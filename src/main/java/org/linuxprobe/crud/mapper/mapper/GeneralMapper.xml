@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.linuxprobe.crud.mapper.GeneralMapper">
+	<insert id="insert" parameterType="org.linuxprobe.crud.model.BaseModel">
+		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+			select uuid()
+		</selectKey>
+		${sqlr.toInsertSql()}
+	</insert>
+
+	<insert id="batchInsert">
+		${value}
+	</insert>
+
+	<delete id="deleteByPrimaryKey">
+		${value}
+	</delete>
+
+	<delete id="batchDeleteByPrimaryKey">
+		${value}
+	</delete>
+
+	<select id="select" parameterType="org.linuxprobe.crud.query.BaseQuery"
+		resultType="java.util.HashMap">
+		${sqlr.toSelectSql()}
+	</select>
+
+	<select id="selectCount" parameterType="org.linuxprobe.crud.query.BaseQuery"
+		resultType="java.lang.Long">
+		<!-- 可以指定字段 -->
+		<!-- ${sqlr.toSelectCountSql('name')} -->
+		${sqlr.toSelectCountSql()}
+	</select>
+
+	<update id="localUpdate" parameterType="org.linuxprobe.crud.model.BaseModel">
+		${sqlr.toLocalUpdateSql()}
+	</update>
+
+	<update id="globalUpdate" parameterType="org.linuxprobe.crud.model.BaseModel">
+		${sqlr.toGlobalUpdateSql()}
+	</update>
+</mapper>
