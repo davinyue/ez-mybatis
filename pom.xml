@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.linuxprobe</groupId>
-	<artifactId>mybatis-general-crud-simple</artifactId>
+	<artifactId>mybatis-universal-crud-simple</artifactId>
 	<version>1.0.5.RELEASE</version>
 	<packaging>jar</packaging>
 
-	<name>mybatis-general-crud-simple</name>
+	<name>mybatis-universal-crud-simple</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
