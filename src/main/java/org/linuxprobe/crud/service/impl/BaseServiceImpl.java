@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
-
 import org.linuxprobe.crud.mapper.BaseMapper;
 import org.linuxprobe.crud.model.BaseModel;
 import org.linuxprobe.crud.query.BaseQuery;
@@ -21,8 +20,8 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		implements BaseService<Model, QueryDTO> {
 	@Autowired
 	private GeneralService service;
-
-	private BaseMapper<BaseModel> mapper;
+	@Autowired
+	private BaseMapper<Model> mapper;
 
 	@Override
 	@Transactional
@@ -62,16 +61,14 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		return this.service.globalUpdate(model);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Model getByPrimaryKey(String id) {
-		return (Model) this.mapper.selectByPrimaryKey(id);
+		return this.mapper.selectByPrimaryKey(id);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Model> getByQueryParam(QueryDTO param) {
-		return (List<Model>) this.mapper.select(param);
+		return this.mapper.select(param);
 	}
 
 	@Override

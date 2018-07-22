@@ -210,7 +210,9 @@ public class BaseQuery {
 		if (this.order != null) {
 			sqlBuffer.append(" order by " + this.order + " ");
 		}
-		sqlBuffer.append("limit " + this.limit.toLimit());
+		if (this.limit != null) {
+			sqlBuffer.append("limit " + this.limit.toLimit());
+		}
 		return sqlBuffer.toString();
 	}
 
