@@ -30,6 +30,13 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 	 * @throws Exception
 	 */
 	public long batchRemoveByPrimaryKey(List<String> ids) throws Exception;
+	
+	
+	/** 根据主键查询 */
+	public Model getByPrimaryKey(String id);
+
+	/** 根据查询对象获取实体list */
+	public List<Model> getByQueryParam(QueryDTO param);
 
 	/** 根据查询对象获取实体数量 */
 	public long getCountByQueryParam(QueryDTO param);

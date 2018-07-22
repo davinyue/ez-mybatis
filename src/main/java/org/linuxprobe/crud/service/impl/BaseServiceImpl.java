@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+
+import org.linuxprobe.crud.mapper.BaseMapper;
 import org.linuxprobe.crud.model.BaseModel;
 import org.linuxprobe.crud.query.BaseQuery;
 import org.linuxprobe.crud.service.BaseService;
@@ -19,6 +21,8 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		implements BaseService<Model, QueryDTO> {
 	@Autowired
 	private GeneralService service;
+
+	private BaseMapper<BaseModel> mapper;
 
 	@Override
 	@Transactional
@@ -53,6 +57,24 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 	}
 
 	@Override
+	@Transactional
+	public int globalUpdate(Model model) {
+		return this.service.globalUpdate(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Model getByPrimaryKey(String id) {
+		return (Model) this.mapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Model> getByQueryParam(QueryDTO param) {
+		return (List<Model>) this.mapper.select(param);
+	}
+
+	@Override
 	public long getCountByQueryParam(QueryDTO param) {
 		return this.service.selectCount(param);
 	}
@@ -75,11 +97,5 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 	@Transactional
 	public int localUpdate(Model model) {
 		return this.service.localUpdate(model);
-	}
-
-	@Override
-	@Transactional
-	public int globalUpdate(Model model) {
-		return this.service.globalUpdate(model);
 	}
 }
