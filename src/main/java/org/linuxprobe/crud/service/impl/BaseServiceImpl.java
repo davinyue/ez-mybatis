@@ -8,7 +8,7 @@ import org.linuxprobe.crud.mapper.BaseMapper;
 import org.linuxprobe.crud.model.BaseModel;
 import org.linuxprobe.crud.query.BaseQuery;
 import org.linuxprobe.crud.service.BaseService;
-import org.linuxprobe.crud.service.GeneralService;
+import org.linuxprobe.crud.service.UniversalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery>
 		implements BaseService<Model, QueryDTO> {
 	@Autowired
-	private GeneralService service;
+	private UniversalService service;
 	@Autowired
 	private BaseMapper<Model> mapper;
 
@@ -43,7 +43,7 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		@SuppressWarnings("unchecked")
 		Class<BaseModel> modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
-		return this.service.remove(id, modelClass);
+		return this.service.removeByPrimaryKey(id, modelClass);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		@SuppressWarnings("unchecked")
 		Class<BaseModel> modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
-		return this.service.batchRemove(ids, modelClass);
+		return this.service.batchRemoveByPrimaryKey(ids, modelClass);
 	}
 
 	@Override
@@ -78,15 +78,16 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Model> generalGetByQueryParam(QueryDTO param) throws IOException {
+	public List<Model> universalGetByQueryParam(QueryDTO param) throws IOException {
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Class<BaseModel> modelClass = null;
 		try {
 			modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+			return null;
 		}
-		List<BaseModel> result = this.service.select(param, modelClass);
+		List<BaseModel> result = this.service.universalSelect(param, modelClass);
 		return (List<Model>) result;
 	}
 

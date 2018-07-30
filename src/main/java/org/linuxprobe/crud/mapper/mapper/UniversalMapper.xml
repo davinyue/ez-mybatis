@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.linuxprobe.crud.mapper.GeneralMapper">
-	<insert id="insert" parameterType="org.linuxprobe.crud.model.BaseModel">
-		<selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
-			select uuid()
-		</selectKey>
-		${sqlr.toInsertSql()}
+<mapper namespace="org.linuxprobe.crud.mapper.UniversalMapper">
+	<insert id="insert">
+		${sqlr.toInsertSql(entity)}
 	</insert>
 
 	<insert id="batchInsert">
-		${value}
+		${sqlr.toBatchInsertSql(entitys)}
 	</insert>
 
 	<delete id="deleteByPrimaryKey">
-		${value}
+		${sqlr.toDeleteSql(entity)}
 	</delete>
 
 	<delete id="batchDeleteByPrimaryKey">
-		${value}
+		${sqlr.toBatchDeleteSql(entitys)}
 	</delete>
 
-	<select id="select" parameterType="org.linuxprobe.crud.query.BaseQuery"
+	<select id="universalSelect" parameterType="org.linuxprobe.crud.query.BaseQuery"
 		resultType="java.util.HashMap">
 		${sqlr.toSelectSql()}
 	</select>
@@ -32,11 +29,11 @@
 		${sqlr.toSelectCountSql()}
 	</select>
 
-	<update id="localUpdate" parameterType="org.linuxprobe.crud.model.BaseModel">
-		${sqlr.toLocalUpdateSql()}
+	<update id="localUpdate">
+		${sqlr.toLocalUpdateSql(entity)}
 	</update>
 
-	<update id="globalUpdate" parameterType="org.linuxprobe.crud.model.BaseModel">
-		${sqlr.toGlobalUpdateSql()}
+	<update id="globalUpdate">
+		${sqlr.toGlobalUpdateSql(entity)}
 	</update>
 </mapper>

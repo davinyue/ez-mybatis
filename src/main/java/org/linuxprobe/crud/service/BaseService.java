@@ -13,8 +13,11 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 	/** 添加 */
 	public Model add(Model model);
 
-	/** 批量添加 
-	 * @throws Exception */
+	/**
+	 * 批量添加
+	 * 
+	 * @throws Exception
+	 */
 	public List<Model> batchAdd(List<Model> models) throws Exception;
 
 	/**
@@ -30,8 +33,7 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 	 * @throws Exception
 	 */
 	public long batchRemoveByPrimaryKey(List<String> ids) throws Exception;
-	
-	
+
 	/** 根据主键查询 */
 	public Model getByPrimaryKey(String id);
 
@@ -40,10 +42,13 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 
 	/** 根据查询对象获取实体数量 */
 	public long getCountByQueryParam(QueryDTO param);
-	
-	/** 通用查询，根据查询对象获取实体list，不能处理关联加载 
-	 * @throws IOException */
-	public List<Model> generalGetByQueryParam(QueryDTO param) throws IOException;
+
+	/**
+	 * 通用查询，根据查询对象获取实体list，不能处理关联加载
+	 * 
+	 * @throws IOException
+	 */
+	public List<Model> universalGetByQueryParam(QueryDTO param) throws IOException;
 
 	/** 增量更新 */
 	public int localUpdate(Model model);
