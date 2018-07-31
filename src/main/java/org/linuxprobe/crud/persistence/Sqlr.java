@@ -234,11 +234,11 @@ public class Sqlr {
 		Class<?> superClass = entity.getClass().getSuperclass();
 		if (superClass != null) {
 			for (;;) {
-				fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-				if (superClass.equals(Object.class)) {
-					break;
-				} else {
+				if (!superClass.equals(Object.class)) {
+					fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
 					superClass = superClass.getSuperclass();
+				} else {
+					break;
 				}
 			}
 		}

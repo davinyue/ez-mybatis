@@ -7,11 +7,18 @@ import org.linuxprobe.crud.query.param.QueryParam;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/** 数字型参数 */
 @Setter
 @NoArgsConstructor
 public class NumberParam extends QueryParam {
 	/** 操作符= */
 	public NumberParam(Number value) {
+		this.value = value;
+	}
+
+	/** 操作符= */
+	public NumberParam(Condition condition, Number value) {
+		this.setCondition(condition);
 		this.value = value;
 	}
 
@@ -21,6 +28,18 @@ public class NumberParam extends QueryParam {
 				|| operator == Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
+			this.setOperator(operator);
+			this.value = value;
+		}
+	}
+
+	/** 操作符不支持in, not in, between, not between */
+	public NumberParam(Condition condition, Operator operator, Number value) {
+		if (operator == Operator.in || operator == Operator.notIn || operator == Operator.between
+				|| operator == Operator.notBetween) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setCondition(condition);
 			this.setOperator(operator);
 			this.value = value;
 		}
@@ -37,11 +56,34 @@ public class NumberParam extends QueryParam {
 		}
 	}
 
+	/** 操作符只支持between, not between */
+	public NumberParam(Condition condition, Operator operator, Number lowerLimit, Number upperLimit) {
+		if (operator != Operator.between && operator != Operator.notBetween) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setCondition(condition);
+			this.setOperator(operator);
+			this.lowerLimit = lowerLimit;
+			this.upperLimit = upperLimit;
+		}
+	}
+
 	/** 操作符只支持in, not in */
 	public NumberParam(Operator operator, List<Number> multipart) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
+			this.setOperator(operator);
+			this.multipart = multipart;
+		}
+	}
+
+	/** 操作符只支持in, not in */
+	public NumberParam(Condition condition, Operator operator, List<Number> multipart) {
+		if (operator != Operator.in && operator != Operator.notIn) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setCondition(condition);
 			this.setOperator(operator);
 			this.multipart = multipart;
 		}

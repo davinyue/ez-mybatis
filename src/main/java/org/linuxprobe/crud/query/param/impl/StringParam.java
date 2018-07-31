@@ -1,13 +1,12 @@
 package org.linuxprobe.crud.query.param.impl;
 
 import java.util.List;
-
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.query.param.QueryParam;
-
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/** 字符串型参数 */
 @Setter
 @NoArgsConstructor
 public class StringParam extends QueryParam {
@@ -15,6 +14,13 @@ public class StringParam extends QueryParam {
 	public StringParam(String value) {
 		this.value = value;
 	}
+
+	/** 操作符= */
+	public StringParam(Condition condition, String value) {
+		this.setCondition(condition);
+		this.value = value;
+	}
+
 	/** 操作符不支持in, not in, between, not between */
 	public StringParam(Operator operator, String value) {
 		if (operator == Operator.in || operator == Operator.notIn || operator == Operator.between
@@ -25,6 +31,19 @@ public class StringParam extends QueryParam {
 			this.value = value;
 		}
 	}
+
+	/** 操作符不支持in, not in, between, not between */
+	public StringParam(Condition condition, Operator operator, String value) {
+		if (operator == Operator.in || operator == Operator.notIn || operator == Operator.between
+				|| operator == Operator.notBetween) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setCondition(condition);
+			this.setOperator(operator);
+			this.value = value;
+		}
+	}
+
 	/** 操作符只支持between, not between */
 	public StringParam(Operator operator, String lowerLimit, String upperLimit) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
@@ -35,12 +54,35 @@ public class StringParam extends QueryParam {
 			this.upperLimit = upperLimit;
 		}
 	}
-	
+
+	/** 操作符只支持between, not between */
+	public StringParam(Condition condition, Operator operator, String lowerLimit, String upperLimit) {
+		if (operator != Operator.between && operator != Operator.notBetween) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+			this.setOperator(operator);
+			this.lowerLimit = lowerLimit;
+			this.upperLimit = upperLimit;
+		}
+	}
+
 	/** 操作符只支持in, not in */
 	public StringParam(Operator operator, List<String> multipart) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
+			this.setOperator(operator);
+			this.multipart = multipart;
+		}
+	}
+
+	/** 操作符只支持in, not in */
+	public StringParam(Condition condition, Operator operator, List<String> multipart) {
+		if (operator != Operator.in && operator != Operator.notIn) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
 			this.setOperator(operator);
 			this.multipart = multipart;
 		}

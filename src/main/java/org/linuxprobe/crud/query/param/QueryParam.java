@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public abstract class QueryParam {
 	private Operator operator = Operator.equal;
+	private Condition condition = Condition.and;
 
 	public String toSqlPart() {
 		if (isEmpty()) {
@@ -59,6 +60,15 @@ public abstract class QueryParam {
 		}
 	}
 
+	public void setCondition(Condition condition) {
+		if (condition == null) {
+			this.condition = Condition.and;
+		} else {
+			this.condition = condition;
+		}
+	}
+
+	/** 操作符 =,!=,like... */
 	public static class Operator {
 		private Operator(String operator) {
 			this.operator = operator;
@@ -82,5 +92,22 @@ public abstract class QueryParam {
 		public static final Operator isNotNull = new Operator("is not");
 		/** 正则,只有字符串类,时间类支持 */
 		public static final Operator regexp = new Operator("regexp");
+	}
+
+	/** 条件,and or */
+	public static class Condition {
+		private Condition(String condition) {
+			this.condition = condition;
+		};
+
+		@Override
+		public String toString() {
+			return condition;
+		}
+
+		@Getter
+		private String condition;
+		public static final Condition and = new Condition("and");
+		public static final Condition or = new Condition("or");
 	}
 }
