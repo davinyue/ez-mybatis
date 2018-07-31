@@ -16,6 +16,12 @@ public interface UniversalDAO {
 	/** 批量删除 */
 	long batchDelete(List<Object> records);
 
+	/** 根据主键删除 */
+	public int deleteByPrimaryKey(String id, Class<?> type);
+
+	/** 根据主键批量删除 */
+	public long batchDeleteByPrimaryKey(List<String> ids, Class<?> type);
+
 	/** 通用查询,不支持关联加载 */
 	public <T> List<T> universalSelect(BaseQuery param, Class<T> type);
 

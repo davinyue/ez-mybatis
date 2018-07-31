@@ -1,6 +1,7 @@
 package org.linuxprobe.crud.dao.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +33,34 @@ public class UniversalDAOImpl implements UniversalDAO {
 
 	@Override
 	public int delete(Object record) {
-		return this.mapper.deleteByPrimaryKey(record, sqlr);
+		return this.mapper.delete(record, sqlr);
 	}
 
 	@Override
 	public long batchDelete(List<Object> records) {
-		return this.mapper.batchDeleteByPrimaryKey(records, sqlr);
+		return this.mapper.batchDelete(records, sqlr);
+	}
+
+	@Override
+	public int deleteByPrimaryKey(String id, Class<?> type) {
+		try {
+			return this.mapper.deleteByPrimaryKey(Sqlr.toDeleteSqlByPrimaryKey(id, type));
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	@Override
+	public long batchDeleteByPrimaryKey(List<String> ids, Class<?> type) {
+		try {
+			return this.mapper.batchDeleteByPrimaryKey(Sqlr.toBatchDeleteSqlByPrimaryKey(ids, type));
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	@Override

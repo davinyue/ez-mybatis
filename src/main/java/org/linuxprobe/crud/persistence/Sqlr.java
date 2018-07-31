@@ -36,7 +36,7 @@ public class Sqlr {
 	/** 生成插入sql */
 	public static String toInsertSql(Object entity) {
 		String table = Sqlr.getTable(entity);
-		if (table == null || table.trim().isEmpty()) {
+		if (table == null) {
 			throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
 		}
 		StringBuffer sqlBuffer = new StringBuffer("insert into " + table + " ");
@@ -82,10 +82,33 @@ public class Sqlr {
 	}
 
 	public static String toDeleteSql(Object entity) {
+		if (entity == null) {
+			throw new OperationNotSupportedException("没有需要被删除的实体");
+		}
 		List<Attribute> attributes = getAttributes(entity, false);
 		Attribute primaryKey = getPrimaryKey(attributes);
 		String table = getTable(entity);
+		if (table == null) {
+			throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
+		}
 		String sql = "delete from " + table + " where " + primaryKey.getName() + " = " + primaryKey.getValue();
+		return sql;
+	}
+
+	public static String toDeleteSqlByPrimaryKey(String id, Class<?> type)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
+		if (id == null) {
+			throw new OperationNotSupportedException("没有需要被删除的实体");
+		}
+		Object entity = type.getConstructor().newInstance();
+		List<Attribute> attributes = getAttributes(entity, false);
+		Attribute primaryKey = getPrimaryKey(attributes);
+		String table = getTable(entity);
+		if (table == null) {
+			throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
+		}
+		String sql = "delete from " + table + " where " + primaryKey.getName() + " = '" + id + "'";
 		return sql;
 	}
 
@@ -100,6 +123,9 @@ public class Sqlr {
 			Attribute primaryKey = getPrimaryKey(attributes);
 			if (i == 0) {
 				String table = getTable(entity);
+				if (table == null) {
+					throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
+				}
 				sqlBuffer.append(table + " where " + primaryKey.getName() + " in(");
 			}
 			sqlBuffer.append(primaryKey.getValue() + ", ");
@@ -111,9 +137,36 @@ public class Sqlr {
 		return sqlBuffer.toString();
 	}
 
+	public static String toBatchDeleteSqlByPrimaryKey(List<String> ids, Class<?> type)
+			throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
+		if (ids == null || ids.isEmpty()) {
+			throw new OperationNotSupportedException("没有需要被删除的实体");
+		}
+		Object entity = type.getConstructor().newInstance();
+		List<Attribute> attributes = getAttributes(entity, false);
+		Attribute primaryKey = getPrimaryKey(attributes);
+		String table = getTable(entity);
+		if (table == null) {
+			throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
+		}
+		StringBuffer sqlBuffer = new StringBuffer("delete from " + table + " where " + primaryKey.getName() + " in (");
+		for (String id : ids) {
+			sqlBuffer.append("'" + id + "', ");
+		}
+		if (sqlBuffer.lastIndexOf(", ") != -1) {
+			sqlBuffer.replace(sqlBuffer.length() - 2, sqlBuffer.length(), "");
+		}
+		sqlBuffer.append(")");
+		return sqlBuffer.toString();
+	}
+
 	/** 生成全更新sql */
 	public static String toGlobalUpdateSql(Object entity) {
 		String table = Sqlr.getTable(entity);
+		if (table == null) {
+			throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
+		}
 		StringBuffer sqlBuffer = new StringBuffer("update " + table + " set ");
 		List<Attribute> attributes = getAttributes(entity, false);
 		Attribute primaryKey = getPrimaryKey(attributes);
@@ -137,6 +190,9 @@ public class Sqlr {
 	/** 生成部分更新sql */
 	public static String toLocalUpdateSql(Object entity) {
 		String table = Sqlr.getTable(entity);
+		if (table == null) {
+			throw new UnknownTableException("请在实体类上标注注解@Table(\"table\")");
+		}
 		StringBuffer sqlBuffer = new StringBuffer("update " + table + " set ");
 		List<Attribute> attributes = getAttributes(entity, false);
 		Attribute primaryKey = getPrimaryKey(attributes);
@@ -159,14 +215,17 @@ public class Sqlr {
 		return sqlBuffer.toString();
 	}
 
+	/** 获取实体table注解值 */
 	private static <T extends Object> String getTable(T entity) {
 		Class<?> entityClass = entity.getClass();
 		boolean classHasTableAnno = entityClass.isAnnotationPresent(Table.class);
 		if (classHasTableAnno) {
 			Table annotation = entityClass.getAnnotation(Table.class);
-			return annotation.value();
+			String table = annotation.value();
+			return table.isEmpty() ? null : table;
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	private static List<Attribute> getAttributes(Object entity, boolean isInsertMode) {

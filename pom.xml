@@ -42,7 +42,7 @@
 	<url>https://github.com/linuxprobe-org/mybatis-universal-crud-simple.git</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<encoding>UTF-8</encoding>
 		<spring.vsersion>4.3.18.RELEASE</spring.vsersion>
 	</properties>
 
@@ -89,14 +89,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<compilerVersion>1.8</compilerVersion>
 					<fork>true</fork>
 					<source>1.8</source>
 					<target>1.8</target>
-					<encoding>UTF-8</encoding>
+					<encoding>${encoding}</encoding>
 				</configuration>
+			</plugin>
+			<!-- lombok编译插件 -->
+			<plugin>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok-maven-plugin</artifactId>
+				<version>1.18.0.0</version>
 			</plugin>
 			<!--打包源码 -->
 			<plugin>
@@ -112,7 +118,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<encoding>UTF-8</encoding>
+					<encoding>${encoding}</encoding>
 				</configuration>
 			</plugin>
 			<!-- 打包java-doc -->
@@ -122,8 +128,8 @@
 				<version>2.9</version>
 				<configuration>
 					<aggregate>true</aggregate>
-					<encoding>UTF-8</encoding>
-					<docencoding>UTF-8</docencoding>
+					<encoding>${encoding}</encoding>
+					<docencoding>${encoding}</docencoding>
 				</configuration>
 				<executions>
 					<execution>

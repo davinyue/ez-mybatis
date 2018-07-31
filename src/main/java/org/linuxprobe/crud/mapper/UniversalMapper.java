@@ -14,12 +14,18 @@ public interface UniversalMapper {
 	int batchInsert(@Param("entitys") List<Object> entitys, @Param("sqlr") Sqlr sqlr);
 
 	/** 删除 */
-	int deleteByPrimaryKey(@Param("entity") Object entity, @Param("sqlr") Sqlr sqlr);
+	int delete(@Param("entity") Object entity, @Param("sqlr") Sqlr sqlr);
 
 	/** 批量删除 */
-	long batchDeleteByPrimaryKey(@Param("entitys") List<Object> entitys, @Param("sqlr") Sqlr sqlr);
+	long batchDelete(@Param("entitys") List<Object> entitys, @Param("sqlr") Sqlr sqlr);
 
-	/** 通用查询 */  
+	/** 删除 */
+	int deleteByPrimaryKey(String sql);
+
+	/** 批量删除 */
+	long batchDeleteByPrimaryKey(String sql);
+
+	/** 通用查询 */
 	public List<Map<String, Object>> universalSelect(BaseQuery param);
 
 	/** 查询数量 */

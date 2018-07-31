@@ -9,12 +9,20 @@
 		${sqlr.toBatchInsertSql(entitys)}
 	</insert>
 
-	<delete id="deleteByPrimaryKey">
+	<delete id="delete">
 		${sqlr.toDeleteSql(entity)}
 	</delete>
 
-	<delete id="batchDeleteByPrimaryKey">
+	<delete id="batchDelete">
 		${sqlr.toBatchDeleteSql(entitys)}
+	</delete>
+
+	<delete id="deleteByPrimaryKey">
+		${value}
+	</delete>
+
+	<delete id="batchDeleteByPrimaryKey">
+		${value}
 	</delete>
 
 	<select id="universalSelect" parameterType="org.linuxprobe.crud.query.BaseQuery"
