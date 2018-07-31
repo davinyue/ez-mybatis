@@ -11,14 +11,14 @@ import org.linuxprobe.crud.query.BaseQuery;
  */
 public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery> {
 	/** 添加 */
-	public Model add(Model model);
+	public Model save(Model model);
 
 	/**
 	 * 批量添加
 	 * 
 	 * @throws Exception
 	 */
-	public List<Model> batchAdd(List<Model> models) throws Exception;
+	public List<Model> batchSave(List<Model> models) throws Exception;
 
 	/**
 	 * 删除
@@ -33,6 +33,20 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 	 * @throws Exception
 	 */
 	public long batchRemoveByPrimaryKey(List<String> ids) throws Exception;
+
+	/**
+	 * 删除
+	 * 
+	 * @throws Exception
+	 */
+	public int remove(Model record);
+
+	/**
+	 * 批量删除
+	 * 
+	 * @throws Exception
+	 */
+	public long batchRemove(List<Model> records);
 
 	/** 根据主键查询 */
 	public Model getByPrimaryKey(String id);

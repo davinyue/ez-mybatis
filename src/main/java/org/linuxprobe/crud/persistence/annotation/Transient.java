@@ -6,14 +6,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** 列名标注 */
+/** 忽略该字段，用于对象有这个字段，但数据库没有该列的情况 */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Column {
-	/** 列名 */
-	public String value() default "";
+public @interface Transient {
 
-	/** 忽略更新,生成的update sql 语句将不包含该字段 */
-	public boolean updateIgnore() default false;
 }

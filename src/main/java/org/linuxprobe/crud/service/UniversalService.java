@@ -5,14 +5,14 @@ import org.linuxprobe.crud.query.BaseQuery;
 
 public interface UniversalService {
 	/** 添加 */
-	public <T> T add(T record);
+	public <T> T save(T record);
 
 	/**
 	 * 批量添加
 	 * 
 	 * @throws Exception
 	 */
-	public <T> List<T> batchAdd(List<T> records);
+	public <T> List<T> batchSave(List<T> records);
 
 	public int remove(Object record);
 
@@ -20,7 +20,7 @@ public interface UniversalService {
 
 	public int removeByPrimaryKey(String id, Class<?> type);
 
-	public long batchRemoveByPrimaryKey(List<String> id, Class<?> type);
+	public long batchRemoveByPrimaryKey(List<String> ids, Class<?> type);
 
 	public <T> List<T> universalSelect(BaseQuery param, Class<T> type);
 

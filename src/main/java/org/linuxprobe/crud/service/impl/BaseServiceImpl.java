@@ -25,16 +25,16 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 
 	@Override
 	@Transactional
-	public Model add(Model model) {
-		this.service.add(model);
+	public Model save(Model model) {
+		this.service.save(model);
 		return model;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public List<Model> batchAdd(List<Model> models) throws Exception {
-		return (List<Model>) this.service.batchAdd((List<BaseModel>) models);
+	public List<Model> batchSave(List<Model> models) throws Exception {
+		return (List<Model>) this.service.batchSave((List<BaseModel>) models);
 	}
 
 	@Override
@@ -53,6 +53,19 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		@SuppressWarnings("unchecked")
 		Class<BaseModel> modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
 		return this.service.batchRemoveByPrimaryKey(ids, modelClass);
+	}
+
+	@Override
+	@Transactional
+	public int remove(Model record) {
+		return this.service.remove(record);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional
+	public long batchRemove(List<Model> records) {
+		return this.service.batchRemove((List<Object>) (List<?>) records);
 	}
 
 	@Override

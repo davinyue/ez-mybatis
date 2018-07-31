@@ -13,14 +13,14 @@ public class UniversalServiceImpl implements UniversalService {
 	private UniversalDAO dao;
 
 	@Override
-	public <T> T add(T record) {
+	public <T> T save(T record) {
 		this.dao.insert(record);
 		return record;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<T> batchAdd(List<T> records) {
+	public <T> List<T> batchSave(List<T> records) {
 		this.dao.batchInsert((List<Object>) records);
 		return records;
 	}
@@ -37,14 +37,12 @@ public class UniversalServiceImpl implements UniversalService {
 
 	@Override
 	public int removeByPrimaryKey(String id, Class<?> type) {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.dao.deleteByPrimaryKey(id, type);
 	}
 
 	@Override
-	public long batchRemoveByPrimaryKey(List<String> id, Class<?> type) {
-		// TODO Auto-generated method stub
-		return 0;
+	public long batchRemoveByPrimaryKey(List<String> ids, Class<?> type) {
+		return this.dao.batchDeleteByPrimaryKey(ids, type);
 	}
 
 	@Override
