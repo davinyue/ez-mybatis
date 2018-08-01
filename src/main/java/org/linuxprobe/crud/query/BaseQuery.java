@@ -1,5 +1,7 @@
 package org.linuxprobe.crud.query;
 
+import java.util.LinkedList;
+import java.util.List;
 import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.persistence.SelectSqler;
 import org.linuxprobe.crud.query.param.impl.StringParam;
@@ -51,32 +53,31 @@ public abstract class BaseQuery {
 		StringBuffer result = new StringBuffer();
 		if (orders != null) {
 			for (int i = 0; i < orders.length; i++) {
-				String[] orderMembers = orders[i].trim().split(" ");
-				/** 如果参数使用多个空格来分隔列和模式，则模式在数组最后一个元素，把它赋值给数组第二个元素 */
-				if (orderMembers.length > 2) {
-					orderMembers[1] = orderMembers[orderMembers.length - 1];
-				}
-				if (orderMembers != null && orderMembers.length > 0) {
-					String[] members = new String[2];
-					members[0] = orderMembers[0];
-					if (orderMembers.length == 1) {
-						members[1] = "asc";
-					} else {
-						if (orderMembers[1].equalsIgnoreCase("asc")) {
-							members[1] = "asc";
-						} else if (orderMembers[1].equalsIgnoreCase("desc")) {
-							members[1] = "desc";
-						} else {
-							throw new ParameterException("排序模式只能为asc和desc");
-						}
+				String[] tempOrderMembers = orders[i].trim().split(" ");
+				/** 删除值是空格的元素 */
+				List<String> orderMembers = new LinkedList<>();
+				for (String tempOrderMember : tempOrderMembers) {
+					if (!tempOrderMember.trim().isEmpty()) {
+						orderMembers.add(tempOrderMember);
 					}
-					if (i + 1 == orders.length) {
-						result.append(members[0] + " " + members[1]);
+				}
+				if (orderMembers.size() > 2) {
+					throw new ParameterException("参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
+				} else if (orderMembers.size() == 1) {
+					result.append(orderMembers.get(0) + " " + "asc,");
+				} else if (orderMembers.size() == 2) {
+					if (orderMembers.get(1).equalsIgnoreCase("asc")) {
+						result.append(orderMembers.get(0) + " " + "asc,");
+					} else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
+						result.append(orderMembers.get(0) + " " + "desc,");
 					} else {
-						result.append(members[0] + " " + members[1] + ",");
+						throw new ParameterException("排序模式只能为asc和desc");
 					}
 				}
 			}
+		}
+		if (result.indexOf(",") != -1) {
+			result.delete(result.length() - 1, result.length());
 		}
 		this.order = result.length() == 0 ? null : result.toString();
 	}
