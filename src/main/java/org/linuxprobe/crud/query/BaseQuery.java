@@ -3,7 +3,6 @@ package org.linuxprobe.crud.query;
 import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.persistence.SelectSqler;
 import org.linuxprobe.crud.query.param.impl.StringParam;
-import org.linuxprobe.crud.utils.StringHumpTool;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,6 +40,13 @@ public abstract class BaseQuery {
 	private Limit limit = new Limit();
 
 	public void setOrder(String order) {
+		if (order == null) {
+			return;
+		}
+		order = order.trim();
+		if (order.isEmpty()) {
+			return;
+		}
 		String[] orders = order.split(",");
 		StringBuffer result = new StringBuffer();
 		if (orders != null) {
@@ -52,7 +58,7 @@ public abstract class BaseQuery {
 				}
 				if (orderMembers != null && orderMembers.length > 0) {
 					String[] members = new String[2];
-					members[0] = StringHumpTool.humpToLine2(orderMembers[0], "_");
+					members[0] = orderMembers[0];
 					if (orderMembers.length == 1) {
 						members[1] = "asc";
 					} else {
@@ -72,7 +78,7 @@ public abstract class BaseQuery {
 				}
 			}
 		}
-		this.order = result.toString();
+		this.order = result.length() == 0 ? null : result.toString();
 	}
 
 	public static class Limit {

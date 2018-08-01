@@ -25,13 +25,11 @@
 		${value}
 	</delete>
 
-	<select id="universalSelect" parameterType="org.linuxprobe.crud.query.BaseQuery"
-		resultType="java.util.HashMap">
+	<select id="universalSelect" resultType="java.util.HashMap">
 		${sqlr.toSelectSql()}
 	</select>
 
-	<select id="selectCount" parameterType="org.linuxprobe.crud.query.BaseQuery"
-		resultType="java.lang.Long">
+	<select id="selectCount" resultType="java.lang.Long">
 		<!-- 可以指定字段 -->
 		<!-- ${sqlr.toSelectCountSql('name')} -->
 		${sqlr.toSelectCountSql()}

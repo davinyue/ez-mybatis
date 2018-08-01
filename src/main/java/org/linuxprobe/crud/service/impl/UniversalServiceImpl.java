@@ -2,7 +2,6 @@ package org.linuxprobe.crud.service.impl;
 
 import java.util.List;
 import org.linuxprobe.crud.dao.UniversalDAO;
-import org.linuxprobe.crud.query.BaseQuery;
 import org.linuxprobe.crud.service.UniversalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,12 +45,12 @@ public class UniversalServiceImpl implements UniversalService {
 	}
 
 	@Override
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
+	public <T> List<T> universalSelect(Object param, Class<T> type) {
 		return this.dao.universalSelect(param, type);
 	}
 
 	@Override
-	public long selectCount(BaseQuery param) {
+	public long selectCount(Object param) {
 		return this.dao.selectCount(param);
 	}
 

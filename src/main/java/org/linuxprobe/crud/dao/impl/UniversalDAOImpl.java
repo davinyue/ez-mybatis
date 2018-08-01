@@ -8,7 +8,6 @@ import java.util.Map;
 import org.linuxprobe.crud.dao.UniversalDAO;
 import org.linuxprobe.crud.mapper.UniversalMapper;
 import org.linuxprobe.crud.persistence.Sqlr;
-import org.linuxprobe.crud.query.BaseQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -64,7 +63,7 @@ public class UniversalDAOImpl implements UniversalDAO {
 	}
 
 	@Override
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
+	public <T> List<T> universalSelect(Object param, Class<T> type) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 				DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS);
@@ -86,7 +85,7 @@ public class UniversalDAOImpl implements UniversalDAO {
 	}
 
 	@Override
-	public long selectCount(BaseQuery param) {
+	public long selectCount(Object param) {
 		return this.mapper.selectCount(param);
 	}
 

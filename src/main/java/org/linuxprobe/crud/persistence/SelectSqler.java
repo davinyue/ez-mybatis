@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
+import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.persistence.annotation.Column;
 import org.linuxprobe.crud.persistence.annotation.PrimaryKey;
 import org.linuxprobe.crud.persistence.annotation.Search;
@@ -48,7 +49,7 @@ public class SelectSqler {
 		StringBuffer sqlBuffer = new StringBuffer(
 				"select distinct " + alias + ".* from " + getTable(searcher.getClass()) + " as " + alias + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
-		sqlBuffer.append("where " + getFormatWhere(searcher));
+		sqlBuffer.append(getFormatWhere(searcher));
 		sqlBuffer.append(toOrder(searcher));
 		sqlBuffer.append(toLimit(searcher));
 		return sqlBuffer.toString();
@@ -60,7 +61,7 @@ public class SelectSqler {
 		StringBuffer sqlBuffer = new StringBuffer(
 				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
-		sqlBuffer.append("where " + getFormatWhere(searcher));
+		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
 	}
 
@@ -71,25 +72,13 @@ public class SelectSqler {
 		StringBuffer sqlBuffer = new StringBuffer(
 				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
-		sqlBuffer.append("where " + getFormatWhere(searcher));
+		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
 	}
 
 	/** 转换为left join part */
 	private static StringBuffer toLeftJoin(Object searcher) {
-		List<Field> fields = Arrays.asList(searcher.getClass().getDeclaredFields());
-		fields = new ArrayList<Field>(fields);
-		Class<?> superClass = searcher.getClass().getSuperclass();
-		if (superClass != null) {
-			for (;;) {
-				if (!superClass.equals(Object.class)) {
-					fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-					superClass = superClass.getSuperclass();
-				} else {
-					break;
-				}
-			}
-		}
+		List<Field> fields = geteAllFields(searcher.getClass());
 		StringBuffer joinBuffer = new StringBuffer();
 		for (Field field : fields) {
 			/** 如果是关联查询对象 */
@@ -135,14 +124,79 @@ public class SelectSqler {
 	}
 
 	/** 转换为order by part */
-	private static String toOrder(Object searcher) {
+	private static StringBuffer toOrder(Object searcher) {
+		StringBuffer result = new StringBuffer();
 		if (BaseQuery.class.isAssignableFrom(searcher.getClass())) {
 			BaseQuery baseQuery = (BaseQuery) searcher;
-			if (baseQuery.getOrder() != null) {
-				return " order by " + baseQuery.getOrder() + " ";
+			String strOrder = baseQuery.getOrder();
+			if (strOrder != null) {
+				String[] orders = strOrder.split(",");
+				for (int i = 0; i < orders.length; i++) {
+					String[] parts = orders[i].split(" ");
+					String fieldName = parts[0];
+					String orderName = getOrderMember(searcher, fieldName);
+					if (orderName != null) {
+						result.append(orderName + " " + parts[1] + ", ");
+					} else {
+						throw new ParameterException(searcher.getClass().getName() + "类查询对象里没有与'" + fieldName
+								+ "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
+					}
+				}
 			}
 		}
-		return "";
+		if (result.indexOf(", ") != -1) {
+			result.delete(result.length() - 2, result.length());
+			result.insert(0, "order by ");
+		}
+		result.append(" ");
+		return result;
+	}
+
+	private static String getOrderMember(Object searcher, String fieldName) {
+		/** 拆分层次 */
+		String[] fieldNames = fieldName.split("\\.");
+		/** 获取查询对象的成员 */
+		List<Field> searcherFields = geteAllFields(searcher.getClass());
+		for (Field searcherField : searcherFields) {
+			/**
+			 * 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
+			 */
+			/** 第一章情况 */
+			if (fieldNames.length == 1) {
+				/** 如果名称匹配上 */
+				if (searcherField.getName().equals(fieldName)) {
+					/** 如果是查询类参数对象 */
+					if (QueryParam.class.isAssignableFrom(searcherField.getType())) {
+						String orderName = getAlias(searcher) + "." + fieldName;
+						/** 如果标有列注解 */
+						if (searcherField.isAnnotationPresent(Column.class)) {
+							Column column = searcherField.getAnnotation(Column.class);
+							if (!column.value().trim().isEmpty()) {
+								orderName = getAlias(searcher) + "." + column.value().trim();
+							}
+						}
+						return orderName;
+					}
+					break;
+				}
+			}
+			/** 第二种情况 */
+			else {
+				/** 如果第一层名称匹配上 */
+				if (searcherField.getName().equals(fieldNames[0])) {
+					searcherField.setAccessible(true);
+					try {
+						Object sonSearcher = searcherField.get(searcher);
+						if (sonSearcher != null) {
+							return getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
+						}
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						continue;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/** 转换为order by part */
@@ -158,19 +212,7 @@ public class SelectSqler {
 
 	/** 转换为where part */
 	private static LinkedList<String> toWhere(Object searcher) {
-		List<Field> fields = Arrays.asList(searcher.getClass().getDeclaredFields());
-		fields = new ArrayList<Field>(fields);
-		Class<?> superClass = searcher.getClass().getSuperclass();
-		if (superClass != null) {
-			for (;;) {
-				if (!superClass.equals(Object.class)) {
-					fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-					superClass = superClass.getSuperclass();
-				} else {
-					break;
-				}
-			}
-		}
+		List<Field> fields = geteAllFields(searcher.getClass());
 		LinkedList<String> result = new LinkedList<>();
 		for (Field field : fields) {
 			/** 获取成员名称 */
@@ -219,7 +261,7 @@ public class SelectSqler {
 	}
 
 	/** 获取格式化后的where条件 */
-	private static String getFormatWhere(Object searcher) {
+	private static StringBuffer getFormatWhere(Object searcher) {
 		List<String> wheres = toWhere(searcher);
 		/** 把and的条件排序在前面 */
 		Collections.sort(wheres, new Comparator<String>() {
@@ -232,14 +274,12 @@ public class SelectSqler {
 		for (String where : wheres) {
 			resultBuffer.append(where);
 		}
-		String result = resultBuffer.toString();
-		if (result.trim().isEmpty()) {
-			result = "1=1 ";
-		} else {
-			/** 删除最前面的and或者or关键字 */
-			result = result.substring(result.indexOf(" ") + 1);
+		/** 有条件 */
+		if (resultBuffer.indexOf("and") != -1 || resultBuffer.indexOf("or") != -1) {
+			resultBuffer.delete(0, resultBuffer.indexOf(" "));
+			resultBuffer.insert(0, "where");
 		}
-		return result;
+		return resultBuffer;
 	}
 
 	/**
@@ -263,16 +303,11 @@ public class SelectSqler {
 		}
 	}
 
-	/**
-	 * 获取模型对应的表的主键列名称
-	 * 
-	 * @param modelType
-	 *            模型的类型
-	 */
-	private static String getPrimaryKeyName(Class<?> modelType) {
-		List<Field> fields = Arrays.asList(modelType.getDeclaredFields());
+	/** 获取一个类的所有成员，包括它的父类的 */
+	private static List<Field> geteAllFields(Class<?> type) {
+		List<Field> fields = Arrays.asList(type.getDeclaredFields());
 		fields = new ArrayList<Field>(fields);
-		Class<?> superClass = modelType.getSuperclass();
+		Class<?> superClass = type.getSuperclass();
 		if (superClass != null) {
 			for (;;) {
 				if (!superClass.equals(Object.class)) {
@@ -283,6 +318,17 @@ public class SelectSqler {
 				}
 			}
 		}
+		return fields;
+	}
+
+	/**
+	 * 获取模型对应的表的主键列名称
+	 * 
+	 * @param modelType
+	 *            模型的类型
+	 */
+	private static String getPrimaryKeyName(Class<?> modelType) {
+		List<Field> fields = geteAllFields(modelType);
 		String primaryKeyName = null;
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(PrimaryKey.class)) {
