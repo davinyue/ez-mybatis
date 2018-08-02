@@ -3,6 +3,7 @@ package org.linuxprobe.crud.query.param.impl;
 import java.util.List;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.query.param.QueryParam;
+import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -98,13 +99,15 @@ public class StringParam extends QueryParam {
 
 	@Override
 	public String getValue() {
-		if (value == null) {
+		String temp = value;
+		if (temp == null) {
 			return null;
 		} else {
+			temp = SqlEscapeUtil.escape(temp);
 			if (this.getOperator() == Operator.like || this.getOperator() == Operator.unlike) {
-				return "'%" + value + "%'";
+				return "'%" + temp + "%'";
 			} else {
-				return "'" + value + "'";
+				return "'" + temp + "'";
 			}
 		}
 	}
@@ -117,6 +120,7 @@ public class StringParam extends QueryParam {
 			StringBuffer valueBufffer = new StringBuffer();
 			for (int i = 0; i < multipart.size(); i++) {
 				String tempvalue = multipart.get(i);
+				tempvalue = SqlEscapeUtil.escape(tempvalue);
 				if (i + 1 != multipart.size()) {
 					valueBufffer.append("'" + tempvalue + "', ");
 				} else {
@@ -129,19 +133,23 @@ public class StringParam extends QueryParam {
 
 	@Override
 	public String getUpperLimit() {
+		String tempvalue = upperLimit;
 		if (upperLimit == null) {
 			return null;
 		} else {
-			return "'" + upperLimit + "'";
+			tempvalue = SqlEscapeUtil.escape(tempvalue);
+			return "'" + tempvalue + "'";
 		}
 	}
 
 	@Override
 	public String getLowerLimit() {
+		String tempvalue = lowerLimit;
 		if (lowerLimit == null) {
 			return null;
 		} else {
-			return "'" + lowerLimit + "'";
+			tempvalue = SqlEscapeUtil.escape(tempvalue);
+			return "'" + tempvalue + "'";
 		}
 	}
 }

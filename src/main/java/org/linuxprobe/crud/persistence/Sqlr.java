@@ -10,11 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
+import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.exception.UnknownTableException;
 import org.linuxprobe.crud.persistence.annotation.Column;
 import org.linuxprobe.crud.persistence.annotation.Transient;
+import org.linuxprobe.crud.persistence.annotation.Column.LengthHandle;
 import org.linuxprobe.crud.persistence.annotation.PrimaryKey;
 import org.linuxprobe.crud.persistence.annotation.Table;
+import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 import lombok.Getter;
 import lombok.Setter;
@@ -267,7 +270,19 @@ public class Sqlr {
 			if (String.class.isAssignableFrom(field.getType())) {
 				String clounmValue = (String) fieldValue;
 				if (clounmValue != null) {
-					clounmValue = clounmValue.replaceAll("\\\\", "\\\\\\\\");
+					if (field.isAnnotationPresent(Column.class)) {
+						Column column = field.getAnnotation(Column.class);
+						if (column.length() > 0) {
+							if (clounmValue.length() > column.length()) {
+								if (column.lengthHandle().equals(LengthHandle.Sub)) {
+									clounmValue = clounmValue.substring(0, column.length());
+								} else {
+									throw new ParameterException(field.getName() + "字段的赋值超出规定长度" + column.length());
+								}
+							}
+						}
+					}
+					clounmValue = SqlEscapeUtil.escape(clounmValue);
 					value = "'" + clounmValue + "'";
 				} else {
 					value = null;
@@ -405,5 +420,4 @@ public class Sqlr {
 			return true;
 		}
 	}
-
 }
