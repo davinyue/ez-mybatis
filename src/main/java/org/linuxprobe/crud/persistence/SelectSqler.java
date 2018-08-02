@@ -167,7 +167,7 @@ public class SelectSqler {
 				if (searcherField.getName().equals(fieldName)) {
 					/** 如果是查询类参数对象 */
 					if (QueryParam.class.isAssignableFrom(searcherField.getType())) {
-						String orderName = getAlias(searcher) + "." + fieldName;
+						String orderName = getAlias(searcher) + "." + StringHumpTool.humpToLine2(fieldName, "_");
 						/** 如果标有列注解 */
 						if (searcherField.isAnnotationPresent(Column.class)) {
 							Column column = searcherField.getAnnotation(Column.class);
