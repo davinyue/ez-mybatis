@@ -3,8 +3,6 @@ package org.linuxprobe.crud.persistence;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,6 +17,7 @@ import org.linuxprobe.crud.persistence.annotation.Search;
 import org.linuxprobe.crud.persistence.annotation.Table;
 import org.linuxprobe.crud.query.BaseQuery;
 import org.linuxprobe.crud.query.param.QueryParam;
+import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
 public class SelectSqler {
@@ -78,7 +77,7 @@ public class SelectSqler {
 
 	/** 转换为left join part */
 	private static StringBuffer toLeftJoin(Object searcher) {
-		List<Field> fields = geteAllFields(searcher.getClass());
+		List<Field> fields = FieldUtils.getAllFields(searcher.getClass());
 		StringBuffer joinBuffer = new StringBuffer();
 		for (Field field : fields) {
 			/** 如果是关联查询对象 */
@@ -156,7 +155,7 @@ public class SelectSqler {
 		/** 拆分层次 */
 		String[] fieldNames = fieldName.split("\\.");
 		/** 获取查询对象的成员 */
-		List<Field> searcherFields = geteAllFields(searcher.getClass());
+		List<Field> searcherFields = FieldUtils.getAllFields(searcher.getClass());
 		for (Field searcherField : searcherFields) {
 			/**
 			 * 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
@@ -212,7 +211,7 @@ public class SelectSqler {
 
 	/** 转换为where part */
 	private static LinkedList<String> toWhere(Object searcher) {
-		List<Field> fields = geteAllFields(searcher.getClass());
+		List<Field> fields = FieldUtils.getAllFields(searcher.getClass());
 		LinkedList<String> result = new LinkedList<>();
 		for (Field field : fields) {
 			/** 获取成员名称 */
@@ -303,24 +302,6 @@ public class SelectSqler {
 		}
 	}
 
-	/** 获取一个类的所有成员，包括它的父类的 */
-	private static List<Field> geteAllFields(Class<?> type) {
-		List<Field> fields = Arrays.asList(type.getDeclaredFields());
-		fields = new ArrayList<Field>(fields);
-		Class<?> superClass = type.getSuperclass();
-		if (superClass != null) {
-			for (;;) {
-				if (!superClass.equals(Object.class)) {
-					fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-					superClass = superClass.getSuperclass();
-				} else {
-					break;
-				}
-			}
-		}
-		return fields;
-	}
-
 	/**
 	 * 获取模型对应的表的主键列名称
 	 * 
@@ -328,7 +309,7 @@ public class SelectSqler {
 	 *            模型的类型
 	 */
 	private static String getPrimaryKeyName(Class<?> modelType) {
-		List<Field> fields = geteAllFields(modelType);
+		List<Field> fields = FieldUtils.getAllFields(modelType);
 		String primaryKeyName = null;
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(PrimaryKey.class)) {

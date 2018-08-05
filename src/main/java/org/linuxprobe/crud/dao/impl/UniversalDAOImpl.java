@@ -1,18 +1,17 @@
 package org.linuxprobe.crud.dao.impl;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.linuxprobe.crud.dao.UniversalDAO;
+import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.mapper.UniversalMapper;
 import org.linuxprobe.crud.persistence.Sqlr;
+import org.linuxprobe.crud.utils.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 @Repository
 public class UniversalDAOImpl implements UniversalDAO {
@@ -64,24 +63,26 @@ public class UniversalDAOImpl implements UniversalDAO {
 
 	@Override
 	public <T> List<T> universalSelect(Object param, Class<T> type) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-				DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS);
-		mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+		List<T> records = new LinkedList<>();
 		List<Map<String, Object>> mapperResults = this.mapper.universalSelect(param);
-		List<T> result = new LinkedList<>();
-		for (int i = 0; i < mapperResults.size(); i++) {
-			Map<String, Object> mapperResult = mapperResults.get(i);
-			String content;
+		for (Map<String, Object> mapperResult : mapperResults) {
+			T model = null;
 			try {
-				content = mapper.writeValueAsString(mapperResult);
-				T record = mapper.readValue(content, type);
-				result.add(record);
-			} catch (IOException e) {
-				continue;
+				model = type.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new ParameterException(type.getName() + "没有无参构造函数", e);
 			}
+			Set<String> columns = mapperResult.keySet();
+			for (String column : columns) {
+				try {
+					EntityUtils.setField(model, column, mapperResult.get(column));
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			records.add(model);
 		}
-		return result;
+		return records;
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package org.linuxprobe.crud.persistence;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,9 +12,11 @@ import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.exception.UnknownTableException;
 import org.linuxprobe.crud.persistence.annotation.Column;
 import org.linuxprobe.crud.persistence.annotation.Transient;
-import org.linuxprobe.crud.persistence.annotation.Column.LengthHandle;
+import org.linuxprobe.crud.persistence.annotation.Column.EnumHandler;
+import org.linuxprobe.crud.persistence.annotation.Column.LengthHandler;
 import org.linuxprobe.crud.persistence.annotation.PrimaryKey;
 import org.linuxprobe.crud.persistence.annotation.Table;
+import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 import lombok.Getter;
@@ -232,19 +232,7 @@ public class Sqlr {
 
 	private static List<Field> getAttributes(Object entity, boolean isInsertMode) {
 		List<Field> result = new LinkedList<>();
-		List<java.lang.reflect.Field> fields = Arrays.asList(entity.getClass().getDeclaredFields());
-		fields = new ArrayList<java.lang.reflect.Field>(fields);
-		Class<?> superClass = entity.getClass().getSuperclass();
-		if (superClass != null) {
-			for (;;) {
-				if (!superClass.equals(Object.class)) {
-					fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-					superClass = superClass.getSuperclass();
-				} else {
-					break;
-				}
-			}
-		}
+		List<java.lang.reflect.Field> fields = FieldUtils.getAllFields(entity.getClass());
 		for (int i = 0; i < fields.size(); i++) {
 			java.lang.reflect.Field field = fields.get(i);
 			Field myField = new Field();
@@ -274,7 +262,7 @@ public class Sqlr {
 						Column column = field.getAnnotation(Column.class);
 						if (column.length() > 0) {
 							if (clounmValue.length() > column.length()) {
-								if (column.lengthHandle().equals(LengthHandle.Sub)) {
+								if (column.lengthHandler().equals(LengthHandler.Sub)) {
 									clounmValue = clounmValue.substring(0, column.length());
 								} else {
 									throw new ParameterException(field.getName() + "字段的赋值超出规定长度" + column.length());
@@ -316,6 +304,13 @@ public class Sqlr {
 				Enum<?> clounmValue = (Enum<?>) fieldValue;
 				if (clounmValue != null) {
 					value = clounmValue.ordinal() + "";
+					/** 如果成员变量有Column注解 */
+					if (field.isAnnotationPresent(Column.class)) {
+						Column column = field.getAnnotation(Column.class);
+						if (column.enumHandler().equals(EnumHandler.Name)) {
+							value = "'" + clounmValue.toString() + "'";
+						}
+					}
 				} else {
 					value = null;
 				}
