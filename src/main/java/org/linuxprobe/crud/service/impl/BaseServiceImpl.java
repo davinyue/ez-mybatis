@@ -7,6 +7,7 @@ import java.util.List;
 import org.linuxprobe.crud.mapper.BaseMapper;
 import org.linuxprobe.crud.model.BaseModel;
 import org.linuxprobe.crud.query.BaseQuery;
+import org.linuxprobe.crud.query.Page;
 import org.linuxprobe.crud.service.BaseService;
 import org.linuxprobe.crud.service.UniversalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,16 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 	@Override
 	public long getCountByQueryParam(QueryDTO param) {
 		return this.service.selectCount(param);
+	}
+
+	@Override
+	public Page<Model> getPageInfo(QueryDTO param) {
+		Page<Model> result = new Page<Model>();
+		result.setCurrentPage(param.getLimit().getCurrentPage());
+		result.setPageSize(param.getLimit().getPageSize());
+		result.setData(this.getByQueryParam(param));
+		result.setTotal(this.getCountByQueryParam(param));
+		return result;
 	}
 
 	@Override

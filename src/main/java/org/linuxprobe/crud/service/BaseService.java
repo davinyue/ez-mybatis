@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.linuxprobe.crud.model.BaseModel;
 import org.linuxprobe.crud.query.BaseQuery;
+import org.linuxprobe.crud.query.Page;
 
 /**
  * @param <Model>
@@ -56,6 +57,9 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 
 	/** 根据查询对象获取实体数量 */
 	public long getCountByQueryParam(QueryDTO param);
+
+	/** 根据查询对象获取实体分页数据 */
+	public Page<Model> getPageInfo(QueryDTO param);
 
 	/**
 	 * 通用查询，根据查询对象获取实体list，不能处理关联加载
