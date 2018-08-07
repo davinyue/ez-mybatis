@@ -12,6 +12,7 @@ import java.util.Map;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.persistence.annotation.Column;
+import org.linuxprobe.crud.persistence.annotation.JoinColumn;
 import org.linuxprobe.crud.persistence.annotation.PrimaryKey;
 import org.linuxprobe.crud.persistence.annotation.Search;
 import org.linuxprobe.crud.persistence.annotation.Table;
@@ -101,20 +102,33 @@ public class SelectSqler {
 				}
 				/** 如果对象不为空，则需要join */
 				if (member != null) {
-					/** 获取列名称 */
-					String columnName = StringHumpTool.humpToLine2(fieldName + "Id", "_");
-					if (field.isAnnotationPresent(Column.class)) {
-						Column column = field.getAnnotation(Column.class);
-						if (!column.value().trim().isEmpty()) {
-							columnName = column.value();
+					/** 设置主表链接列,默认是成员名转下划线 */
+					String principalColumn = StringHumpTool.humpToLine2(fieldName + "Id", "_");
+					/** 从表链接列，默认是从表主键 */
+					String subordinateColumn = getPrimaryKeyName(getModelType(field.getType()));
+					/** 如果有JoinColumn注解 */
+					if (field.isAnnotationPresent(JoinColumn.class)) {
+						JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
+						String value = joinColumn.value().trim();
+						String principal = joinColumn.principal().trim();
+						/** 重新设置主表链接列 */
+						if (!value.isEmpty()) {
+							principalColumn = value;
+						} else if (!principal.isEmpty()) {
+							principalColumn = principal;
+						}
+						/** 重新设置从表链接列 */
+						String subordinate = joinColumn.subordinate().trim();
+						if (!subordinate.isEmpty()) {
+							subordinateColumn = subordinate;
 						}
 					}
 					/** 获取需要链接的表名 */
 					String joinTable = getTable(field.getType());
 					String joinTableAlias = getAlias(member);
 					joinBuffer.append("left join " + joinTable + " as " + joinTableAlias + " on ");
-					joinBuffer.append(joinTableAlias + "." + getPrimaryKeyName(getModelType(field.getType())) + " = ");
-					joinBuffer.append(getAlias(searcher) + "." + columnName + " ");
+					joinBuffer.append(joinTableAlias + "." + subordinateColumn + " = ");
+					joinBuffer.append(getAlias(searcher) + "." + principalColumn + " ");
 					joinBuffer.append(toLeftJoin(member));
 				}
 			}
