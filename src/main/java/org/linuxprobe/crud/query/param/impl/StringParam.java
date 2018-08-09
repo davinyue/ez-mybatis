@@ -11,6 +11,25 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class StringParam extends QueryParam {
+	/** 操作符is null或者is not null */
+	public StringParam(Operator operator) {
+		if (operator != Operator.isNotNull && operator != Operator.isNull) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+		}
+	}
+
+	/** 操作符is null或者is not null */
+	public StringParam(Condition condition, Operator operator) {
+		if (operator != Operator.isNotNull && operator != Operator.isNull) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+			this.setCondition(condition);
+		}
+	}
+
 	/** 操作符= */
 	public StringParam(String value) {
 		this.value = value;

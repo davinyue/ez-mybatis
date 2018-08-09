@@ -11,6 +11,25 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class NumberParam extends QueryParam {
+	/** 操作符is null或者is not null */
+	public NumberParam(Operator operator) {
+		if (operator != Operator.isNotNull && operator != Operator.isNull) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+		}
+	}
+
+	/** 操作符is null或者is not null */
+	public NumberParam(Condition condition, Operator operator) {
+		if (operator != Operator.isNotNull && operator != Operator.isNull) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+			this.setCondition(condition);
+		}
+	}
+
 	/** 操作符= */
 	public NumberParam(Number value) {
 		this.value = value;

@@ -12,6 +12,25 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DateParam extends QueryParam {
+	/** 操作符is null或者is not null */
+	public DateParam(Operator operator) {
+		if (operator != Operator.isNotNull && operator != Operator.isNull) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+		}
+	}
+
+	/** 操作符is null或者is not null */
+	public DateParam(Condition condition, Operator operator) {
+		if (operator != Operator.isNotNull && operator != Operator.isNull) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+			this.setCondition(condition);
+		}
+	}
+
 	/** 操作符= */
 	public DateParam(Date value) {
 		this.value = value;
