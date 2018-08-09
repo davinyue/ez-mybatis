@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class StringParam extends QueryParam {
-	/** 操作符is null或者is not null */
+	/** 操作符支持is null和is not null */
 	public StringParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
 			throw new OperationNotSupportedException();
@@ -20,7 +20,7 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符is null或者is not null */
+	/** 自定义条件连接and和or, 操作符支持is null和is not null */
 	public StringParam(Condition condition, Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
 			throw new OperationNotSupportedException();
@@ -30,12 +30,12 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符= */
+	/** 操作符默认是= */
 	public StringParam(String value) {
 		this.value = value;
 	}
 
-	/** 操作符= */
+	/** 自定义条件连接and和or, 操作符默认是= */
 	public StringParam(Condition condition, String value) {
 		this.setCondition(condition);
 		this.value = value;
@@ -52,7 +52,10 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符不支持in, not in, between, not between */
+	/**
+	 * 自定义条件连接and和or, 操作符支持=, !=, >, >=, <, <=, like, not like, is null, is not
+	 * null, 其中模糊匹配默认是全模糊匹配
+	 */
 	public StringParam(Condition condition, Operator operator, String value) {
 		if (operator == Operator.in || operator == Operator.notIn || operator == Operator.between
 				|| operator == Operator.notBetween) {
@@ -64,7 +67,30 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符只支持between, not between */
+	/** 条件连接是and,操作符支持like, not like, 可指定模糊匹配模式 */
+	public StringParam(Operator operator, Fuzzt fuzzt, String value) {
+		if (operator != Operator.like && operator != Operator.unlike) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setOperator(operator);
+			this.fuzzt = fuzzt;
+			this.value = value;
+		}
+	}
+
+	/** 自定义条件连接and和or, 操作符支持like, not like, 可指定模糊匹配模式 */
+	public StringParam(Condition condition, Operator operator, Fuzzt fuzzt, String value) {
+		if (operator != Operator.like && operator != Operator.unlike) {
+			throw new OperationNotSupportedException();
+		} else {
+			this.setCondition(condition);
+			this.setOperator(operator);
+			this.fuzzt = fuzzt;
+			this.value = value;
+		}
+	}
+
+	/** 操作符支持between, not between */
 	public StringParam(Operator operator, String lowerLimit, String upperLimit) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
@@ -75,7 +101,7 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符只支持between, not between */
+	/** 自定义条件连接and和or, 操作符只支持between, not between */
 	public StringParam(Condition condition, Operator operator, String lowerLimit, String upperLimit) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
@@ -87,7 +113,7 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符只支持in, not in */
+	/** 操作符支持in, not in */
 	public StringParam(Operator operator, List<String> multipart) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
@@ -97,7 +123,7 @@ public class StringParam extends QueryParam {
 		}
 	}
 
-	/** 操作符只支持in, not in */
+	/** 自定义条件连接and和or, 操作符支持in, not in */
 	public StringParam(Condition condition, Operator operator, List<String> multipart) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
@@ -115,6 +141,8 @@ public class StringParam extends QueryParam {
 	private String lowerLimit;
 	/** 多值 */
 	private List<String> multipart;
+	/** 模糊匹配模式 */
+	private Fuzzt fuzzt = Fuzzt.All;
 
 	@Override
 	public String getValue() {
@@ -124,7 +152,15 @@ public class StringParam extends QueryParam {
 		} else {
 			temp = SqlEscapeUtil.escape(temp);
 			if (this.getOperator() == Operator.like || this.getOperator() == Operator.unlike) {
-				return "'%" + temp + "%'";
+				if (Fuzzt.All.equals(this.fuzzt) || this.fuzzt == null) {
+					return "'%" + temp + "%'";
+				} else if (Fuzzt.Right.equals(this.fuzzt)) {
+					return "'" + temp + "%'";
+				} else if (Fuzzt.Left.equals(this.fuzzt)) {
+					return "'%" + temp + "'";
+				} else {
+					return "'" + temp + "'";
+				}
 			} else {
 				return "'" + temp + "'";
 			}
@@ -170,5 +206,17 @@ public class StringParam extends QueryParam {
 			tempvalue = SqlEscapeUtil.escape(tempvalue);
 			return "'" + tempvalue + "'";
 		}
+	}
+
+	/** 模糊匹配模式 */
+	public static enum Fuzzt {
+		/** 左侧数据模糊匹配 */
+		Left,
+		/** 右侧数据模糊匹配 */
+		Right,
+		/** 左右模糊匹配 */
+		All,
+		/** 自定义模糊匹配 */
+		Custom;
 	}
 }

@@ -16,7 +16,7 @@ public class StringHumpTool {
         matcher.appendTail(sb);  
         return sb.toString();  
     }  
-    /**驼峰转下划线(简单写法，效率低于{@link #humpToLine2(String)})*/  
+    /**驼峰转下划线(简单写法，效率低于{@link #humpToLine2(String, String)})*/  
     public static String humpToLine(String str,String interval){
         return str.replaceAll("[A-Z]", interval+"$0").toLowerCase();  
     }  

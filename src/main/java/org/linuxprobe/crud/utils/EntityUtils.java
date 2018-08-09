@@ -11,7 +11,7 @@ public class EntityUtils {
 	/**
 	 * 获取实体类型与数据库表列名对应的field
 	 * 
-	 * @param entity
+	 * @param entityClass
 	 *            被查找的实体类类型
 	 * @param columnName
 	 *            列名

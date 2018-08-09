@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class BooleanParam extends QueryParam {
-	/** 操作符is null或者is not null */
+	/** 操作符支持is null和is not null */
 	public BooleanParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
 			throw new OperationNotSupportedException();
@@ -19,7 +19,7 @@ public class BooleanParam extends QueryParam {
 		}
 	}
 
-	/** 操作符is null或者is not null */
+	/** 自定义条件连接and和or, 操作符支持is null和is not null */
 	public BooleanParam(Condition condition, Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
 			throw new OperationNotSupportedException();
@@ -29,12 +29,12 @@ public class BooleanParam extends QueryParam {
 		}
 	}
 
-	/** 操作符= */
+	/** 操作符默认是= */
 	public BooleanParam(Boolean value) {
 		this.value = value;
 	}
 
-	/** 操作符= */
+	/** 自定义条件连接and和or, 操作符默认是= */
 	public BooleanParam(Condition condition, Boolean value) {
 		this.setCondition(condition);
 		this.value = value;
