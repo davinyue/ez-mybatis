@@ -18,7 +18,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 
 配置简单，只需三步。
 ===
-1.	在pom文件里面添加依赖，
+1.在pom文件里面添加依赖，
 ---
 ```
 <dependency>
@@ -27,17 +27,18 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 	<version>1.1.4.RELEASE</version>
 </dependency>
 ```
-2.	bean扫描配置
+2.bean扫描配置
 ---
-spring框架应在配置文件里面添加包扫描
+1)Spring boot框架应在启动文件添加注解@ComponentScan("org.linuxprobe.**")。
+
+2)spring框架应在配置文件里面添加包扫描。
 ```
 <context:component-scan
 	base-package=" com.river.cruise.service, org.linuxprobe.crud">
 </context:component-scan>
 ```
-Spring boot框架应在启动文件添加注解@ComponentScan("org.linuxprobe.**")
 
-3.	配置mybatis
+3.配置mybatis
 将maven下载的依赖包mybatis-universal-crud-simple-1.1.4.RELEASE.jar解压把
 /src/main/java/org/linuxprobe/crud/mapper/mapping/UniversalMapper.xml文件复制到你的项目的mapping映射文件所在目录，并配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
 ---
