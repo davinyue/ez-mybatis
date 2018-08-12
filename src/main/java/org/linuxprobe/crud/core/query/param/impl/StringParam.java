@@ -1,8 +1,8 @@
-package org.linuxprobe.crud.query.param.impl;
+package org.linuxprobe.crud.core.query.param.impl;
 
 import java.util.List;
+import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.query.param.QueryParam;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

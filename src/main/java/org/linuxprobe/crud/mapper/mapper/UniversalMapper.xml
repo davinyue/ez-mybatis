@@ -2,44 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.linuxprobe.crud.mapper.UniversalMapper">
 	<insert id="insert">
-		${sqlr.toInsertSql(entity)}
+		${value}
 	</insert>
 
 	<insert id="batchInsert">
-		${sqlr.toBatchInsertSql(entitys)}
+		${value}
 	</insert>
 
 	<delete id="delete">
-		${sqlr.toDeleteSql(entity)}
-	</delete>
-
-	<delete id="batchDelete">
-		${sqlr.toBatchDeleteSql(entitys)}
-	</delete>
-
-	<delete id="deleteByPrimaryKey">
 		${value}
 	</delete>
 
-	<delete id="batchDeleteByPrimaryKey">
+	<delete id="batchDelete">
 		${value}
 	</delete>
 
 	<select id="universalSelect" resultType="java.util.HashMap">
-		${sqlr.toSelectSql()}
+		${value}
 	</select>
 
 	<select id="selectCount" resultType="java.lang.Long">
-		<!-- 可以指定字段 -->
-		<!-- ${sqlr.toSelectCountSql('name')} -->
-		${sqlr.toSelectCountSql()}
+		${value}
 	</select>
 
-	<update id="localUpdate">
-		${sqlr.toLocalUpdateSql(entity)}
-	</update>
-
-	<update id="globalUpdate">
-		${sqlr.toGlobalUpdateSql(entity)}
+	<update id="update">
+		${value}
 	</update>
 </mapper>

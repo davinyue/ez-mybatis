@@ -1,7 +1,9 @@
 package org.linuxprobe.crud.model;
 
 import java.util.Date;
-import org.linuxprobe.crud.persistence.annotation.Column;
+
+import org.linuxprobe.crud.core.annoatation.Column;
+
 import lombok.Getter;
 import lombok.Setter;
 

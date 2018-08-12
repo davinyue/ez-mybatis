@@ -10,4 +10,8 @@ public class OperationNotSupportedException extends RuntimeException {
 	public OperationNotSupportedException(String msg) {
 		super(msg);
 	}
+	
+	public OperationNotSupportedException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

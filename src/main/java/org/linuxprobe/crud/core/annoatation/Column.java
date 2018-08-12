@@ -1,4 +1,4 @@
-package org.linuxprobe.crud.persistence.annotation;
+package org.linuxprobe.crud.core.annoatation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,6 +25,9 @@ public @interface Column {
 
 	/** 枚举处理模式，仅当字段是枚举时生效 */
 	public EnumHandler enumHandler() default EnumHandler.Ordinal;
+
+	/** 是否不能为空,默认可以为空 */
+	public boolean notNull() default false;
 
 	/** 超长处理模式 */
 	public static enum LengthHandler {

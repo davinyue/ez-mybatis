@@ -1,10 +1,10 @@
-package org.linuxprobe.crud.query;
+package org.linuxprobe.crud.core.query;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.linuxprobe.crud.core.query.param.impl.StringParam;
+import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.exception.ParameterException;
-import org.linuxprobe.crud.persistence.SelectSqler;
-import org.linuxprobe.crud.query.param.impl.StringParam;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,15 +14,15 @@ public abstract class BaseQuery {
 
 	public class Sqlr {
 		public String toSelectSql() throws Exception {
-			return SelectSqler.toSelectSql(BaseQuery.this);
+			return SelectSqlGenerator.toSelectSql(BaseQuery.this);
 		}
 
 		public String toSelectCountSql() throws Exception {
-			return SelectSqler.toSelectCountSql(BaseQuery.this);
+			return SelectSqlGenerator.toSelectCountSql(BaseQuery.this);
 		}
 
 		public String toSelectCountSql(String clounm) throws Exception {
-			return SelectSqler.toSelectCountSql(BaseQuery.this, clounm);
+			return SelectSqlGenerator.toSelectCountSql(BaseQuery.this, clounm);
 		}
 	}
 

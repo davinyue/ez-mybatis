@@ -1,8 +1,9 @@
 package org.linuxprobe.crud.mapper;
 
 import java.util.List;
+
+import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.model.BaseModel;
-import org.linuxprobe.crud.query.BaseQuery;
 
 /**
  * @param <Model>

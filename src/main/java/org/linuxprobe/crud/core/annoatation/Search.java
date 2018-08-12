@@ -1,4 +1,4 @@
-package org.linuxprobe.crud.persistence.annotation;
+package org.linuxprobe.crud.core.annoatation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

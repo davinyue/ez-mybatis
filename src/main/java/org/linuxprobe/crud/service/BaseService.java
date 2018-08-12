@@ -2,9 +2,10 @@ package org.linuxprobe.crud.service;
 
 import java.io.IOException;
 import java.util.List;
+import org.linuxprobe.crud.core.query.BaseQuery;
+import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.model.BaseModel;
-import org.linuxprobe.crud.query.BaseQuery;
-import org.linuxprobe.crud.query.Page;
+
 
 /**
  * @param <Model>

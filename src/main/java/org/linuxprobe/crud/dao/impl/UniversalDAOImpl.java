@@ -5,10 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.UpdateSqlGenerator;
 import org.linuxprobe.crud.dao.UniversalDAO;
 import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.mapper.UniversalMapper;
-import org.linuxprobe.crud.persistence.Sqlr;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,54 +20,41 @@ import org.springframework.stereotype.Repository;
 public class UniversalDAOImpl implements UniversalDAO {
 	@Autowired
 	private UniversalMapper mapper;
-	private static Sqlr sqlr = Sqlr.getInstance();
 
 	@Override
 	public int insert(Object record) {
-		return this.mapper.insert(record, sqlr);
+		return this.mapper.insert(InsertSqlGenerator.toInsertSql(record));
 	}
 
 	@Override
 	public int batchInsert(List<Object> records) {
-		return this.mapper.batchInsert(records, sqlr);
+		return this.mapper.batchInsert(InsertSqlGenerator.toBatchInsertSql(records));
 	}
 
 	@Override
 	public int delete(Object record) {
-		return this.mapper.delete(record, sqlr);
+		return this.mapper.delete(DeleteSqlGenerator.toDeleteSql(record));
 	}
 
 	@Override
 	public long batchDelete(List<Object> records) {
-		return this.mapper.batchDelete(records, sqlr);
+		return this.mapper.batchDelete(DeleteSqlGenerator.toBatchDeleteSql(records));
 	}
 
 	@Override
 	public int deleteByPrimaryKey(String id, Class<?> type) {
-		try {
-			return this.mapper.deleteByPrimaryKey(Sqlr.toDeleteSqlByPrimaryKey(id, type));
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-			return 0;
-		}
+		return this.mapper.delete(DeleteSqlGenerator.toDeleteSqlByPrimaryKey(id, type));
 	}
 
 	@Override
 	public long batchDeleteByPrimaryKey(List<String> ids, Class<?> type) {
-		try {
-			return this.mapper.batchDeleteByPrimaryKey(Sqlr.toBatchDeleteSqlByPrimaryKey(ids, type));
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-			return 0;
-		}
+		return this.mapper.batchDelete(DeleteSqlGenerator.toBatchDeleteSqlByPrimaryKey(ids, type));
 	}
 
 	@Override
 	public <T> List<T> universalSelect(Object param, Class<T> type) {
 		List<T> records = new LinkedList<>();
-		List<Map<String, Object>> mapperResults = this.mapper.universalSelect(param);
+		List<Map<String, Object>> mapperResults = this.mapper.universalSelect(SelectSqlGenerator.toSelectSql(param));
 		for (Map<String, Object> mapperResult : mapperResults) {
 			T model = null;
 			try {
@@ -87,16 +77,16 @@ public class UniversalDAOImpl implements UniversalDAO {
 
 	@Override
 	public long selectCount(Object param) {
-		return this.mapper.selectCount(param);
+		return this.mapper.selectCount(SelectSqlGenerator.toSelectCountSql(param));
 	}
 
 	@Override
 	public int localUpdate(Object record) {
-		return this.mapper.localUpdate(record, sqlr);
+		return this.mapper.update(UpdateSqlGenerator.toLocalUpdateSql(record));
 	}
 
 	@Override
 	public int globalUpdate(Object record) {
-		return this.mapper.globalUpdate(record, sqlr);
+		return this.mapper.update(UpdateSqlGenerator.toGlobalUpdateSql(record));
 	}
 }

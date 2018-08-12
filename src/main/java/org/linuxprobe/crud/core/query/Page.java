@@ -1,4 +1,4 @@
-package org.linuxprobe.crud.query;
+package org.linuxprobe.crud.core.query;
 
 import java.util.Collection;
 import lombok.AllArgsConstructor;

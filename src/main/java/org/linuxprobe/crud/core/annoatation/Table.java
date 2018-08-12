@@ -1,4 +1,4 @@
-package org.linuxprobe.crud.persistence.annotation;
+package org.linuxprobe.crud.core.annoatation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,10 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** 忽略该字段，用于对象有这个字段，但数据库没有该列的情况 */
-@Target(ElementType.FIELD)
+/** 表名标注 */
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Transient {
-
+public @interface Table {
+	/** 表名 */
+	String value() default "";
 }

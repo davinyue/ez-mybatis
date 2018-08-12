@@ -1,4 +1,4 @@
-package org.linuxprobe.crud.query.param;
+package org.linuxprobe.crud.core.query.param;
 
 import lombok.Getter;
 

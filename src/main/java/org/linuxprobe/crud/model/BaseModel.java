@@ -1,7 +1,7 @@
 package org.linuxprobe.crud.model;
 
-import org.linuxprobe.crud.persistence.annotation.PrimaryKey;
-import org.linuxprobe.crud.persistence.annotation.PrimaryKey.Strategy;
+import org.linuxprobe.crud.core.annoatation.PrimaryKey;
+import org.linuxprobe.crud.core.annoatation.PrimaryKey.Strategy;
 import lombok.Getter;
 import lombok.Setter;
 

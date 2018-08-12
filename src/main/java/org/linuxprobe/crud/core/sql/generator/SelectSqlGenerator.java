@@ -1,4 +1,4 @@
-package org.linuxprobe.crud.persistence;
+package org.linuxprobe.crud.core.sql.generator;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,26 +9,26 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.linuxprobe.crud.core.annoatation.Column;
+import org.linuxprobe.crud.core.annoatation.JoinColumn;
+import org.linuxprobe.crud.core.annoatation.PrimaryKey;
+import org.linuxprobe.crud.core.annoatation.Search;
+import org.linuxprobe.crud.core.annoatation.Table;
+import org.linuxprobe.crud.core.query.BaseQuery;
+import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.exception.ParameterException;
-import org.linuxprobe.crud.persistence.annotation.Column;
-import org.linuxprobe.crud.persistence.annotation.JoinColumn;
-import org.linuxprobe.crud.persistence.annotation.PrimaryKey;
-import org.linuxprobe.crud.persistence.annotation.Search;
-import org.linuxprobe.crud.persistence.annotation.Table;
-import org.linuxprobe.crud.query.BaseQuery;
-import org.linuxprobe.crud.query.param.QueryParam;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
-public class SelectSqler {
+public class SelectSqlGenerator {
 	private static ThreadLocal<Map<Object, String>> alias = new ThreadLocal<>();
 
 	private static Map<Object, String> getAlias() {
-		Map<Object, String> result = SelectSqler.alias.get();
+		Map<Object, String> result = SelectSqlGenerator.alias.get();
 		if (result == null) {
-			SelectSqler.alias.set(new HashMap<>());
-			result = SelectSqler.alias.get();
+			SelectSqlGenerator.alias.set(new HashMap<>());
+			result = SelectSqlGenerator.alias.get();
 		}
 		return result;
 	}

@@ -1,17 +1,19 @@
-package org.linuxprobe.crud.query.param.impl;
+package org.linuxprobe.crud.core.query.param.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.query.param.QueryParam;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 布尔型参数 */
+/** 日期型参数 */
 @Setter
 @NoArgsConstructor
-public class BooleanParam extends QueryParam {
-	/** 操作符支持is null和is not null */
-	public BooleanParam(Operator operator) {
+public class DateParam extends QueryParam {
+	/** 操作符is null或者is not null */
+	public DateParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
 			throw new OperationNotSupportedException();
 		} else {
@@ -19,8 +21,8 @@ public class BooleanParam extends QueryParam {
 		}
 	}
 
-	/** 自定义条件连接and和or, 操作符支持is null和is not null */
-	public BooleanParam(Condition condition, Operator operator) {
+	/** 操作符is null或者is not null */
+	public DateParam(Condition condition, Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
 			throw new OperationNotSupportedException();
 		} else {
@@ -29,19 +31,19 @@ public class BooleanParam extends QueryParam {
 		}
 	}
 
-	/** 操作符默认是= */
-	public BooleanParam(Boolean value) {
+	/** 操作符= */
+	public DateParam(Date value) {
 		this.value = value;
 	}
 
-	/** 自定义条件连接and和or, 操作符默认是= */
-	public BooleanParam(Condition condition, Boolean value) {
+	/** 操作符= */
+	public DateParam(Condition condition, Date value) {
 		this.setCondition(condition);
 		this.value = value;
 	}
 
 	/** 操作符不支持in, not in, between, not between */
-	public BooleanParam(Operator operator, Boolean value) {
+	public DateParam(Operator operator, Date value) {
 		if (operator == Operator.in || operator == Operator.notIn || operator == Operator.between
 				|| operator == Operator.notBetween) {
 			throw new OperationNotSupportedException();
@@ -52,7 +54,7 @@ public class BooleanParam extends QueryParam {
 	}
 
 	/** 操作符不支持in, not in, between, not between */
-	public BooleanParam(Condition condition, Operator operator, Boolean value) {
+	public DateParam(Condition condition, Operator operator, Date value) {
 		if (operator == Operator.in || operator == Operator.notIn || operator == Operator.between
 				|| operator == Operator.notBetween) {
 			throw new OperationNotSupportedException();
@@ -64,7 +66,7 @@ public class BooleanParam extends QueryParam {
 	}
 
 	/** 操作符只支持between, not between */
-	public BooleanParam(Operator operator, Boolean lowerLimit, Boolean upperLimit) {
+	public DateParam(Operator operator, Date lowerLimit, Date upperLimit) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
@@ -75,7 +77,7 @@ public class BooleanParam extends QueryParam {
 	}
 
 	/** 操作符只支持between, not between */
-	public BooleanParam(Condition condition, Operator operator, Boolean lowerLimit, Boolean upperLimit) {
+	public DateParam(Condition condition, Operator operator, Date lowerLimit, Date upperLimit) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
@@ -87,7 +89,7 @@ public class BooleanParam extends QueryParam {
 	}
 
 	/** 操作符只支持in, not in */
-	public BooleanParam(Operator operator, List<Boolean> multipart) {
+	public DateParam(Operator operator, List<Date> multipart) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
@@ -97,7 +99,7 @@ public class BooleanParam extends QueryParam {
 	}
 
 	/** 操作符只支持in, not in */
-	public BooleanParam(Condition condition, Operator operator, List<Boolean> multipart) {
+	public DateParam(Condition condition, Operator operator, List<Date> multipart) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
@@ -107,20 +109,26 @@ public class BooleanParam extends QueryParam {
 		}
 	}
 
-	private Boolean value;
+	private Date value;
 	/** 上限 */
-	private Boolean upperLimit;
+	private Date upperLimit;
 	/** 下限 */
-	private Boolean lowerLimit;
+	private Date lowerLimit;
 	/** 多值 */
-	private List<Boolean> multipart;
+	private List<Date> multipart;
+	final static private SimpleDateFormat dateForma = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	@Override
 	public String getValue() {
 		if (value == null) {
 			return null;
 		} else {
-			return value ? 1 + "" : 0 + "";
+			String strValue = dateForma.format(value);
+			if (this.getOperator() == Operator.like || this.getOperator() == Operator.unlike) {
+				return "'%" + strValue + "%'";
+			} else {
+				return "'" + strValue + "'";
+			}
 		}
 	}
 
@@ -129,16 +137,17 @@ public class BooleanParam extends QueryParam {
 		if (multipart == null || multipart.isEmpty()) {
 			return null;
 		} else {
-			StringBuffer multipartValue = new StringBuffer();
+			StringBuffer valueBufffer = new StringBuffer();
 			for (int i = 0; i < multipart.size(); i++) {
-				int tempvalue = multipart.get(i) ? 1 : 0;
+				Date tempvalue = multipart.get(i);
+				String strTempvalue = dateForma.format(tempvalue);
 				if (i + 1 != multipart.size()) {
-					multipartValue.append(tempvalue + ", ");
+					valueBufffer.append("'" + strTempvalue + "', ");
 				} else {
-					multipartValue.append(tempvalue);
+					valueBufffer.append("'" + strTempvalue + "'");
 				}
 			}
-			return multipartValue.toString();
+			return valueBufffer.toString();
 		}
 	}
 
@@ -147,7 +156,8 @@ public class BooleanParam extends QueryParam {
 		if (upperLimit == null) {
 			return null;
 		} else {
-			return upperLimit ? 1 + "" : 0 + "";
+			String strUpperLimit = dateForma.format(upperLimit);
+			return "'" + strUpperLimit + "'";
 		}
 	}
 
@@ -156,8 +166,8 @@ public class BooleanParam extends QueryParam {
 		if (lowerLimit == null) {
 			return null;
 		} else {
-			return lowerLimit ? 1 + "" : 0 + "";
+			String strLowerLimit = dateForma.format(lowerLimit);
+			return "'" + strLowerLimit + "'";
 		}
 	}
-
 }
