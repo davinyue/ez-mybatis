@@ -59,7 +59,7 @@ Jap可以通过规范编只写方法接口不编写方法实现实现数据的�
 [1.不继承BaseService的使用教程：](https://github.com/linuxprobe-org/crud-demo/blob/master/src/test/java/org/linuxprobe/demo/ApplicationTests.java)
 ---
 
-2.继承BaseService，实现自己的扩展
+[2.继承BaseService，实现自己的扩展](https://github.com/linuxprobe-org/crud-demo)
 ---
 
 ##1）实体是BaseModel的直接子类或间接子类，BaseModel类里面已经自带了一个String id字段。
@@ -151,7 +151,7 @@ public interface OrgMapper extends BaseMapper<Org>{
 		<result column="name" jdbcType="VARCHAR" property="name" />
 	</resultMap>
 	<select id="select"
-		parameterType="org.linuxprobe.sso.business.dto.document.DocumentQueryDTO"
+		parameterType="org.linuxprobe.demo.query.OrgQuery"
 		resultMap="BaseResultMap">
 		${sqlr.toSelectSql()}
 	</select>
