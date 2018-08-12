@@ -1,6 +1,5 @@
 package org.linuxprobe.crud.service.impl;
 
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -31,19 +30,22 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		return model;
 	}
 
+	@Override
+	@Transactional
+	public List<Model> batchSave(List<Model> models) {
+		return this.service.batchSave(models);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public List<Model> batchSave(List<Model> models) throws Exception {
-		return (List<Model>) this.service.batchSave((List<BaseModel>) models);
-	}
-
-	@Override
-	@Transactional
-	public int removeByPrimaryKey(String id) throws Exception {
+	public int removeByPrimaryKey(String id) {
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		@SuppressWarnings("unchecked")
-		Class<BaseModel> modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
+		Class<BaseModel> modelClass = null;
+		try {
+			modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
+		} catch (ClassNotFoundException e) {
+		}
 		return this.service.removeByPrimaryKey(id, modelClass);
 	}
 
@@ -102,7 +104,7 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Model> universalGetByQueryParam(QueryDTO param) throws IOException {
+	public List<Model> universalGetByQueryParam(QueryDTO param) {
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		Class<BaseModel> modelClass = null;
 		try {

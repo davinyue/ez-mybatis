@@ -20,14 +20,14 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 	 * 
 	 * @throws Exception
 	 */
-	public List<Model> batchSave(List<Model> models) throws Exception;
+	public List<Model> batchSave(List<Model> models);
 
 	/**
 	 * 删除
 	 * 
 	 * @throws Exception
 	 */
-	public int removeByPrimaryKey(String id) throws Exception;
+	public int removeByPrimaryKey(String id);
 
 	/**
 	 * 批量删除
@@ -67,7 +67,7 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 	 * 
 	 * @throws IOException
 	 */
-	public List<Model> universalGetByQueryParam(QueryDTO param) throws IOException;
+	public List<Model> universalGetByQueryParam(QueryDTO param);
 
 	/** 增量更新 */
 	public int localUpdate(Model model);
