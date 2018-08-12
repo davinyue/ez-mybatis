@@ -46,8 +46,8 @@ public class SelectSqlGenerator {
 	/** 转换为查询sql */
 	public static String toSelectSql(Object searcher) {
 		String alias = getAlias(searcher);
-		StringBuffer sqlBuffer = new StringBuffer("select distinct " + alias + ".* from "
-				+ EntityUtils.getTable(searcher.getClass()) + " as " + alias + " ");
+		StringBuffer sqlBuffer = new StringBuffer(
+				"select distinct " + alias + ".* from " + getTable(searcher.getClass()) + " as " + alias + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		sqlBuffer.append(toOrder(searcher));
@@ -58,8 +58,8 @@ public class SelectSqlGenerator {
 	/** 转换为查询数量的sql */
 	public static String toSelectCountSql(Object searcher, String clounm) {
 		String countFun = "count(distinct " + getAlias(searcher) + "." + clounm + ")";
-		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from "
-				+ EntityUtils.getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
+		StringBuffer sqlBuffer = new StringBuffer(
+				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
@@ -69,8 +69,8 @@ public class SelectSqlGenerator {
 	public static String toSelectCountSql(Object searcher) {
 		String countFun = "count(distinct " + getAlias(searcher) + "."
 				+ getPrimaryKeyName(getModelType(searcher.getClass())) + ")";
-		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from "
-				+ EntityUtils.getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
+		StringBuffer sqlBuffer = new StringBuffer(
+				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
@@ -124,7 +124,7 @@ public class SelectSqlGenerator {
 						}
 					}
 					/** 获取需要链接的表名 */
-					String joinTable = EntityUtils.getTable(field.getType());
+					String joinTable = getTable(field.getType());
 					String joinTableAlias = getAlias(member);
 					joinBuffer.append("left join " + joinTable + " as " + joinTableAlias + " on ");
 					joinBuffer.append(joinTableAlias + "." + subordinateColumn + " = ");
@@ -344,6 +344,18 @@ public class SelectSqlGenerator {
 		} else {
 			throw new OperationNotSupportedException("该类没有标注@Search注解");
 		}
+	}
+
+	/**
+	 * 获取要搜索的表名
+	 * 
+	 * @param searcherType
+	 *            用于查询的对象类型
+	 * @return 返回对象不会为空，没有结果会抛出异常
+	 */
+	private static String getTable(Class<?> searcherType) {
+		Class<?> entityType = getModelType(searcherType);
+		return EntityUtils.getTable(entityType);
 	}
 }
 

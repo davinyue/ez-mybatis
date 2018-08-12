@@ -27,7 +27,7 @@ public class UniversalDAOImpl implements UniversalDAO {
 	}
 
 	@Override
-	public int batchInsert(List<Object> records) {
+	public int batchInsert(List<?> records) {
 		return this.mapper.batchInsert(InsertSqlGenerator.toBatchInsertSql(records));
 	}
 
@@ -37,7 +37,7 @@ public class UniversalDAOImpl implements UniversalDAO {
 	}
 
 	@Override
-	public long batchDelete(List<Object> records) {
+	public long batchDelete(List<?> records) {
 		return this.mapper.batchDelete(DeleteSqlGenerator.toBatchDeleteSql(records));
 	}
 

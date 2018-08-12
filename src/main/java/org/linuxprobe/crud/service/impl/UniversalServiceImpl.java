@@ -17,10 +17,9 @@ public class UniversalServiceImpl implements UniversalService {
 		return record;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> batchSave(List<T> records) {
-		this.dao.batchInsert((List<Object>) records);
+		this.dao.batchInsert(records);
 		return records;
 	}
 
@@ -30,7 +29,7 @@ public class UniversalServiceImpl implements UniversalService {
 	}
 
 	@Override
-	public long batchRemove(List<Object> records) {
+	public long batchRemove(List<?> records) {
 		return this.dao.batchDelete(records);
 	}
 

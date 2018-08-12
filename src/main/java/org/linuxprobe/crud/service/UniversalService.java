@@ -15,7 +15,7 @@ public interface UniversalService {
 
 	public int remove(Object record);
 
-	public long batchRemove(List<Object> records);
+	public long batchRemove(List<?> records);
 
 	public int removeByPrimaryKey(String id, Class<?> type);
 

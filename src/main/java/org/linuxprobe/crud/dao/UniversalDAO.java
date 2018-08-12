@@ -7,13 +7,13 @@ public interface UniversalDAO {
 	int insert(Object record);
 
 	/** 批量插入 */
-	int batchInsert(List<Object> records);
+	int batchInsert(List<?> records);
 
 	/** 删除 */
 	int delete(Object record);
 
 	/** 批量删除 */
-	long batchDelete(List<Object> records);
+	long batchDelete(List<?> records);
 
 	/** 根据主键删除 */
 	public int deleteByPrimaryKey(String id, Class<?> type);
