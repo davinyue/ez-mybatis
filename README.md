@@ -39,13 +39,16 @@ Spring boot框架应在启动文件添加注解@ComponentScan("org.linuxprobe.**
 
 3.	配置mybatis
 将maven下载的依赖包mybatis-universal-crud-simple-1.1.4.RELEASE.jar解压把
-/src/main/java/org/linuxprobe/crud/mapper/mapping/UniversalMapper.xml文件复制到你的项目的mapping映射文件所在目录，并配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口
+/src/main/java/org/linuxprobe/crud/mapper/mapping/UniversalMapper.xml文件复制到你的项目的mapping映射文件所在目录，并配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
+
 性能良好
 ===
 	根据java反射生成sql，生成的sql让mybatis去执行，并无多余操作。
+
 方便快捷
 ===
 	普通的增删查改完全够用，如过有特殊需求，用户自行往自己的映射文件添加自己的实现即可。用户的实体service可以继续mybatis-universal-crud-simple并覆盖里面的方法，根据需求重写方法。例如插入数据库前检测数据是否重复。
+
 与jpa对比的优点
 ===
 	Jap可以通过规范编只写方法接口不编写方法实现实现数据的查询，但条件过多时，方法名太长，不同的条件可能需要编写不同的方法。而mybatis-universal-crud-simple则可一个方法通吃。
