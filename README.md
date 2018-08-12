@@ -40,6 +40,7 @@ Spring boot框架应在启动文件添加注解@ComponentScan("org.linuxprobe.**
 3.	配置mybatis
 将maven下载的依赖包mybatis-universal-crud-simple-1.1.4.RELEASE.jar解压把
 /src/main/java/org/linuxprobe/crud/mapper/mapping/UniversalMapper.xml文件复制到你的项目的mapping映射文件所在目录，并配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
+---
 
 性能良好
 ===
