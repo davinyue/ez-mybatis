@@ -13,11 +13,11 @@ import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.JoinColumn;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Search;
-import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.exception.ParameterException;
+import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
@@ -46,8 +46,8 @@ public class SelectSqlGenerator {
 	/** 转换为查询sql */
 	public static String toSelectSql(Object searcher) {
 		String alias = getAlias(searcher);
-		StringBuffer sqlBuffer = new StringBuffer(
-				"select distinct " + alias + ".* from " + getTable(searcher.getClass()) + " as " + alias + " ");
+		StringBuffer sqlBuffer = new StringBuffer("select distinct " + alias + ".* from "
+				+ EntityUtils.getTable(searcher.getClass()) + " as " + alias + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		sqlBuffer.append(toOrder(searcher));
@@ -58,8 +58,8 @@ public class SelectSqlGenerator {
 	/** 转换为查询数量的sql */
 	public static String toSelectCountSql(Object searcher, String clounm) {
 		String countFun = "count(distinct " + getAlias(searcher) + "." + clounm + ")";
-		StringBuffer sqlBuffer = new StringBuffer(
-				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
+		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from "
+				+ EntityUtils.getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
@@ -69,8 +69,8 @@ public class SelectSqlGenerator {
 	public static String toSelectCountSql(Object searcher) {
 		String countFun = "count(distinct " + getAlias(searcher) + "."
 				+ getPrimaryKeyName(getModelType(searcher.getClass())) + ")";
-		StringBuffer sqlBuffer = new StringBuffer(
-				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
+		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from "
+				+ EntityUtils.getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
@@ -124,7 +124,7 @@ public class SelectSqlGenerator {
 						}
 					}
 					/** 获取需要链接的表名 */
-					String joinTable = getTable(field.getType());
+					String joinTable = EntityUtils.getTable(field.getType());
 					String joinTableAlias = getAlias(member);
 					joinBuffer.append("left join " + joinTable + " as " + joinTableAlias + " on ");
 					joinBuffer.append(joinTableAlias + "." + subordinateColumn + " = ");
@@ -293,27 +293,6 @@ public class SelectSqlGenerator {
 			resultBuffer.insert(0, "where");
 		}
 		return resultBuffer;
-	}
-
-	/**
-	 * 获取要搜索的表名
-	 * 
-	 * @param searcherType
-	 *            用于查询的对象类型
-	 * @return 返回对象不会为空，没有结果会抛出异常
-	 */
-	private static String getTable(Class<?> searcherType) {
-		Class<?> entityType = getModelType(searcherType);
-		if (entityType.isAnnotationPresent(Table.class)) {
-			Table table = entityType.getAnnotation(Table.class);
-			if (table.value().trim().isEmpty()) {
-				throw new OperationNotSupportedException(entityType.getName() + "类的@Table注解没有赋值");
-			} else {
-				return table.value();
-			}
-		} else {
-			throw new OperationNotSupportedException(entityType.getName() + "类没有@Table注解");
-		}
 	}
 
 	/**
