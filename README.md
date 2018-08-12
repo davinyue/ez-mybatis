@@ -54,4 +54,5 @@ Spring boot框架应在启动文件添加注解@ComponentScan("org.linuxprobe.**
 Jap可以通过规范编只写方法接口不编写方法实现实现数据的查询，但条件过多时，方法名太长，不同的条件可能需要编写不同的方法。而mybatis-universal-crud-simple则可一个方法通吃。
 
 使用教程
+===
 [1.不继承BaserService的使用教程：](https://github.com/linuxprobe-org/crud-demo/blob/master/src/test/java/org/linuxprobe/demo/ApplicationTests.java)
