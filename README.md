@@ -62,7 +62,7 @@ Jap可以通过规范编只写方法接口不编写方法实现实现数据的�
 2.继承BaseService，实现自己的扩展
 ---
 
-1）实体是BaseModel的直接子类或间接子类，BaseModel类里面已经自带了一个String id字段。
+##1）实体是BaseModel的直接子类或间接子类，BaseModel类里面已经自带了一个String id字段。
 ```
 package org.linuxprobe.demo.model;
 
@@ -80,9 +80,7 @@ public class Org extends BaseModel{
 }
 ```
 
-2）实体的查询类是BaseQuery的直接子类或间接子类，BaseQuery类里面已经自带了一个StringParam id字段，继承BaseQuery还可以实现分页和排序。
----
-
+##2）实体的查询类是BaseQuery的直接子类或间接子类，BaseQuery类里面已经自带了一个StringParam id字段，继承BaseQuery还可以实现分页和排序。
 ```
 package org.linuxprobe.demo.query;
 
@@ -101,9 +99,7 @@ public class OrgQuery extends BaseQuery{
 }
 ```
 
-3）Service继承BaseService
----
-
+##3）Service继承BaseService
 ```
 package org.linuxprobe.demo.service;
 
@@ -116,8 +112,7 @@ public interface OrgService extends BaseService<Org, OrgQuery>{
 }
 ```
 
-4）ServiceImpl继承BaseServiceImpl并实现Service接口
----
+##4）ServiceImpl继承BaseServiceImpl并实现Service接口
 
 ```
 package org.linuxprobe.demo.service.impl;
@@ -134,8 +129,7 @@ public class OrgServiceImpl extends BaseServiceImpl<Org, OrgQuery> implements Or
 }
 ```
 
-5）Mapper继承BaseMapper接口
----
+##5）Mapper继承BaseMapper接口
 ```
 package org.linuxprobe.demo.mapper;
 
@@ -147,8 +141,7 @@ public interface OrgMapper extends BaseMapper<Org>{
 }
 ```
 
-6）编写xml映射文件,下面的两个实现是必须的，它是BaseMapper里面未实现的接口
----
+##6）编写xml映射文件,下面的两个实现是必须的，它是BaseMapper里面未实现的接口
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
