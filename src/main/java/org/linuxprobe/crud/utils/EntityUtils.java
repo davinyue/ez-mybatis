@@ -11,7 +11,6 @@ import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
-import org.linuxprobe.crud.exception.ParameterException;
 
 public class EntityUtils {
 	/**
@@ -138,7 +137,7 @@ public class EntityUtils {
 			try {
 				getCurrnetClounm = entity.getClass().getMethod("get" + funSuffix);
 			} catch (NoSuchMethodException | SecurityException e) {
-				throw new ParameterException(entity.getClass().getName() + "主键成员没有get方法", e);
+				throw new IllegalArgumentException(entity.getClass().getName() + "主键成员没有get方法", e);
 			}
 			String value = null;
 			Object fieldValue = null;
@@ -146,7 +145,7 @@ public class EntityUtils {
 				/** 得到本次参数 */
 				fieldValue = getCurrnetClounm.invoke(entity);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new ParameterException(entity.getClass().getName() + "主键成员的get方法调用失败", e);
+				throw new IllegalArgumentException(entity.getClass().getName() + "主键成员的get方法调用失败", e);
 			}
 			if (String.class.isAssignableFrom(primaryKey.getType())) {
 				String clounmValue = (String) fieldValue;
@@ -196,7 +195,7 @@ public class EntityUtils {
 					value = null;
 				}
 			} else {
-				throw new ParameterException(entity.getClass().getName() + "主键成员不是被支持的类型");
+				throw new IllegalArgumentException(entity.getClass().getName() + "主键成员不是被支持的类型");
 			}
 			result.setValue(value);
 			/** 设置数据库列是成员名称转下划线 */
@@ -210,7 +209,7 @@ public class EntityUtils {
 				}
 			}
 		} else {
-			throw new ParameterException(entity.getClass().getName() + "所有成员变量均未标注@PrimaryKey注解");
+			throw new IllegalArgumentException(entity.getClass().getName() + "所有成员变量均未标注@PrimaryKey注解");
 		}
 		return result;
 	}

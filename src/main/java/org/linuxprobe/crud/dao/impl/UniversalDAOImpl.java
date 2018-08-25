@@ -10,7 +10,6 @@ import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.UpdateSqlGenerator;
 import org.linuxprobe.crud.dao.UniversalDAO;
-import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.mapper.UniversalMapper;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public class UniversalDAOImpl implements UniversalDAO {
 			try {
 				model = type.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				throw new ParameterException(type.getName() + "没有无参构造函数", e);
+				throw new IllegalArgumentException(type.getName() + "没有无参构造函数", e);
 			}
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
@@ -88,5 +87,11 @@ public class UniversalDAOImpl implements UniversalDAO {
 	@Override
 	public int globalUpdate(Object record) {
 		return this.mapper.update(UpdateSqlGenerator.toGlobalUpdateSql(record));
+	}
+
+	@Override
+	public List<Map<String, Object>> selectBySql(String sql) {
+		List<Map<String, Object>> result = this.mapper.universalSelect(sql);
+		return result;
 	}
 }

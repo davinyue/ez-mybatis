@@ -2,6 +2,8 @@ package org.linuxprobe.crud.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.model.BaseModel;
@@ -61,6 +63,18 @@ public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery
 
 	/** 根据查询对象获取实体分页数据 */
 	public Page<Model> getPageInfo(QueryDTO param);
+	
+	/** 根据sql获取数据 */
+	public List<Map<String, Object>> getBySql(String sql);
+	
+	/** 根据sql获取唯一数据 */
+	public Map<String, Object> getUniqueResultBySql(String sql);
+
+	/** 根据sql获取数据 */
+	public <T> List<T> getBySql(String sql, Class<T> type);
+	
+	/** 根据sql获取唯一数据 */
+	public <T> T getUniqueResultBySql(String sql, Class<T> type);
 
 	/**
 	 * 通用查询，根据查询对象获取实体list，不能处理关联加载

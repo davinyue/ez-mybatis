@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.linuxprobe.crud.core.query.param.impl.StringParam;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
-import org.linuxprobe.crud.exception.ParameterException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,7 +61,7 @@ public abstract class BaseQuery {
 					}
 				}
 				if (orderMembers.size() > 2) {
-					throw new ParameterException("参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
+					throw new IllegalArgumentException("参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
 				} else if (orderMembers.size() == 1) {
 					result.append(orderMembers.get(0) + " " + "asc,");
 				} else if (orderMembers.size() == 2) {
@@ -71,7 +70,7 @@ public abstract class BaseQuery {
 					} else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
 						result.append(orderMembers.get(0) + " " + "desc,");
 					} else {
-						throw new ParameterException("排序模式只能为asc和desc");
+						throw new IllegalArgumentException("排序模式只能为asc和desc");
 					}
 				}
 			}

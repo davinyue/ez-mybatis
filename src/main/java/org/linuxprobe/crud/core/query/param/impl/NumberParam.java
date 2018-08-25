@@ -3,7 +3,6 @@ package org.linuxprobe.crud.core.query.param.impl;
 import java.util.List;
 import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.exception.ParameterException;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -161,7 +160,7 @@ public class NumberParam extends QueryParam {
 	@Override
 	public void setOperator(Operator operator) {
 		if (operator == Operator.like || operator == Operator.unlike || this.getOperator() == Operator.regexp) {
-			throw new ParameterException("数字类型不支持like nunlike regexp查询");
+			throw new IllegalArgumentException("数字类型不支持like nunlike regexp查询");
 		} else {
 			super.setOperator(operator);
 		}

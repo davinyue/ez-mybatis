@@ -14,7 +14,6 @@ import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
 import org.linuxprobe.crud.core.annoatation.Column.LengthHandler;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
@@ -118,7 +117,7 @@ public class UpdateSqlGenerator {
 								if (column.lengthHandler().equals(LengthHandler.Sub)) {
 									clounmValue = clounmValue.substring(0, column.length());
 								} else {
-									throw new ParameterException(field.getName() + "字段的赋值超出规定长度" + column.length());
+									throw new IllegalArgumentException(field.getName() + "字段的赋值超出规定长度" + column.length());
 								}
 							}
 						}
@@ -180,7 +179,7 @@ public class UpdateSqlGenerator {
 				if (field.isAnnotationPresent(PrimaryKey.class)) {
 					isPrimaryKey = true;
 					if (value == null) {
-						throw new ParameterException("更新模式下，主键不能为空");
+						throw new IllegalArgumentException("更新模式下，主键不能为空");
 					}
 				}
 				/** 设置数据库列是成员名称转下划线 */
@@ -195,7 +194,7 @@ public class UpdateSqlGenerator {
 					/** 如果是全更新 */
 					if (isGlobalUpdate) {
 						if (column.notNull() && value == null) {
-							throw new ParameterException(fieldName + "不能为空");
+							throw new IllegalArgumentException(fieldName + "不能为空");
 						}
 					}
 					String strColumn = column.value();

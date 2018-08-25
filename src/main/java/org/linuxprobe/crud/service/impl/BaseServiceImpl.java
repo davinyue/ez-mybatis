@@ -3,6 +3,7 @@ package org.linuxprobe.crud.service.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mapper.BaseMapper;
@@ -100,6 +101,26 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		result.setData(this.getByQueryParam(param));
 		result.setTotal(this.getCountByQueryParam(param));
 		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> getBySql(String sql) {
+		return this.service.selectBySql(sql);
+	}
+
+	@Override
+	public Map<String, Object> getUniqueResultBySql(String sql) {
+		return this.service.selectUniqueResultBySql(sql);
+	}
+
+	@Override
+	public <T> List<T> getBySql(String sql, Class<T> type) {
+		return this.service.selectBySql(sql, type);
+	}
+
+	@Override
+	public <T> T getUniqueResultBySql(String sql, Class<T> type) {
+		return this.service.selectUniqueResultBySql(sql, type);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package org.linuxprobe.crud.service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UniversalService {
 	/** 添加 */
@@ -25,6 +26,18 @@ public interface UniversalService {
 	public <T> List<T> universalSelect(Object param, Class<T> type);
 
 	public long selectCount(Object param);
+
+	/** 根据sql查询数据 */
+	public List<Map<String, Object>> selectBySql(String sql);
+
+	/** 根据sql查询唯一数据 */
+	public Map<String, Object> selectUniqueResultBySql(String sql);
+
+	/** 根据sql查询数据 */
+	public <T> List<T> selectBySql(String sql, Class<T> type);
+
+	/** 根据sql查询唯一数据 */
+	public <T> T selectUniqueResultBySql(String sql, Class<T> type);
 
 	/** 增量更新 */
 	public int localUpdate(Object record);

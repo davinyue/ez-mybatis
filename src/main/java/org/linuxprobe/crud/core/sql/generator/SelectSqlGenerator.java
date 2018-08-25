@@ -16,7 +16,6 @@ import org.linuxprobe.crud.core.annoatation.Search;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.StringHumpTool;
@@ -151,7 +150,7 @@ public class SelectSqlGenerator {
 					if (orderName != null) {
 						result.append(orderName + " " + parts[1] + ", ");
 					} else {
-						throw new ParameterException(searcher.getClass().getName() + "类查询对象里没有与'" + fieldName
+						throw new IllegalArgumentException(searcher.getClass().getName() + "类查询对象里没有与'" + fieldName
 								+ "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
 					}
 				}

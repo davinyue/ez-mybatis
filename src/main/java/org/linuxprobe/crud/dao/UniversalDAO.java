@@ -1,6 +1,7 @@
 package org.linuxprobe.crud.dao;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UniversalDAO {
 	/** 插入 */
@@ -26,6 +27,8 @@ public interface UniversalDAO {
 
 	/** 查询数量 */
 	public long selectCount(Object param);
+	
+	public List<Map<String, Object>> selectBySql(String sql);
 
 	/** 增量更新 */
 	int localUpdate(Object record);

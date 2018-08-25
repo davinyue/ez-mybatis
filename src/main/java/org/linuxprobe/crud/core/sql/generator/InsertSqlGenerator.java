@@ -15,7 +15,6 @@ import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
 import org.linuxprobe.crud.core.annoatation.Column.LengthHandler;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
@@ -115,7 +114,7 @@ public class InsertSqlGenerator {
 								if (column.lengthHandler().equals(LengthHandler.Sub)) {
 									clounmValue = clounmValue.substring(0, column.length());
 								} else {
-									throw new ParameterException(field.getName() + "字段的赋值超出规定长度" + column.length());
+									throw new IllegalArgumentException(field.getName() + "字段的赋值超出规定长度" + column.length());
 								}
 							}
 						}
@@ -201,7 +200,7 @@ public class InsertSqlGenerator {
 				if (field.isAnnotationPresent(Column.class)) {
 					Column column = field.getAnnotation(Column.class);
 					if (column.notNull() && value == null) {
-						throw new ParameterException(fieldName + "不能为空");
+						throw new IllegalArgumentException(fieldName + "不能为空");
 					}
 					String strColumn = column.value();
 					if (strColumn != null && !strColumn.trim().isEmpty()) {

@@ -3,14 +3,12 @@ package org.linuxprobe.crud.core.sql.generator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
-import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.exception.ParameterException;
 import org.linuxprobe.crud.utils.EntityUtils;
 
 public class DeleteSqlGenerator {
 	public static String toDeleteSql(Object entity) {
 		if (entity == null) {
-			throw new OperationNotSupportedException("没有需要被删除的实体");
+			throw new IllegalArgumentException("没有需要被删除的实体");
 		}
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(entity.getClass());
@@ -20,14 +18,14 @@ public class DeleteSqlGenerator {
 
 	public static String toDeleteSqlByPrimaryKey(String id, Class<?> type) {
 		if (id == null) {
-			throw new OperationNotSupportedException("没有需要被删除的实体");
+			throw new IllegalArgumentException("没有需要被删除的实体");
 		}
 		Object entity = null;
 		try {
 			entity = type.getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			throw new ParameterException(type.getName() + "没有无参构造函数", e);
+			throw new IllegalArgumentException(type.getName() + "没有无参构造函数", e);
 		}
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(type);
@@ -37,7 +35,7 @@ public class DeleteSqlGenerator {
 
 	public static String toBatchDeleteSql(List<?> entitys) {
 		if (entitys == null || entitys.isEmpty()) {
-			throw new OperationNotSupportedException("没有需要被删除的实体");
+			throw new IllegalArgumentException("没有需要被删除的实体");
 		}
 		StringBuffer sqlBuffer = new StringBuffer("delete from ");
 		for (int i = 0; i < entitys.size(); i++) {
@@ -58,14 +56,14 @@ public class DeleteSqlGenerator {
 
 	public static String toBatchDeleteSqlByPrimaryKey(List<String> ids, Class<?> type) {
 		if (ids == null || ids.isEmpty()) {
-			throw new OperationNotSupportedException("没有需要被删除的实体");
+			throw new IllegalArgumentException("没有需要被删除的实体");
 		}
 		Object entity = null;
 		try {
 			entity = type.getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			throw new ParameterException(type.getName() + "没有无参构造函数", e);
+			throw new IllegalArgumentException(type.getName() + "没有无参构造函数", e);
 		}
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(type);
