@@ -46,7 +46,7 @@ public class SelectSqlGenerator {
 	public static String toSelectSql(Object searcher) {
 		String alias = getAlias(searcher);
 		StringBuffer sqlBuffer = new StringBuffer(
-				"select distinct " + alias + ".* from " + getTable(searcher.getClass()) + " as " + alias + " ");
+				"select distinct `" + alias + "`.* from `" + getTable(searcher.getClass()) + "` as `" + alias + "` ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		sqlBuffer.append(toOrder(searcher));
@@ -56,9 +56,9 @@ public class SelectSqlGenerator {
 
 	/** 转换为查询数量的sql */
 	public static String toSelectCountSql(Object searcher, String clounm) {
-		String countFun = "count(distinct " + getAlias(searcher) + "." + clounm + ")";
-		StringBuffer sqlBuffer = new StringBuffer(
-				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
+		String countFun = "count(distinct `" + getAlias(searcher) + "`.`" + clounm + "`)";
+		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from `" + getTable(searcher.getClass())
+				+ "` as `" + getAlias(searcher) + "` ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
@@ -66,10 +66,10 @@ public class SelectSqlGenerator {
 
 	/** 转换为查询主键数量的sql */
 	public static String toSelectCountSql(Object searcher) {
-		String countFun = "count(distinct " + getAlias(searcher) + "."
-				+ getPrimaryKeyName(getModelType(searcher.getClass())) + ")";
-		StringBuffer sqlBuffer = new StringBuffer(
-				"select " + countFun + " from " + getTable(searcher.getClass()) + " as " + getAlias(searcher) + " ");
+		String countFun = "count(distinct `" + getAlias(searcher) + "`.`"
+				+ getPrimaryKeyName(getModelType(searcher.getClass())) + "`)";
+		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from `" + getTable(searcher.getClass())
+				+ "` as `" + getAlias(searcher) + "` ");
 		sqlBuffer.append(toLeftJoin(searcher));
 		sqlBuffer.append(getFormatWhere(searcher));
 		return sqlBuffer.toString();
@@ -125,9 +125,9 @@ public class SelectSqlGenerator {
 					/** 获取需要链接的表名 */
 					String joinTable = getTable(field.getType());
 					String joinTableAlias = getAlias(member);
-					joinBuffer.append("left join " + joinTable + " as " + joinTableAlias + " on ");
-					joinBuffer.append(joinTableAlias + "." + subordinateColumn + " = ");
-					joinBuffer.append(getAlias(searcher) + "." + principalColumn + " ");
+					joinBuffer.append("left join `" + joinTable + "` as `" + joinTableAlias + "` on ");
+					joinBuffer.append("`" + joinTableAlias + "`.`" + subordinateColumn + "` = ");
+					joinBuffer.append("`" + getAlias(searcher) + "`.`" + principalColumn + "` ");
 					joinBuffer.append(toLeftJoin(member));
 				}
 			}
@@ -179,12 +179,13 @@ public class SelectSqlGenerator {
 				if (searcherField.getName().equals(fieldName)) {
 					/** 如果是查询类参数对象 */
 					if (QueryParam.class.isAssignableFrom(searcherField.getType())) {
-						String orderName = getAlias(searcher) + "." + StringHumpTool.humpToLine2(fieldName, "_");
+						String orderName = "`" + getAlias(searcher) + "`.`" + StringHumpTool.humpToLine2(fieldName, "_")
+								+ "`";
 						/** 如果标有列注解 */
 						if (searcherField.isAnnotationPresent(Column.class)) {
 							Column column = searcherField.getAnnotation(Column.class);
 							if (!column.value().trim().isEmpty()) {
-								orderName = getAlias(searcher) + "." + column.value().trim();
+								orderName = "`" + getAlias(searcher) + "`.`" + column.value().trim() + "`";
 							}
 						}
 						return orderName;
@@ -260,7 +261,7 @@ public class SelectSqlGenerator {
 			if (QueryParam.class.isAssignableFrom(field.getType())) {
 				QueryParam baseMember = (QueryParam) member;
 				if (!baseMember.isEmpty()) {
-					result.add(baseMember.getCondition() + " " + getAlias(searcher) + "." + columnName + " "
+					result.add(baseMember.getCondition() + " `" + getAlias(searcher) + "`.`" + columnName + "` "
 							+ baseMember.toSqlPart() + " ");
 				}
 			}

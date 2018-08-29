@@ -12,7 +12,7 @@ public class DeleteSqlGenerator {
 		}
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(entity.getClass());
-		String sql = "delete from " + table + " where " + primaryKey.getColumn() + " = " + primaryKey.getValue();
+		String sql = "delete from `" + table + "` where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue();
 		return sql;
 	}
 
@@ -29,7 +29,7 @@ public class DeleteSqlGenerator {
 		}
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(type);
-		String sql = "delete from " + table + " where " + primaryKey.getColumn() + " = '" + id + "'";
+		String sql = "delete from `" + table + "` where `" + primaryKey.getColumn() + "` = '" + id + "'";
 		return sql;
 	}
 
@@ -37,13 +37,13 @@ public class DeleteSqlGenerator {
 		if (entitys == null || entitys.isEmpty()) {
 			throw new IllegalArgumentException("没有需要被删除的实体");
 		}
-		StringBuffer sqlBuffer = new StringBuffer("delete from ");
+		StringBuffer sqlBuffer = new StringBuffer("delete from `");
 		for (int i = 0; i < entitys.size(); i++) {
 			Object entity = entitys.get(i);
 			ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 			if (i == 0) {
 				String table = EntityUtils.getTable(entity.getClass());
-				sqlBuffer.append(table + " where " + primaryKey.getColumn() + " in(");
+				sqlBuffer.append(table + "` where `" + primaryKey.getColumn() + "` in(");
 			}
 			sqlBuffer.append(primaryKey.getValue() + ", ");
 		}
@@ -68,7 +68,7 @@ public class DeleteSqlGenerator {
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(type);
 		StringBuffer sqlBuffer = new StringBuffer(
-				"delete from " + table + " where " + primaryKey.getColumn() + " in (");
+				"delete from `" + table + "` where `" + primaryKey.getColumn() + "` in (");
 		for (String id : ids) {
 			sqlBuffer.append("'" + id + "', ");
 		}

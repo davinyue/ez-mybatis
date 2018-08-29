@@ -37,7 +37,7 @@ public class InsertSqlGenerator {
 	/** 生成插入sql */
 	public static String toInsertSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuffer sqlBuffer = new StringBuffer("insert into " + table + " ");
+		StringBuffer sqlBuffer = new StringBuffer("insert into `" + table + "` ");
 		StringBuffer clounms = new StringBuffer("(");
 		StringBuffer values = new StringBuffer(" values(");
 		List<ColumnField> columnFields = getColumnFields(entity);
@@ -47,10 +47,10 @@ public class InsertSqlGenerator {
 		for (int i = 0; i < columnFields.size(); i++) {
 			ColumnField columnField = columnFields.get(i);
 			if (i + 1 == columnFields.size()) {
-				clounms.append(columnField.getColumn() + ")");
+				clounms.append("`" + columnField.getColumn() + "`)");
 				values.append(columnField.getValue() + ")");
 			} else {
-				clounms.append(columnField.getColumn() + ", ");
+				clounms.append("`" + columnField.getColumn() + "`, ");
 				values.append(columnField.getValue() + ", ");
 			}
 		}
@@ -58,7 +58,7 @@ public class InsertSqlGenerator {
 		sqlBuffer.append(values);
 		return sqlBuffer.toString();
 	}
-	
+
 	/** 生成同一模型的批量插入sql */
 	public static String toBatchInsertSql(List<?> entitys) {
 		if (entitys == null || entitys.isEmpty()) {
@@ -114,7 +114,8 @@ public class InsertSqlGenerator {
 								if (column.lengthHandler().equals(LengthHandler.Sub)) {
 									clounmValue = clounmValue.substring(0, column.length());
 								} else {
-									throw new IllegalArgumentException(field.getName() + "字段的赋值超出规定长度" + column.length());
+									throw new IllegalArgumentException(
+											field.getName() + "字段的赋值超出规定长度" + column.length());
 								}
 							}
 						}
