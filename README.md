@@ -16,7 +16,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 8.	修改数据库表信息后，只需修改对应实体即可，无需修改映射文件。
 
 
-配置简单，只需三步。
+配置：
 ===
 1.在pom文件里面添加依赖，
 ---
@@ -39,7 +39,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 ```
 
 3.配置mybatis
-将maven下载的依赖包mybatis-universal-crud-simple-1.1.4.RELEASE.jar解压把
+将maven下载的依赖包mybatis-universal-crud-simple-1.1.7.RELEASE.jar解压把
 /src/main/java/org/linuxprobe/crud/mapper/mapping/UniversalMapper.xml文件复制到你的项目的mapping映射文件所在目录，并配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
 ---
 
