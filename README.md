@@ -24,7 +24,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 <dependency>
 	<groupId>org.linuxprobe</groupId>
 	<artifactId>mybatis-universal-crud-simple</artifactId>
-	<version>1.1.4.RELEASE</version>
+	<version>1.1.7.RELEASE</version>
 </dependency>
 ```
 2.bean扫描配置
