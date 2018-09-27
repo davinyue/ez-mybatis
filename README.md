@@ -1,5 +1,8 @@
 [1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.7.md)
 
+fix:
+修复sql生成类可能引起内存溢出的bug。
+
 简介：
 ==
 mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上是因为可以利用mybatis缓存功能，实际上完全可以稍作修改运行在jdbc上。
@@ -30,17 +33,17 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 ```
 2.bean扫描配置
 ---
-1)Spring boot框架应在启动文件添加注解@ComponentScan({"org.linuxprobe.**"})和@MapperScan({ "org.linuxprobe.crud.mapper" })。
+1)Spring boot框架应在启动文件添加注解@ComponentScan({"org.linuxprobe.**"})和mybatis接口扫描@MapperScan({ "org.linuxprobe.crud.mapper" })。
 
 2)spring框架应在配置文件里面添加包扫描。
 ```
 <context:component-scan
-	base-package=" com.river.cruise.service, org.linuxprobe.crud">
+	base-package="你的包, org.linuxprobe.crud">
 </context:component-scan>
 ```
 
 3.配置mybatis
-配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
+配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口，如果是spring boot配置了@MapperScan({ "org.linuxprobe.crud.mapper" })则不需要配置此项。
 ---
 
 性能良好
