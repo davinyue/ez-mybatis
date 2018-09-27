@@ -1,3 +1,4 @@
+[1.1.8之前的版本请查看](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.7.md)
 
 简介：
 ==
@@ -24,7 +25,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 <dependency>
 	<groupId>org.linuxprobe</groupId>
 	<artifactId>mybatis-universal-crud-simple</artifactId>
-	<version>1.1.7.RELEASE</version>
+	<version>1.1.8.RELEASE</version>
 </dependency>
 ```
 2.bean扫描配置
@@ -39,8 +40,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 ```
 
 3.配置mybatis
-将maven下载的依赖包mybatis-universal-crud-simple-1.1.7.RELEASE.jar解压把
-/src/main/java/org/linuxprobe/crud/mapper/mapping/UniversalMapper.xml文件复制到你的项目的mapping映射文件所在目录，并配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
+配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口。
 ---
 
 性能良好
