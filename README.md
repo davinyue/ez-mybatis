@@ -56,7 +56,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 
 与jpa对比的优点
 ===
-Jap可以通过规范编只写方法接口不编写方法实现实现数据的查询，但条件过多时，方法名太长，不同的条件可能需要编写不同的方法。而mybatis-universal-crud-simple则可一个方法通吃。
+Jap可以通过一定的规则编写方法接口儿不用编写方法实现实现数据的查询，但条件过多时，方法名太长，不同的条件可能需要编写不同的方法。而mybatis-universal-crud-simple则可一个方法通吃。
 
 使用教程
 ===
