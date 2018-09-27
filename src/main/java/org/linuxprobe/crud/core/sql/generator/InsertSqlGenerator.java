@@ -213,6 +213,15 @@ public class InsertSqlGenerator {
 				result.add(columnField);
 			}
 		}
-		return result;
+		/** 去重 */
+		List<ColumnField> distinctResult = new LinkedList<>();
+		if (result != null) {
+			for (ColumnField columnField : result) {
+				if (!distinctResult.contains(columnField)) {
+					distinctResult.add(columnField);
+				}
+			}
+		}
+		return distinctResult;
 	}
 }
