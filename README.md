@@ -1,4 +1,4 @@
-[1.1.8之前的版本请查看](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.7.md)
+[1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.7.md)
 
 简介：
 ==
