@@ -49,7 +49,7 @@ public abstract class BaseQuery {
 			return;
 		}
 		String[] orders = order.split(",");
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (orders != null) {
 			for (int i = 0; i < orders.length; i++) {
 				String[] tempOrderMembers = orders[i].trim().split(" ");

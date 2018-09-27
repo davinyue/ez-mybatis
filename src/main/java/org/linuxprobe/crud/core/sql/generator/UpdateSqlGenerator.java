@@ -24,7 +24,7 @@ public class UpdateSqlGenerator {
 	private UpdateSqlGenerator() {
 	}
 
-	private volatile static UpdateSqlGenerator instance = new UpdateSqlGenerator();
+	private static UpdateSqlGenerator instance = new UpdateSqlGenerator();
 
 	public static UpdateSqlGenerator getInstance() {
 		return instance;
@@ -35,7 +35,7 @@ public class UpdateSqlGenerator {
 	/** 生成字段全更新sql */
 	public static String toGlobalUpdateSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuffer sqlBuffer = new StringBuffer("update `" + table + "` set ");
+		StringBuilder sqlBuilder = new StringBuilder("update `" + table + "` set ");
 		List<ColumnField> columnFields = getColumnFields(entity, true);
 		ColumnField primaryKey = null;
 		for (ColumnField columnField : columnFields) {
@@ -48,18 +48,18 @@ public class UpdateSqlGenerator {
 		}
 		for (int i = 0; i < columnFields.size(); i++) {
 			ColumnField columnField = columnFields.get(i);
-			sqlBuffer.append("`" + columnField.getColumn() + "` = " + columnField.getValue() + ", ");
+			sqlBuilder.append("`" + columnField.getColumn() + "` = " + columnField.getValue() + ", ");
 		}
-		if (sqlBuffer.indexOf(",") != -1)
-			sqlBuffer.replace(sqlBuffer.length() - 2, sqlBuffer.length(), " ");
-		sqlBuffer.append("where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue());
-		return sqlBuffer.toString();
+		if (sqlBuilder.indexOf(",") != -1)
+			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), " ");
+		sqlBuilder.append("where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue());
+		return sqlBuilder.toString();
 	}
 
 	/** 生成字段选择更新sql */
 	public static String toLocalUpdateSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuffer sqlBuffer = new StringBuffer("update `" + table + "` set ");
+		StringBuilder sqlBuilder = new StringBuilder("update `" + table + "` set ");
 		List<ColumnField> columnFields = getColumnFields(entity, false);
 		ColumnField primaryKey = null;
 		for (ColumnField columnField : columnFields) {
@@ -73,13 +73,13 @@ public class UpdateSqlGenerator {
 		for (int i = 0; i < columnFields.size(); i++) {
 			ColumnField columnField = columnFields.get(i);
 			if (columnField.getValue() != null) {
-				sqlBuffer.append("`" + columnField.getColumn() + "` = " + columnField.getValue() + ", ");
+				sqlBuilder.append("`" + columnField.getColumn() + "` = " + columnField.getValue() + ", ");
 			}
 		}
-		if (sqlBuffer.indexOf(",") != -1)
-			sqlBuffer.replace(sqlBuffer.length() - 2, sqlBuffer.length(), " ");
-		sqlBuffer.append("where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue());
-		return sqlBuffer.toString();
+		if (sqlBuilder.indexOf(",") != -1)
+			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), " ");
+		sqlBuilder.append("where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue());
+		return sqlBuilder.toString();
 	}
 
 	private static List<ColumnField> getColumnFields(Object entity, boolean isGlobalUpdate) {

@@ -26,7 +26,7 @@ public class InsertSqlGenerator {
 	private InsertSqlGenerator() {
 	}
 
-	private volatile static InsertSqlGenerator instance = new InsertSqlGenerator();
+	private static InsertSqlGenerator instance = new InsertSqlGenerator();
 
 	public static InsertSqlGenerator getInstance() {
 		return instance;
@@ -37,9 +37,9 @@ public class InsertSqlGenerator {
 	/** 生成插入sql */
 	public static String toInsertSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuffer sqlBuffer = new StringBuffer("insert into `" + table + "` ");
-		StringBuffer clounms = new StringBuffer("(");
-		StringBuffer values = new StringBuffer(" values(");
+		StringBuilder sqlBuilder = new StringBuilder("insert into `" + table + "` ");
+		StringBuilder clounms = new StringBuilder("(");
+		StringBuilder values = new StringBuilder(" values(");
 		List<ColumnField> columnFields = getColumnFields(entity);
 		if (columnFields.isEmpty()) {
 			throw new OperationNotSupportedException("该实体类没有任何字段");
@@ -54,9 +54,9 @@ public class InsertSqlGenerator {
 				values.append(columnField.getValue() + ", ");
 			}
 		}
-		sqlBuffer.append(clounms);
-		sqlBuffer.append(values);
-		return sqlBuffer.toString();
+		sqlBuilder.append(clounms);
+		sqlBuilder.append(values);
+		return sqlBuilder.toString();
 	}
 
 	/** 生成同一模型的批量插入sql */
@@ -64,18 +64,18 @@ public class InsertSqlGenerator {
 		if (entitys == null || entitys.isEmpty()) {
 			throw new OperationNotSupportedException("没有需要被保存的实体");
 		} else {
-			StringBuffer sqlBuffer = new StringBuffer();
+			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < entitys.size(); i++) {
 				Object entity = entitys.get(i);
 				if (i == 0) {
-					sqlBuffer.append(toInsertSql(entity));
+					sqlBuilder.append(toInsertSql(entity));
 				} else {
 					String sql = toInsertSql(entity);
 					String sqlValue = sql.substring(sql.indexOf("values") + 6);
-					sqlBuffer.append(", " + sqlValue);
+					sqlBuilder.append(", " + sqlValue);
 				}
 			}
-			return sqlBuffer.toString();
+			return sqlBuilder.toString();
 		}
 	}
 

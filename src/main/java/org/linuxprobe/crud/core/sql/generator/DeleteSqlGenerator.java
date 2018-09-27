@@ -37,21 +37,21 @@ public class DeleteSqlGenerator {
 		if (entitys == null || entitys.isEmpty()) {
 			throw new IllegalArgumentException("没有需要被删除的实体");
 		}
-		StringBuffer sqlBuffer = new StringBuffer("delete from `");
+		StringBuilder sqlBuilder = new StringBuilder("delete from `");
 		for (int i = 0; i < entitys.size(); i++) {
 			Object entity = entitys.get(i);
 			ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 			if (i == 0) {
 				String table = EntityUtils.getTable(entity.getClass());
-				sqlBuffer.append(table + "` where `" + primaryKey.getColumn() + "` in(");
+				sqlBuilder.append(table + "` where `" + primaryKey.getColumn() + "` in(");
 			}
-			sqlBuffer.append(primaryKey.getValue() + ", ");
+			sqlBuilder.append(primaryKey.getValue() + ", ");
 		}
-		if (sqlBuffer.lastIndexOf(", ") != -1) {
-			sqlBuffer.replace(sqlBuffer.length() - 2, sqlBuffer.length(), "");
+		if (sqlBuilder.lastIndexOf(", ") != -1) {
+			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), "");
 		}
-		sqlBuffer.append(")");
-		return sqlBuffer.toString();
+		sqlBuilder.append(")");
+		return sqlBuilder.toString();
 	}
 
 	public static String toBatchDeleteSqlByPrimaryKey(List<String> ids, Class<?> type) {
@@ -67,15 +67,15 @@ public class DeleteSqlGenerator {
 		}
 		ColumnField primaryKey = EntityUtils.getPrimaryKey(entity);
 		String table = EntityUtils.getTable(type);
-		StringBuffer sqlBuffer = new StringBuffer(
+		StringBuilder sqlBuilder = new StringBuilder(
 				"delete from `" + table + "` where `" + primaryKey.getColumn() + "` in (");
 		for (String id : ids) {
-			sqlBuffer.append("'" + id + "', ");
+			sqlBuilder.append("'" + id + "', ");
 		}
-		if (sqlBuffer.lastIndexOf(", ") != -1) {
-			sqlBuffer.replace(sqlBuffer.length() - 2, sqlBuffer.length(), "");
+		if (sqlBuilder.lastIndexOf(", ") != -1) {
+			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), "");
 		}
-		sqlBuffer.append(")");
-		return sqlBuffer.toString();
+		sqlBuilder.append(")");
+		return sqlBuilder.toString();
 	}
 }

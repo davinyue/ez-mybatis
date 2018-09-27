@@ -45,40 +45,43 @@ public class SelectSqlGenerator {
 	/** 转换为查询sql */
 	public static String toSelectSql(Object searcher) {
 		String alias = getAlias(searcher);
-		StringBuffer sqlBuffer = new StringBuffer(
+		StringBuilder sqlBuilder = new StringBuilder(
 				"select distinct `" + alias + "`.* from `" + getTable(searcher.getClass()) + "` as `" + alias + "` ");
-		sqlBuffer.append(toLeftJoin(searcher));
-		sqlBuffer.append(getFormatWhere(searcher));
-		sqlBuffer.append(toOrder(searcher));
-		sqlBuffer.append(toLimit(searcher));
-		return sqlBuffer.toString();
+		sqlBuilder.append(toLeftJoin(searcher));
+		sqlBuilder.append(getFormatWhere(searcher));
+		sqlBuilder.append(toOrder(searcher));
+		sqlBuilder.append(toLimit(searcher));
+		SelectSqlGenerator.alias.remove();
+		return sqlBuilder.toString();
 	}
 
 	/** 转换为查询数量的sql */
 	public static String toSelectCountSql(Object searcher, String clounm) {
 		String countFun = "count(distinct `" + getAlias(searcher) + "`.`" + clounm + "`)";
-		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from `" + getTable(searcher.getClass())
+		StringBuilder sqlBuilder = new StringBuilder("select " + countFun + " from `" + getTable(searcher.getClass())
 				+ "` as `" + getAlias(searcher) + "` ");
-		sqlBuffer.append(toLeftJoin(searcher));
-		sqlBuffer.append(getFormatWhere(searcher));
-		return sqlBuffer.toString();
+		sqlBuilder.append(toLeftJoin(searcher));
+		sqlBuilder.append(getFormatWhere(searcher));
+		SelectSqlGenerator.alias.remove();
+		return sqlBuilder.toString();
 	}
 
 	/** 转换为查询主键数量的sql */
 	public static String toSelectCountSql(Object searcher) {
 		String countFun = "count(distinct `" + getAlias(searcher) + "`.`"
 				+ getPrimaryKeyName(getModelType(searcher.getClass())) + "`)";
-		StringBuffer sqlBuffer = new StringBuffer("select " + countFun + " from `" + getTable(searcher.getClass())
+		StringBuilder sqlBuilder = new StringBuilder("select " + countFun + " from `" + getTable(searcher.getClass())
 				+ "` as `" + getAlias(searcher) + "` ");
-		sqlBuffer.append(toLeftJoin(searcher));
-		sqlBuffer.append(getFormatWhere(searcher));
-		return sqlBuffer.toString();
+		sqlBuilder.append(toLeftJoin(searcher));
+		sqlBuilder.append(getFormatWhere(searcher));
+		SelectSqlGenerator.alias.remove();
+		return sqlBuilder.toString();
 	}
 
 	/** 转换为left join part */
-	private static StringBuffer toLeftJoin(Object searcher) {
+	private static StringBuilder toLeftJoin(Object searcher) {
 		List<Field> fields = FieldUtils.getAllFields(searcher.getClass());
-		StringBuffer joinBuffer = new StringBuffer();
+		StringBuilder joinBuffer = new StringBuilder();
 		for (Field field : fields) {
 			/** 如果是关联查询对象 */
 			if (field.getType().isAnnotationPresent(Search.class)) {
@@ -136,8 +139,8 @@ public class SelectSqlGenerator {
 	}
 
 	/** 转换为order by part */
-	private static StringBuffer toOrder(Object searcher) {
-		StringBuffer result = new StringBuffer();
+	private static StringBuilder toOrder(Object searcher) {
+		StringBuilder result = new StringBuilder();
 		if (BaseQuery.class.isAssignableFrom(searcher.getClass())) {
 			BaseQuery baseQuery = (BaseQuery) searcher;
 			String strOrder = baseQuery.getOrder();
@@ -274,7 +277,7 @@ public class SelectSqlGenerator {
 	}
 
 	/** 获取格式化后的where条件 */
-	private static StringBuffer getFormatWhere(Object searcher) {
+	private static StringBuilder getFormatWhere(Object searcher) {
 		List<String> wheres = toWhere(searcher);
 		/** 把and的条件排序在前面 */
 		Collections.sort(wheres, new Comparator<String>() {
@@ -283,7 +286,7 @@ public class SelectSqlGenerator {
 				return str1.trim().compareToIgnoreCase(str2.trim());
 			}
 		});
-		StringBuffer resultBuffer = new StringBuffer();
+		StringBuilder resultBuffer = new StringBuilder();
 		for (String where : wheres) {
 			resultBuffer.append(where);
 		}
