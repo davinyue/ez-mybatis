@@ -7,7 +7,6 @@ import java.util.Map;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mapper.BaseMapper;
-import org.linuxprobe.crud.model.BaseModel;
 import org.linuxprobe.crud.service.BaseService;
 import org.linuxprobe.crud.service.UniversalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @param <Model>
  *            模型
  */
-public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery>
-		implements BaseService<Model, QueryDTO> {
+public class BaseServiceImpl<Model, QueryDTO extends BaseQuery> implements BaseService<Model, QueryDTO> {
 	@Autowired
 	private UniversalService service;
 	@Autowired
@@ -37,14 +35,13 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 		return this.service.batchSave(models);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public int removeByPrimaryKey(String id) {
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Class<BaseModel> modelClass = null;
+		Class<?> modelClass = null;
 		try {
-			modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
+			modelClass = Class.forName(type.getTypeName());
 		} catch (ClassNotFoundException e) {
 		}
 		return this.service.removeByPrimaryKey(id, modelClass);
@@ -54,8 +51,7 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 	@Transactional
 	public long batchRemoveByPrimaryKey(List<String> ids) throws Exception {
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		@SuppressWarnings("unchecked")
-		Class<BaseModel> modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
+		Class<?> modelClass = Class.forName(type.getTypeName());
 		return this.service.batchRemoveByPrimaryKey(ids, modelClass);
 	}
 
@@ -127,14 +123,14 @@ public class BaseServiceImpl<Model extends BaseModel, QueryDTO extends BaseQuery
 	@SuppressWarnings("unchecked")
 	public List<Model> universalGetByQueryParam(QueryDTO param) {
 		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Class<BaseModel> modelClass = null;
+		Class<?> modelClass = null;
 		try {
-			modelClass = (Class<BaseModel>) Class.forName(type.getTypeName());
+			modelClass = Class.forName(type.getTypeName());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return null;
 		}
-		List<BaseModel> result = this.service.universalSelect(param, modelClass);
+		List<?> result = this.service.universalSelect(param, modelClass);
 		return (List<Model>) result;
 	}
 

@@ -3,17 +3,14 @@ package org.linuxprobe.crud.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
-import org.linuxprobe.crud.model.BaseModel;
-
 
 /**
  * @param <Model>
  *            模型
  */
-public interface BaseService<Model extends BaseModel, QueryDTO extends BaseQuery> {
+public interface BaseService<Model, QueryDTO extends BaseQuery> {
 	/** 添加 */
 	public Model save(Model model);
 

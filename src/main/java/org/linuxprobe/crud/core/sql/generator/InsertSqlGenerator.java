@@ -191,7 +191,7 @@ public class InsertSqlGenerator {
 						}
 						/** 如果指定主键生成模式是程序指定 */
 						else if (primaryKey.value().equals(PrimaryKey.Strategy.ASSIGNED)) {
-							throw new NullPointerException("主键不能为空");
+							throw new NullPointerException("primaryKey can't not be null");
 						}
 					}
 				}
