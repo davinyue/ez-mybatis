@@ -10,7 +10,6 @@ import lombok.Setter;
 /** 实体查询dto */
 public abstract class BaseQuery {
 	/** 因为mybatis不能直接调用参数的方法，但能调用参数成员的方法，故这个类就出现了 */
-
 	public class Sqlr {
 		public String toSelectSql() throws Exception {
 			return SelectSqlGenerator.toSelectSql(BaseQuery.this);
@@ -35,10 +34,16 @@ public abstract class BaseQuery {
 	@Getter
 	@Setter
 	private StringParam id;
+
 	/** 分页 */
 	@Getter
 	@Setter
 	private Limit limit = new Limit();
+
+	/** 被连接方式 */
+	@Getter
+	@Setter
+	private JoinType joinType = JoinType.LeftJoin;
 
 	public void setOrder(String order) {
 		if (order == null) {
@@ -61,14 +66,15 @@ public abstract class BaseQuery {
 					}
 				}
 				if (orderMembers.size() > 2) {
-					throw new IllegalArgumentException("参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
+					throw new IllegalArgumentException(
+							"参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
 				} else if (orderMembers.size() == 1) {
-					result.append(orderMembers.get(0) + " " + "asc,");
+					result.append(orderMembers.get(0) + " " + "ASC,");
 				} else if (orderMembers.size() == 2) {
 					if (orderMembers.get(1).equalsIgnoreCase("asc")) {
-						result.append(orderMembers.get(0) + " " + "asc,");
+						result.append(orderMembers.get(0) + " " + "ASC,");
 					} else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
-						result.append(orderMembers.get(0) + " " + "desc,");
+						result.append(orderMembers.get(0) + " " + "DESC,");
 					} else {
 						throw new IllegalArgumentException("排序模式只能为asc和desc");
 					}
@@ -82,8 +88,8 @@ public abstract class BaseQuery {
 	}
 
 	public static class Limit {
-		private int startRow;
-		private int size;
+		/** 开始行号 */
+		private int startRow = 0;
 		/** 当前页 */
 		private int currentPage = 1;
 		/** 页大小 */
@@ -97,7 +103,6 @@ public abstract class BaseQuery {
 				pageSize = 10;
 			}
 			this.startRow = (currentPage - 1) * pageSize;
-			this.size = pageSize;
 		}
 
 		public Limit() {
@@ -113,30 +118,32 @@ public abstract class BaseQuery {
 			this.init();
 		}
 
-		/** 获取sql语句limit后面的后门部分 */
-		public String toLimit() {
-			this.init();
-			return startRow + ", " + size;
-		}
-
 		/** 获取当前页号 */
 		public int getCurrentPage() {
-			this.init();
 			return currentPage;
 		}
 
 		/** 获取页大小 */
 		public int getPageSize() {
-			this.init();
 			return pageSize;
 		}
 
 		public void setCurrentPage(int currentPage) {
 			this.currentPage = currentPage;
+			this.init();
 		}
 
 		public void setPageSize(int pageSize) {
 			this.pageSize = pageSize;
+			this.init();
 		}
+
+		public int getStartRow() {
+			return this.startRow;
+		}
+	}
+
+	public static enum JoinType {
+		LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin;
 	}
 }

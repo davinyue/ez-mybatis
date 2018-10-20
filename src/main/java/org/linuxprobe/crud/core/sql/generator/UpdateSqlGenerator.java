@@ -20,7 +20,7 @@ import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
 /** 更新sql语句生成器 */
-public class UpdateSqlGenerator {
+public class UpdateSqlGenerator extends SqlGenerator {
 	private UpdateSqlGenerator() {
 	}
 
@@ -35,7 +35,8 @@ public class UpdateSqlGenerator {
 	/** 生成字段全更新sql */
 	public static String toGlobalUpdateSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuilder sqlBuilder = new StringBuilder("update `" + table + "` set ");
+		StringBuilder sqlBuilder = new StringBuilder(
+				"UPDATE " + getEscapeCharacter() + table + getEscapeCharacter() + " SET ");
 		List<ColumnField> columnFields = getColumnFields(entity, true);
 		ColumnField primaryKey = null;
 		for (ColumnField columnField : columnFields) {
@@ -48,18 +49,21 @@ public class UpdateSqlGenerator {
 		}
 		for (int i = 0; i < columnFields.size(); i++) {
 			ColumnField columnField = columnFields.get(i);
-			sqlBuilder.append("`" + columnField.getColumn() + "` = " + columnField.getValue() + ", ");
+			sqlBuilder.append(getEscapeCharacter() + columnField.getColumn() + getEscapeCharacter() + " = "
+					+ columnField.getValue() + ", ");
 		}
 		if (sqlBuilder.indexOf(",") != -1)
 			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), " ");
-		sqlBuilder.append("where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue());
+		sqlBuilder.append("WHERE " + getEscapeCharacter() + primaryKey.getColumn() + getEscapeCharacter() + " = "
+				+ primaryKey.getValue());
 		return sqlBuilder.toString();
 	}
 
 	/** 生成字段选择更新sql */
 	public static String toLocalUpdateSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuilder sqlBuilder = new StringBuilder("update `" + table + "` set ");
+		StringBuilder sqlBuilder = new StringBuilder(
+				"UPDATE " + getEscapeCharacter() + table + getEscapeCharacter() + " SET ");
 		List<ColumnField> columnFields = getColumnFields(entity, false);
 		ColumnField primaryKey = null;
 		for (ColumnField columnField : columnFields) {
@@ -73,12 +77,14 @@ public class UpdateSqlGenerator {
 		for (int i = 0; i < columnFields.size(); i++) {
 			ColumnField columnField = columnFields.get(i);
 			if (columnField.getValue() != null) {
-				sqlBuilder.append("`" + columnField.getColumn() + "` = " + columnField.getValue() + ", ");
+				sqlBuilder.append(getEscapeCharacter() + columnField.getColumn() + getEscapeCharacter() + " = "
+						+ columnField.getValue() + ", ");
 			}
 		}
 		if (sqlBuilder.indexOf(",") != -1)
 			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), " ");
-		sqlBuilder.append("where `" + primaryKey.getColumn() + "` = " + primaryKey.getValue());
+		sqlBuilder.append("WHERE " + getEscapeCharacter() + primaryKey.getColumn() + getEscapeCharacter() + " = "
+				+ primaryKey.getValue());
 		return sqlBuilder.toString();
 	}
 

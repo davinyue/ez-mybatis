@@ -21,7 +21,7 @@ import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
 /** 插入sql语句生成器 */
-public class InsertSqlGenerator {
+public class InsertSqlGenerator extends SqlGenerator {
 
 	private InsertSqlGenerator() {
 	}
@@ -37,9 +37,10 @@ public class InsertSqlGenerator {
 	/** 生成插入sql */
 	public static String toInsertSql(Object entity) {
 		String table = EntityUtils.getTable(entity.getClass());
-		StringBuilder sqlBuilder = new StringBuilder("insert into `" + table + "` ");
+		StringBuilder sqlBuilder = new StringBuilder(
+				"INSERT INTO " + getEscapeCharacter() + table + getEscapeCharacter() + " ");
 		StringBuilder clounms = new StringBuilder("(");
-		StringBuilder values = new StringBuilder(" values(");
+		StringBuilder values = new StringBuilder(" VALUES(");
 		List<ColumnField> columnFields = getColumnFields(entity);
 		if (columnFields.isEmpty()) {
 			throw new OperationNotSupportedException("该实体类没有任何字段");
@@ -47,10 +48,10 @@ public class InsertSqlGenerator {
 		for (int i = 0; i < columnFields.size(); i++) {
 			ColumnField columnField = columnFields.get(i);
 			if (i + 1 == columnFields.size()) {
-				clounms.append("`" + columnField.getColumn() + "`)");
+				clounms.append(getEscapeCharacter() + columnField.getColumn() + getEscapeCharacter() + ")");
 				values.append(columnField.getValue() + ")");
 			} else {
-				clounms.append("`" + columnField.getColumn() + "`, ");
+				clounms.append(getEscapeCharacter() + columnField.getColumn() + getEscapeCharacter() + ", ");
 				values.append(columnField.getValue() + ", ");
 			}
 		}
@@ -71,7 +72,7 @@ public class InsertSqlGenerator {
 					sqlBuilder.append(toInsertSql(entity));
 				} else {
 					String sql = toInsertSql(entity);
-					String sqlValue = sql.substring(sql.indexOf("values") + 6);
+					String sqlValue = sql.substring(sql.indexOf("VALUES") + 6);
 					sqlBuilder.append(", " + sqlValue);
 				}
 			}

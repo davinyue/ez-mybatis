@@ -14,13 +14,14 @@ import org.linuxprobe.crud.core.annoatation.JoinColumn;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Search;
 import org.linuxprobe.crud.core.query.BaseQuery;
+import org.linuxprobe.crud.core.query.BaseQuery.JoinType;
 import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
-public class SelectSqlGenerator {
+public class SelectSqlGenerator extends SqlGenerator {
 	private static ThreadLocal<Map<Object, String>> alias = new ThreadLocal<>();
 
 	private static Map<Object, String> getAlias() {
@@ -45,9 +46,10 @@ public class SelectSqlGenerator {
 	/** 转换为查询sql */
 	public static String toSelectSql(Object searcher) {
 		String alias = getAlias(searcher);
-		StringBuilder sqlBuilder = new StringBuilder(
-				"select distinct `" + alias + "`.* from `" + getTable(searcher.getClass()) + "` as `" + alias + "` ");
-		sqlBuilder.append(toLeftJoin(searcher));
+		StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT " + getEscapeCharacter() + alias
+				+ getEscapeCharacter() + ".* FROM " + getEscapeCharacter() + getTable(searcher.getClass())
+				+ getEscapeCharacter() + " AS " + getEscapeCharacter() + alias + getEscapeCharacter() + " ");
+		sqlBuilder.append(toJoin(searcher));
 		sqlBuilder.append(getFormatWhere(searcher));
 		sqlBuilder.append(toOrder(searcher));
 		sqlBuilder.append(toLimit(searcher));
@@ -57,10 +59,12 @@ public class SelectSqlGenerator {
 
 	/** 转换为查询数量的sql */
 	public static String toSelectCountSql(Object searcher, String clounm) {
-		String countFun = "count(distinct `" + getAlias(searcher) + "`.`" + clounm + "`)";
-		StringBuilder sqlBuilder = new StringBuilder("select " + countFun + " from `" + getTable(searcher.getClass())
-				+ "` as `" + getAlias(searcher) + "` ");
-		sqlBuilder.append(toLeftJoin(searcher));
+		String countFun = "COUNT(DISTINCT " + getEscapeCharacter() + getAlias(searcher) + getEscapeCharacter() + "."
+				+ getEscapeCharacter() + clounm + getEscapeCharacter() + ")";
+		StringBuilder sqlBuilder = new StringBuilder("SELECT " + countFun + " FROM " + getEscapeCharacter()
+				+ getTable(searcher.getClass()) + getEscapeCharacter() + " AS " + getEscapeCharacter()
+				+ getAlias(searcher) + getEscapeCharacter() + " ");
+		sqlBuilder.append(toJoin(searcher));
 		sqlBuilder.append(getFormatWhere(searcher));
 		SelectSqlGenerator.alias.remove();
 		return sqlBuilder.toString();
@@ -68,18 +72,20 @@ public class SelectSqlGenerator {
 
 	/** 转换为查询主键数量的sql */
 	public static String toSelectCountSql(Object searcher) {
-		String countFun = "count(distinct `" + getAlias(searcher) + "`.`"
-				+ getPrimaryKeyName(getModelType(searcher.getClass())) + "`)";
-		StringBuilder sqlBuilder = new StringBuilder("select " + countFun + " from `" + getTable(searcher.getClass())
-				+ "` as `" + getAlias(searcher) + "` ");
-		sqlBuilder.append(toLeftJoin(searcher));
+		String countFun = "COUNT(DISTINCT " + getEscapeCharacter() + getAlias(searcher) + getEscapeCharacter() + "."
+				+ getEscapeCharacter() + getPrimaryKeyName(getModelType(searcher.getClass())) + getEscapeCharacter()
+				+ ")";
+		StringBuilder sqlBuilder = new StringBuilder("SELECT " + countFun + " FROM " + getEscapeCharacter()
+				+ getTable(searcher.getClass()) + getEscapeCharacter() + " AS " + getEscapeCharacter()
+				+ getAlias(searcher) + getEscapeCharacter() + " ");
+		sqlBuilder.append(toJoin(searcher));
 		sqlBuilder.append(getFormatWhere(searcher));
 		SelectSqlGenerator.alias.remove();
 		return sqlBuilder.toString();
 	}
 
 	/** 转换为left join part */
-	private static StringBuilder toLeftJoin(Object searcher) {
+	private static StringBuilder toJoin(Object searcher) {
 		List<Field> fields = FieldUtils.getAllFields(searcher.getClass());
 		StringBuilder joinBuffer = new StringBuilder();
 		for (Field field : fields) {
@@ -128,10 +134,28 @@ public class SelectSqlGenerator {
 					/** 获取需要链接的表名 */
 					String joinTable = getTable(field.getType());
 					String joinTableAlias = getAlias(member);
-					joinBuffer.append("left join `" + joinTable + "` as `" + joinTableAlias + "` on ");
-					joinBuffer.append("`" + joinTableAlias + "`.`" + subordinateColumn + "` = ");
-					joinBuffer.append("`" + getAlias(searcher) + "`.`" + principalColumn + "` ");
-					joinBuffer.append(toLeftJoin(member));
+					/** 处理连接方式 */
+					String joinStr = "LEFT";
+					if (BaseQuery.class.isAssignableFrom(member.getClass())) {
+						BaseQuery joinSearchObj = (BaseQuery) member;
+						JoinType joinType = joinSearchObj.getJoinType();
+						if (joinType.equals(JoinType.RightJoin)) {
+							joinStr = "RIGHT";
+						} else if (joinType.equals(JoinType.FullJoin)) {
+							joinStr = "FULL";
+						} else if (joinType.equals(JoinType.InnerJoin)) {
+							joinStr = "INNER";
+						} else if (joinType.equals(JoinType.CrossJoin)) {
+							joinStr = "CROSS";
+						}
+					}
+					joinBuffer.append(joinStr + " JOIN " + getEscapeCharacter() + joinTable + getEscapeCharacter()
+							+ " AS " + getEscapeCharacter() + joinTableAlias + getEscapeCharacter() + " ON ");
+					joinBuffer.append(getEscapeCharacter() + joinTableAlias + getEscapeCharacter() + "."
+							+ getEscapeCharacter() + subordinateColumn + getEscapeCharacter() + " = ");
+					joinBuffer.append(getEscapeCharacter() + getAlias(searcher) + getEscapeCharacter() + "."
+							+ getEscapeCharacter() + principalColumn + getEscapeCharacter() + " ");
+					joinBuffer.append(toJoin(member));
 				}
 			}
 		}
@@ -161,7 +185,7 @@ public class SelectSqlGenerator {
 		}
 		if (result.indexOf(", ") != -1) {
 			result.delete(result.length() - 2, result.length());
-			result.insert(0, "order by ");
+			result.insert(0, "ORDER BY ");
 		}
 		result.append(" ");
 		return result;
@@ -182,13 +206,15 @@ public class SelectSqlGenerator {
 				if (searcherField.getName().equals(fieldName)) {
 					/** 如果是查询类参数对象 */
 					if (QueryParam.class.isAssignableFrom(searcherField.getType())) {
-						String orderName = "`" + getAlias(searcher) + "`.`" + StringHumpTool.humpToLine2(fieldName, "_")
-								+ "`";
+						String orderName = getEscapeCharacter() + getAlias(searcher) + getEscapeCharacter() + "."
+								+ getEscapeCharacter() + StringHumpTool.humpToLine2(fieldName, "_")
+								+ getEscapeCharacter();
 						/** 如果标有列注解 */
 						if (searcherField.isAnnotationPresent(Column.class)) {
 							Column column = searcherField.getAnnotation(Column.class);
 							if (!column.value().trim().isEmpty()) {
-								orderName = "`" + getAlias(searcher) + "`.`" + column.value().trim() + "`";
+								orderName = getEscapeCharacter() + getAlias(searcher) + getEscapeCharacter() + "."
+										+ getEscapeCharacter() + column.value().trim() + getEscapeCharacter();
 							}
 						}
 						return orderName;
@@ -215,12 +241,18 @@ public class SelectSqlGenerator {
 		return null;
 	}
 
-	/** 转换为order by part */
+	/** 转换为分页部分 */
 	private static String toLimit(Object searcher) {
 		if (BaseQuery.class.isAssignableFrom(searcher.getClass())) {
 			BaseQuery baseQuery = (BaseQuery) searcher;
 			if (baseQuery.getLimit() != null) {
-				return "limit " + baseQuery.getLimit().toLimit() + " ";
+				if (DataBaseType.Mysql.equals(SqlGenerator.getDataBaseType())) {
+					return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize()
+							+ " ";
+				} else if (DataBaseType.Postgre.equals(SqlGenerator.getDataBaseType())) {
+					return "LIMIT " + baseQuery.getLimit().getPageSize() + " OFFSET "
+							+ baseQuery.getLimit().getStartRow() + " ";
+				}
 			}
 		}
 		return "";
@@ -264,8 +296,9 @@ public class SelectSqlGenerator {
 			if (QueryParam.class.isAssignableFrom(field.getType())) {
 				QueryParam baseMember = (QueryParam) member;
 				if (!baseMember.isEmpty()) {
-					result.add(baseMember.getCondition() + " `" + getAlias(searcher) + "`.`" + columnName + "` "
-							+ baseMember.toSqlPart() + " ");
+					result.add(baseMember.getCondition() + " " + getEscapeCharacter() + getAlias(searcher)
+							+ getEscapeCharacter() + "." + getEscapeCharacter() + columnName + getEscapeCharacter()
+							+ " " + baseMember.toSqlPart() + " ");
 				}
 			}
 			/** 如果是关联查询对象 */
@@ -291,9 +324,9 @@ public class SelectSqlGenerator {
 			resultBuffer.append(where);
 		}
 		/** 有条件 */
-		if (resultBuffer.indexOf("and") != -1 || resultBuffer.indexOf("or") != -1) {
+		if (resultBuffer.indexOf("AND") != -1 || resultBuffer.indexOf("OR") != -1) {
 			resultBuffer.delete(0, resultBuffer.indexOf(" "));
-			resultBuffer.insert(0, "where");
+			resultBuffer.insert(0, "WHERE");
 		}
 		return resultBuffer;
 	}

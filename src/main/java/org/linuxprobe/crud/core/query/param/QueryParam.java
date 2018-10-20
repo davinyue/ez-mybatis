@@ -107,7 +107,7 @@ public abstract class QueryParam {
 
 		@Getter
 		private String condition;
-		public static final Condition and = new Condition("and");
-		public static final Condition or = new Condition("or");
+		public static final Condition and = new Condition("AND");
+		public static final Condition or = new Condition("OR");
 	}
 }
