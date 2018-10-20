@@ -52,6 +52,8 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 ---
 在执行操作前，配置数据类型，可把此操作放在spring bean里面
 ```
+import org.linuxprobe.crud.core.sql.generator.SqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.SqlGenerator.DataBaseType;
 SqlGenerator.setDataBaseType(DataBaseType.Mysql);
 ```
 
