@@ -1,5 +1,7 @@
 [1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.7.md)
+
 [1.1.9之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.9.md)
+
 更新:
 支持指定连接查询方式，支持postgreSql。
 
