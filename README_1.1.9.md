@@ -1,7 +1,7 @@
-[1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.7.md)
-[1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.9.md)
-更新:
-支持指定连接查询方式，支持postgreSql。
+[1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.7.md)
+
+fix:
+修复sql生成类可能引起内存溢出的bug。
 
 简介：
 ==
@@ -15,7 +15,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 3.	支持插入和批量插入。
 4.	支持字段全更新和部分更新。
 5.	支持删除和批量删除同一类型实体。
-6.	支持深层次的join查询，支持排序，用户可指定where条件操作符，where条件链接符(and,or)，同时处理了关键字符的转义，防止sql注入，但不支持实体的关联加载，如果有关联加载的需求，用户只需按照实例编写自己的映射文件，修改返回结果映射即可。
+6.	支持深层次的left join查询，支持排序，用户可指定where条件操作符，where条件链接符(and,or)，同时处理了关键字符的转义，防止sql注入，但不支持实体的关联加载，如果有关联加载的需求，用户只需按照实例编写自己的映射文件，修改返回结果映射即可。
 7.	实体字段与数据库字段的映射默认是驼峰转下划线，可通过注解指定数据库的列名。
 8.	修改数据库表信息后，只需修改对应实体即可，无需修改映射文件。
 
@@ -28,7 +28,7 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 <dependency>
 	<groupId>org.linuxprobe</groupId>
 	<artifactId>mybatis-universal-crud-simple</artifactId>
-	<version>1.2.0.RELEASE</version>
+	<version>1.1.8.RELEASE</version>
 </dependency>
 ```
 2.bean扫描配置
@@ -73,15 +73,14 @@ package org.linuxprobe.demo.model;
 
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Table;
+import org.linuxprobe.crud.model.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 
 @Table("org")
 @Getter
 @Setter
-public class Org {
-	@PrimaryKey
-	private String id;
+public class Org extends BaseModel{
 	private String name;
 }
 ```
