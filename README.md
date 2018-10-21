@@ -1,5 +1,7 @@
 [1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.7.md)
-[1.1.8之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.9.md)
+
+[1.1.9之前的版本请点击这里查看文档](https://github.com/linuxprobe-org/mybatis-universal-crud-simple/blob/master/README_1.1.9.md)
+
 更新:
 支持指定连接查询方式，支持postgreSql。
 
@@ -43,8 +45,18 @@ mybatis-universal-crud-simple基于java反射开发，选择运行于mybatis上�
 ```
 
 3.配置mybatis
-配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口，如果是spring boot配置了@MapperScan({ "org.linuxprobe.crud.mapper" })则不需要配置此项。
 ---
+配置mybatis扫描/src/main/java/org/linuxprobe/crud/mapper/下的接口，如果是spring boot配置了@MapperScan({ "org.linuxprobe.crud.mapper" })则不需要配置此项。
+
+4.配置数据库类型
+---
+在执行操作前，配置数据类型，可把此操作放在spring bean里面
+```
+import org.linuxprobe.crud.core.sql.generator.SqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.SqlGenerator.DataBaseType;
+SqlGenerator.setDataBaseType(DataBaseType.Mysql);
+```
+
 
 性能良好
 ===
