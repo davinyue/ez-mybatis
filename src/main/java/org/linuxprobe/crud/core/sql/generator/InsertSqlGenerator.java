@@ -182,7 +182,7 @@ public class InsertSqlGenerator extends SqlGenerator {
 						/** 如果指定主键生成模式是uuid */
 						if (primaryKey.value().equals(PrimaryKey.Strategy.UUID)) {
 							try {
-								String uuid = UUID.randomUUID().toString();
+								String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 								Method setFun = entity.getClass().getMethod("set" + funSuffix, String.class);
 								setFun.invoke(entity, uuid);
 								value = "'" + uuid + "'";
