@@ -27,6 +27,10 @@ public interface UniversalMapper {
 	/** 通用查询 */
 	@SelectProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	public List<Map<String, Object>> universalSelect(String sql);
+	
+	/** 通用查询 */
+	@SelectProvider(type = MybatisSqlGenerator.class, method = "getSql")
+	public Map<String, Object> universalSelectOne(String sql);
 
 	/** 查询数量 */
 	@SelectProvider(type = MybatisSqlGenerator.class, method = "getSql")
