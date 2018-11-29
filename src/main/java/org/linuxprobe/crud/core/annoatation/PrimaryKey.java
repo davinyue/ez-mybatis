@@ -20,7 +20,7 @@ public @interface PrimaryKey {
 		NATIVE,
 		/** 由uuid生成 */
 		UUID,
-		/** 由程序指定 */
+		/** 自指定 */
 		ASSIGNED
 	}
 }
