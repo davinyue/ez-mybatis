@@ -70,7 +70,9 @@ public class ClassScan {
 				.getResources(basePack.replace(".", "/"));
 		List<Class<?>> result = new LinkedList<>();
 		while (urlEnumeration.hasMoreElements()) {
-			/** 得到的结果大概是：jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit */
+			/**
+			 * 得到的结果大概是：jar:file:/C:/Users/ibm/.m2/repository/junit/junit/4.12/junit-4.12.jar!/org/junit
+			 */
 			URL url = urlEnumeration.nextElement();
 			/** 大概是jar */
 			String protocol = url.getProtocol();
@@ -84,8 +86,7 @@ public class ClassScan {
 						Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
 						while (jarEntryEnumeration.hasMoreElements()) {
 							/**
-							 * entry的结果大概是这样： org/ org/junit/ org/junit/rules/
-							 * org/junit/runners/
+							 * entry的结果大概是这样： org/ org/junit/ org/junit/rules/ org/junit/runners/
 							 */
 							JarEntry entry = jarEntryEnumeration.nextElement();
 							String jarEntryName = entry.getName();
@@ -113,13 +114,16 @@ public class ClassScan {
 	/**
 	 * 扫描指定包下面的类
 	 * 
-	 * @param basePackage
-	 *            需扫描包
+	 * @param basePackage 需扫描包
 	 */
-	public static List<Class<?>> scan(String basePackage) throws IOException {
+	public static List<Class<?>> scan(String basePackage) {
 		List<Class<?>> result = new LinkedList<>();
 		result.addAll(ClassScan.scanDirClass(basePackage));
-		result.addAll(ClassScan.scanJarClass(basePackage));
+		try {
+			result.addAll(ClassScan.scanJarClass(basePackage));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		return result;
 	}
 }

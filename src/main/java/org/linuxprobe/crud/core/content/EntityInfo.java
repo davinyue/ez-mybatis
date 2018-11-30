@@ -16,21 +16,17 @@ public class EntityInfo {
 		if (entityType == null) {
 			throw new NullPointerException("entityType can't be null");
 		}
-		if (!entityType.isAssignableFrom(Entity.class)) {
+		if (!entityType.isAnnotationPresent(Entity.class)) {
 			throw new IllegalArgumentException(entityType.getName()
 					+ " does not have callout org.linuxprobe.crud.core.annoatation.Entity annotation");
 		} else {
 			this.entityType = entityType;
 			/** handle table name */
-			if (entityType.isAssignableFrom(Entity.class)) {
-				Entity table = entityType.getAnnotation(Entity.class);
-				if (table.value().isEmpty()) {
-					this.tableName = StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
-				} else {
-					this.tableName = table.value();
-				}
-			} else {
+			Entity table = entityType.getAnnotation(Entity.class);
+			if (table.value().isEmpty()) {
 				this.tableName = StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
+			} else {
+				this.tableName = table.value();
 			}
 			/** handle field */
 			this.fieldInfos = new LinkedList<>();

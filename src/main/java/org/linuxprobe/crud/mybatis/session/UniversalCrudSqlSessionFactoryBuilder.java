@@ -1,58 +1,72 @@
 package org.linuxprobe.crud.mybatis.session;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
-import org.apache.ibatis.builder.xml.XMLConfigBuilder;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.exceptions.ExceptionFactory;
+import org.apache.ibatis.executor.ErrorContext;
+import org.linuxprobe.crud.mybatis.session.builder.xml.UniversalCrudXMLConfigBuilder;
 import org.linuxprobe.crud.mybatis.session.defaults.UniversalCrudDefaultSqlSessionFactory;
 
-public class UniversalCrudSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
-	@Override
+public class UniversalCrudSqlSessionFactoryBuilder {
+
 	public UniversalCrudSqlSessionFactory build(Reader reader) {
-		return this.build(reader, null, null);
+		return build(reader, null, null);
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(Reader reader, String environment) {
-		return this.build(reader, environment, null);
+		return build(reader, environment, null);
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(Reader reader, Properties properties) {
-		return this.build(reader, null, properties);
+		return build(reader, null, properties);
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(Reader reader, String environment, Properties properties) {
-		XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
-		return this.build(parser.parse());
+		try {
+			UniversalCrudXMLConfigBuilder parser = new UniversalCrudXMLConfigBuilder(reader, environment, properties);
+			return build(parser.parse());
+		} catch (Exception e) {
+			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+		} finally {
+			ErrorContext.instance().reset();
+			try {
+				reader.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(InputStream inputStream) {
-		return this.build(inputStream, null, null);
+		return build(inputStream, null, null);
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(InputStream inputStream, String environment) {
-		return this.build(inputStream, environment, null);
+		return build(inputStream, environment, null);
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(InputStream inputStream, Properties properties) {
-		return this.build(inputStream, null, properties);
+		return build(inputStream, null, properties);
 	}
 
-	@Override
 	public UniversalCrudSqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
-		XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
-		return this.build(parser.parse());
+		try {
+			UniversalCrudXMLConfigBuilder parser = new UniversalCrudXMLConfigBuilder(inputStream, environment,
+					properties);
+			return build(parser.parse());
+		} catch (Exception e) {
+			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+		} finally {
+			ErrorContext.instance().reset();
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
-	@Override
-	public UniversalCrudSqlSessionFactory build(Configuration config) {
+	public UniversalCrudSqlSessionFactory build(UniversalCrudConfiguration config) {
 		return new UniversalCrudDefaultSqlSessionFactory(config);
 	}
 }

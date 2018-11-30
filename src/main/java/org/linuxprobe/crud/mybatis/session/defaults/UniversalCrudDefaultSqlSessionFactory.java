@@ -2,37 +2,50 @@ package org.linuxprobe.crud.mybatis.session.defaults;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.TransactionIsolationLevel;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
+import org.linuxprobe.crud.core.annoatation.Entity;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.linuxprobe.crud.core.sql.generator.SqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.SqlGenerator.DataBaseType;
+import org.linuxprobe.crud.mybatis.session.UniversalCrudConfiguration;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSession;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSessionFactory;
+import org.linuxprobe.crud.utils.ClassScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFactory
 		implements UniversalCrudSqlSessionFactory {
-	private final Configuration configuration;
+	private static Logger logger = LoggerFactory.getLogger(UniversalCrudDefaultSqlSessionFactory.class);
 
-	public UniversalCrudDefaultSqlSessionFactory(Configuration configuration) {
+	/** mybatis配置 */
+	public UniversalCrudDefaultSqlSessionFactory(UniversalCrudConfiguration configuration) {
 		super(configuration);
-		this.configuration = configuration;
+		if (!configuration.hasMapper(org.linuxprobe.crud.mapper.UniversalMapper.class)) {
+			configuration.addMapper(org.linuxprobe.crud.mapper.UniversalMapper.class);
+		}
+		/** 初始化univerCrud */
+		initUniversalCrud(configuration);
 	}
 
 	@Override
 	public UniversalCrudSqlSession openSession() {
-		return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
+		return openSessionFromDataSource(getConfiguration().getDefaultExecutorType(), null, false);
 	}
 
 	@Override
 	public UniversalCrudSqlSession openSession(boolean autoCommit) {
-		return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, autoCommit);
+		return openSessionFromDataSource(getConfiguration().getDefaultExecutorType(), null, autoCommit);
 	}
 
 	@Override
@@ -42,7 +55,7 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 
 	@Override
 	public UniversalCrudSqlSession openSession(TransactionIsolationLevel level) {
-		return openSessionFromDataSource(configuration.getDefaultExecutorType(), level, false);
+		return openSessionFromDataSource(getConfiguration().getDefaultExecutorType(), level, false);
 	}
 
 	@Override
@@ -57,7 +70,7 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 
 	@Override
 	public UniversalCrudSqlSession openSession(Connection connection) {
-		return openSessionFromConnection(configuration.getDefaultExecutorType(), connection);
+		return openSessionFromConnection(getConfiguration().getDefaultExecutorType(), connection);
 	}
 
 	@Override
@@ -69,11 +82,11 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 			boolean autoCommit) {
 		Transaction tx = null;
 		try {
-			final Environment environment = configuration.getEnvironment();
+			final Environment environment = getConfiguration().getEnvironment();
 			final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
 			tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
-			final Executor executor = configuration.newExecutor(tx, execType);
-			return new UniversalCrudDefaultSqlSession(configuration, executor, autoCommit);
+			final Executor executor = getConfiguration().newExecutor(tx, execType);
+			return new UniversalCrudDefaultSqlSession(getConfiguration(), executor, autoCommit);
 		} catch (Exception e) {
 			closeTransaction(tx);
 			throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
@@ -90,11 +103,11 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 			} catch (SQLException e) {
 				autoCommit = true;
 			}
-			final Environment environment = configuration.getEnvironment();
+			final Environment environment = getConfiguration().getEnvironment();
 			final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
 			final Transaction tx = transactionFactory.newTransaction(connection);
-			final Executor executor = configuration.newExecutor(tx, execType);
-			return new UniversalCrudDefaultSqlSession(configuration, executor, autoCommit);
+			final Executor executor = getConfiguration().newExecutor(tx, execType);
+			return new UniversalCrudDefaultSqlSession(getConfiguration(), executor, autoCommit);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
 		} finally {
@@ -114,6 +127,26 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 			try {
 				tx.close();
 			} catch (SQLException ignore) {
+			}
+		}
+	}
+
+	@Override
+	public UniversalCrudConfiguration getConfiguration() {
+		return (UniversalCrudConfiguration) super.getConfiguration();
+	}
+
+	/** 初始化univerCrud */
+	private void initUniversalCrud(UniversalCrudConfiguration configuration) {
+		if (configuration.getDriver().indexOf("mysql") != -1) {
+			SqlGenerator.setDataBaseType(DataBaseType.Mysql);
+		}
+		/** 扫描类信息 */
+		List<Class<?>> classs = ClassScan.scan(configuration.getUniversalCrudScan());
+		for (Class<?> clazz : classs) {
+			if (clazz.isAnnotationPresent(Entity.class)) {
+				logger.debug("scan entity " + clazz.getName());
+				UniversalCrudContent.addEntityInfo(clazz);
 			}
 		}
 	}
