@@ -30,12 +30,11 @@ public class EntityInfo {
 			}
 			/** handle field */
 			this.fieldInfos = new LinkedList<>();
-			List<Field> fields = FieldUtils.getAllFields(entityType);
+			List<Field> fields = FieldUtils.getAllSqlSupportFields(entityType);
 			if (null != fields && !fields.isEmpty()) {
 				for (Field field : fields) {
 					String fieldName = field.getName();
 					String filedColumn = fieldName;
-					Class<?> fiedCloumnType = field.getType();
 					/** 如果有column注解 */
 					if (field.isAnnotationPresent(Column.class)) {
 						Column column = field.getAnnotation(Column.class);
@@ -46,11 +45,10 @@ public class EntityInfo {
 					/** 如果该字段是主键 */
 					FieldInfo fieldInfo = null;
 					if (field.isAnnotationPresent(PrimaryKey.class)) {
-						fieldInfo = new FieldInfo(fieldName, filedColumn, fiedCloumnType,
-								field.getAnnotation(PrimaryKey.class));
+						fieldInfo = new FieldInfo(field, filedColumn, field.getAnnotation(PrimaryKey.class));
 						this.primaryKey = fieldInfo;
 					} else {
-						fieldInfo = new FieldInfo(fieldName, filedColumn, fiedCloumnType);
+						fieldInfo = new FieldInfo(field, filedColumn);
 					}
 					this.fieldInfos.add(fieldInfo);
 				}
@@ -83,7 +81,7 @@ public class EntityInfo {
 			return false;
 		} else {
 			for (FieldInfo fieldInfo : fieldInfos) {
-				if (fieldInfo.getFieldName().equals(field)) {
+				if (fieldInfo.getField().getName().equals(field)) {
 					return true;
 				}
 			}
@@ -93,23 +91,21 @@ public class EntityInfo {
 
 	@Getter
 	public static class FieldInfo {
-		public FieldInfo(String fieldName, String filedColumn, Class<?> fieldType, PrimaryKey primaryKey) {
-			this.fieldName = fieldName;
+		public FieldInfo(Field field, String filedColumn, PrimaryKey primaryKey) {
+			this.field = field;
 			this.filedColumn = filedColumn;
-			this.fieldType = fieldType;
 			if (primaryKey != null) {
 				this.primaryKey = primaryKey;
 				this.isPrimaryKey = true;
 			}
 		}
 
-		public FieldInfo(String fieldName, String filedColumn, Class<?> fieldType) {
-			this(fieldName, filedColumn, fieldType, null);
+		public FieldInfo(Field field, String filedColumn) {
+			this(field, filedColumn, null);
 		}
 
-		private String fieldName;
+		private Field field;
 		private String filedColumn;
-		private Class<?> fieldType;
 		private boolean isPrimaryKey = false;
 		private PrimaryKey primaryKey;
 	}

@@ -20,10 +20,6 @@ public interface UniversalMapper {
 	@DeleteProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	int delete(String sql);
 
-	/** 批量删除 */
-	@DeleteProvider(type = MybatisSqlGenerator.class, method = "getSql")
-	long batchDelete(String sql);
-
 	/** 通用查询 */
 	@SelectProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	public List<Map<String, Object>> universalSelect(String sql);

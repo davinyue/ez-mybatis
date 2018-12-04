@@ -1,6 +1,8 @@
 package org.linuxprobe.crud.mybatis.session.defaults;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,16 +10,23 @@ import java.util.Set;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
+import org.linuxprobe.crud.core.annoatation.PrimaryKey.Strategy;
+import org.linuxprobe.crud.core.content.EntityInfo;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
+import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSession;
 import org.linuxprobe.crud.utils.EntityUtils;
+import org.linuxprobe.crud.utils.FieldUtils;
 
 public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements UniversalCrudSqlSession {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
 	private static final String selectOneStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelectOne";
+	private static final String selectCountStatement = "org.linuxprobe.crud.mapper.UniversalMapper.selectCount";
 	private static final String insertStatement = "org.linuxprobe.crud.mapper.UniversalMapper.insert";
+	private static final String deleteStatement = "org.linuxprobe.crud.mapper.UniversalMapper.delete";
 
 	public UniversalCrudDefaultSqlSession(Configuration configuration, Executor executor) {
 		super(configuration, executor);
@@ -29,7 +38,6 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 
 	@Override
 	public List<Map<String, Object>> universalSelect(BaseQuery param) {
-
 		String sql = SelectSqlGenerator.toSelectSql(param);
 		List<Map<String, Object>> reslut = super.selectList(selectStatement, sql);
 		return reslut;
@@ -58,12 +66,73 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 		}
 		return records;
 	}
+	
+	@Override
+	public long selectCount(BaseQuery param) {
+		SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
+		super.selectOne(selectCountStatement, selectSqlGenerator.toSelectCountSql(param));
+		return 0L;
+	}
 
 	@Override
 	public int insert(Object record) {
-		int result = super.insert(insertStatement, InsertSqlGenerator.toInsertSql(record));
-		Object i= super.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
-		System.out.println(i.getClass()+"   "+i);
+		InsertSqlGenerator insertSqlGenerator = UniversalCrudContent.getInsertSqlGenerator();
+		int result = super.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
+		if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
+			Map<String, Object> idMap = super.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
+			try {
+				Number id = (Number) idMap.get("id");
+				if (entityInfo.getPrimaryKey().getField().getType().equals(Long.class)) {
+					id = id.longValue();
+				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Integer.class)) {
+					id = id.intValue();
+				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
+					id = id.shortValue();
+				}
+				FieldUtils.setField(record, entityInfo.getPrimaryKey().getField(), id);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
 		return result;
+	}
+
+	@Override
+	public <T> int batchInsert(Collection<T> records) {
+		if (records == null || records.isEmpty()) {
+			return 0;
+		} else {
+			int result = 0;
+			for (T record : records) {
+				this.insert(record);
+				result++;
+			}
+			return result;
+		}
+	}
+
+	@Override
+	public int deleteByPrimaryKey(Serializable id, Class<?> entityType) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return super.delete(deleteStatement, deleteSqlGenerator.toDeleteSqlByPrimaryKey(id, entityType));
+	}
+
+	@Override
+	public int batchDeleteByPrimaryKey(Collection<Serializable> ids, Class<?> entityType) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return super.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSqlByPrimaryKey(ids, entityType));
+	}
+
+	@Override
+	public int delete(Object record) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return super.delete(deleteStatement, deleteSqlGenerator.toDeleteSql(record));
+	}
+
+	@Override
+	public int batchDelete(Collection<Object> records) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return super.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSql(records));
 	}
 }

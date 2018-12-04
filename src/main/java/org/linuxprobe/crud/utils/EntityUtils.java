@@ -7,9 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import org.linuxprobe.crud.core.annoatation.Column;
-import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
+import org.linuxprobe.crud.core.content.EntityInfo;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
 
 public class EntityUtils {
@@ -115,18 +116,12 @@ public class EntityUtils {
 	}
 
 	/** 获取实体主键 */
+	@Deprecated
 	public static ColumnField getPrimaryKey(Object entity) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		List<Field> fields = FieldUtils.getAllFields(entity.getClass());
 		ColumnField result = null;
-		Field primaryKey = null;
-		for (int i = 0; i < fields.size(); i++) {
-			Field field = fields.get(i);
-			if (field.isAnnotationPresent(PrimaryKey.class)) {
-				primaryKey = field;
-				break;
-			}
-		}
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
+		Field primaryKey = entityInfo.getPrimaryKey().getField();
 		if (primaryKey != null) {
 			result = new ColumnField();
 			String fieldName = primaryKey.getName();
