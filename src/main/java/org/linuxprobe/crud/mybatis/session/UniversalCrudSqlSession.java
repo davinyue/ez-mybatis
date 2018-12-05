@@ -24,5 +24,5 @@ public interface UniversalCrudSqlSession extends SqlSession {
 
 	public int delete(Object record);
 
-	public int batchDelete(Collection<Object> records);
+	public int batchDelete(Collection<?> records);
 }

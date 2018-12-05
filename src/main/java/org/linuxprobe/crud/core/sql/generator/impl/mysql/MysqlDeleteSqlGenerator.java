@@ -41,7 +41,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 
 	public String toBatchDeleteSql(Collection<?> entitys) {
 		if (entitys == null || entitys.isEmpty()) {
-			throw new IllegalArgumentException("entitys can't be null");
+			throw new IllegalArgumentException("entitys can't be empty");
 		}
 		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM `");
 		Iterator<?> entityIterator = entitys.iterator();
@@ -52,13 +52,12 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 				EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
 				table = entityInfo.getTableName();
 				sqlBuilder.append(table + "` WHERE `" + entityInfo.getPrimaryKey().getFiledColumn() + "` IN(");
-			} else {
-				Serializable idValue = SqlFieldUtil.getPrimaryKeyValue(entity);
-				if (String.class.isAssignableFrom(idValue.getClass())) {
-					idValue = "'" + idValue + "'";
-				}
-				sqlBuilder.append(idValue + ", ");
 			}
+			Serializable idValue = SqlFieldUtil.getPrimaryKeyValue(entity);
+			if (String.class.isAssignableFrom(idValue.getClass())) {
+				idValue = "'" + idValue + "'";
+			}
+			sqlBuilder.append(idValue + ", ");
 		}
 		if (sqlBuilder.lastIndexOf(", ") != -1) {
 			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), "");
@@ -81,9 +80,9 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		while (idIterator.hasNext()) {
 			Serializable idValue = idIterator.next();
 			if (String.class.isAssignableFrom(idValue.getClass())) {
-				idValue = "'" + idValue + "'";
+				idValue = "'" + idValue + "', ";
 			}
-			sqlBuilder.append(idValue);
+			sqlBuilder.append(idValue + ", ");
 		}
 		if (sqlBuilder.lastIndexOf(", ") != -1) {
 			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), "");

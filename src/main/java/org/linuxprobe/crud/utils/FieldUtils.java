@@ -87,4 +87,14 @@ public class FieldUtils {
 			methodOfSet.invoke(obj, arg);
 		}
 	}
+
+	public static Object getFieldValue(Object obj, Field field) {
+		Method getMethod = getMethodOfFieldGet(obj.getClass(), field);
+		try {
+			Object value = getMethod.invoke(obj);
+			return value;
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.Entity;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
+import org.linuxprobe.crud.core.annoatation.Transient;
 import org.linuxprobe.crud.utils.FieldUtils;
 import org.linuxprobe.crud.utils.StringHumpTool;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class EntityInfo {
 			List<Field> fields = FieldUtils.getAllSqlSupportFields(entityType);
 			if (null != fields && !fields.isEmpty()) {
 				for (Field field : fields) {
+					if (field.isAnnotationPresent(Transient.class)) {
+						continue;
+					}
 					String fieldName = field.getName();
 					String filedColumn = fieldName;
 					/** 如果有column注解 */

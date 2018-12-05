@@ -66,7 +66,7 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 		}
 		return records;
 	}
-	
+
 	@Override
 	public long selectCount(BaseQuery param) {
 		SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
@@ -80,19 +80,22 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 		int result = super.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
 		if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
-			Map<String, Object> idMap = super.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
-			try {
-				Number id = (Number) idMap.get("id");
-				if (entityInfo.getPrimaryKey().getField().getType().equals(Long.class)) {
-					id = id.longValue();
-				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Integer.class)) {
-					id = id.intValue();
-				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
-					id = id.shortValue();
+			Object idValue = FieldUtils.getFieldValue(record, entityInfo.getPrimaryKey().getField());
+			if (idValue == null) {
+				Map<String, Object> idMap = super.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
+				try {
+					Number id = (Number) idMap.get("id");
+					if (entityInfo.getPrimaryKey().getField().getType().equals(Long.class)) {
+						id = id.longValue();
+					} else if (entityInfo.getPrimaryKey().getField().getType().equals(Integer.class)) {
+						id = id.intValue();
+					} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
+						id = id.shortValue();
+					}
+					FieldUtils.setField(record, entityInfo.getPrimaryKey().getField(), id);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new IllegalArgumentException(e);
 				}
-				FieldUtils.setField(record, entityInfo.getPrimaryKey().getField(), id);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new IllegalArgumentException(e);
 			}
 		}
 		return result;
@@ -131,7 +134,7 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	}
 
 	@Override
-	public int batchDelete(Collection<Object> records) {
+	public int batchDelete(Collection<?> records) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
 		return super.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSql(records));
 	}
