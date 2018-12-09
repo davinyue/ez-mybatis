@@ -7,7 +7,7 @@ import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.Entity;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Transient;
-import org.linuxprobe.crud.utils.FieldUtils;
+import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 import lombok.Getter;
 
@@ -31,14 +31,14 @@ public class EntityInfo {
 			}
 			/** handle field */
 			this.fieldInfos = new LinkedList<>();
-			List<Field> fields = FieldUtils.getAllSqlSupportFields(entityType);
+			List<Field> fields = FieldUtil.getAllSqlSupportFields(entityType);
 			if (null != fields && !fields.isEmpty()) {
 				for (Field field : fields) {
 					if (field.isAnnotationPresent(Transient.class)) {
 						continue;
 					}
 					String fieldName = field.getName();
-					String filedColumn = fieldName;
+					String filedColumn = StringHumpTool.humpToLine2(fieldName, "_");
 					/** 如果有column注解 */
 					if (field.isAnnotationPresent(Column.class)) {
 						Column column = field.getAnnotation(Column.class);

@@ -18,7 +18,7 @@ import org.linuxprobe.crud.core.query.BaseQuery.JoinType;
 import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.EntityUtils;
-import org.linuxprobe.crud.utils.FieldUtils;
+import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
 public class SelectSqlGenerator extends SqlGenerator {
@@ -86,7 +86,7 @@ public class SelectSqlGenerator extends SqlGenerator {
 
 	/** 转换为left join part */
 	private static StringBuilder toJoin(Object searcher) {
-		List<Field> fields = FieldUtils.getAllFields(searcher.getClass());
+		List<Field> fields = FieldUtil.getAllFields(searcher.getClass());
 		StringBuilder joinBuffer = new StringBuilder();
 		for (Field field : fields) {
 			/** 如果是关联查询对象 */
@@ -195,7 +195,7 @@ public class SelectSqlGenerator extends SqlGenerator {
 		/** 拆分层次 */
 		String[] fieldNames = fieldName.split("\\.");
 		/** 获取查询对象的成员 */
-		List<Field> searcherFields = FieldUtils.getAllFields(searcher.getClass());
+		List<Field> searcherFields = FieldUtil.getAllFields(searcher.getClass());
 		for (Field searcherField : searcherFields) {
 			/**
 			 * 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
@@ -260,7 +260,7 @@ public class SelectSqlGenerator extends SqlGenerator {
 
 	/** 转换为where part */
 	private static LinkedList<String> toWhere(Object searcher) {
-		List<Field> fields = FieldUtils.getAllFields(searcher.getClass());
+		List<Field> fields = FieldUtil.getAllFields(searcher.getClass());
 		LinkedList<String> result = new LinkedList<>();
 		for (Field field : fields) {
 			/** 获取成员名称 */
@@ -338,7 +338,7 @@ public class SelectSqlGenerator extends SqlGenerator {
 	 *            模型的类型
 	 */
 	private static String getPrimaryKeyName(Class<?> modelType) {
-		List<Field> fields = FieldUtils.getAllFields(modelType);
+		List<Field> fields = FieldUtil.getAllFields(modelType);
 		String primaryKeyName = null;
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(PrimaryKey.class)) {

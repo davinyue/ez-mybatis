@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface PrimaryKey {
 	/** 指定主键生成模式 */
-	public Strategy value() default Strategy.UUID;
+	public Strategy value();
 
 	/** 主键生成模式 */
 	public static enum Strategy {

@@ -19,7 +19,7 @@ import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.utils.FieldUtils;
+import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
 
 public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
@@ -75,7 +75,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 	}
 
 	private Serializable getFieldSqlValue(Object record, Field field) {
-		Method getMethod = FieldUtils.getMethodOfFieldGet(record.getClass(), field);
+		Method getMethod = FieldUtil.getMethodOfFieldGet(record.getClass(), field);
 		Object value = null;
 		try {
 			value = getMethod.invoke(record);
@@ -150,7 +150,7 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 				if (primaryKey.value().equals(PrimaryKey.Strategy.UUID)) {
 					try {
 						String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-						FieldUtils.setField(record, field, uuid);
+						FieldUtil.setField(record, field, uuid);
 						value = "'" + uuid + "'";
 					} catch (Exception e) {
 						throw new OperationNotSupportedException("未找到主键的set方法", e);

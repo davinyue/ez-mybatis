@@ -19,7 +19,7 @@ import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSession;
 import org.linuxprobe.crud.utils.EntityUtils;
-import org.linuxprobe.crud.utils.FieldUtils;
+import org.linuxprobe.crud.utils.FieldUtil;
 
 public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements UniversalCrudSqlSession {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
@@ -80,7 +80,7 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 		int result = super.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
 		if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
-			Object idValue = FieldUtils.getFieldValue(record, entityInfo.getPrimaryKey().getField());
+			Object idValue = FieldUtil.getFieldValue(record, entityInfo.getPrimaryKey().getField());
 			if (idValue == null) {
 				Map<String, Object> idMap = super.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
 				try {
@@ -92,7 +92,7 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 					} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
 						id = id.shortValue();
 					}
-					FieldUtils.setField(record, entityInfo.getPrimaryKey().getField(), id);
+					FieldUtil.setField(record, entityInfo.getPrimaryKey().getField(), id);
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					throw new IllegalArgumentException(e);
 				}

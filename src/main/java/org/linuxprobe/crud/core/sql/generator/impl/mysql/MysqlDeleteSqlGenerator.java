@@ -54,6 +54,9 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 				sqlBuilder.append(table + "` WHERE `" + entityInfo.getPrimaryKey().getFiledColumn() + "` IN(");
 			}
 			Serializable idValue = SqlFieldUtil.getPrimaryKeyValue(entity);
+			if (idValue == null) {
+				throw new NullPointerException(entity.toString() + " id can't be null");
+			}
 			if (String.class.isAssignableFrom(idValue.getClass())) {
 				idValue = "'" + idValue + "'";
 			}

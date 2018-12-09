@@ -26,7 +26,7 @@ public class EntityUtils {
 		if (entityClass == null || columnName == null) {
 			return null;
 		}
-		List<Field> fields = FieldUtils.getAllFields(entityClass);
+		List<Field> fields = FieldUtil.getAllFields(entityClass);
 		/** 注解匹配 */
 		Field columnAnnotationMatch = null;
 		/** 完全匹配 */
@@ -66,7 +66,7 @@ public class EntityUtils {
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Field field = getFieldByColumnName(entity.getClass(), column);
 		if (field != null) {
-			Method methodOfSet = FieldUtils.getMethodOfFieldSet(entity.getClass(), field);
+			Method methodOfSet = FieldUtil.getMethodOfFieldSet(entity.getClass(), field);
 			if (methodOfSet != null) {
 				Class<?> argType = methodOfSet.getParameterTypes()[0];
 				if (arg == null || argType.isAssignableFrom(arg.getClass())) {

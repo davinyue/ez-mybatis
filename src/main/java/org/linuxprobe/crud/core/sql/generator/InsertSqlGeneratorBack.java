@@ -17,7 +17,7 @@ import org.linuxprobe.crud.core.annoatation.Column.LengthHandler;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.EntityUtils;
-import org.linuxprobe.crud.utils.FieldUtils;
+import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
@@ -72,7 +72,7 @@ public class InsertSqlGeneratorBack extends SqlGenerator{
 
 	private static List<ColumnField> getColumnFields(Object entity) {
 		List<ColumnField> result = new LinkedList<>();
-		List<Field> fields = FieldUtils.getAllFields(entity.getClass());
+		List<Field> fields = FieldUtil.getAllFields(entity.getClass());
 		for (int i = 0; i < fields.size(); i++) {
 			Field field = fields.get(i);
 			ColumnField columnField = new ColumnField();

@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /** 类的成员工具类 */
-public class FieldUtils {
+public class FieldUtil {
 	/** 获取该类型的所有成员，包括它的超类的成员 */
 	public static List<Field> getAllFields(Class<?> objClass) {
 		List<Field> fields = Arrays.asList(objClass.getDeclaredFields());
