@@ -37,44 +37,6 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	}
 
 	@Override
-	public List<Map<String, Object>> universalSelect(BaseQuery param) {
-		String sql = SelectSqlGenerator.toSelectSql(param);
-		List<Map<String, Object>> reslut = super.selectList(selectStatement, sql);
-		return reslut;
-	}
-
-	@Override
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
-		List<Map<String, Object>> mapperResults = this.universalSelect(param);
-		List<T> records = new LinkedList<>();
-		for (Map<String, Object> mapperResult : mapperResults) {
-			T model = null;
-			try {
-				model = type.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new IllegalArgumentException(e);
-			}
-			Set<String> columns = mapperResult.keySet();
-			for (String column : columns) {
-				try {
-					EntityUtils.setField(model, column, mapperResult.get(column));
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new RuntimeException(e);
-				}
-			}
-			records.add(model);
-		}
-		return records;
-	}
-
-	@Override
-	public long selectCount(BaseQuery param) {
-		SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
-		super.selectOne(selectCountStatement, selectSqlGenerator.toSelectCountSql(param));
-		return 0L;
-	}
-
-	@Override
 	public int insert(Object record) {
 		InsertSqlGenerator insertSqlGenerator = UniversalCrudContent.getInsertSqlGenerator();
 		int result = super.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
@@ -137,5 +99,90 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	public int batchDelete(Collection<?> records) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
 		return super.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSql(records));
+	}
+
+	@Override
+	public List<Map<String, Object>> universalSelect(BaseQuery param) {
+		String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(param);
+		List<Map<String, Object>> reslut = super.selectList(selectStatement, sql);
+		return reslut;
+	}
+
+	@Override
+	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
+		List<Map<String, Object>> mapperResults = this.universalSelect(param);
+		List<T> records = new LinkedList<>();
+		for (Map<String, Object> mapperResult : mapperResults) {
+			T model = null;
+			try {
+				model = type.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new IllegalArgumentException(e);
+			}
+			Set<String> columns = mapperResult.keySet();
+			for (String column : columns) {
+				try {
+					EntityUtils.setField(model, column, mapperResult.get(column));
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			records.add(model);
+		}
+		return records;
+	}
+
+	@Override
+	public long selectCount(BaseQuery param) {
+		SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
+		return super.selectOne(selectCountStatement, selectSqlGenerator.toSelectCountSql(param));
+	}
+
+	@Override
+	public List<Map<String, Object>> selectBySql(String sql) {
+		List<Map<String, Object>> reslut = super.selectList(selectStatement, sql);
+		return reslut;
+	}
+
+	@Override
+	public Map<String, Object> selectOneBySql(String sql) {
+		List<Map<String, Object>> mapResult = this.selectBySql(sql);
+		if (mapResult != null && !mapResult.isEmpty()) {
+			return mapResult.get(0);
+		} else
+			return null;
+	}
+
+	@Override
+	public <T> List<T> selectBySql(String sql, Class<T> type) {
+		List<Map<String, Object>> mapResult = this.selectBySql(sql);
+		List<T> records = new LinkedList<>();
+		for (Map<String, Object> mapperResult : mapResult) {
+			T model = null;
+			try {
+				model = type.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new IllegalArgumentException(type.getName() + "没有无参构造函数", e);
+			}
+			Set<String> columns = mapperResult.keySet();
+			for (String column : columns) {
+				try {
+					EntityUtils.setField(model, column, mapperResult.get(column));
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			records.add(model);
+		}
+		return records;
+	}
+
+	@Override
+	public <T> T selectOneBySql(String sql, Class<T> type) {
+		List<T> records = this.selectBySql(sql, type);
+		if (records != null && !records.isEmpty()) {
+			return records.get(0);
+		} else
+			return null;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.UpdateSqlGenerator;
 import org.linuxprobe.crud.dao.UniversalDAO;
@@ -50,9 +51,10 @@ public class UniversalDAOImpl implements UniversalDAO {
 	}
 
 	@Override
-	public <T> List<T> universalSelect(Object param, Class<T> type) {
+	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
+		SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
 		List<T> records = new LinkedList<>();
-		List<Map<String, Object>> mapperResults = this.mapper.universalSelect(SelectSqlGenerator.toSelectSql(param));
+		List<Map<String, Object>> mapperResults = this.mapper.universalSelect(selectSqlGenerator.toSelectSql(param));
 		for (Map<String, Object> mapperResult : mapperResults) {
 			T model = null;
 			try {
@@ -74,8 +76,9 @@ public class UniversalDAOImpl implements UniversalDAO {
 	}
 
 	@Override
-	public long selectCount(Object param) {
-		return this.mapper.selectCount(SelectSqlGenerator.toSelectCountSql(param));
+	public long selectCount(BaseQuery param) {
+		SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
+		return this.mapper.selectCount(selectSqlGenerator.toSelectCountSql(param));
 	}
 
 	@Override

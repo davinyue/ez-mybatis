@@ -12,9 +12,9 @@ import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Transient;
 import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
 import org.linuxprobe.crud.core.annoatation.Column.LengthHandler;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.sql.field.ColumnField;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
@@ -34,7 +34,7 @@ public class UpdateSqlGenerator extends SqlGenerator {
 
 	/** 生成字段全更新sql */
 	public static String toGlobalUpdateSql(Object entity) {
-		String table = EntityUtils.getTable(entity.getClass());
+		String table = UniversalCrudContent.getEntityInfo(entity.getClass()).getTableName();
 		StringBuilder sqlBuilder = new StringBuilder(
 				"UPDATE " + getEscapeCharacter() + table + getEscapeCharacter() + " SET ");
 		List<ColumnField> columnFields = getColumnFields(entity, true);
@@ -61,7 +61,7 @@ public class UpdateSqlGenerator extends SqlGenerator {
 
 	/** 生成字段选择更新sql */
 	public static String toLocalUpdateSql(Object entity) {
-		String table = EntityUtils.getTable(entity.getClass());
+		String table = UniversalCrudContent.getEntityInfo(entity.getClass()).getTableName();
 		StringBuilder sqlBuilder = new StringBuilder(
 				"UPDATE " + getEscapeCharacter() + table + getEscapeCharacter() + " SET ");
 		List<ColumnField> columnFields = getColumnFields(entity, false);

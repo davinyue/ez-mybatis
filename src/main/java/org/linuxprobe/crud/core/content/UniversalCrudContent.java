@@ -7,12 +7,13 @@ import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlDeleteSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlInsertSqlGenerator;
+import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlSelectSqlGenerator;
 
 public class UniversalCrudContent {
 	private static Map<Class<?>, EntityInfo> entityInfos = new HashMap<>();
 	private static DeleteSqlGenerator deleteSqlGenerator = new MysqlDeleteSqlGenerator();
 	private static InsertSqlGenerator insertSqlGenerator = new MysqlInsertSqlGenerator();
-	private static SelectSqlGenerator selectSqlGenerator;
+	private static SelectSqlGenerator selectSqlGenerator = new MysqlSelectSqlGenerator();
 
 	public static DeleteSqlGenerator getDeleteSqlGenerator() {
 		return deleteSqlGenerator;

@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import org.linuxprobe.crud.core.annoatation.Column;
-import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
@@ -97,22 +96,6 @@ public class EntityUtils {
 			}
 		}
 
-	}
-
-	/** 获取实体类型对应的表名 */
-	public static String getTable(Class<?> entityType) {
-		boolean classHasTableAnno = entityType.isAnnotationPresent(Table.class);
-		if (classHasTableAnno) {
-			Table annotation = entityType.getAnnotation(Table.class);
-			String table = annotation.value();
-			if (table.trim().isEmpty()) {
-				return StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
-			} else {
-				return table.trim();
-			}
-		} else {
-			return StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
-		}
 	}
 
 	/** 获取实体主键 */

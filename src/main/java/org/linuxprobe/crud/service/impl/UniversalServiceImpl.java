@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.dao.UniversalDAO;
 import org.linuxprobe.crud.service.UniversalService;
 import org.linuxprobe.crud.utils.EntityUtils;
@@ -49,12 +50,12 @@ public class UniversalServiceImpl implements UniversalService {
 	}
 
 	@Override
-	public <T> List<T> universalSelect(Object param, Class<T> type) {
+	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
 		return this.dao.universalSelect(param, type);
 	}
 
 	@Override
-	public long selectCount(Object param) {
+	public long selectCount(BaseQuery param) {
 		return this.dao.selectCount(param);
 	}
 

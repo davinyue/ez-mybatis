@@ -3,6 +3,8 @@ package org.linuxprobe.crud.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.linuxprobe.crud.core.query.BaseQuery;
+
 public interface UniversalDAO {
 	/** 插入 */
 	int insert(Object record);
@@ -23,10 +25,10 @@ public interface UniversalDAO {
 	public long batchDeleteByPrimaryKey(List<String> ids, Class<?> type);
 
 	/** 通用查询,不支持关联加载，如果传入的对象的所属类没有继承BaseQuery,则不支持排序和分页 */
-	public <T> List<T> universalSelect(Object param, Class<T> type);
+	public <T> List<T> universalSelect(BaseQuery param, Class<T> type);
 
 	/** 查询数量 */
-	public long selectCount(Object param);
+	public long selectCount(BaseQuery param);
 	
 	public List<Map<String, Object>> selectBySql(String sql);
 

@@ -25,4 +25,16 @@ public interface UniversalCrudSqlSession extends SqlSession {
 	public int delete(Object record);
 
 	public int batchDelete(Collection<?> records);
+	
+	/** 根据sql查询数据 */
+	public List<Map<String, Object>> selectBySql(String sql);
+
+	/** 根据sql查询唯一数据 */
+	public Map<String, Object> selectOneBySql(String sql);
+
+	/** 根据sql查询数据 */
+	public <T> List<T> selectBySql(String sql, Class<T> type);
+
+	/** 根据sql查询唯一数据 */
+	public <T> T selectOneBySql(String sql, Class<T> type);
 }

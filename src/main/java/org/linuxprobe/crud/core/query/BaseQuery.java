@@ -2,6 +2,7 @@ package org.linuxprobe.crud.core.query;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.param.impl.StringParam;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import lombok.Getter;
@@ -9,18 +10,25 @@ import lombok.Setter;
 
 /** 实体查询dto */
 public abstract class BaseQuery {
+	public BaseQuery() {
+		this.alias = AliasGenerate.getAlias();
+	}
+
 	/** 因为mybatis不能直接调用参数的方法，但能调用参数成员的方法，故这个类就出现了 */
 	public class Sqlr {
 		public String toSelectSql() throws Exception {
-			return SelectSqlGenerator.toSelectSql(BaseQuery.this);
+			SelectSqlGenerator sqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
+			return sqlGenerator.toSelectSql(BaseQuery.this);
 		}
 
 		public String toSelectCountSql() throws Exception {
-			return SelectSqlGenerator.toSelectCountSql(BaseQuery.this);
+			SelectSqlGenerator sqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
+			return sqlGenerator.toSelectCountSql(BaseQuery.this);
 		}
 
 		public String toSelectCountSql(String clounm) throws Exception {
-			return SelectSqlGenerator.toSelectCountSql(BaseQuery.this, clounm);
+			SelectSqlGenerator sqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
+			return sqlGenerator.toSelectCountSql(BaseQuery.this, clounm);
 		}
 	}
 
@@ -39,6 +47,11 @@ public abstract class BaseQuery {
 	@Getter
 	@Setter
 	private Limit limit = new Limit();
+
+	/** 别名 */
+	@Getter
+	@Setter
+	private String alias;
 
 	/** 被连接方式 */
 	@Getter
@@ -145,5 +158,27 @@ public abstract class BaseQuery {
 
 	public static enum JoinType {
 		LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin;
+	}
+}
+
+/** 生成表别名 */
+class AliasGenerate {
+	private static char first = 96;
+	private static int second = 0;
+
+	public static String getAlias(String prefix) {
+		first++;
+		if (first == 123) {
+			first = 97;
+		}
+		second++;
+		if (second == 10) {
+			second = 1;
+		}
+		return prefix + String.valueOf(first) + second;
+	}
+
+	public static String getAlias() {
+		return getAlias("t");
 	}
 }

@@ -3,6 +3,8 @@ package org.linuxprobe.crud.service;
 import java.util.List;
 import java.util.Map;
 
+import org.linuxprobe.crud.core.query.BaseQuery;
+
 public interface UniversalService {
 	/** 添加 */
 	public <T> T save(T record);
@@ -23,9 +25,9 @@ public interface UniversalService {
 	public long batchRemoveByPrimaryKey(List<String> ids, Class<?> type);
 
 	/** 通用查询,不支持关联加载，如果传入的对象的所属类没有继承BaseQuery,则不支持排序和分页 */
-	public <T> List<T> universalSelect(Object param, Class<T> type);
+	public <T> List<T> universalSelect(BaseQuery param, Class<T> type);
 
-	public long selectCount(Object param);
+	public long selectCount(BaseQuery param);
 
 	/** 根据sql查询数据 */
 	public List<Map<String, Object>> selectBySql(String sql);
