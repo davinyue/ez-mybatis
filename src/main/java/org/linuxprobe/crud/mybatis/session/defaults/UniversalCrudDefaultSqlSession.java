@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
@@ -27,6 +28,7 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	private static final String selectCountStatement = "org.linuxprobe.crud.mapper.UniversalMapper.selectCount";
 	private static final String insertStatement = "org.linuxprobe.crud.mapper.UniversalMapper.insert";
 	private static final String deleteStatement = "org.linuxprobe.crud.mapper.UniversalMapper.delete";
+	private static final String updateStatement = "org.linuxprobe.crud.mapper.UniversalMapper.update";
 
 	public UniversalCrudDefaultSqlSession(Configuration configuration, Executor executor) {
 		super(configuration, executor);
@@ -184,5 +186,15 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 			return records.get(0);
 		} else
 			return null;
+	}
+
+	@Override
+	public int globalUpdate(Object record) {
+		return super.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
+	}
+
+	@Override
+	public int localUpdate(Object record) {
+		return super.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
 	}
 }

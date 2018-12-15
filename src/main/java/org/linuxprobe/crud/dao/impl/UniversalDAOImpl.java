@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
-import org.linuxprobe.crud.core.sql.generator.UpdateSqlGenerator;
 import org.linuxprobe.crud.dao.UniversalDAO;
 import org.linuxprobe.crud.mapper.UniversalMapper;
 import org.linuxprobe.crud.utils.EntityUtils;
@@ -83,12 +83,12 @@ public class UniversalDAOImpl implements UniversalDAO {
 
 	@Override
 	public int localUpdate(Object record) {
-		return this.mapper.update(UpdateSqlGenerator.toLocalUpdateSql(record));
+		return 0;
 	}
 
 	@Override
 	public int globalUpdate(Object record) {
-		return this.mapper.update(UpdateSqlGenerator.toGlobalUpdateSql(record));
+		return 0;
 	}
 
 	@Override
