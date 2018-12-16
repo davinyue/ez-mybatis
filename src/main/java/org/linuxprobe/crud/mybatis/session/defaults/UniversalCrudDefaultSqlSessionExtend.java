@@ -82,7 +82,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	}
 
 	@Override
-	public <T extends Serializable> int batchDeleteByPrimaryKey(Collection<T> ids, Class<?> entityType) {
+	public int batchDeleteByPrimaryKey(Collection<Serializable> ids, Class<?> entityType) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
 		return sqlSession.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSqlByPrimaryKey(ids, entityType));
 	}

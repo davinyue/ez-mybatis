@@ -64,7 +64,7 @@ public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implemen
 	}
 
 	@Override
-	public <T extends Serializable> int batchDeleteByPrimaryKey(Collection<T> ids, Class<?> entityType) {
+	public int batchDeleteByPrimaryKey(Collection<Serializable> ids, Class<?> entityType) {
 		return sqlSessionExtend.batchDeleteByPrimaryKey(ids, entityType);
 	}
 

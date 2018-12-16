@@ -3,6 +3,7 @@ package org.linuxprobe.crud.service.impl;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @param <Model> 模型
+ * @param <Model> 模型类型
+ * @param <IdType> 主键类型
+ * @param <Query> 查询类型
  */
-public class UniversalServiceImpl<Model, Query extends BaseQuery> implements UniversalService<Model, Query> {
+public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
+		implements UniversalService<Model, IdType, Query> {
 	@Autowired
 	private UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
@@ -57,16 +61,17 @@ public class UniversalServiceImpl<Model, Query extends BaseQuery> implements Uni
 
 	@Override
 	@Transactional
-	public <T extends Serializable> int removeByPrimaryKey(T id) {
+	public int removeByPrimaryKey(IdType id) {
 		Class<?> modelClass = getModeCalss();
 		return this.sqlSessionTemplate.deleteByPrimaryKey(id, modelClass);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
-	public <T extends Serializable> long batchRemoveByPrimaryKey(List<T> ids) throws Exception {
+	public long batchRemoveByPrimaryKey(List<IdType> ids) throws Exception {
 		Class<?> modelClass = getModeCalss();
-		return this.sqlSessionTemplate.batchDeleteByPrimaryKey(ids, modelClass);
+		return this.sqlSessionTemplate.batchDeleteByPrimaryKey((Collection<Serializable>) ids, modelClass);
 	}
 
 	@Override
@@ -89,7 +94,7 @@ public class UniversalServiceImpl<Model, Query extends BaseQuery> implements Uni
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Serializable> Model getByPrimaryKey(T id) {
+	public Model getByPrimaryKey(IdType id) {
 		Class<?> modelClass = getModeCalss();
 		return (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass);
 	}

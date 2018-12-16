@@ -8,9 +8,11 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 
 /**
- * @param <Model> 模型
+ * @param <Model> 模型类型
+ * @param <IdType> 主键类型
+ * @param <Query> 查询类型
  */
-public interface UniversalService<Model, Query extends BaseQuery> {
+public interface UniversalService<Model, IdType extends Serializable, Query extends BaseQuery> {
 	/** 添加 */
 	public Model save(Model model);
 
@@ -26,14 +28,14 @@ public interface UniversalService<Model, Query extends BaseQuery> {
 	 * 
 	 * @throws Exception
 	 */
-	public <T extends Serializable> int removeByPrimaryKey(T id);
+	public int removeByPrimaryKey(IdType id);
 
 	/**
 	 * 批量删除
 	 * 
 	 * @throws Exception
 	 */
-	public <T extends Serializable> long batchRemoveByPrimaryKey(List<T> ids) throws Exception;
+	public long batchRemoveByPrimaryKey(List<IdType> ids) throws Exception;
 
 	/**
 	 * 删除
@@ -50,7 +52,7 @@ public interface UniversalService<Model, Query extends BaseQuery> {
 	public int batchRemove(List<Model> records);
 
 	/** 根据主键查询 */
-	public <T extends Serializable> Model getByPrimaryKey(T id);
+	public Model getByPrimaryKey(IdType id);
 
 	/** 根据查询对象获取实体list */
 	public List<Model> getByQueryParam(Query param);

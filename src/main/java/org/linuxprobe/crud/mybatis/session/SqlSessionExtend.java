@@ -30,7 +30,7 @@ public interface SqlSessionExtend {
 	public int deleteByPrimaryKey(Serializable id, Class<?> entityType);
 
 	/** 根据主键批量删除 */
-	public <T extends Serializable> int batchDeleteByPrimaryKey(Collection<T> ids, Class<?> entityType);
+	public int batchDeleteByPrimaryKey(Collection<Serializable> ids, Class<?> entityType);
 
 	/** 删除 */
 	public int delete(Object record);
