@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.JoinColumn;
-import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Search;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
@@ -114,7 +114,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 					/** 处理连接方式 */
 					String joinStr = "LEFT";
 					if (BaseQuery.class.isAssignableFrom(member.getClass())) {
-						BaseQuery joinSearchObj = (BaseQuery) member;
+						BaseQuery joinSearchObj = member;
 						JoinType joinType = joinSearchObj.getJoinType();
 						if (joinType.equals(JoinType.RightJoin)) {
 							joinStr = "RIGHT";
@@ -140,7 +140,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	private static StringBuilder toOrder(BaseQuery searcher) {
 		StringBuilder result = new StringBuilder();
 		if (BaseQuery.class.isAssignableFrom(searcher.getClass())) {
-			BaseQuery baseQuery = (BaseQuery) searcher;
+			BaseQuery baseQuery = searcher;
 			String strOrder = baseQuery.getOrder();
 			if (strOrder != null) {
 				String[] orders = strOrder.split(",");
@@ -305,36 +305,16 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取模型对应的表的主键列名称
 	 * 
-	 * @param modelType
-	 *            模型的类型
+	 * @param modelType 模型的类型
 	 */
 	private static String getPrimaryKeyName(Class<?> modelType) {
-		List<Field> fields = FieldUtil.getAllFields(modelType);
-		String primaryKeyName = null;
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(PrimaryKey.class)) {
-				primaryKeyName = field.getName();
-				if (field.isAnnotationPresent(Column.class)) {
-					Column column = field.getAnnotation(Column.class);
-					String strColumn = column.value().trim();
-					if (!strColumn.isEmpty()) {
-						primaryKeyName = strColumn;
-					}
-				}
-				break;
-			}
-		}
-		if (primaryKeyName == null) {
-			throw new OperationNotSupportedException(modelType.getName() + "类的成员没有@PrimaryKey注解");
-		}
-		return primaryKeyName;
+		return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getFiledColumn();
 	}
 
 	/**
 	 * 获取要查询的模型类型
 	 * 
-	 * @param searcherType
-	 *            用于查询的对象类型
+	 * @param searcherType 用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
 	private static Class<?> getModelType(Class<?> searcherType) {
@@ -356,8 +336,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取要搜索的表名
 	 * 
-	 * @param searcherType
-	 *            用于查询的对象类型
+	 * @param searcherType 用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
 	private static String getTable(Class<?> searcherType) {
@@ -365,5 +344,3 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		return UniversalCrudContent.getEntityInfo(entityType).getTableName();
 	}
 }
-
-

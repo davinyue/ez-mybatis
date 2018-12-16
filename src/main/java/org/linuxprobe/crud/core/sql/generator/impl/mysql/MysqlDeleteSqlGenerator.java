@@ -7,7 +7,6 @@ import java.util.Iterator;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
-import org.linuxprobe.crud.utils.SqlFieldUtil;
 
 public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 	@Override
@@ -16,10 +15,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 			throw new NullPointerException("entity can't be null");
 		}
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
-		Serializable idValue = SqlFieldUtil.getPrimaryKeyValue(entity);
-		if (String.class.isAssignableFrom(idValue.getClass())) {
-			idValue = "'" + idValue + "'";
-		}
+		String idValue = MysqlFieldValueConversion.updateConversion(entity, entityInfo.getPrimaryKey().getField());
 		String sql = "DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
 				+ entityInfo.getPrimaryKey().getFiledColumn() + "` = " + idValue;
 		return sql;
@@ -50,14 +46,15 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM `");
 		Iterator<?> entityIterator = entitys.iterator();
 		String table = null;
+		EntityInfo entityInfo = null;
 		while (entityIterator.hasNext()) {
 			Object entity = entityIterator.next();
 			if (table == null) {
-				EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
+				entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
 				table = entityInfo.getTableName();
 				sqlBuilder.append(table + "` WHERE `" + entityInfo.getPrimaryKey().getFiledColumn() + "` IN(");
 			}
-			Serializable idValue = SqlFieldUtil.getPrimaryKeyValue(entity);
+			String idValue = MysqlFieldValueConversion.updateConversion(entity, entityInfo.getPrimaryKey().getField());
 			if (idValue == null) {
 				throw new NullPointerException(entity.toString() + " id can't be null");
 			}

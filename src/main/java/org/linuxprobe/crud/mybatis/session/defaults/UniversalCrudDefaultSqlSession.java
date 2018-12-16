@@ -31,7 +31,7 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 
 	@Override
 	public <T> int batchInsert(Collection<T> records) {
-		return sqlSessionExtend.batchDelete(records);
+		return sqlSessionExtend.batchInsert(records);
 	}
 
 	@Override

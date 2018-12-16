@@ -3,36 +3,35 @@ package org.linuxprobe.crud.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
+
 import org.linuxprobe.crud.core.annoatation.Column;
-import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
 import org.linuxprobe.crud.core.content.EntityInfo;
+import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
-import org.linuxprobe.crud.core.sql.field.ColumnField;
 
 public class EntityUtils {
 	/**
 	 * 获取实体类型与数据库表列名对应的field
 	 * 
-	 * @param entityClass
-	 *            被查找的实体类类型
-	 * @param columnName
-	 *            列名
+	 * @param entityClass 被查找的实体类类型
+	 * @param columnName  列名
 	 */
 	public static Field getFieldByColumnName(Class<?> entityClass, String columnName) {
 		if (entityClass == null || columnName == null) {
 			return null;
 		}
-		List<Field> fields = FieldUtil.getAllFields(entityClass);
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entityClass);
+		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
+
 		/** 注解匹配 */
 		Field columnAnnotationMatch = null;
 		/** 完全匹配 */
 		Field nameMatch = null;
 		/** 下划线转驼峰匹配 */
 		Field lineToHumpMatch = null;
-		for (Field field : fields) {
+		for (FieldInfo fieldInfo : fieldInfos) {
+			Field field = fieldInfo.getField();
 			if (field.getName().equals(columnName)) {
 				nameMatch = field;
 			}
@@ -96,99 +95,5 @@ public class EntityUtils {
 			}
 		}
 
-	}
-
-	/** 获取实体主键 */
-	@Deprecated
-	public static ColumnField getPrimaryKey(Object entity) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		ColumnField result = null;
-		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
-		Field primaryKey = entityInfo.getPrimaryKey().getField();
-		if (primaryKey != null) {
-			result = new ColumnField();
-			String fieldName = primaryKey.getName();
-			result.setName(fieldName);
-			/** 获取本次参数的方法 */
-			String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-			Method getCurrnetClounm = null;
-			try {
-				getCurrnetClounm = entity.getClass().getMethod("get" + funSuffix);
-			} catch (NoSuchMethodException | SecurityException e) {
-				throw new IllegalArgumentException(entity.getClass().getName() + "主键成员没有get方法", e);
-			}
-			String value = null;
-			Object fieldValue = null;
-			try {
-				/** 得到本次参数 */
-				fieldValue = getCurrnetClounm.invoke(entity);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new IllegalArgumentException(entity.getClass().getName() + "主键成员的get方法调用失败", e);
-			}
-			if (String.class.isAssignableFrom(primaryKey.getType())) {
-				String clounmValue = (String) fieldValue;
-				if (clounmValue != null) {
-					clounmValue = SqlEscapeUtil.escape(clounmValue);
-					value = "'" + clounmValue + "'";
-				} else {
-					value = null;
-				}
-			} else if (Number.class.isAssignableFrom(primaryKey.getType())) {
-				Number clounmValue = (Number) fieldValue;
-				if (clounmValue != null) {
-					value = clounmValue.toString();
-				} else {
-					value = null;
-				}
-			} else if (Boolean.class.isAssignableFrom(primaryKey.getType())) {
-				Boolean clounmValue = (Boolean) fieldValue;
-				if (clounmValue != null) {
-					if (clounmValue) {
-						value = "1";
-					} else {
-						value = "0";
-					}
-				} else {
-					value = null;
-				}
-			} else if (Date.class.isAssignableFrom(primaryKey.getType())) {
-				Date clounmValue = (Date) fieldValue;
-				if (clounmValue != null) {
-					value = "'" + dateFormat.format(clounmValue) + "'";
-				} else {
-					value = null;
-				}
-			} else if (Enum.class.isAssignableFrom(primaryKey.getType())) {
-				Enum<?> clounmValue = (Enum<?>) fieldValue;
-				if (clounmValue != null) {
-					value = clounmValue.ordinal() + "";
-					/** 如果成员变量有Column注解 */
-					if (primaryKey.isAnnotationPresent(Column.class)) {
-						Column column = primaryKey.getAnnotation(Column.class);
-						if (column.enumHandler().equals(EnumHandler.Name)) {
-							value = "'" + clounmValue.toString() + "'";
-						}
-					}
-				} else {
-					value = null;
-				}
-			} else {
-				throw new IllegalArgumentException(entity.getClass().getName() + "主键成员不是被支持的类型");
-			}
-			result.setValue(value);
-			/** 设置数据库列是成员名称转下划线 */
-			result.setColumn(StringHumpTool.humpToLine2(fieldName, "_"));
-			/** 如果成员变量有Column注解 */
-			if (primaryKey.isAnnotationPresent(Column.class)) {
-				Column column = primaryKey.getAnnotation(Column.class);
-				String strColumn = column.value();
-				if (strColumn != null && !strColumn.trim().isEmpty()) {
-					result.setColumn(strColumn);
-				}
-			}
-		} else {
-			throw new IllegalArgumentException(entity.getClass().getName() + "所有成员变量均未标注@PrimaryKey注解");
-		}
-		return result;
 	}
 }

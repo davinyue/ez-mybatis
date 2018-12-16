@@ -80,7 +80,7 @@ public class FieldUtil {
 		return methodOfGet;
 	}
 
-	public static void setField(Object obj, Field field, Object arg)
+	public static void setField(Object obj, Field field, Object... arg)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Method methodOfSet = getMethodOfFieldSet(obj.getClass(), field);
 		if (methodOfSet != null) {
