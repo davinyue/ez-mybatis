@@ -3,6 +3,7 @@ package org.linuxprobe.crud.mybatis.session.defaults;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
@@ -138,9 +139,12 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 
 	/** 初始化univerCrud */
 	private void initUniversalCrud(UniversalCrudConfiguration configuration) {
-		if (configuration.getDriver().indexOf("mysql") != -1) {
+		if (true) {
 			SqlGenerator.setDataBaseType(DataBaseType.Mysql);
 		}
+//		else if (configuration.getDriver().indexOf("mysql") != -1) {
+//			SqlGenerator.setDataBaseType(DataBaseType.Mysql);
+//		}
 		/** 扫描类信息 */
 		List<Class<?>> classs = ClassScan.scan(configuration.getUniversalCrudScan());
 		for (Class<?> clazz : classs) {

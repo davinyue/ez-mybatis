@@ -1,49 +1,81 @@
 package org.linuxprobe.crud.service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import org.linuxprobe.crud.core.query.BaseQuery;
+import org.linuxprobe.crud.core.query.Page;
 
-public interface UniversalService {
+/**
+ * @param <Model> 模型
+ */
+public interface UniversalService<Model, Query extends BaseQuery> {
 	/** 添加 */
-	public <T> T save(T record);
+	public Model save(Model model);
 
 	/**
 	 * 批量添加
 	 * 
 	 * @throws Exception
 	 */
-	public <T> List<T> batchSave(List<T> records);
+	public List<Model> batchSave(List<Model> models);
 
-	public int remove(Object record);
+	/**
+	 * 删除
+	 * 
+	 * @throws Exception
+	 */
+	public <T extends Serializable> int removeByPrimaryKey(T id);
 
-	public long batchRemove(List<?> records);
+	/**
+	 * 批量删除
+	 * 
+	 * @throws Exception
+	 */
+	public <T extends Serializable> long batchRemoveByPrimaryKey(List<T> ids) throws Exception;
 
-	public int removeByPrimaryKey(String id, Class<?> type);
+	/**
+	 * 删除
+	 * 
+	 * @throws Exception
+	 */
+	public int remove(Model record);
 
-	public long batchRemoveByPrimaryKey(List<String> ids, Class<?> type);
+	/**
+	 * 批量删除
+	 * 
+	 * @throws Exception
+	 */
+	public int batchRemove(List<Model> records);
 
-	/** 通用查询,不支持关联加载，如果传入的对象的所属类没有继承BaseQuery,则不支持排序和分页 */
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type);
+	/** 根据主键查询 */
+	public <T extends Serializable> Model getByPrimaryKey(T id);
 
-	public long selectCount(BaseQuery param);
+	/** 根据查询对象获取实体list */
+	public List<Model> getByQueryParam(Query param);
 
-	/** 根据sql查询数据 */
-	public List<Map<String, Object>> selectBySql(String sql);
+	/** 根据查询对象获取实体数量 */
+	public long getCountByQueryParam(Query param);
 
-	/** 根据sql查询唯一数据 */
-	public Map<String, Object> selectUniqueResultBySql(String sql);
+	/** 根据查询对象获取实体分页数据 */
+	public Page<Model> getPageInfo(Query param);
 
-	/** 根据sql查询数据 */
-	public <T> List<T> selectBySql(String sql, Class<T> type);
+	/** 根据sql获取数据 */
+	public List<Map<String, Object>> getBySql(String sql);
 
-	/** 根据sql查询唯一数据 */
-	public <T> T selectUniqueResultBySql(String sql, Class<T> type);
+	/** 根据sql获取唯一数据 */
+	public Map<String, Object> getUniqueResultBySql(String sql);
+
+	/** 根据sql获取数据 */
+	public <T> List<T> getBySql(String sql, Class<T> type);
+
+	/** 根据sql获取唯一数据 */
+	public <T> T getUniqueResultBySql(String sql, Class<T> type);
 
 	/** 增量更新 */
-	public int localUpdate(Object record);
+	public int localUpdate(Model model);
 
 	/** 全量更新 */
-	public int globalUpdate(Object record);
+	public int globalUpdate(Model model);
 }

@@ -1,6 +1,7 @@
 package org.linuxprobe.crud.mybatis.session;
 
 import java.sql.Connection;
+
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.TransactionIsolationLevel;
@@ -29,6 +30,7 @@ public interface UniversalCrudSqlSessionFactory extends SqlSessionFactory {
 
 	@Override
 	UniversalCrudSqlSession openSession(ExecutorType execType, Connection connection);
-	
+
+	@Override
 	public UniversalCrudConfiguration getConfiguration();
 }

@@ -1,28 +1,52 @@
-package org.linuxprobe.crud.mybatis.session.defaults;
+package org.linuxprobe.crud.mybatis.spring;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.defaults.DefaultSqlSession;
+import org.apache.ibatis.session.ExecutorType;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSession;
+import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSessionFactory;
+import org.linuxprobe.crud.mybatis.session.defaults.UniversalCrudDefaultSqlSessionExtend;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.dao.support.PersistenceExceptionTranslator;
 
-public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements UniversalCrudSqlSession {
+public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implements UniversalCrudSqlSession {
+	// private SqlSession sqlSession;
+
 	private final UniversalCrudDefaultSqlSessionExtend sqlSessionExtend;
 
-	public UniversalCrudDefaultSqlSession(Configuration configuration, Executor executor) {
-		super(configuration, executor);
+	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory, ExecutorType executorType,
+			PersistenceExceptionTranslator exceptionTranslator) {
+		super(sqlSessionFactory, executorType, exceptionTranslator);
+		// initSqlSession();
 		this.sqlSessionExtend = new UniversalCrudDefaultSqlSessionExtend(this);
 	}
 
-	public UniversalCrudDefaultSqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
-		super(configuration, executor, autoCommit);
+	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory,
+			ExecutorType executorType) {
+		super(sqlSessionFactory, executorType);
+		// initSqlSession();
 		this.sqlSessionExtend = new UniversalCrudDefaultSqlSessionExtend(this);
 	}
+
+	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory) {
+		super(sqlSessionFactory);
+		// initSqlSession();
+		this.sqlSessionExtend = new UniversalCrudDefaultSqlSessionExtend(this);
+	}
+
+//	private void initSqlSession() {
+//		try {
+//			Field sqlSessionProxyFiels = SqlSessionTemplate.class.getDeclaredField("sqlSessionProxy");
+//			sqlSessionProxyFiels.setAccessible(true);
+//			sqlSession = (SqlSession) sqlSessionProxyFiels.get(this);
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}
+//	}
 
 	@Override
 	public int insert(Object record) {

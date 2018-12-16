@@ -10,5 +10,5 @@ public interface DeleteSqlGenerator {
 
 	public String toBatchDeleteSql(Collection<?> entitys);
 
-	public String toBatchDeleteSqlByPrimaryKey(Collection<Serializable> ids, Class<?> type);
+	public <T extends Serializable> String toBatchDeleteSqlByPrimaryKey(Collection<T> ids, Class<?> type);
 }

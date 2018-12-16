@@ -3,12 +3,14 @@ package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
 
 public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
+	@Override
 	public String toDeleteSql(Object entity) {
 		if (entity == null) {
 			throw new NullPointerException("entity can't be null");
@@ -23,6 +25,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		return sql;
 	}
 
+	@Override
 	public String toDeleteSqlByPrimaryKey(Serializable id, Class<?> type) {
 		if (id == null) {
 			throw new NullPointerException("id can't be null");
@@ -39,6 +42,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		return sql;
 	}
 
+	@Override
 	public String toBatchDeleteSql(Collection<?> entitys) {
 		if (entitys == null || entitys.isEmpty()) {
 			throw new IllegalArgumentException("entitys can't be empty");
@@ -69,7 +73,8 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		return sqlBuilder.toString();
 	}
 
-	public String toBatchDeleteSqlByPrimaryKey(Collection<Serializable> ids, Class<?> type) {
+	@Override
+	public <T extends Serializable> String toBatchDeleteSqlByPrimaryKey(Collection<T> ids, Class<?> type) {
 		if (type == null) {
 			throw new NullPointerException("type can't be null");
 		}
@@ -79,7 +84,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
 		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
 				+ entityInfo.getPrimaryKey().getFiledColumn() + "` IN (");
-		Iterator<Serializable> idIterator = ids.iterator();
+		Iterator<T> idIterator = ids.iterator();
 		while (idIterator.hasNext()) {
 			Serializable idValue = idIterator.next();
 			if (String.class.isAssignableFrom(idValue.getClass())) {

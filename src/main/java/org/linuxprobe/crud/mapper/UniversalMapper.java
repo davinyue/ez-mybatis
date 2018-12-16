@@ -2,6 +2,7 @@ package org.linuxprobe.crud.mapper;
 
 import java.util.List;
 import java.util.Map;
+
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -12,10 +13,6 @@ public interface UniversalMapper {
 	@InsertProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	int insert(String sql);
 
-	/** 批量插入 */
-	@InsertProvider(type = MybatisSqlGenerator.class, method = "getSql")
-	int batchInsert(String sql);
-
 	/** 删除 */
 	@DeleteProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	int delete(String sql);
@@ -23,7 +20,7 @@ public interface UniversalMapper {
 	/** 通用查询 */
 	@SelectProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	public List<Map<String, Object>> universalSelect(String sql);
-	
+
 	/** 通用查询 */
 	@SelectProvider(type = MybatisSqlGenerator.class, method = "getSql")
 	public Map<String, Object> universalSelectOne(String sql);

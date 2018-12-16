@@ -65,7 +65,7 @@ public class UniversalCrudMapperScannerConfigurer
 	 * @param basePackage base package name
 	 */
 	public void setBasePackage(String basePackage) {
-		basePackage = basePackage + ",org.linuxprobe.crud.mapper.UniversalMapper";
+		basePackage = basePackage + ",org.linuxprobe.crud.mapper";
 		this.basePackage = basePackage;
 	}
 

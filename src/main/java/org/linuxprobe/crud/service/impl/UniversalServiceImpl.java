@@ -1,118 +1,144 @@
 package org.linuxprobe.crud.service.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import org.linuxprobe.crud.core.query.BaseQuery;
-import org.linuxprobe.crud.dao.UniversalDAO;
+import org.linuxprobe.crud.core.query.Page;
+import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
 import org.linuxprobe.crud.service.UniversalService;
-import org.linuxprobe.crud.utils.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class UniversalServiceImpl implements UniversalService {
+/**
+ * @param <Model> 模型
+ */
+public class UniversalServiceImpl<Model, Query extends BaseQuery> implements UniversalService<Model, Query> {
 	@Autowired
-	private UniversalDAO dao;
+	private UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
-	@Override
-	public <T> T save(T record) {
-		this.dao.insert(record);
-		return record;
-	}
-
-	@Override
-	public <T> List<T> batchSave(List<T> records) {
-		this.dao.batchInsert(records);
-		return records;
-	}
-
-	@Override
-	public int remove(Object record) {
-		return this.dao.delete(record);
-	}
-
-	@Override
-	public long batchRemove(List<?> records) {
-		return this.dao.batchDelete(records);
-	}
-
-	@Override
-	public int removeByPrimaryKey(String id, Class<?> type) {
-		return this.dao.deleteByPrimaryKey(id, type);
-	}
-
-	@Override
-	public long batchRemoveByPrimaryKey(List<String> ids, Class<?> type) {
-		return this.dao.batchDeleteByPrimaryKey(ids, type);
-	}
-
-	@Override
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
-		return this.dao.universalSelect(param, type);
-	}
-
-	@Override
-	public long selectCount(BaseQuery param) {
-		return this.dao.selectCount(param);
-	}
-
-	@Override
-	public int localUpdate(Object record) {
-		return this.dao.localUpdate(record);
-	}
-
-	@Override
-	public int globalUpdate(Object record) {
-		return this.dao.globalUpdate(record);
-	}
-
-	@Override
-	public List<Map<String, Object>> selectBySql(String sql) {
-		return this.dao.selectBySql(sql);
-	}
-
-	@Override
-	public <T> List<T> selectBySql(String sql, Class<T> type) {
-		List<Map<String, Object>> mapResult = this.selectBySql(sql);
-		List<T> records = new LinkedList<>();
-		for (Map<String, Object> mapperResult : mapResult) {
-			T model = null;
-			try {
-				model = type.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new IllegalArgumentException(type.getName() + "没有无参构造函数", e);
-			}
-			Set<String> columns = mapperResult.keySet();
-			for (String column : columns) {
-				try {
-					EntityUtils.setField(model, column, mapperResult.get(column));
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new RuntimeException(e);
-				}
-			}
-			records.add(model);
+	private Class<?> getModeCalss() {
+		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		Class<?> modelClass = null;
+		try {
+			modelClass = Class.forName(type.getTypeName());
+		} catch (ClassNotFoundException e) {
 		}
-		return records;
+		return modelClass;
+	}
+
+	@SuppressWarnings("unused")
+	private Class<?> getQueryCalss() {
+		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+		Class<?> querylClass = null;
+		try {
+			querylClass = Class.forName(type.getTypeName());
+		} catch (ClassNotFoundException e) {
+		}
+		return querylClass;
 	}
 
 	@Override
-	public Map<String, Object> selectUniqueResultBySql(String sql) {
-		List<Map<String, Object>> mapResult = this.selectBySql(sql);
-		if (mapResult != null && !mapResult.isEmpty()) {
-			return mapResult.get(0);
-		} else
-			return null;
+	@Transactional
+	public Model save(Model model) {
+		this.sqlSessionTemplate.insert(model);
+		return model;
 	}
 
 	@Override
-	public <T> T selectUniqueResultBySql(String sql, Class<T> type) {
-		List<T> records = this.selectBySql(sql, type);
-		if (records != null && !records.isEmpty()) {
-			return records.get(0);
-		} else
-			return null;
+	@Transactional
+	public List<Model> batchSave(List<Model> models) {
+		this.sqlSessionTemplate.batchInsert(models);
+		return models;
+	}
+
+	@Override
+	@Transactional
+	public <T extends Serializable> int removeByPrimaryKey(T id) {
+		Class<?> modelClass = getModeCalss();
+		return this.sqlSessionTemplate.deleteByPrimaryKey(id, modelClass);
+	}
+
+	@Override
+	@Transactional
+	public <T extends Serializable> long batchRemoveByPrimaryKey(List<T> ids) throws Exception {
+		Class<?> modelClass = getModeCalss();
+		return this.sqlSessionTemplate.batchDeleteByPrimaryKey(ids, modelClass);
+	}
+
+	@Override
+	@Transactional
+	public int remove(Model record) {
+		return this.sqlSessionTemplate.delete(record);
+	}
+
+	@Override
+	@Transactional
+	public int batchRemove(List<Model> records) {
+		return this.sqlSessionTemplate.batchDelete(records);
+	}
+
+	@Override
+	@Transactional
+	public int globalUpdate(Model model) {
+		return this.sqlSessionTemplate.globalUpdate(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Serializable> Model getByPrimaryKey(T id) {
+		Class<?> modelClass = getModeCalss();
+		return (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Model> getByQueryParam(Query param) {
+		Class<?> modelClass = getModeCalss();
+		return (List<Model>) sqlSessionTemplate.universalSelect(param, modelClass);
+	}
+
+	@Override
+	public long getCountByQueryParam(Query param) {
+		return this.sqlSessionTemplate.selectCount(param);
+	}
+
+	@Override
+	public Page<Model> getPageInfo(Query param) {
+		Page<Model> result = new Page<Model>();
+		result.setCurrentPage(param.getLimit().getCurrentPage());
+		result.setPageSize(param.getLimit().getPageSize());
+		result.setData(this.getByQueryParam(param));
+		result.setTotal(this.getCountByQueryParam(param));
+		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> getBySql(String sql) {
+		return this.sqlSessionTemplate.selectBySql(sql);
+	}
+
+	@Override
+	public Map<String, Object> getUniqueResultBySql(String sql) {
+		return this.sqlSessionTemplate.selectOneBySql(sql);
+	}
+
+	@Override
+	public <T> List<T> getBySql(String sql, Class<T> type) {
+		return this.sqlSessionTemplate.selectBySql(sql, type);
+	}
+
+	@Override
+	public <T> T getUniqueResultBySql(String sql, Class<T> type) {
+		return this.sqlSessionTemplate.selectOneBySql(sql, type);
+	}
+
+	@Override
+	@Transactional
+	public int localUpdate(Model model) {
+		return this.sqlSessionTemplate.localUpdate(model);
 	}
 }

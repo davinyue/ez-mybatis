@@ -530,7 +530,7 @@ public class UniversalCrudSqlSessionFactoryBean
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SqlSessionFactory getObject() throws Exception {
+	public UniversalCrudSqlSessionFactory getObject() throws Exception {
 		if (this.sqlSessionFactory == null) {
 			afterPropertiesSet();
 		}
