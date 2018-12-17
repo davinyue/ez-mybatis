@@ -198,13 +198,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
 	@Override
 	public <T> T selectByPrimaryKey(Serializable id, Class<T> type) {
-		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
-		String table = entityInfo.getTableName();
-		String idColumn = entityInfo.getPrimaryKey().getFiledColumn();
-		if (String.class.isAssignableFrom(id.getClass())) {
-			id = "'" + id + "'";
-		}
-		String sql = "select * from `" + table + "` where `" + idColumn + "` = " + id;
+		String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(id, type);
 		return this.selectOneBySql(sql, type);
 	}
 }

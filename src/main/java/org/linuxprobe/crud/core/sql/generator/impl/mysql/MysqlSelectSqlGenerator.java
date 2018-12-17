@@ -1,5 +1,6 @@
 package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.JoinColumn;
 import org.linuxprobe.crud.core.annoatation.Search;
+import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.BaseQuery.JoinType;
@@ -34,6 +36,33 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		sqlBuilder.append(toOrder(searcher));
 		sqlBuilder.append(toLimit(searcher));
 		return sqlBuilder.toString();
+	}
+	
+	/** 转换为查询sql
+	 * @param id 主键
+	 * @param modelType model类型
+	 * @return 返回生成sql */
+	@Override
+	public String toSelectSql(Serializable id, Class<?> modelType) {
+		if(id==null) {
+			throw new IllegalArgumentException("id cannot be null");
+		}
+		if(id instanceof String) {
+			if("".equals(id)) {
+				throw new IllegalArgumentException("id cannot be empty");
+			}
+		}
+		if(modelType==null) {
+			throw new IllegalArgumentException("modelType cannot be null");
+		}
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
+		String table = entityInfo.getTableName();
+		String idColumn = entityInfo.getPrimaryKey().getFiledColumn();
+		if (String.class.isAssignableFrom(id.getClass())) {
+			id = "'" + id + "'";
+		}
+		String sql = "SELECT * FROM `" + table + "` WHERE `" + idColumn + "` = " + id;
+		return sql;
 	}
 
 	/** 转换为查询数量的sql */
