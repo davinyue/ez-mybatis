@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Table {
 	/** 表名 */
-	String value() default "";
+	String value();
 }

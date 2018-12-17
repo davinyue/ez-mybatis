@@ -80,6 +80,18 @@
 			<version>1.7.25</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- 类扫描工具 -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.11</version>
+		</dependency>
+		<!-- google开源工具包guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>20.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

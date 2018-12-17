@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Search {
+public @interface Query {
 	Class<?> value();
 }
 

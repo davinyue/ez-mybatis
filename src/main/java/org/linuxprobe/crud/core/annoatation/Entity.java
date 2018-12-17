@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface Entity {
-	/** 表名 */
-	String value() default "";
 }

@@ -3,19 +3,22 @@ package org.linuxprobe.crud.core.content;
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.Entity;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
+import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.annoatation.Transient;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
+
 import lombok.Getter;
 
 @Getter
 public class EntityInfo {
 	public EntityInfo(Class<?> entityType) {
 		if (entityType == null) {
-			throw new NullPointerException("entityType can't be null");
+			throw new IllegalArgumentException("entityType can't be null");
 		}
 		if (!entityType.isAnnotationPresent(Entity.class)) {
 			throw new IllegalArgumentException(entityType.getName()
@@ -23,11 +26,12 @@ public class EntityInfo {
 		} else {
 			this.entityType = entityType;
 			/** handle table name */
-			Entity table = entityType.getAnnotation(Entity.class);
-			if (table.value().isEmpty()) {
-				this.tableName = StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
-			} else {
-				this.tableName = table.value();
+			this.tableName = StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
+			if (entityType.isAnnotationPresent(Table.class)) {
+				Table table = entityType.getAnnotation(Table.class);
+				if (!table.value().isEmpty()) {
+					this.tableName = table.value();
+				}
 			}
 			/** handle field */
 			this.fieldInfos = new LinkedList<>();

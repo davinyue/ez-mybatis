@@ -10,9 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.linuxprobe.crud.core.annoatation.Column;
-import org.linuxprobe.crud.core.annoatation.JoinColumn;
-import org.linuxprobe.crud.core.annoatation.Search;
+import org.linuxprobe.crud.core.annoatation.Query;
 import org.linuxprobe.crud.core.content.EntityInfo;
+import org.linuxprobe.crud.core.content.QueryInfo;
+import org.linuxprobe.crud.core.content.QueryInfo.QueryFieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.BaseQuery.JoinType;
@@ -20,7 +21,6 @@ import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SqlGenerator.DataBaseType;
-import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
@@ -37,22 +37,25 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		sqlBuilder.append(toLimit(searcher));
 		return sqlBuilder.toString();
 	}
-	
-	/** 转换为查询sql
-	 * @param id 主键
+
+	/**
+	 * 转换为查询sql
+	 * 
+	 * @param id        主键
 	 * @param modelType model类型
-	 * @return 返回生成sql */
+	 * @return 返回生成sql
+	 */
 	@Override
 	public String toSelectSql(Serializable id, Class<?> modelType) {
-		if(id==null) {
+		if (id == null) {
 			throw new IllegalArgumentException("id cannot be null");
 		}
-		if(id instanceof String) {
-			if("".equals(id)) {
+		if (id instanceof String) {
+			if ("".equals(id)) {
 				throw new IllegalArgumentException("id cannot be empty");
 			}
 		}
-		if(modelType==null) {
+		if (modelType == null) {
 			throw new IllegalArgumentException("modelType cannot be null");
 		}
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
@@ -92,68 +95,35 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 
 	/** 转换为left join part */
 	private static StringBuilder toJoin(BaseQuery searcher) {
-		List<Field> fields = FieldUtil.getAllFields(searcher.getClass());
 		StringBuilder joinBuffer = new StringBuilder();
-		for (Field field : fields) {
+		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
+		List<QueryFieldInfo> baseQueryFieldInfos = queryInfo.getBaseQueryFieldInfos();
+		for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
+			Field field = queryFieldInfo.getField();
 			/** 如果是关联查询对象 */
-			if (field.getType().isAnnotationPresent(Search.class)) {
-				/** 获取成员名称 */
-				String fieldName = field.getName();
-				/** 获取本次参数的方法 */
-				String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-				Method getCurrnetParam = null;
-				try {
-					getCurrnetParam = searcher.getClass().getMethod("get" + funSuffix);
-				} catch (NoSuchMethodException | SecurityException e) {
-					continue;
-				}
+			if (field.getType().isAnnotationPresent(Query.class)) {
 				/** 获得该对象 */
-				BaseQuery member = null;
-				try {
-					member = (BaseQuery) getCurrnetParam.invoke(searcher);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					continue;
-				}
+				BaseQuery member = (BaseQuery) FieldUtil.getFieldValue(searcher, field);
 				/** 如果对象不为空，则需要join */
 				if (member != null) {
-					/** 设置主表链接列,默认是成员名转下划线 */
-					String principalColumn = StringHumpTool.humpToLine2(fieldName + "Id", "_");
-					/** 从表链接列，默认是从表主键 */
-					String subordinateColumn = getPrimaryKeyName(getModelType(field.getType()));
-					/** 如果有JoinColumn注解 */
-					if (field.isAnnotationPresent(JoinColumn.class)) {
-						JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
-						String value = joinColumn.value().trim();
-						String principal = joinColumn.principal().trim();
-						/** 重新设置主表链接列 */
-						if (!value.isEmpty()) {
-							principalColumn = value;
-						} else if (!principal.isEmpty()) {
-							principalColumn = principal;
-						}
-						/** 重新设置从表链接列 */
-						String subordinate = joinColumn.subordinate().trim();
-						if (!subordinate.isEmpty()) {
-							subordinateColumn = subordinate;
-						}
-					}
+					/** 设置主表链接列 */
+					String principalColumn = queryFieldInfo.getPrincipalColumn();
+					/** 从表链接列 */
+					String subordinateColumn = queryFieldInfo.getSubordinateColumn();
 					/** 获取需要链接的表名 */
 					String joinTable = getTable(field.getType());
 					String joinTableAlias = member.getAlias();
 					/** 处理连接方式 */
 					String joinStr = "LEFT";
-					if (BaseQuery.class.isAssignableFrom(member.getClass())) {
-						BaseQuery joinSearchObj = member;
-						JoinType joinType = joinSearchObj.getJoinType();
-						if (joinType.equals(JoinType.RightJoin)) {
-							joinStr = "RIGHT";
-						} else if (joinType.equals(JoinType.FullJoin)) {
-							joinStr = "FULL";
-						} else if (joinType.equals(JoinType.InnerJoin)) {
-							joinStr = "INNER";
-						} else if (joinType.equals(JoinType.CrossJoin)) {
-							joinStr = "CROSS";
-						}
+					JoinType joinType = member.getJoinType();
+					if (joinType.equals(JoinType.RightJoin)) {
+						joinStr = "RIGHT";
+					} else if (joinType.equals(JoinType.FullJoin)) {
+						joinStr = "FULL";
+					} else if (joinType.equals(JoinType.InnerJoin)) {
+						joinStr = "INNER";
+					} else if (joinType.equals(JoinType.CrossJoin)) {
+						joinStr = "CROSS";
 					}
 					joinBuffer.append(joinStr + " JOIN `" + joinTable + "` AS `" + joinTableAlias + "` ON ");
 					joinBuffer.append("`" + joinTableAlias + "`.`" + subordinateColumn + "` = ");
@@ -302,7 +272,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 				}
 			}
 			/** 如果是关联查询对象 */
-			else if (field.getType().isAnnotationPresent(Search.class)) {
+			else if (field.getType().isAnnotationPresent(Query.class)) {
 				result.addAll(toWhere((BaseQuery) member));
 			}
 		}
@@ -346,20 +316,13 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	 * @param searcherType 用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
-	private static Class<?> getModelType(Class<?> searcherType) {
-		if (searcherType == null) {
-			throw new OperationNotSupportedException("传入对象不能为空");
+	private static Class<?> getModelType(Class<?> queryType) {
+		if (queryType == null) {
+			throw new IllegalArgumentException("queryType cant not be null");
 		}
-		if (searcherType.isAnnotationPresent(Search.class)) {
-			Search search = searcherType.getAnnotation(Search.class);
-			if (search.value() != null) {
-				return search.value();
-			} else {
-				throw new OperationNotSupportedException("该类@Search注解没有赋值");
-			}
-		} else {
-			throw new OperationNotSupportedException("该类没有标注@Search注解");
-		}
+		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
+		Class<?> modelType = queryInfo.getQueryEntityCalss();
+		return modelType;
 	}
 
 	/**
@@ -368,8 +331,9 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	 * @param searcherType 用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
-	private static String getTable(Class<?> searcherType) {
-		Class<?> entityType = getModelType(searcherType);
-		return UniversalCrudContent.getEntityInfo(entityType).getTableName();
+	private static String getTable(Class<?> queryType) {
+		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
+		Class<?> modelType = queryInfo.getQueryEntityCalss();
+		return UniversalCrudContent.getEntityInfo(modelType).getTableName();
 	}
 }

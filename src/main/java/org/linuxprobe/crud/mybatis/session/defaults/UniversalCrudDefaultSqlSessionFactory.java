@@ -2,7 +2,6 @@ package org.linuxprobe.crud.mybatis.session.defaults;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
@@ -14,20 +13,13 @@ import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
-import org.linuxprobe.crud.core.annoatation.Entity;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
-import org.linuxprobe.crud.core.sql.generator.SqlGenerator;
-import org.linuxprobe.crud.core.sql.generator.SqlGenerator.DataBaseType;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudConfiguration;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSession;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudSqlSessionFactory;
-import org.linuxprobe.crud.utils.ClassScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFactory
 		implements UniversalCrudSqlSessionFactory {
-	private static Logger logger = LoggerFactory.getLogger(UniversalCrudDefaultSqlSessionFactory.class);
 
 	/** mybatis配置 */
 	public UniversalCrudDefaultSqlSessionFactory(UniversalCrudConfiguration configuration) {
@@ -139,19 +131,6 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 
 	/** 初始化univerCrud */
 	private void initUniversalCrud(UniversalCrudConfiguration configuration) {
-		if (true) {
-			SqlGenerator.setDataBaseType(DataBaseType.Mysql);
-		}
-//		else if (configuration.getDriver().indexOf("mysql") != -1) {
-//			SqlGenerator.setDataBaseType(DataBaseType.Mysql);
-//		}
-		/** 扫描类信息 */
-		List<Class<?>> classs = ClassScan.scan(configuration.getUniversalCrudScan());
-		for (Class<?> clazz : classs) {
-			if (clazz.isAnnotationPresent(Entity.class)) {
-				logger.debug("scan entity " + clazz.getName());
-				UniversalCrudContent.addEntityInfo(clazz);
-			}
-		}
+		UniversalCrudContent.setUniversalCrudConfiguration(configuration);
 	}
 }

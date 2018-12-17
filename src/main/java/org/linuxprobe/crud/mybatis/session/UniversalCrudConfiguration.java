@@ -2,8 +2,12 @@ package org.linuxprobe.crud.mybatis.session;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import javax.sql.DataSource;
+
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.Configuration;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,25 +17,22 @@ public class UniversalCrudConfiguration extends Configuration {
 	/** 实体和查询类扫描路径 */
 	protected String universalCrudScan;
 
-	private String driver;
-
-	public String getDriver() {
-		if (driver != null) {
-			return driver;
-		}
-		Method getDriverMethod = null;
+	public String getDriverClassName() {
 		DataSource dataSource = this.getEnvironment().getDataSource();
-		try {
-			getDriverMethod = dataSource.getClass().getMethod("getDriver");
-		} catch (NoSuchMethodException | SecurityException e) {
-			return null;
+		if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
+			return ((PooledDataSource) dataSource).getDriver();
+		} else {
+			Method getDriverMethod = null;
+			try {
+				getDriverMethod = dataSource.getClass().getMethod("getDriverClassName");
+			} catch (NoSuchMethodException | SecurityException e1) {
+				return null;
+			}
+			try {
+				return (String) getDriverMethod.invoke(dataSource);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				return null;
+			}
 		}
-		try {
-			driver = (String) getDriverMethod.invoke(dataSource);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return driver;
 	}
 }
