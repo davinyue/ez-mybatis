@@ -93,7 +93,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		return sqlBuilder.toString();
 	}
 
-	/** 转换为left join part */
+	/** 转换为join part */
 	private static StringBuilder toJoin(BaseQuery searcher) {
 		StringBuilder joinBuffer = new StringBuilder();
 		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
