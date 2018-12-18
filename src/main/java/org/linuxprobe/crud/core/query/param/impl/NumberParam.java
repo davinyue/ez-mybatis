@@ -1,15 +1,27 @@
 package org.linuxprobe.crud.core.query.param.impl;
 
 import java.util.List;
-import org.linuxprobe.crud.core.query.param.QueryParam;
+
+import org.linuxprobe.crud.core.query.param.BaseParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /** 数字型参数 */
 @Setter
+@Getter
 @NoArgsConstructor
-public class NumberParam extends QueryParam {
+public class NumberParam extends BaseParam<Number> {
+	private Number value;
+	/** 下限 */
+	private Number minValue;
+	/** 上限 */
+	private Number maxValue;
+	/** 多值 */
+	private List<Number> multiValues;
+
 	/** 操作符is null或者is not null */
 	public NumberParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
@@ -64,96 +76,46 @@ public class NumberParam extends QueryParam {
 	}
 
 	/** 操作符只支持between, not between */
-	public NumberParam(Operator operator, Number lowerLimit, Number upperLimit) {
+	public NumberParam(Operator operator, Number minValue, Number maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符只支持between, not between */
-	public NumberParam(Condition condition, Operator operator, Number lowerLimit, Number upperLimit) {
+	public NumberParam(Condition condition, Operator operator, Number minValue, Number maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setCondition(condition);
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符只支持in, not in */
-	public NumberParam(Operator operator, List<Number> multipart) {
+	public NumberParam(Operator operator, List<Number> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.multipart = multipart;
+			this.multiValues = multiValues;
 		}
 	}
 
 	/** 操作符只支持in, not in */
-	public NumberParam(Condition condition, Operator operator, List<Number> multipart) {
+	public NumberParam(Condition condition, Operator operator, List<Number> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setCondition(condition);
 			this.setOperator(operator);
-			this.multipart = multipart;
-		}
-	}
-
-	private Number value;
-	/** 上限 */
-	private Number upperLimit;
-	/** 下限 */
-	private Number lowerLimit;
-	/** 多值 */
-	private List<Number> multipart;
-
-	@Override
-	public String getValue() {
-		if (value == null) {
-			return null;
-		}
-		return value.toString();
-	}
-
-	@Override
-	public String getUpperLimit() {
-		if (upperLimit == null) {
-			return null;
-		}
-		return upperLimit.toString();
-	}
-
-	@Override
-	public String getLowerLimit() {
-		if (lowerLimit == null) {
-			return null;
-		}
-		return lowerLimit.toString();
-	}
-
-	@Override
-	public String getMultipart() {
-		if (multipart == null || multipart.isEmpty()) {
-			return null;
-		} else {
-			StringBuffer multipartValue = new StringBuffer();
-			for (int i = 0; i < multipart.size(); i++) {
-				Number tempvalue = multipart.get(i);
-				if (i + 1 != multipart.size()) {
-					multipartValue.append(tempvalue.toString() + ", ");
-				} else {
-					multipartValue.append(tempvalue.toString());
-				}
-			}
-			return multipartValue.toString();
+			this.multiValues = multiValues;
 		}
 	}
 

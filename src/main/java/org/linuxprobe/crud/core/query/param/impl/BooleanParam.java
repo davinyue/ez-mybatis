@@ -1,15 +1,27 @@
 package org.linuxprobe.crud.core.query.param.impl;
 
 import java.util.List;
-import org.linuxprobe.crud.core.query.param.QueryParam;
+
+import org.linuxprobe.crud.core.query.param.BaseParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /** 布尔型参数 */
 @Setter
+@Getter
 @NoArgsConstructor
-public class BooleanParam extends QueryParam {
+public class BooleanParam extends BaseParam<Boolean> {
+	private Boolean value;
+	/** 上限 */
+	private Boolean maxValue;
+	/** 下限 */
+	private Boolean minValue;
+	/** 多值 */
+	private List<Boolean> multiValues;
+
 	/** 操作符支持is null和is not null */
 	public BooleanParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
@@ -64,100 +76,46 @@ public class BooleanParam extends QueryParam {
 	}
 
 	/** 操作符只支持between, not between */
-	public BooleanParam(Operator operator, Boolean lowerLimit, Boolean upperLimit) {
+	public BooleanParam(Operator operator, Boolean minValue, Boolean maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符只支持between, not between */
-	public BooleanParam(Condition condition, Operator operator, Boolean lowerLimit, Boolean upperLimit) {
+	public BooleanParam(Condition condition, Operator operator, Boolean minValue, Boolean maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setCondition(condition);
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符只支持in, not in */
-	public BooleanParam(Operator operator, List<Boolean> multipart) {
+	public BooleanParam(Operator operator, List<Boolean> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.multipart = multipart;
+			this.multiValues = multiValues;
 		}
 	}
 
 	/** 操作符只支持in, not in */
-	public BooleanParam(Condition condition, Operator operator, List<Boolean> multipart) {
+	public BooleanParam(Condition condition, Operator operator, List<Boolean> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setCondition(condition);
 			this.setOperator(operator);
-			this.multipart = multipart;
+			this.multiValues = multiValues;
 		}
 	}
-
-	private Boolean value;
-	/** 上限 */
-	private Boolean upperLimit;
-	/** 下限 */
-	private Boolean lowerLimit;
-	/** 多值 */
-	private List<Boolean> multipart;
-
-	@Override
-	public String getValue() {
-		if (value == null) {
-			return null;
-		} else {
-			return value ? 1 + "" : 0 + "";
-		}
-	}
-
-	@Override
-	public String getMultipart() {
-		if (multipart == null || multipart.isEmpty()) {
-			return null;
-		} else {
-			StringBuffer multipartValue = new StringBuffer();
-			for (int i = 0; i < multipart.size(); i++) {
-				int tempvalue = multipart.get(i) ? 1 : 0;
-				if (i + 1 != multipart.size()) {
-					multipartValue.append(tempvalue + ", ");
-				} else {
-					multipartValue.append(tempvalue);
-				}
-			}
-			return multipartValue.toString();
-		}
-	}
-
-	@Override
-	public String getUpperLimit() {
-		if (upperLimit == null) {
-			return null;
-		} else {
-			return upperLimit ? 1 + "" : 0 + "";
-		}
-	}
-
-	@Override
-	public String getLowerLimit() {
-		if (lowerLimit == null) {
-			return null;
-		} else {
-			return lowerLimit ? 1 + "" : 0 + "";
-		}
-	}
-
 }

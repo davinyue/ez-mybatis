@@ -2,8 +2,10 @@ package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,9 +16,16 @@ import org.linuxprobe.crud.core.content.QueryInfo.QueryFieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.BaseQuery.JoinType;
-import org.linuxprobe.crud.core.query.param.QueryParam;
+import org.linuxprobe.crud.core.query.param.BaseParam;
+import org.linuxprobe.crud.core.query.param.BaseParam.Operator;
+import org.linuxprobe.crud.core.query.param.impl.BooleanParam;
+import org.linuxprobe.crud.core.query.param.impl.DateParam;
+import org.linuxprobe.crud.core.query.param.impl.NumberParam;
+import org.linuxprobe.crud.core.query.param.impl.StringParam;
+import org.linuxprobe.crud.core.query.param.impl.StringParam.Fuzzt;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.crud.utils.SqlEscapeUtil;
 
 public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/** 转换为查询sql */
@@ -159,7 +168,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		/** 获取查询对象的成员 */
 		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
 		List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
-		for(QueryFieldInfo queryFieldInfo:queryFieldInfos) {
+		for (QueryFieldInfo queryFieldInfo : queryFieldInfos) {
 			Field searcherField = queryFieldInfo.getField();
 			/**
 			 * 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
@@ -169,9 +178,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 				/** 如果名称匹配上 */
 				if (searcherField.getName().equals(fieldName)) {
 					/** 如果是查询类参数对象 */
-					if (QueryParam.class.isAssignableFrom(searcherField.getType())) {
-						String orderName = "`" + searcher.getAlias() + "`.`"
-								+ queryFieldInfo.getColumnName() + "`";
+					if (BaseParam.class.isAssignableFrom(searcherField.getType())) {
+						String orderName = "`" + searcher.getAlias() + "`.`" + queryFieldInfo.getColumnName() + "`";
 						return orderName;
 					}
 					break;
@@ -181,12 +189,12 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 			else {
 				/** 如果第一层名称匹配上 */
 				if (searcherField.getName().equals(fieldNames[0])) {
-					if(BaseQuery.class.isAssignableFrom(searcherField.getType())) {
+					if (BaseQuery.class.isAssignableFrom(searcherField.getType())) {
 						BaseQuery sonSearcher = (BaseQuery) FieldUtil.getFieldValue(searcher, searcherField);
 						if (sonSearcher != null) {
 							return getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
 						}
-					}else {
+					} else {
 						throw new IllegalArgumentException("深层次排序必须指定在连接查询上");
 					}
 				}
@@ -198,19 +206,18 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/** 转换为分页部分 */
 	private static String toLimit(BaseQuery baseQuery) {
 		if (baseQuery.getLimit() != null) {
-			return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize()
-					+ " ";
-		}else {
+			return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize() + " ";
+		} else {
 			return " ";
 		}
 	}
 
 	/** 转换为where part */
-	private static LinkedList<String> toWhere(BaseQuery searcher) {
+	private LinkedList<String> toWhere(BaseQuery searcher) {
 		LinkedList<String> result = new LinkedList<>();
 		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
-		List<QueryFieldInfo> queryFieldInfos =queryInfo.getQueryFieldInfos();
-		for(QueryFieldInfo queryFieldInfo:queryFieldInfos) {
+		List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
+		for (QueryFieldInfo queryFieldInfo : queryFieldInfos) {
 			Field field = queryFieldInfo.getField();
 			/** 列名 */
 			String columnName = queryFieldInfo.getColumnName();
@@ -221,11 +228,12 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 				continue;
 			}
 			/** 如果是基础查询对象 */
-			if (QueryParam.class.isAssignableFrom(field.getType())) {
-				QueryParam baseMember = (QueryParam) member;
+			if (BaseParam.class.isAssignableFrom(field.getType())) {
+				@SuppressWarnings("unchecked")
+				BaseParam<Serializable> baseMember = (BaseParam<Serializable>) member;
 				if (!baseMember.isEmpty()) {
 					result.add(baseMember.getCondition() + " `" + searcher.getAlias() + "`.`" + columnName + "` "
-							+ baseMember.toSqlPart() + " ");
+							+ this.paramToSqlPart(baseMember) + " ");
 				}
 			}
 			/** 如果是关联查询对象 */
@@ -237,7 +245,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	}
 
 	/** 获取格式化后的where条件 */
-	private static StringBuilder getFormatWhere(BaseQuery searcher) {
+	private StringBuilder getFormatWhere(BaseQuery searcher) {
 		List<String> wheres = toWhere(searcher);
 		/** 把and的条件排序在前面 */
 		Collections.sort(wheres, new Comparator<String>() {
@@ -292,5 +300,151 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
 		Class<?> modelType = queryInfo.getQueryEntityCalss();
 		return UniversalCrudContent.getEntityInfo(modelType).getTableName();
+	}
+
+	private String paramToSqlPart(BaseParam<? extends Serializable> param) {
+		if (StringParam.class.isAssignableFrom(param.getClass())) {
+			return this.stringParamToSqlPart((StringParam) param);
+		} else if (DateParam.class.isAssignableFrom(param.getClass())) {
+			return this.dateParamToSqlPart((DateParam) param);
+		} else if (NumberParam.class.isAssignableFrom(param.getClass())) {
+			return this.numberParamToSqlPart((NumberParam) param);
+		} else if (BooleanParam.class.isAssignableFrom(param.getClass())) {
+			return this.booleanParamToSqlPart((BooleanParam) param);
+		} else {
+			return " ";
+		}
+	}
+
+	private String stringParamToSqlPart(StringParam param) {
+		if (param == null || param.isEmpty()) {
+			return " ";
+		} else {
+			String escape = "'";
+			Operator operator = param.getOperator();
+			if (operator == Operator.equal || operator == Operator.unequal || operator == Operator.more
+					|| operator == Operator.less || operator == Operator.moreOrEqual || operator == Operator.lessOrEqual
+					|| operator == Operator.regexp) {
+				String value = param.getValue();
+				value = SqlEscapeUtil.mysqlEscape(value);
+				value = escape + value + escape;
+				return operator.getOperator() + " " + value + " ";
+			} else if (operator == Operator.like || operator == Operator.unlike) {
+				String value = param.getValue();
+				value = SqlEscapeUtil.mysqlEscape(value);
+				if (Fuzzt.Left.equals(param.getFuzzt())) {
+					value = "%" + value;
+				} else if (Fuzzt.Right.equals(param.getFuzzt())) {
+					value = value + "%";
+				} else if (Fuzzt.All.equals(param.getFuzzt())) {
+					value = "%" + value + "%";
+				}
+				value = escape + value + escape;
+				return operator.getOperator() + " " + value + " ";
+			} else if (operator == Operator.between || operator == Operator.notBetween) {
+				String minValue = param.getMinValue();
+				minValue = SqlEscapeUtil.mysqlEscape(minValue);
+				minValue = escape + minValue + escape;
+				String maxValue = param.getMaxValue();
+				maxValue = SqlEscapeUtil.mysqlEscape(maxValue);
+				maxValue = escape + maxValue + escape;
+				return operator.getOperator() + " " + minValue + " AND " + maxValue + " ";
+			} else if (operator == Operator.in || operator == Operator.notIn) {
+				List<String> multiValues = param.getMultiValues();
+				StringBuilder stringValues = new StringBuilder();
+				for (int i = 0; i < multiValues.size(); i++) {
+					String multiValue = multiValues.get(i);
+					multiValue = SqlEscapeUtil.mysqlEscape(multiValue);
+					if (i + 1 == multiValues.size()) {
+						multiValue = escape + multiValue + escape;
+					} else {
+						multiValue = escape + multiValue + escape + ", ";
+					}
+					stringValues.append(multiValue);
+				}
+				return operator.getOperator() + "(" + stringValues.toString() + ") ";
+			} else if (operator == Operator.isNull || operator == Operator.isNotNull) {
+				return operator.getOperator() + " NULL ";
+			} else {
+				return " ";
+			}
+		}
+	}
+
+	private String dateParamToSqlPart(DateParam param) {
+		SimpleDateFormat dateForma = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		StringParam stringParam = new StringParam();
+		stringParam.setFuzzt(Fuzzt.Custom);
+		stringParam.setCondition(param.getCondition());
+		stringParam.setOperator(param.getOperator());
+		if (param.getValue() != null) {
+			stringParam.setValue(dateForma.format(param.getValue()));
+		} else if (param.getMinValue() != null) {
+			stringParam.setMinValue(dateForma.format(param.getMinValue()));
+		} else if (param.getMaxValue() != null) {
+			stringParam.setMaxValue(dateForma.format(param.getMaxValue()));
+		} else if (param.getMultiValues() != null) {
+			List<String> multiValues = new LinkedList<>();
+			for (Date multiValue : param.getMultiValues()) {
+				multiValues.add(dateForma.format(multiValue));
+			}
+			stringParam.setMultiValues(multiValues);
+		}
+		return this.stringParamToSqlPart(stringParam);
+	}
+
+	private String numberParamToSqlPart(NumberParam param) {
+		if (param == null || param.isEmpty()) {
+			return " ";
+		} else {
+			Operator operator = param.getOperator();
+			if (operator == Operator.equal || operator == Operator.unequal || operator == Operator.more
+					|| operator == Operator.less || operator == Operator.moreOrEqual
+					|| operator == Operator.lessOrEqual) {
+				return operator.getOperator() + " " + param.getValue() + " ";
+			} else if (operator == Operator.between || operator == Operator.notBetween) {
+				return operator.getOperator() + " " + param.getMinValue() + " AND " + param.getMaxValue() + " ";
+			} else if (operator == Operator.in || operator == Operator.notIn) {
+				List<Number> multiValues = param.getMultiValues();
+				StringBuilder stringValues = new StringBuilder();
+				for (int i = 0; i < multiValues.size(); i++) {
+					Number multiValue = multiValues.get(i);
+					if (i + 1 == multiValues.size()) {
+						stringValues.append(multiValue);
+					} else {
+						stringValues.append(multiValue + ", ");
+					}
+				}
+				return operator.getOperator() + "(" + stringValues.toString() + ") ";
+			} else if (operator == Operator.isNull || operator == Operator.isNotNull) {
+				return operator.getOperator() + " NULL ";
+			} else {
+				return " ";
+			}
+		}
+	}
+
+	private String booleanParamToSqlPart(BooleanParam param) {
+		NumberParam numberParam = new NumberParam();
+		numberParam.setCondition(param.getCondition());
+		numberParam.setOperator(param.getOperator());
+		if (param.getValue() != null) {
+			Number value = param.getValue() ? 1 : 0;
+			numberParam.setValue(value);
+		} else if (param.getMinValue() != null) {
+			Number minValue = param.getMinValue() ? 1 : 0;
+			numberParam.setMinValue(minValue);
+		} else if (param.getMaxValue() != null) {
+			Number maxValue = param.getMaxValue() ? 1 : 0;
+			numberParam.setMaxValue(maxValue);
+		} else if (param.getMultiValues() != null) {
+			List<Number> multiValues = new LinkedList<>();
+			for (Boolean multiValue : param.getMultiValues()) {
+				Number value = multiValue ? 1 : 0;
+				multiValues.add(value);
+			}
+			numberParam.setMultiValues(multiValues);
+		}
+		return this.numberParamToSqlPart(numberParam);
 	}
 }

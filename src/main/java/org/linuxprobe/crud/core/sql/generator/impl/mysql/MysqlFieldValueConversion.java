@@ -34,7 +34,7 @@ public class MysqlFieldValueConversion {
 						}
 					}
 				}
-				clounmValue = SqlEscapeUtil.escape(clounmValue);
+				clounmValue = SqlEscapeUtil.mysqlEscape(clounmValue);
 				result = "'" + clounmValue + "'";
 			}
 		} else if (Number.class.isAssignableFrom(field.getType())) {

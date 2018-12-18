@@ -1,16 +1,29 @@
 package org.linuxprobe.crud.core.query.param.impl;
 
 import java.util.List;
-import org.linuxprobe.crud.core.query.param.QueryParam;
+
+import org.linuxprobe.crud.core.query.param.BaseParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.utils.SqlEscapeUtil;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /** 字符串型参数 */
 @Setter
+@Getter
 @NoArgsConstructor
-public class StringParam extends QueryParam {
+public class StringParam extends BaseParam<String> {
+	private String value;
+	/** 上限 */
+	private String maxValue;
+	/** 下限 */
+	private String minValue;
+	/** 多值 */
+	private List<String> multiValues;
+	/** 模糊匹配模式 */
+	private Fuzzt fuzzt = Fuzzt.All;
+
 	/** 操作符支持is null和is not null */
 	public StringParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
@@ -91,120 +104,46 @@ public class StringParam extends QueryParam {
 	}
 
 	/** 操作符支持between, not between */
-	public StringParam(Operator operator, String lowerLimit, String upperLimit) {
+	public StringParam(Operator operator, String minValue, String maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 自定义条件连接and和or, 操作符只支持between, not between */
-	public StringParam(Condition condition, Operator operator, String lowerLimit, String upperLimit) {
+	public StringParam(Condition condition, Operator operator, String minValue, String maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符支持in, not in */
-	public StringParam(Operator operator, List<String> multipart) {
+	public StringParam(Operator operator, List<String> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.multipart = multipart;
+			this.multiValues = multiValues;
 		}
 	}
 
 	/** 自定义条件连接and和or, 操作符支持in, not in */
-	public StringParam(Condition condition, Operator operator, List<String> multipart) {
+	public StringParam(Condition condition, Operator operator, List<String> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
 			this.setOperator(operator);
-			this.multipart = multipart;
-		}
-	}
-
-	private String value;
-	/** 上限 */
-	private String upperLimit;
-	/** 下限 */
-	private String lowerLimit;
-	/** 多值 */
-	private List<String> multipart;
-	/** 模糊匹配模式 */
-	private Fuzzt fuzzt = Fuzzt.All;
-
-	@Override
-	public String getValue() {
-		String temp = value;
-		if (temp == null) {
-			return null;
-		} else {
-			temp = SqlEscapeUtil.escape(temp);
-			if (this.getOperator() == Operator.like || this.getOperator() == Operator.unlike) {
-				if (Fuzzt.All.equals(this.fuzzt) || this.fuzzt == null) {
-					return "'%" + temp + "%'";
-				} else if (Fuzzt.Right.equals(this.fuzzt)) {
-					return "'" + temp + "%'";
-				} else if (Fuzzt.Left.equals(this.fuzzt)) {
-					return "'%" + temp + "'";
-				} else {
-					return "'" + temp + "'";
-				}
-			} else {
-				return "'" + temp + "'";
-			}
-		}
-	}
-
-	@Override
-	public String getMultipart() {
-		if (multipart == null || multipart.isEmpty()) {
-			return null;
-		} else {
-			StringBuffer valueBufffer = new StringBuffer();
-			for (int i = 0; i < multipart.size(); i++) {
-				String tempvalue = multipart.get(i);
-				tempvalue = SqlEscapeUtil.escape(tempvalue);
-				if (i + 1 != multipart.size()) {
-					valueBufffer.append("'" + tempvalue + "', ");
-				} else {
-					valueBufffer.append("'" + tempvalue + "'");
-				}
-			}
-			return valueBufffer.toString();
-		}
-	}
-
-	@Override
-	public String getUpperLimit() {
-		String tempvalue = upperLimit;
-		if (upperLimit == null) {
-			return null;
-		} else {
-			tempvalue = SqlEscapeUtil.escape(tempvalue);
-			return "'" + tempvalue + "'";
-		}
-	}
-
-	@Override
-	public String getLowerLimit() {
-		String tempvalue = lowerLimit;
-		if (lowerLimit == null) {
-			return null;
-		} else {
-			tempvalue = SqlEscapeUtil.escape(tempvalue);
-			return "'" + tempvalue + "'";
+			this.multiValues = multiValues;
 		}
 	}
 

@@ -1,17 +1,20 @@
 package org.linuxprobe.crud.core.query.param.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import org.linuxprobe.crud.core.query.param.QueryParam;
+
+import org.linuxprobe.crud.core.query.param.BaseParam;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /** 日期型参数 */
 @Setter
+@Getter
 @NoArgsConstructor
-public class DateParam extends QueryParam {
+public class DateParam extends BaseParam<Date> {
 	/** 操作符is null或者is not null */
 	public DateParam(Operator operator) {
 		if (operator != Operator.isNotNull && operator != Operator.isNull) {
@@ -66,108 +69,54 @@ public class DateParam extends QueryParam {
 	}
 
 	/** 操作符只支持between, not between */
-	public DateParam(Operator operator, Date lowerLimit, Date upperLimit) {
+	public DateParam(Operator operator, Date minValue, Date maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符只支持between, not between */
-	public DateParam(Condition condition, Operator operator, Date lowerLimit, Date upperLimit) {
+	public DateParam(Condition condition, Operator operator, Date minValue, Date maxValue) {
 		if (operator != Operator.between && operator != Operator.notBetween) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setCondition(condition);
 			this.setOperator(operator);
-			this.lowerLimit = lowerLimit;
-			this.upperLimit = upperLimit;
+			this.minValue = minValue;
+			this.maxValue = maxValue;
 		}
 	}
 
 	/** 操作符只支持in, not in */
-	public DateParam(Operator operator, List<Date> multipart) {
+	public DateParam(Operator operator, List<Date> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setOperator(operator);
-			this.multipart = multipart;
+			this.multiValues = multiValues;
 		}
 	}
 
 	/** 操作符只支持in, not in */
-	public DateParam(Condition condition, Operator operator, List<Date> multipart) {
+	public DateParam(Condition condition, Operator operator, List<Date> multiValues) {
 		if (operator != Operator.in && operator != Operator.notIn) {
 			throw new OperationNotSupportedException();
 		} else {
 			this.setCondition(condition);
 			this.setOperator(operator);
-			this.multipart = multipart;
+			this.multiValues = multiValues;
 		}
 	}
 
 	private Date value;
 	/** 上限 */
-	private Date upperLimit;
+	private Date maxValue;
 	/** 下限 */
-	private Date lowerLimit;
+	private Date minValue;
 	/** 多值 */
-	private List<Date> multipart;
-	final static private SimpleDateFormat dateForma = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-	@Override
-	public String getValue() {
-		if (value == null) {
-			return null;
-		} else {
-			String strValue = dateForma.format(value);
-			if (this.getOperator() == Operator.like || this.getOperator() == Operator.unlike) {
-				return "'%" + strValue + "%'";
-			} else {
-				return "'" + strValue + "'";
-			}
-		}
-	}
-
-	@Override
-	public String getMultipart() {
-		if (multipart == null || multipart.isEmpty()) {
-			return null;
-		} else {
-			StringBuffer valueBufffer = new StringBuffer();
-			for (int i = 0; i < multipart.size(); i++) {
-				Date tempvalue = multipart.get(i);
-				String strTempvalue = dateForma.format(tempvalue);
-				if (i + 1 != multipart.size()) {
-					valueBufffer.append("'" + strTempvalue + "', ");
-				} else {
-					valueBufffer.append("'" + strTempvalue + "'");
-				}
-			}
-			return valueBufffer.toString();
-		}
-	}
-
-	@Override
-	public String getUpperLimit() {
-		if (upperLimit == null) {
-			return null;
-		} else {
-			String strUpperLimit = dateForma.format(upperLimit);
-			return "'" + strUpperLimit + "'";
-		}
-	}
-
-	@Override
-	public String getLowerLimit() {
-		if (lowerLimit == null) {
-			return null;
-		} else {
-			String strLowerLimit = dateForma.format(lowerLimit);
-			return "'" + strLowerLimit + "'";
-		}
-	}
+	private List<Date> multiValues;
 }

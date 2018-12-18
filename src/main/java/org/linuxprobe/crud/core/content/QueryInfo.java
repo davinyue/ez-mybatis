@@ -10,7 +10,7 @@ import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.JoinColumn;
 import org.linuxprobe.crud.core.annoatation.Query;
 import org.linuxprobe.crud.core.query.BaseQuery;
-import org.linuxprobe.crud.core.query.param.QueryParam;
+import org.linuxprobe.crud.core.query.param.BaseParam;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
@@ -38,14 +38,14 @@ public class QueryInfo {
 			this.baseQueryFieldInfos = new LinkedList<>();
 			List<Field> fields = FieldUtil.getAllFields(queryType);
 			for (Field field : fields) {
-				if (!QueryParam.class.isAssignableFrom(field.getType())
+				if (!BaseParam.class.isAssignableFrom(field.getType())
 						&& !BaseQuery.class.isAssignableFrom(field.getType())) {
 					continue;
 				} else {
 					QueryFieldInfo fieldInfo = new QueryFieldInfo();
 					fieldInfo.setField(field);
 					/** 如果是基本类型参数 */
-					if (QueryParam.class.isAssignableFrom(field.getType())) {
+					if (BaseParam.class.isAssignableFrom(field.getType())) {
 						fieldInfo.setColumnName(StringHumpTool.humpToLine2(field.getName(), "_"));
 						if (field.isAnnotationPresent(Column.class)) {
 							Column column = field.getAnnotation(Column.class);
