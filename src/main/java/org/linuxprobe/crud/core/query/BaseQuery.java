@@ -2,9 +2,10 @@ package org.linuxprobe.crud.core.query;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
-import org.linuxprobe.crud.core.query.param.impl.StringParam;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,11 +39,6 @@ public abstract class BaseQuery {
 	/** 排序 */
 	@Getter
 	private String order;
-	/** 主键 */
-	@Getter
-	@Setter
-	private StringParam id;
-
 	/** 分页 */
 	@Getter
 	@Setter
