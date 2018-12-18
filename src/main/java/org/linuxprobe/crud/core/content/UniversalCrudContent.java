@@ -28,8 +28,9 @@ public class UniversalCrudContent {
 	private static DeleteSqlGenerator mysqlDeleteSqlGenerator;
 	private static SelectSqlGenerator mysqlSelectSqlGenerator;
 	private static UpdateSqlGenerator mysqlUpdateSqlGenerator;
-
-	public static void setUniversalCrudConfiguration(UniversalCrudConfiguration universalCrudConfiguration) {
+	
+	/** 初始化content */
+	public static void init(UniversalCrudConfiguration universalCrudConfiguration) {
 		UniversalCrudContent.universalCrudConfiguration = universalCrudConfiguration;
 		/** 扫描类信息 */
 		String[] scans = universalCrudConfiguration.getUniversalCrudScan().split(",");
@@ -38,7 +39,7 @@ public class UniversalCrudContent {
 			Reflections reflections = new Reflections(scan);
 			Set<Class<?>> entityClasss = reflections.getTypesAnnotatedWith(Entity.class);
 			for (Class<?> entityClass : entityClasss) {
-				logger.debug("scan entity " + entityClass.getName());
+				logger.debug("scan entity class " + entityClass.getName());
 				UniversalCrudContent.addEntityInfo(entityClass);
 			}
 		}
@@ -47,7 +48,7 @@ public class UniversalCrudContent {
 			Reflections reflections = new Reflections(scan);
 			Set<Class<?>> queryClasss = reflections.getTypesAnnotatedWith(Query.class);
 			for (Class<?> queryClass : queryClasss) {
-				logger.debug("scan query " + queryClass.getName());
+				logger.debug("scan query class " + queryClass.getName());
 				UniversalCrudContent.addQueryInfo(queryClass);
 			}
 		}
@@ -101,7 +102,7 @@ public class UniversalCrudContent {
 		}
 	}
 
-	public static void addEntityInfo(Class<?> entityType) {
+	private static void addEntityInfo(Class<?> entityType) {
 		entityInfos.put(entityType, new EntityInfo(entityType));
 	}
 
@@ -109,7 +110,7 @@ public class UniversalCrudContent {
 		return entityInfos.get(entityType);
 	}
 
-	public static void addQueryInfo(Class<?> queryType) {
+	private static void addQueryInfo(Class<?> queryType) {
 		queryInfos.put(queryType, new QueryInfo(queryType));
 	}
 

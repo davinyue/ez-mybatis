@@ -28,7 +28,7 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 			configuration.addMapper(org.linuxprobe.crud.mapper.UniversalMapper.class);
 		}
 		/** 初始化univerCrud */
-		initUniversalCrud(configuration);
+		UniversalCrudContent.init(configuration);
 	}
 
 	@Override
@@ -127,10 +127,5 @@ public class UniversalCrudDefaultSqlSessionFactory extends DefaultSqlSessionFact
 	@Override
 	public UniversalCrudConfiguration getConfiguration() {
 		return (UniversalCrudConfiguration) super.getConfiguration();
-	}
-
-	/** 初始化univerCrud */
-	private void initUniversalCrud(UniversalCrudConfiguration configuration) {
-		UniversalCrudContent.setUniversalCrudConfiguration(configuration);
 	}
 }
