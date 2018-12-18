@@ -90,6 +90,7 @@ public class FieldUtil {
 
 	public static Object getFieldValue(Object obj, Field field) {
 		Method getMethod = getMethodOfFieldGet(obj.getClass(), field);
+		getMethod.setAccessible(true);
 		try {
 			Object value = getMethod.invoke(obj);
 			return value;

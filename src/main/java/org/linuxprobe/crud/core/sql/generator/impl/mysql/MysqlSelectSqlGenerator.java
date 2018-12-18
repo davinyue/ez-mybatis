@@ -2,14 +2,11 @@ package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.Query;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.QueryInfo;
@@ -19,10 +16,7 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.BaseQuery.JoinType;
 import org.linuxprobe.crud.core.query.param.QueryParam;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
-import org.linuxprobe.crud.core.sql.generator.SqlGenerator;
-import org.linuxprobe.crud.core.sql.generator.SqlGenerator.DataBaseType;
 import org.linuxprobe.crud.utils.FieldUtil;
-import org.linuxprobe.crud.utils.StringHumpTool;
 
 public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/** 转换为查询sql */
@@ -97,62 +91,57 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	private static StringBuilder toJoin(BaseQuery searcher) {
 		StringBuilder joinBuffer = new StringBuilder();
 		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
+		/** 获取所有关联查询field */
 		List<QueryFieldInfo> baseQueryFieldInfos = queryInfo.getBaseQueryFieldInfos();
 		for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
 			Field field = queryFieldInfo.getField();
-			/** 如果是关联查询对象 */
-			if (field.getType().isAnnotationPresent(Query.class)) {
-				/** 获得该对象 */
-				BaseQuery member = (BaseQuery) FieldUtil.getFieldValue(searcher, field);
-				/** 如果对象不为空，则需要join */
-				if (member != null) {
-					/** 设置主表链接列 */
-					String principalColumn = queryFieldInfo.getPrincipalColumn();
-					/** 从表链接列 */
-					String subordinateColumn = queryFieldInfo.getSubordinateColumn();
-					/** 获取需要链接的表名 */
-					String joinTable = getTable(field.getType());
-					String joinTableAlias = member.getAlias();
-					/** 处理连接方式 */
-					String joinStr = "LEFT";
-					JoinType joinType = member.getJoinType();
-					if (joinType.equals(JoinType.RightJoin)) {
-						joinStr = "RIGHT";
-					} else if (joinType.equals(JoinType.FullJoin)) {
-						joinStr = "FULL";
-					} else if (joinType.equals(JoinType.InnerJoin)) {
-						joinStr = "INNER";
-					} else if (joinType.equals(JoinType.CrossJoin)) {
-						joinStr = "CROSS";
-					}
-					joinBuffer.append(joinStr + " JOIN `" + joinTable + "` AS `" + joinTableAlias + "` ON ");
-					joinBuffer.append("`" + joinTableAlias + "`.`" + subordinateColumn + "` = ");
-					joinBuffer.append("`" + searcher.getAlias() + "`.`" + principalColumn + "` ");
-					joinBuffer.append(toJoin(member));
+			/** 获得该对象 */
+			BaseQuery member = (BaseQuery) FieldUtil.getFieldValue(searcher, field);
+			/** 如果对象不为空，则需要join */
+			if (member != null) {
+				/** 设置主表链接列 */
+				String principalColumn = queryFieldInfo.getPrincipalColumn();
+				/** 从表链接列 */
+				String subordinateColumn = queryFieldInfo.getSubordinateColumn();
+				/** 获取需要链接的表名 */
+				String joinTable = getTable(field.getType());
+				String joinTableAlias = member.getAlias();
+				/** 处理连接方式 */
+				String joinStr = "LEFT";
+				JoinType joinType = member.getJoinType();
+				if (joinType.equals(JoinType.RightJoin)) {
+					joinStr = "RIGHT";
+				} else if (joinType.equals(JoinType.FullJoin)) {
+					joinStr = "FULL";
+				} else if (joinType.equals(JoinType.InnerJoin)) {
+					joinStr = "INNER";
+				} else if (joinType.equals(JoinType.CrossJoin)) {
+					joinStr = "CROSS";
 				}
+				joinBuffer.append(joinStr + " JOIN `" + joinTable + "` AS `" + joinTableAlias + "` ON ");
+				joinBuffer.append("`" + joinTableAlias + "`.`" + subordinateColumn + "` = ");
+				joinBuffer.append("`" + searcher.getAlias() + "`.`" + principalColumn + "` ");
+				joinBuffer.append(toJoin(member));
 			}
 		}
 		return joinBuffer;
 	}
 
 	/** 转换为order by part */
-	private static StringBuilder toOrder(BaseQuery searcher) {
+	private static StringBuilder toOrder(BaseQuery baseQuery) {
 		StringBuilder result = new StringBuilder();
-		if (BaseQuery.class.isAssignableFrom(searcher.getClass())) {
-			BaseQuery baseQuery = searcher;
-			String strOrder = baseQuery.getOrder();
-			if (strOrder != null) {
-				String[] orders = strOrder.split(",");
-				for (int i = 0; i < orders.length; i++) {
-					String[] parts = orders[i].split(" ");
-					String fieldName = parts[0];
-					String orderName = getOrderMember(searcher, fieldName);
-					if (orderName != null) {
-						result.append(orderName + " " + parts[1] + ", ");
-					} else {
-						throw new IllegalArgumentException(searcher.getClass().getName() + "类查询对象里没有与'" + fieldName
-								+ "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
-					}
+		String strOrder = baseQuery.getOrder();
+		if (strOrder != null) {
+			String[] orders = strOrder.split(",");
+			for (int i = 0; i < orders.length; i++) {
+				String[] parts = orders[i].split(" ");
+				String fieldName = parts[0];
+				String orderName = getOrderMember(baseQuery, fieldName);
+				if (orderName != null) {
+					result.append(orderName + " " + parts[1] + ", ");
+				} else {
+					throw new IllegalArgumentException(baseQuery.getClass().getName() + "类查询对象里没有与'" + fieldName
+							+ "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
 				}
 			}
 		}
@@ -168,8 +157,10 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		/** 拆分层次 */
 		String[] fieldNames = fieldName.split("\\.");
 		/** 获取查询对象的成员 */
-		List<Field> searcherFields = FieldUtil.getAllFields(searcher.getClass());
-		for (Field searcherField : searcherFields) {
+		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
+		List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
+		for(QueryFieldInfo queryFieldInfo:queryFieldInfos) {
+			Field searcherField = queryFieldInfo.getField();
 			/**
 			 * 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
 			 */
@@ -180,14 +171,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 					/** 如果是查询类参数对象 */
 					if (QueryParam.class.isAssignableFrom(searcherField.getType())) {
 						String orderName = "`" + searcher.getAlias() + "`.`"
-								+ StringHumpTool.humpToLine2(fieldName, "_") + "`";
-						/** 如果标有列注解 */
-						if (searcherField.isAnnotationPresent(Column.class)) {
-							Column column = searcherField.getAnnotation(Column.class);
-							if (!column.value().trim().isEmpty()) {
-								orderName = "`" + searcher.getAlias() + "`.`" + column.value().trim() + "`";
-							}
-						}
+								+ queryFieldInfo.getColumnName() + "`";
 						return orderName;
 					}
 					break;
@@ -197,14 +181,13 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 			else {
 				/** 如果第一层名称匹配上 */
 				if (searcherField.getName().equals(fieldNames[0])) {
-					searcherField.setAccessible(true);
-					try {
-						BaseQuery sonSearcher = (BaseQuery) searcherField.get(searcher);
+					if(BaseQuery.class.isAssignableFrom(searcherField.getType())) {
+						BaseQuery sonSearcher = (BaseQuery) FieldUtil.getFieldValue(searcher, searcherField);
 						if (sonSearcher != null) {
 							return getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
 						}
-					} catch (IllegalArgumentException | IllegalAccessException e) {
-						continue;
+					}else {
+						throw new IllegalArgumentException("深层次排序必须指定在连接查询上");
 					}
 				}
 			}
@@ -213,52 +196,26 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	}
 
 	/** 转换为分页部分 */
-	private static String toLimit(Object searcher) {
-		if (BaseQuery.class.isAssignableFrom(searcher.getClass())) {
-			BaseQuery baseQuery = (BaseQuery) searcher;
-			if (baseQuery.getLimit() != null) {
-				if (DataBaseType.Mysql.equals(SqlGenerator.getDataBaseType())) {
-					return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize()
-							+ " ";
-				} else if (DataBaseType.Postgre.equals(SqlGenerator.getDataBaseType())) {
-					return "LIMIT " + baseQuery.getLimit().getPageSize() + " OFFSET "
-							+ baseQuery.getLimit().getStartRow() + " ";
-				}
-			}
+	private static String toLimit(BaseQuery baseQuery) {
+		if (baseQuery.getLimit() != null) {
+			return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize()
+					+ " ";
+		}else {
+			return " ";
 		}
-		return "";
 	}
 
 	/** 转换为where part */
 	private static LinkedList<String> toWhere(BaseQuery searcher) {
-		List<Field> fields = FieldUtil.getAllFields(searcher.getClass());
 		LinkedList<String> result = new LinkedList<>();
-		for (Field field : fields) {
-			/** 获取成员名称 */
-			String fieldName = field.getName();
+		QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
+		List<QueryFieldInfo> queryFieldInfos =queryInfo.getQueryFieldInfos();
+		for(QueryFieldInfo queryFieldInfo:queryFieldInfos) {
+			Field field = queryFieldInfo.getField();
 			/** 列名 */
-			String columnName = StringHumpTool.humpToLine2(fieldName, "_");
-			if (field.isAnnotationPresent(Column.class)) {
-				Column column = field.getAnnotation(Column.class);
-				if (!column.value().trim().isEmpty()) {
-					columnName = column.value();
-				}
-			}
-			/** 获取本次参数的方法 */
-			String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-			Method getCurrnetParam = null;
-			try {
-				getCurrnetParam = searcher.getClass().getMethod("get" + funSuffix);
-			} catch (NoSuchMethodException | SecurityException e) {
-				continue;
-			}
+			String columnName = queryFieldInfo.getColumnName();
 			/** 获得该对象 */
-			Object member = null;
-			try {
-				member = getCurrnetParam.invoke(searcher);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				continue;
-			}
+			Object member = FieldUtil.getFieldValue(searcher, field);
 			/** 如果该成员是空值，则不需要加入where条件 */
 			if (member == null) {
 				continue;
