@@ -102,8 +102,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Model> getByQueryParam(Query param) {
-		Class<?> modelClass = getModeCalss();
-		return (List<Model>) sqlSessionTemplate.universalSelect(param, modelClass);
+		return (List<Model>) sqlSessionTemplate.universalSelect(param);
 	}
 
 	@Override

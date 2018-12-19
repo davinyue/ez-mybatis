@@ -15,6 +15,7 @@ import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlInsertSqlGenerator
 import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlSelectSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlUpdateSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudConfiguration;
+import org.linuxprobe.crud.utils.FieldUtil;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class UniversalCrudContent {
 	private static DeleteSqlGenerator mysqlDeleteSqlGenerator;
 	private static SelectSqlGenerator mysqlSelectSqlGenerator;
 	private static UpdateSqlGenerator mysqlUpdateSqlGenerator;
-	
+
 	/** 初始化content */
 	public static void init(UniversalCrudConfiguration universalCrudConfiguration) {
 		UniversalCrudContent.universalCrudConfiguration = universalCrudConfiguration;
@@ -107,7 +108,7 @@ public class UniversalCrudContent {
 	}
 
 	public static EntityInfo getEntityInfo(Class<?> entityType) {
-		return entityInfos.get(entityType);
+		return entityInfos.get(FieldUtil.getRealCalssOfProxyClass(entityType));
 	}
 
 	private static void addQueryInfo(Class<?> queryType) {

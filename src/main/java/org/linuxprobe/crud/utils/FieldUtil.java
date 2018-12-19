@@ -13,6 +13,7 @@ import java.util.List;
 public class FieldUtil {
 	/** 获取该类型的所有成员，包括它的超类的成员 */
 	public static List<Field> getAllFields(Class<?> objClass) {
+		objClass = getRealCalssOfProxyClass(objClass);
 		List<Field> fields = Arrays.asList(objClass.getDeclaredFields());
 		fields = new ArrayList<Field>(fields);
 		Class<?> superClass = objClass.getSuperclass();
@@ -31,6 +32,7 @@ public class FieldUtil {
 
 	/** 获取所有的sql支持的类型成员 */
 	public static List<Field> getAllSqlSupportFields(Class<?> objClass) {
+		objClass = getRealCalssOfProxyClass(objClass);
 		List<Field> fields = getAllFields(objClass);
 		List<Field> result = new LinkedList<>();
 		for (Field field : fields) {
@@ -55,6 +57,7 @@ public class FieldUtil {
 		if (objClass == null || field == null) {
 			return null;
 		}
+		objClass = getRealCalssOfProxyClass(objClass);
 		String fieldName = field.getName();
 		String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
 		Method methodOfSet = null;
@@ -70,6 +73,7 @@ public class FieldUtil {
 		if (objClass == null || field == null) {
 			return null;
 		}
+		objClass = getRealCalssOfProxyClass(objClass);
 		String fieldName = field.getName();
 		String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
 		Method methodOfGet = null;
@@ -82,14 +86,16 @@ public class FieldUtil {
 
 	public static void setField(Object obj, Field field, Object... arg)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodOfSet = getMethodOfFieldSet(obj.getClass(), field);
+		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
+		Method methodOfSet = getMethodOfFieldSet(objClass, field);
 		if (methodOfSet != null) {
 			methodOfSet.invoke(obj, arg);
 		}
 	}
 
 	public static Object getFieldValue(Object obj, Field field) {
-		Method getMethod = getMethodOfFieldGet(obj.getClass(), field);
+		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
+		Method getMethod = getMethodOfFieldGet(objClass, field);
 		getMethod.setAccessible(true);
 		try {
 			Object value = getMethod.invoke(obj);
@@ -97,5 +103,45 @@ public class FieldUtil {
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	public static Object getFieldValueByFieldName(Object obj, String fieldName) {
+		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
+		Field field = null;
+		try {
+			field = objClass.getDeclaredField(fieldName);
+		} catch (NoSuchFieldException | SecurityException e1) {
+			throw new RuntimeException(e1);
+		}
+		Method getMethod = getMethodOfFieldGet(objClass, field);
+		getMethod.setAccessible(true);
+		try {
+			Object value = getMethod.invoke(obj);
+			return value;
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public static String getFieldNameByMethod(Method method) {
+		String fieldName = method.getName().substring(3, method.getName().length());
+		fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1, fieldName.length());
+		return fieldName;
+	}
+
+	public static Field getFieldByMethod(Class<?> type, Method method) {
+		type = getRealCalssOfProxyClass(type);
+		try {
+			return type.getDeclaredField(getFieldNameByMethod(method));
+		} catch (NoSuchFieldException | SecurityException e) {
+			return null;
+		}
+	}
+
+	public static Class<?> getRealCalssOfProxyClass(Class<?> type) {
+		while (type.getSimpleName().indexOf("$$EnhancerByCGLIB$$") != -1) {
+			type = type.getSuperclass();
+		}
+		return type;
 	}
 }

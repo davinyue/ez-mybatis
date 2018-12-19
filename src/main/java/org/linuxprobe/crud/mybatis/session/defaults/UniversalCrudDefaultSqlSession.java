@@ -55,13 +55,8 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	}
 
 	@Override
-	public List<Map<String, Object>> universalSelect(BaseQuery param) {
+	public <T> List<T> universalSelect(BaseQuery param) {
 		return sqlSessionExtend.universalSelect(param);
-	}
-
-	@Override
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
-		return sqlSessionExtend.universalSelect(param, type);
 	}
 
 	@Override

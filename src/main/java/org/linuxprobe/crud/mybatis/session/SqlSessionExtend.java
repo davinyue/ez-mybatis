@@ -9,10 +9,7 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 
 public interface SqlSessionExtend {
 	/** 根据查询对象查询符合条件的数据 */
-	public List<Map<String, Object>> universalSelect(BaseQuery param);
-
-	/** 根据查询对象查询符合条件的数据 */
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type);
+	public <T> List<T> universalSelect(BaseQuery param);
 
 	/** 查询符合条件的记录数 */
 	public long selectCount(BaseQuery param);

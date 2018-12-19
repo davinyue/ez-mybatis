@@ -12,6 +12,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey.Strategy;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.linuxprobe.crud.core.proxy.ModelCglib;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
@@ -100,23 +101,14 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	}
 
 	@Override
-	public List<Map<String, Object>> universalSelect(BaseQuery param) {
+	public <T> List<T> universalSelect(BaseQuery param) {
+		@SuppressWarnings("unchecked")
+		Class<T> type = (Class<T>) UniversalCrudContent.getQueryInfo(param.getClass()).getQueryEntityCalss();
 		String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(param);
-		List<Map<String, Object>> reslut = sqlSession.selectList(selectStatement, sql);
-		return reslut;
-	}
-
-	@Override
-	public <T> List<T> universalSelect(BaseQuery param, Class<T> type) {
-		List<Map<String, Object>> mapperResults = this.universalSelect(param);
+		List<Map<String, Object>> mapperResults = sqlSession.selectList(selectStatement, sql);
 		List<T> records = new LinkedList<>();
 		for (Map<String, Object> mapperResult : mapperResults) {
-			T model = null;
-			try {
-				model = type.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new IllegalArgumentException(e);
-			}
+			T model = new ModelCglib(this).getInstance(type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
 				try {
@@ -144,11 +136,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
 	@Override
 	public Map<String, Object> selectOneBySql(String sql) {
-		List<Map<String, Object>> mapResult = this.selectBySql(sql);
-		if (mapResult != null && !mapResult.isEmpty()) {
-			return mapResult.get(0);
-		} else
-			return null;
+		Map<String, Object> mapResult = this.sqlSession.selectOne(selectOneStatement, sql);
+		return mapResult;
 	}
 
 	@Override
@@ -156,12 +145,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		List<Map<String, Object>> mapResult = this.selectBySql(sql);
 		List<T> records = new LinkedList<>();
 		for (Map<String, Object> mapperResult : mapResult) {
-			T model = null;
-			try {
-				model = type.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new IllegalArgumentException(type.getName() + "没有无参构造函数", e);
-			}
+			T model = new ModelCglib(this).getInstance(type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
 				try {
@@ -177,11 +161,20 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
 	@Override
 	public <T> T selectOneBySql(String sql, Class<T> type) {
-		List<T> records = this.selectBySql(sql, type);
-		if (records != null && !records.isEmpty()) {
-			return records.get(0);
-		} else
+		Map<String, Object> mapResult = this.sqlSession.selectOne(selectOneStatement, sql);
+		if (mapResult == null) {
 			return null;
+		}
+		T model = new ModelCglib(this).getInstance(type);
+		Set<String> columns = mapResult.keySet();
+		for (String column : columns) {
+			try {
+				EntityUtils.setField(model, column, mapResult.get(column));
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return model;
 	}
 
 	@Override
