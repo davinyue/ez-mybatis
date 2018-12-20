@@ -176,6 +176,17 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		}
 		return model;
 	}
+	
+	@Override
+	public <T> T selectByPrimaryKey(Serializable id, Class<T> type) {
+		String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(id, type);
+		return this.selectOneBySql(sql, type);
+	}
+
+	@Override
+	public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type) {
+		return this.selectBySql(UniversalCrudContent.getSelectSqlGenerator().toSelectSql(column, columnValue, type), type);
+	}
 
 	@Override
 	public int globalUpdate(Object record) {
@@ -187,11 +198,5 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	public int localUpdate(Object record) {
 		return sqlSession.update(updateStatement,
 				UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
-	}
-
-	@Override
-	public <T> T selectByPrimaryKey(Serializable id, Class<T> type) {
-		String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(id, type);
-		return this.selectOneBySql(sql, type);
 	}
 }

@@ -16,6 +16,9 @@ public interface SqlSessionExtend {
 
 	/** 根据主键查询数据 */
 	public <T> T selectByPrimaryKey(Serializable id, Class<T> type);
+	
+	/** 根据主键查询数据 */
+	public <T> List<T> selectByColumn(String column,Serializable columnValue, Class<T> type);
 
 	/** 插入 */
 	public int insert(Object record);

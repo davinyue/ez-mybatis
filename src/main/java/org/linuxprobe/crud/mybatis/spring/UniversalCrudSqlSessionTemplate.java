@@ -122,4 +122,9 @@ public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implemen
 	public <T> T selectByPrimaryKey(Serializable id, Class<T> type) {
 		return sqlSessionExtend.selectByPrimaryKey(id, type);
 	}
+	
+	@Override
+	public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type) {
+		return sqlSessionExtend.selectByColumn(column, columnValue, type);
+	}
 }

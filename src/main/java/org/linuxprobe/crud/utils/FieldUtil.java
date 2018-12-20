@@ -3,6 +3,8 @@ package org.linuxprobe.crud.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -150,5 +152,33 @@ public class FieldUtil {
 			}
 		}
 		return null;
+	}
+	
+	/** 获取类的父类泛型类型参数 */
+	public static  Class<?> getGenericSuperclass(Class<?> clazz,int order) {
+		Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[order];
+		Class<?> genericsCalss = null;
+		try {
+			genericsCalss = Class.forName(type.getTypeName());
+			return genericsCalss;
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	/** 获取field的泛型类型参数,eg List<T>, 获取T的类型 */
+	public static  Class<?> getFiledGenericclass(Field field,int order) {
+		ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+		if(parameterizedType==null) {
+			throw new IllegalArgumentException("必须指定泛型类型");
+		}
+		Type type = parameterizedType.getActualTypeArguments()[0];
+		Class<?> genericsCalss = null;
+		try {
+			genericsCalss = Class.forName(type.getTypeName());
+			return genericsCalss;
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 }

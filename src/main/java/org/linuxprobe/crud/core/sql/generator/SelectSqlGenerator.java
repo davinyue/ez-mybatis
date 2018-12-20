@@ -7,11 +7,23 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 public interface SelectSqlGenerator {
 	/** 转换为查询sql */
 	public String toSelectSql(BaseQuery searcher);
-	
-	/** 转换为查询sql
-	 * @param id 主键
-	 * @param modelType model类型 */
+
+	/**
+	 * 转换为查询sql
+	 * 
+	 * @param id        主键
+	 * @param modelType model类型
+	 */
 	public String toSelectSql(Serializable id, Class<?> modelType);
+
+	/**
+	 * 转换为查询sql
+	 * 
+	 * @param column      列名
+	 * @param columnValue 列值
+	 * @param modelType   model类型
+	 */
+	public String toSelectSql(String column, Serializable columnValue, Class<?> modelType);
 
 	/** 转换为查询数量的sql */
 	public String toSelectCountSql(BaseQuery searcher, String clounm);

@@ -65,9 +65,33 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		String table = entityInfo.getTableName();
 		String idColumn = entityInfo.getPrimaryKey().getColumnName();
 		if (String.class.isAssignableFrom(id.getClass())) {
+			id = SqlEscapeUtil.mysqlEscape((String)id);
 			id = "'" + id + "'";
 		}
 		String sql = "SELECT * FROM `" + table + "` WHERE `" + idColumn + "` = " + id;
+		return sql;
+	}
+	
+	@Override
+	public String toSelectSql(String column, Serializable columnValue, Class<?> modelType) {
+		if (column == null) {
+			throw new IllegalArgumentException("column cannot be null");
+		}
+		if (columnValue instanceof String) {
+			if ("".equals(columnValue)) {
+				throw new IllegalArgumentException("columnValue cannot be empty");
+			}
+		}
+		if (modelType == null) {
+			throw new IllegalArgumentException("modelType cannot be null");
+		}
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
+		String table = entityInfo.getTableName();
+		if (String.class.isAssignableFrom(columnValue.getClass())) {
+			columnValue = SqlEscapeUtil.mysqlEscape((String)columnValue);
+			columnValue = "'" + columnValue + "'";
+		}
+		String sql = "SELECT * FROM `" + table + "` WHERE `" + column + "` = " + columnValue;
 		return sql;
 	}
 

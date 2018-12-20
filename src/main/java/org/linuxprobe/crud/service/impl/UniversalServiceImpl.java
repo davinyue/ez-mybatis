@@ -1,8 +1,6 @@
 package org.linuxprobe.crud.service.impl;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +9,7 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
 import org.linuxprobe.crud.service.UniversalService;
+import org.linuxprobe.crud.utils.FieldUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,24 +24,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	private UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
 	private Class<?> getModeCalss() {
-		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		Class<?> modelClass = null;
-		try {
-			modelClass = Class.forName(type.getTypeName());
-		} catch (ClassNotFoundException e) {
-		}
-		return modelClass;
-	}
-
-	@SuppressWarnings("unused")
-	private Class<?> getQueryCalss() {
-		Type type = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-		Class<?> querylClass = null;
-		try {
-			querylClass = Class.forName(type.getTypeName());
-		} catch (ClassNotFoundException e) {
-		}
-		return querylClass;
+		return FieldUtil.getGenericSuperclass(this.getClass(), 0);
 	}
 
 	@Override
