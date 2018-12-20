@@ -23,7 +23,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	@Autowired
 	private UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
-	private Class<?> getModeCalss() {
+	private Class<?> getModelCalss() {
 		return FieldUtil.getGenericSuperclass(this.getClass(), 0);
 	}
 
@@ -44,7 +44,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	@Override
 	@Transactional
 	public int removeByPrimaryKey(IdType id) {
-		Class<?> modelClass = getModeCalss();
+		Class<?> modelClass = getModelCalss();
 		return this.sqlSessionTemplate.deleteByPrimaryKey(id, modelClass);
 	}
 
@@ -52,7 +52,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	@Override
 	@Transactional
 	public long batchRemoveByPrimaryKey(List<IdType> ids) throws Exception {
-		Class<?> modelClass = getModeCalss();
+		Class<?> modelClass = getModelCalss();
 		return this.sqlSessionTemplate.batchDeleteByPrimaryKey((Collection<Serializable>) ids, modelClass);
 	}
 
@@ -68,16 +68,10 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 		return this.sqlSessionTemplate.batchDelete(records);
 	}
 
-	@Override
-	@Transactional
-	public int globalUpdate(Model model) {
-		return this.sqlSessionTemplate.globalUpdate(model);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Model getByPrimaryKey(IdType id) {
-		Class<?> modelClass = getModeCalss();
+		Class<?> modelClass = getModelCalss();
 		return (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass);
 	}
 
@@ -108,7 +102,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	}
 
 	@Override
-	public Map<String, Object> getUniqueResultBySql(String sql) {
+	public Map<String, Object> getOneBySql(String sql) {
 		return this.sqlSessionTemplate.selectOneBySql(sql);
 	}
 
@@ -118,13 +112,31 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	}
 
 	@Override
-	public <T> T getUniqueResultBySql(String sql, Class<T> type) {
+	public <T> T getOneBySql(String sql, Class<T> type) {
 		return this.sqlSessionTemplate.selectOneBySql(sql, type);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Model> getByColumn(String column, Serializable columnValue) {
+		return (List<Model>) this.sqlSessionTemplate.selectByColumn(column, columnValue, this.getModelCalss());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Model> getByFiled(String fieldName, Serializable fieldValue) {
+		return (List<Model>) this.sqlSessionTemplate.selectByField(fieldName, fieldValue, this.getModelCalss());
 	}
 
 	@Override
 	@Transactional
-	public int localUpdate(Model model) {
+	public Model globalUpdate(Model model) {
+		return this.sqlSessionTemplate.globalUpdate(model);
+	}
+
+	@Override
+	@Transactional
+	public Model localUpdate(Model model) {
 		return this.sqlSessionTemplate.localUpdate(model);
 	}
 }

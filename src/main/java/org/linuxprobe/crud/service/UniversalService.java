@@ -60,6 +60,12 @@ public interface UniversalService<Model, IdType extends Serializable, Query exte
 	/** 根据查询对象获取实体数量 */
 	public long getCountByQueryParam(Query param);
 
+	/** 根据列作为条件查询数据 */
+	public List<Model> getByColumn(String column, Serializable columnValue);
+
+	/** 根据实体成员名称作为条件查询数据 */
+	public List<Model> getByFiled(String fieldName, Serializable fieldValue);
+
 	/** 根据查询对象获取实体分页数据 */
 	public Page<Model> getPageInfo(Query param);
 
@@ -67,17 +73,17 @@ public interface UniversalService<Model, IdType extends Serializable, Query exte
 	public List<Map<String, Object>> getBySql(String sql);
 
 	/** 根据sql获取唯一数据 */
-	public Map<String, Object> getUniqueResultBySql(String sql);
+	public Map<String, Object> getOneBySql(String sql);
 
 	/** 根据sql获取数据 */
 	public <T> List<T> getBySql(String sql, Class<T> type);
 
 	/** 根据sql获取唯一数据 */
-	public <T> T getUniqueResultBySql(String sql, Class<T> type);
+	public <T> T getOneBySql(String sql, Class<T> type);
 
 	/** 增量更新 */
-	public int localUpdate(Model model);
+	public Model localUpdate(Model model);
 
 	/** 全量更新 */
-	public int globalUpdate(Model model);
+	public Model globalUpdate(Model model);
 }

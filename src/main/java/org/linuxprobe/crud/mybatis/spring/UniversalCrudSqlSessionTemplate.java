@@ -109,12 +109,12 @@ public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implemen
 	}
 
 	@Override
-	public int globalUpdate(Object record) {
+	public <T> T globalUpdate(T record) {
 		return sqlSessionExtend.globalUpdate(record);
 	}
 
 	@Override
-	public int localUpdate(Object record) {
+	public <T> T localUpdate(T record) {
 		return sqlSessionExtend.localUpdate(record);
 	}
 
@@ -122,9 +122,24 @@ public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implemen
 	public <T> T selectByPrimaryKey(Serializable id, Class<T> type) {
 		return sqlSessionExtend.selectByPrimaryKey(id, type);
 	}
-	
+
 	@Override
 	public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type) {
 		return sqlSessionExtend.selectByColumn(column, columnValue, type);
+	}
+
+	@Override
+	public <T> List<T> selectByField(String fieldName, Serializable fieldValue, Class<T> type) {
+		return sqlSessionExtend.selectByField(fieldName, fieldValue, type);
+	}
+
+	@Override
+	public <T> T selectOneByColumn(String column, Serializable columnValue, Class<T> type) {
+		return this.sqlSessionExtend.selectOneByColumn(column, columnValue, type);
+	}
+
+	@Override
+	public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type) {
+		return this.sqlSessionExtend.selectOneByField(fieldName, fieldValue, type);
 	}
 }

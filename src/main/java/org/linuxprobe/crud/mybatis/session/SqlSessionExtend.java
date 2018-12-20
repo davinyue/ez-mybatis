@@ -16,9 +16,18 @@ public interface SqlSessionExtend {
 
 	/** 根据主键查询数据 */
 	public <T> T selectByPrimaryKey(Serializable id, Class<T> type);
-	
-	/** 根据主键查询数据 */
-	public <T> List<T> selectByColumn(String column,Serializable columnValue, Class<T> type);
+
+	/** 根据列作为条件查询数据 */
+	public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type);
+
+	/** 根据类成员名称作为条件查询数据 */
+	public <T> List<T> selectByField(String fieldName, Serializable fieldValue, Class<T> type);
+
+	/** 根据列作为条件查询数据 */
+	public <T> T selectOneByColumn(String column, Serializable columnValue, Class<T> type);
+
+	/** 根据类成员名称作为条件查询数据 */
+	public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type);
 
 	/** 插入 */
 	public int insert(Object record);
@@ -51,8 +60,8 @@ public interface SqlSessionExtend {
 	public <T> T selectOneBySql(String sql, Class<T> type);
 
 	/** 全字段更新 */
-	public int globalUpdate(Object record);
+	public <T> T globalUpdate(T record);
 
 	/** 非空字段更新 */
-	public int localUpdate(Object record);
+	public <T> T localUpdate(T record);
 }

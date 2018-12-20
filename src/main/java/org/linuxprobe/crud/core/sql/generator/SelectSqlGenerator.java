@@ -24,6 +24,15 @@ public interface SelectSqlGenerator {
 	 * @param modelType   model类型
 	 */
 	public String toSelectSql(String column, Serializable columnValue, Class<?> modelType);
+	
+	/**
+	 * 根据类成员名称转换为查询sql
+	 * 
+	 * @param fieldName      列名
+	 * @param fieldValue 列值
+	 * @param modelType   model类型
+	 */
+	public String toSelectSqlByFieldName(String fieldName, Serializable fieldValue, Class<?> modelType);
 
 	/** 转换为查询数量的sql */
 	public String toSelectCountSql(BaseQuery searcher, String clounm);

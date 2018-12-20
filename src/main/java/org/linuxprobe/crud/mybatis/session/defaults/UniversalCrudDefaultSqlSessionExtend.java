@@ -20,6 +20,7 @@ import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtil;
+import org.springframework.beans.BeanUtils;
 
 public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
@@ -59,6 +60,9 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				}
 			}
 		}
+		Object proxyRecord = new ModelCglib(this).getInstance(record.getClass());
+		BeanUtils.copyProperties(record, proxyRecord);
+		record = proxyRecord;
 		return result;
 	}
 
@@ -176,7 +180,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		}
 		return model;
 	}
-	
+
 	@Override
 	public <T> T selectByPrimaryKey(Serializable id, Class<T> type) {
 		String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(id, type);
@@ -185,18 +189,60 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
 	@Override
 	public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type) {
-		return this.selectBySql(UniversalCrudContent.getSelectSqlGenerator().toSelectSql(column, columnValue, type), type);
+		return this.selectBySql(UniversalCrudContent.getSelectSqlGenerator().toSelectSql(column, columnValue, type),
+				type);
 	}
 
 	@Override
-	public int globalUpdate(Object record) {
-		return sqlSession.update(updateStatement,
-				UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
+	public <T> List<T> selectByField(String fieldName, Serializable fieldValue, Class<T> type) {
+		return this.selectBySql(
+				UniversalCrudContent.getSelectSqlGenerator().toSelectSqlByFieldName(fieldName, fieldValue, type), type);
 	}
 
 	@Override
-	public int localUpdate(Object record) {
-		return sqlSession.update(updateStatement,
-				UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
+	public <T> T selectOneByColumn(String column, Serializable columnValue, Class<T> type) {
+		List<T> datas = this.selectByColumn(column, columnValue, type);
+		if (datas != null && !datas.isEmpty()) {
+			return datas.get(0);
+		} else {
+			return null;
+		}
+
+	}
+
+	@Override
+	public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type) {
+		List<T> datas = this.selectByField(fieldName, fieldValue, type);
+		if (datas != null && !datas.isEmpty()) {
+			return datas.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T globalUpdate(T record) {
+		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
+		if (!FieldUtil.isProxyClass(record.getClass())) {
+			ModelCglib modelCglib = new ModelCglib(this);
+			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			modelCglib.copy(record);
+			return (T) proxyRecord;
+		}
+		return record;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T localUpdate(T record) {
+		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
+		if (!FieldUtil.isProxyClass(record.getClass())) {
+			ModelCglib modelCglib = new ModelCglib(this);
+			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			modelCglib.copy(record);
+			return (T) proxyRecord;
+		}
+		return record;
 	}
 }

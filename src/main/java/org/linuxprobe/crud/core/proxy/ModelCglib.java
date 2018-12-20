@@ -28,6 +28,7 @@ import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -36,6 +37,8 @@ public class ModelCglib implements MethodInterceptor, Serializable {
 	private static final long serialVersionUID = 4762059333523060842L;
 
 	private SqlSessionExtend sqlSessionExtend;
+
+	private Object instance;
 
 	public ModelCglib(SqlSessionExtend sqlSessionExtend) {
 		this.sqlSessionExtend = sqlSessionExtend;
@@ -94,10 +97,15 @@ public class ModelCglib implements MethodInterceptor, Serializable {
 		if (correlationFieldInfo == null) {
 			throw new IllegalArgumentException(columnName + " column does not have a corresponding field.");
 		}
-		Object result = sqlSessionExtend.selectByPrimaryKey(
-				(Serializable) FieldUtil.getFieldValue(obj, correlationFieldInfo.getField()), field.getType());
-		FieldUtil.setField(obj, field, result);
-		return result;
+		Serializable correlationFieldValue = (Serializable) FieldUtil.getFieldValue(obj,
+				correlationFieldInfo.getField());
+		if (correlationFieldValue != null) {
+			Object result = sqlSessionExtend.selectByPrimaryKey(correlationFieldValue, field.getType());
+			FieldUtil.setField(obj, field, result);
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -124,6 +132,9 @@ public class ModelCglib implements MethodInterceptor, Serializable {
 		;
 		Class<?> subordinateClass = FieldUtil.getFiledGenericclass(field, 0);
 		Serializable principalFieldValue = (Serializable) FieldUtil.getFieldValue(obj, principalField);
+		if (principalFieldValue == null) {
+			return null;
+		}
 		@SuppressWarnings("unchecked")
 		List<Object> daoResults = (List<Object>) sqlSessionExtend.selectByColumn(subordinateColumn, principalFieldValue,
 				subordinateClass);
@@ -187,7 +198,14 @@ public class ModelCglib implements MethodInterceptor, Serializable {
 		/** 设置回调：对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept()方法进行拦 */
 		enhancer.setCallback(this);
 		/** 创建动态代理类对象并返回 */
-		return (T) enhancer.create();
+		instance = enhancer.create();
+		return (T) instance;
+	}
+	
+	/** 把传入对象的值复制给代理对象 */
+	public void copy(Object source) {
+		BeanUtils.copyProperties(source, instance);
+		this.handledMethod.clear();
 	}
 
 }

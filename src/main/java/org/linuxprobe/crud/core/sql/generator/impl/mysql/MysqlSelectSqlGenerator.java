@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.linuxprobe.crud.core.annoatation.Query;
 import org.linuxprobe.crud.core.content.EntityInfo;
+import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.QueryInfo;
 import org.linuxprobe.crud.core.content.QueryInfo.QueryFieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
@@ -93,6 +94,22 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		}
 		String sql = "SELECT * FROM `" + table + "` WHERE `" + column + "` = " + columnValue;
 		return sql;
+	}
+	
+	@Override
+	public String toSelectSqlByFieldName(String fieldName, Serializable fieldValue, Class<?> modelType) {
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
+		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
+		String columnName = null;
+		for(FieldInfo fieldInfo:fieldInfos) {
+			if(fieldInfo.getField().getName().equals(fieldName)) {
+				columnName = fieldInfo.getColumnName();
+			}
+		}
+		if(columnName==null) {
+			throw new IllegalArgumentException(fieldName+" is not "+modelType.getClass().getName()+" field");
+		}
+		return this.toSelectSql(columnName, fieldValue, modelType);
 	}
 
 	/** 转换为查询数量的sql */

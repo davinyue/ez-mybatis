@@ -181,4 +181,13 @@ public class FieldUtil {
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	/** 判断一个类是否是代理类 */
+	public static boolean isProxyClass(Class<?> clazz) {
+		if(clazz.getSimpleName().indexOf("$$EnhancerByCGLIB$$") != -1){
+			return true;
+		}else {
+			return false;
+		}
+	}
 }
