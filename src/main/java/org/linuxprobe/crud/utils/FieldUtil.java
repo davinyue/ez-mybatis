@@ -131,11 +131,8 @@ public class FieldUtil {
 
 	public static Field getFieldByMethod(Class<?> type, Method method) {
 		type = getRealCalssOfProxyClass(type);
-		try {
-			return type.getDeclaredField(getFieldNameByMethod(method));
-		} catch (NoSuchFieldException | SecurityException e) {
-			return null;
-		}
+		String fieldName = getFieldNameByMethod(method);
+		return getDeclaredField(type,fieldName);
 	}
 
 	public static Class<?> getRealCalssOfProxyClass(Class<?> type) {
@@ -143,5 +140,15 @@ public class FieldUtil {
 			type = type.getSuperclass();
 		}
 		return type;
+	}
+	
+	public static Field getDeclaredField(Class<?> type,String fieldName) {
+		List<Field> fields = getAllFields(type);
+		for(Field field:fields) {
+			if(field.getName().equals(fieldName)) {
+				return field;
+			}
+		}
+		return null;
 	}
 }

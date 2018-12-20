@@ -7,13 +7,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.linuxprobe.crud.core.annoatation.OneToOne;
+import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.crud.utils.StringHumpTool;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 
-public class ModelCglib implements MethodInterceptor {
+
+public class ModelCglib implements MethodInterceptor, Serializable{
+	private static final long serialVersionUID = 4762059333523060842L;
+	
 	private SqlSessionExtend sqlSessionExtend;
 
 	public ModelCglib(SqlSessionExtend sqlSessionExtend) {
@@ -58,12 +64,17 @@ public class ModelCglib implements MethodInterceptor {
 	 * @throws Exception
 	 */
 	private Object handldeOneToOne(Object obj, Field field) throws Exception {
-		String columnName = field.getName() + "Id";
+		String columnName = StringHumpTool.humpToLine2(field.getName(), "_") + "_id";
 		if (!field.getAnnotation(OneToOne.class).value().isEmpty()) {
 			columnName = field.getAnnotation(OneToOne.class).value();
 		}
+		/** 获取列对应的field info */
+		FieldInfo correlationFieldInfo = UniversalCrudContent.getEntityInfo(obj.getClass()).getColumnMapFieldInfo().get(columnName);
+		if(correlationFieldInfo==null) {
+			throw new IllegalArgumentException(columnName+" column does not have a corresponding field.");
+		}
 		Object result = sqlSessionExtend.selectByPrimaryKey(
-				(Serializable) FieldUtil.getFieldValueByFieldName(obj, columnName), field.getType());
+				(Serializable) FieldUtil.getFieldValue(obj, correlationFieldInfo.getField()), field.getType());
 		FieldUtil.setField(obj, field, result);
 		return result;
 	}

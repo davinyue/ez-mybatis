@@ -41,11 +41,11 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 				}
 			}
 			String value = MysqlFieldValueConversion.updateConversion(entity, fieldInfo.getField());
-			sqlBuilder.append("`" + fieldInfo.getFiledColumn() + "` = " + value + ", ");
+			sqlBuilder.append("`" + fieldInfo.getColumnName() + "` = " + value + ", ");
 		}
 		if (sqlBuilder.indexOf(",") != -1)
 			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), " ");
-		sqlBuilder.append("WHERE `" + entityInfo.getPrimaryKey().getFiledColumn() + "` = " + primaryKeyValue);
+		sqlBuilder.append("WHERE `" + entityInfo.getPrimaryKey().getColumnName() + "` = " + primaryKeyValue);
 		return sqlBuilder.toString();
 	}
 
@@ -84,12 +84,12 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 			if (value == null) {
 				continue;
 			} else {
-				sqlBuilder.append("`" + fieldInfo.getFiledColumn() + "` = " + value + ", ");
+				sqlBuilder.append("`" + fieldInfo.getColumnName() + "` = " + value + ", ");
 			}
 		}
 		if (sqlBuilder.indexOf(",") != -1)
 			sqlBuilder.replace(sqlBuilder.length() - 2, sqlBuilder.length(), " ");
-		sqlBuilder.append("WHERE `" + entityInfo.getPrimaryKey().getFiledColumn() + "` = " + primaryKeyValue);
+		sqlBuilder.append("WHERE `" + entityInfo.getPrimaryKey().getColumnName() + "` = " + primaryKeyValue);
 		return sqlBuilder.toString();
 	}
 }

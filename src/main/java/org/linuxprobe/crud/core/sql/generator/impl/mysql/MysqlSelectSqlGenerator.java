@@ -63,7 +63,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		}
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
 		String table = entityInfo.getTableName();
-		String idColumn = entityInfo.getPrimaryKey().getFiledColumn();
+		String idColumn = entityInfo.getPrimaryKey().getColumnName();
 		if (String.class.isAssignableFrom(id.getClass())) {
 			id = "'" + id + "'";
 		}
@@ -272,7 +272,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	 * @param modelType 模型的类型
 	 */
 	private static String getPrimaryKeyName(Class<?> modelType) {
-		return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getFiledColumn();
+		return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getColumnName();
 	}
 
 	/**

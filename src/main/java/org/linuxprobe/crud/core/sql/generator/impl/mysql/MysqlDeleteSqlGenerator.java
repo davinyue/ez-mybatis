@@ -17,7 +17,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
 		String idValue = MysqlFieldValueConversion.updateConversion(entity, entityInfo.getPrimaryKey().getField());
 		String sql = "DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
-				+ entityInfo.getPrimaryKey().getFiledColumn() + "` = " + idValue;
+				+ entityInfo.getPrimaryKey().getColumnName() + "` = " + idValue;
 		return sql;
 	}
 
@@ -34,7 +34,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		}
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
 		String sql = "DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
-				+ entityInfo.getPrimaryKey().getFiledColumn() + "` = " + id;
+				+ entityInfo.getPrimaryKey().getColumnName() + "` = " + id;
 		return sql;
 	}
 
@@ -52,7 +52,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 			if (table == null) {
 				entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
 				table = entityInfo.getTableName();
-				sqlBuilder.append(table + "` WHERE `" + entityInfo.getPrimaryKey().getFiledColumn() + "` IN(");
+				sqlBuilder.append(table + "` WHERE `" + entityInfo.getPrimaryKey().getColumnName() + "` IN(");
 			}
 			String idValue = MysqlFieldValueConversion.updateConversion(entity, entityInfo.getPrimaryKey().getField());
 			if (idValue == null) {
@@ -80,7 +80,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		}
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
 		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
-				+ entityInfo.getPrimaryKey().getFiledColumn() + "` IN (");
+				+ entityInfo.getPrimaryKey().getColumnName() + "` IN (");
 		Iterator<T> idIterator = ids.iterator();
 		while (idIterator.hasNext()) {
 			Serializable idValue = idIterator.next();

@@ -51,10 +51,10 @@ public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
 			FieldInfo fieldInfo = fieldInfos.get(i);
 			String fieldValue = MysqlFieldValueConversion.insertConversion(record, fieldInfo.getField());
 			if (i + 1 == fieldInfos.size()) {
-				clounms.append("`" + fieldInfo.getFiledColumn() + "`)");
+				clounms.append("`" + fieldInfo.getColumnName() + "`)");
 				values.append(fieldValue + ")");
 			} else {
-				clounms.append("`" + fieldInfo.getFiledColumn() + "`, ");
+				clounms.append("`" + fieldInfo.getColumnName() + "`, ");
 				values.append(fieldValue + ", ");
 			}
 		}

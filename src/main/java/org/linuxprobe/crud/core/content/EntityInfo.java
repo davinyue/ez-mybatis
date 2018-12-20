@@ -1,8 +1,10 @@
 package org.linuxprobe.crud.core.content;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.Entity;
@@ -59,6 +61,7 @@ public class EntityInfo {
 						fieldInfo = new FieldInfo(field, filedColumn);
 					}
 					this.fieldInfos.add(fieldInfo);
+					this.columnMapFieldInfo.put(fieldInfo.getColumnName(), fieldInfo);
 				}
 			}
 		}
@@ -67,6 +70,7 @@ public class EntityInfo {
 	private Class<?> entityType;
 	private String tableName;
 	private List<FieldInfo> fieldInfos;
+	private Map<String, FieldInfo> columnMapFieldInfo = new HashMap<>();
 	private FieldInfo primaryKey;
 
 	/** 是否有名称为cloumn的列 */
@@ -75,7 +79,7 @@ public class EntityInfo {
 			return false;
 		} else {
 			for (FieldInfo fieldInfo : fieldInfos) {
-				if (fieldInfo.getFiledColumn().equals(column)) {
+				if (fieldInfo.getColumnName().equals(column)) {
 					return true;
 				}
 			}
@@ -99,9 +103,9 @@ public class EntityInfo {
 
 	@Getter
 	public static class FieldInfo {
-		public FieldInfo(Field field, String filedColumn, PrimaryKey primaryKey) {
+		public FieldInfo(Field field, String columnName, PrimaryKey primaryKey) {
 			this.field = field;
-			this.filedColumn = filedColumn;
+			this.columnName = columnName;
 			if (primaryKey != null) {
 				this.primaryKey = primaryKey;
 				this.isPrimaryKey = true;
@@ -113,7 +117,7 @@ public class EntityInfo {
 		}
 
 		private Field field;
-		private String filedColumn;
+		private String columnName;
 		private boolean isPrimaryKey = false;
 		private PrimaryKey primaryKey;
 	}

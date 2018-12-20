@@ -59,7 +59,7 @@ public class QueryInfo {
 					else if (BaseQuery.class.isAssignableFrom(field.getType())) {
 						fieldInfo.setPrincipalColumn(StringHumpTool.humpToLine2(field.getName() + "Id", "_"));
 						EntityInfo querEntityInfo = UniversalCrudContent.getEntityInfo(queryEntityCalss);
-						fieldInfo.setSubordinateColumn(querEntityInfo.getPrimaryKey().getFiledColumn());
+						fieldInfo.setSubordinateColumn(querEntityInfo.getPrimaryKey().getColumnName());
 						if (field.isAnnotationPresent(JoinColumn.class)) {
 							JoinColumn joinColumn = field.getAnnotation(JoinColumn.class);
 							if (!"".equals(joinColumn.value())) {
