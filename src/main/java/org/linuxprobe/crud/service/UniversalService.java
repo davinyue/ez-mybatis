@@ -66,6 +66,12 @@ public interface UniversalService<Model, IdType extends Serializable, Query exte
 	/** 根据实体成员名称作为条件查询数据 */
 	public List<Model> getByFiled(String fieldName, Serializable fieldValue);
 
+	/** 根据列作为条件查询数据 */
+	public Model getOneByColumn(String column, Serializable columnValue);
+
+	/** 根据实体成员名称作为条件查询数据 */
+	public Model getOneByFiled(String fieldName, Serializable fieldValue);
+
 	/** 根据查询对象获取实体分页数据 */
 	public Page<Model> getPageInfo(Query param);
 

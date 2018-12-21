@@ -128,6 +128,18 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 		return (List<Model>) this.sqlSessionTemplate.selectByField(fieldName, fieldValue, this.getModelCalss());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Model getOneByColumn(String column, Serializable columnValue) {
+		return (Model) this.sqlSessionTemplate.selectOneByColumn(column, columnValue, this.getModelCalss());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Model getOneByFiled(String fieldName, Serializable fieldValue) {
+		return (Model) this.sqlSessionTemplate.selectOneByField(fieldName, fieldValue, this.getModelCalss());
+	}
+
 	@Override
 	@Transactional
 	public Model globalUpdate(Model model) {
