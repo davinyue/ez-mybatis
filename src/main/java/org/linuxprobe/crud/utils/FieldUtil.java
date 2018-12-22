@@ -134,7 +134,7 @@ public class FieldUtil {
 	public static Field getFieldByMethod(Class<?> type, Method method) {
 		type = getRealCalssOfProxyClass(type);
 		String fieldName = getFieldNameByMethod(method);
-		return getDeclaredField(type,fieldName);
+		return getDeclaredField(type, fieldName);
 	}
 
 	public static Class<?> getRealCalssOfProxyClass(Class<?> type) {
@@ -143,19 +143,19 @@ public class FieldUtil {
 		}
 		return type;
 	}
-	
-	public static Field getDeclaredField(Class<?> type,String fieldName) {
+
+	public static Field getDeclaredField(Class<?> type, String fieldName) {
 		List<Field> fields = getAllFields(type);
-		for(Field field:fields) {
-			if(field.getName().equals(fieldName)) {
+		for (Field field : fields) {
+			if (field.getName().equals(fieldName)) {
 				return field;
 			}
 		}
 		return null;
 	}
-	
+
 	/** 获取类的父类泛型类型参数 */
-	public static  Class<?> getGenericSuperclass(Class<?> clazz,int order) {
+	public static Class<?> getGenericSuperclass(Class<?> clazz, int order) {
 		Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[order];
 		Class<?> genericsCalss = null;
 		try {
@@ -165,11 +165,17 @@ public class FieldUtil {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
+	/** 获取类的父类泛型类型参数 */
+	public static Type getGenericSuperType(Class<?> clazz, int order) {
+		Type type = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[order];
+		return type;
+	}
+
 	/** 获取field的泛型类型参数,eg List<T>, 获取T的类型 */
-	public static  Class<?> getFiledGenericclass(Field field,int order) {
+	public static Class<?> getFiledGenericclass(Field field, int order) {
 		ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
-		if(parameterizedType==null) {
+		if (parameterizedType == null) {
 			throw new IllegalArgumentException("必须指定泛型类型");
 		}
 		Type type = parameterizedType.getActualTypeArguments()[0];
@@ -181,12 +187,12 @@ public class FieldUtil {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	/** 判断一个类是否是代理类 */
 	public static boolean isProxyClass(Class<?> clazz) {
-		if(clazz.getSimpleName().indexOf("$$EnhancerByCGLIB$$") != -1){
+		if (clazz.getSimpleName().indexOf("$$EnhancerByCGLIB$$") != -1) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}

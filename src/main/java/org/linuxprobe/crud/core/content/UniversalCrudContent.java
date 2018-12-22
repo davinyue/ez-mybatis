@@ -117,6 +117,15 @@ public class UniversalCrudContent {
 		return result;
 	}
 
+	public static EntityInfo getEntityInfo(String entityType) {
+		logger.debug("get entityInfo of " + entityType);
+		EntityInfo result = entityInfos.get(entityType);
+		if (result == null) {
+			throw new IllegalArgumentException("can't fond entityInfo of" + entityType);
+		}
+		return result;
+	}
+
 	private static void addQueryInfo(Class<?> queryType) {
 		queryInfos.put(queryType.getName(), new QueryInfo(queryType));
 	}

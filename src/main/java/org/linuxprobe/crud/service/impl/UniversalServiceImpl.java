@@ -1,10 +1,12 @@
 package org.linuxprobe.crud.service.impl;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
@@ -21,10 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
 		implements UniversalService<Model, IdType, Query> {
 	@Autowired
-	private UniversalCrudSqlSessionTemplate sqlSessionTemplate;
+	public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
 	private Class<?> getModelCalss() {
-		return FieldUtil.getGenericSuperclass(this.getClass(), 0);
+		Type type = FieldUtil.getGenericSuperType(this.getClass(), 0);
+		return UniversalCrudContent.getEntityInfo(type.getTypeName()).getEntityType();
 	}
 
 	@Override
@@ -70,7 +73,8 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	@Override
 	public Model getByPrimaryKey(IdType id) {
 		Class<?> modelClass = getModelCalss();
-		return (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass);
+		Model model = (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass);
+		return model;
 	}
 
 	@SuppressWarnings("unchecked")
