@@ -33,7 +33,9 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 
-public class ModelCglib implements MethodInterceptor {
+public class ModelCglib implements MethodInterceptor, Serializable {
+	private static final long serialVersionUID = 101192063064751085L;
+
 	private SqlSessionExtend sqlSessionExtend;
 
 	private Object instance;
