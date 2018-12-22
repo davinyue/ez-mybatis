@@ -33,9 +33,7 @@ import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 
-public class ModelCglib implements MethodInterceptor, Serializable {
-	private static final long serialVersionUID = 4762059333523060842L;
-
+public class ModelCglib implements MethodInterceptor {
 	private SqlSessionExtend sqlSessionExtend;
 
 	private Object instance;
@@ -201,7 +199,7 @@ public class ModelCglib implements MethodInterceptor, Serializable {
 		instance = enhancer.create();
 		return (T) instance;
 	}
-	
+
 	/** 把传入对象的值复制给代理对象 */
 	public void copy(Object source) {
 		BeanUtils.copyProperties(source, instance);

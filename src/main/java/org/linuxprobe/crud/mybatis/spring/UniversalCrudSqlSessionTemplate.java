@@ -15,7 +15,6 @@ import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implements UniversalCrudSqlSession {
 	// private SqlSession sqlSession;
-
 	private final UniversalCrudDefaultSqlSessionExtend sqlSessionExtend;
 
 	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory, ExecutorType executorType,
