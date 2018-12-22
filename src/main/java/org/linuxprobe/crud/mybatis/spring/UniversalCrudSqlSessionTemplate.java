@@ -48,13 +48,13 @@ public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implemen
 //	}
 
 	@Override
-	public int insert(Object record) {
+	public <T> T insert(T record) {
 		return sqlSessionExtend.insert(record);
 	}
 
 	@Override
-	public <T> int batchInsert(Collection<T> records) {
-		return sqlSessionExtend.batchDelete(records);
+	public <T> List<T> batchInsert(Collection<T> records) {
+		return sqlSessionExtend.batchInsert(records);
 	}
 
 	@Override

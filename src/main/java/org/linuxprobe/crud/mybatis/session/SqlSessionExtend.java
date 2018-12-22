@@ -30,10 +30,10 @@ public interface SqlSessionExtend {
 	public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type);
 
 	/** 插入 */
-	public int insert(Object record);
+	public <T> T insert(T record);
 
 	/** 批量插入 */
-	public <T> int batchInsert(Collection<T> records);
+	public <T> List<T> batchInsert(Collection<T> records);
 
 	/** 根据主键删除 */
 	public int deleteByPrimaryKey(Serializable id, Class<?> entityType);

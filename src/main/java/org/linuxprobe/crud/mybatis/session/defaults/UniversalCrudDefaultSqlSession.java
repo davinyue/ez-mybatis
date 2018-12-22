@@ -25,12 +25,12 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	}
 
 	@Override
-	public int insert(Object record) {
+	public <T> T insert(T record) {
 		return sqlSessionExtend.insert(record);
 	}
 
 	@Override
-	public <T> int batchInsert(Collection<T> records) {
+	public <T> List<T> batchInsert(Collection<T> records) {
 		return sqlSessionExtend.batchInsert(records);
 	}
 

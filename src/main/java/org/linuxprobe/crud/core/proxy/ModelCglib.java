@@ -206,4 +206,7 @@ public class ModelCglib implements MethodInterceptor {
 		this.handledMethod.clear();
 	}
 
+	public void clearMark() {
+		this.handledMethod.clear();
+	}
 }

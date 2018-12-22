@@ -20,7 +20,6 @@ import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtil;
-import org.springframework.beans.BeanUtils;
 
 public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
@@ -36,10 +35,11 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		this.sqlSession = sqlSession;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public int insert(Object record) {
+	public <T> T insert(T record) {
 		InsertSqlGenerator insertSqlGenerator = UniversalCrudContent.getInsertSqlGenerator();
-		int result = sqlSession.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
+		sqlSession.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
 		if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
 			Object idValue = FieldUtil.getFieldValue(record, entityInfo.getPrimaryKey().getField());
@@ -60,21 +60,20 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				}
 			}
 		}
-		Object proxyRecord = new ModelCglib(this).getInstance(record.getClass());
-		BeanUtils.copyProperties(record, proxyRecord);
-		record = proxyRecord;
-		return result;
+		ModelCglib modelCglib = new ModelCglib(this);
+		Object proxyRecord = modelCglib.getInstance(record.getClass());
+		modelCglib.copy(record);
+		return (T) proxyRecord;
 	}
 
 	@Override
-	public <T> int batchInsert(Collection<T> records) {
+	public <T> List<T> batchInsert(Collection<T> records) {
 		if (records == null || records.isEmpty()) {
-			return 0;
+			return null;
 		} else {
-			int result = 0;
+			List<T> result = new LinkedList<>();
 			for (T record : records) {
-				this.insert(record);
-				result++;
+				result.add(this.insert(record));
 			}
 			return result;
 		}
@@ -112,7 +111,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		List<Map<String, Object>> mapperResults = sqlSession.selectList(selectStatement, sql);
 		List<T> records = new LinkedList<>();
 		for (Map<String, Object> mapperResult : mapperResults) {
-			T model = new ModelCglib(this).getInstance(type);
+			ModelCglib modelCglib = new ModelCglib(this);
+			T model = modelCglib.getInstance(type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
 				try {
@@ -121,6 +121,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 					throw new RuntimeException(e);
 				}
 			}
+			modelCglib.clearMark();
 			records.add(model);
 		}
 		return records;
@@ -149,7 +150,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		List<Map<String, Object>> mapResult = this.selectBySql(sql);
 		List<T> records = new LinkedList<>();
 		for (Map<String, Object> mapperResult : mapResult) {
-			T model = new ModelCglib(this).getInstance(type);
+			ModelCglib modelCglib = new ModelCglib(this);
+			T model = modelCglib.getInstance(type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
 				try {
@@ -158,6 +160,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 					throw new RuntimeException(e);
 				}
 			}
+			modelCglib.clearMark();
 			records.add(model);
 		}
 		return records;
@@ -169,7 +172,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		if (mapResult == null) {
 			return null;
 		}
-		T model = new ModelCglib(this).getInstance(type);
+		ModelCglib modelCglib = new ModelCglib(this);
+		T model = modelCglib.getInstance(type);
 		Set<String> columns = mapResult.keySet();
 		for (String column : columns) {
 			try {
@@ -178,6 +182,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				throw new RuntimeException(e);
 			}
 		}
+		modelCglib.clearMark();
 		return model;
 	}
 

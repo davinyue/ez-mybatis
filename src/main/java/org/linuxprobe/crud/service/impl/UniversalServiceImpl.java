@@ -30,15 +30,13 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	@Override
 	@Transactional
 	public Model save(Model model) {
-		this.sqlSessionTemplate.insert(model);
-		return model;
+		return this.sqlSessionTemplate.insert(model);
 	}
 
 	@Override
 	@Transactional
 	public List<Model> batchSave(List<Model> models) {
-		this.sqlSessionTemplate.batchInsert(models);
-		return models;
+		return this.sqlSessionTemplate.batchInsert(models);
 	}
 
 	@Override
