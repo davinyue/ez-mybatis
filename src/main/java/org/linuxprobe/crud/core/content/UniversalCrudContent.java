@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 
 public class UniversalCrudContent {
 	private static Logger logger = LoggerFactory.getLogger(UniversalCrudContent.class);
-	private static Map<Class<?>, EntityInfo> entityInfos = new HashMap<>();
-	private static Map<Class<?>, QueryInfo> queryInfos = new HashMap<>();
+	private static Map<String, EntityInfo> entityInfos = new HashMap<>();
+	private static Map<String, QueryInfo> queryInfos = new HashMap<>();
 	private static UniversalCrudConfiguration universalCrudConfiguration;
 	private static InsertSqlGenerator mysqlInsertSqlGenerator;
 	private static DeleteSqlGenerator mysqlDeleteSqlGenerator;
@@ -104,13 +104,13 @@ public class UniversalCrudContent {
 	}
 
 	private static void addEntityInfo(Class<?> entityType) {
-		entityInfos.put(entityType, new EntityInfo(entityType));
+		entityInfos.put(entityType.getName(), new EntityInfo(entityType));
 	}
 
 	public static EntityInfo getEntityInfo(Class<?> entityType) {
 		entityType = FieldUtil.getRealCalssOfProxyClass(entityType);
 		logger.debug("get entityInfo of " + entityType.getName());
-		EntityInfo result = entityInfos.get(entityType);
+		EntityInfo result = entityInfos.get(entityType.getName());
 		if (result == null) {
 			throw new IllegalArgumentException("can't fond entityInfo of" + entityType.getName());
 		}
@@ -118,12 +118,12 @@ public class UniversalCrudContent {
 	}
 
 	private static void addQueryInfo(Class<?> queryType) {
-		queryInfos.put(queryType, new QueryInfo(queryType));
+		queryInfos.put(queryType.getName(), new QueryInfo(queryType));
 	}
 
 	public static QueryInfo getQueryInfo(Class<?> queryType) {
 		logger.debug("get queryInfo of " + queryType.getName());
-		QueryInfo queryInfo = queryInfos.get(queryType);
+		QueryInfo queryInfo = queryInfos.get(queryType.getName());
 		if (queryInfo == null) {
 			throw new IllegalArgumentException("can't fond queryInfo of" + queryType.getName());
 		}
