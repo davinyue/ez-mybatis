@@ -108,7 +108,13 @@ public class UniversalCrudContent {
 	}
 
 	public static EntityInfo getEntityInfo(Class<?> entityType) {
-		return entityInfos.get(FieldUtil.getRealCalssOfProxyClass(entityType));
+		entityType = FieldUtil.getRealCalssOfProxyClass(entityType);
+		logger.debug("get entityInfo of " + entityType.getName());
+		EntityInfo result = entityInfos.get(entityType);
+		if (result == null) {
+			throw new IllegalArgumentException("can't fond entityInfo of" + entityType.getName());
+		}
+		return result;
 	}
 
 	private static void addQueryInfo(Class<?> queryType) {
@@ -116,6 +122,11 @@ public class UniversalCrudContent {
 	}
 
 	public static QueryInfo getQueryInfo(Class<?> queryType) {
-		return queryInfos.get(queryType);
+		logger.debug("get queryInfo of " + queryType.getName());
+		QueryInfo queryInfo = queryInfos.get(queryType);
+		if (queryInfo == null) {
+			throw new IllegalArgumentException("can't fond queryInfo of" + queryType.getName());
+		}
+		return queryInfo;
 	}
 }
