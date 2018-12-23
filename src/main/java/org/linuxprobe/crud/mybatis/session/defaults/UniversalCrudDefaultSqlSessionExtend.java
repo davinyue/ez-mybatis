@@ -60,10 +60,14 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				}
 			}
 		}
-		ModelCglib modelCglib = new ModelCglib(this);
-		Object proxyRecord = modelCglib.getInstance(record.getClass());
-		modelCglib.copy(record);
-		return (T) proxyRecord;
+		if (FieldUtil.isProxyClass(record.getClass())) {
+			return record;
+		} else {
+			ModelCglib modelCglib = new ModelCglib(this);
+			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			modelCglib.copy(record);
+			return (T) proxyRecord;
+		}
 	}
 
 	@Override
