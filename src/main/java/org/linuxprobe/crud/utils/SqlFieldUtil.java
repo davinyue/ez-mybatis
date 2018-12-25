@@ -1,6 +1,5 @@
 package org.linuxprobe.crud.utils;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -25,7 +24,7 @@ public class SqlFieldUtil {
 		result.add(String.class);
 		result.add(Enum.class);
 		result.add(Blob.class);
-		result.add(Serializable.class);
+		result.add(Date.class);
 		result.add(Byte[].class);
 		result.add(byte.class);
 		result.add(char.class);
@@ -77,6 +76,24 @@ public class SqlFieldUtil {
 	public static boolean isFacultyOfNumber(Class<?> type) {
 		if (Number.class.isAssignableFrom(type)) {
 			return true;
+		}
+		if (byte.class.isAssignableFrom(type)) {
+			return true;
+		}
+		if (short.class.isAssignableFrom(type)) {
+			return true;
+		}
+		if (int.class.isAssignableFrom(type)) {
+			return true;
+		}
+		if (long.class.isAssignableFrom(type)) {
+			return true;
+		}
+		if (float.class.isAssignableFrom(type)) {
+			return true;
+		}
+		if (double.class.isAssignableFrom(type)) {
+			return true;
 		} else {
 			return false;
 		}
@@ -89,6 +106,24 @@ public class SqlFieldUtil {
 		} else if (byte[].class.isAssignableFrom(type)) {
 			return true;
 		} else if (Byte[].class.isAssignableFrom(type)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/** 是否是枚举系列类型 */
+	public static boolean isFacultyOfEnum(Class<?> type) {
+		if (Enum.class.isAssignableFrom(type)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/** 是否是布尔系列类型 */
+	public static boolean isFacultyOfBoolean(Class<?> type) {
+		if (Boolean.class.isAssignableFrom(type)) {
 			return true;
 		} else {
 			return false;

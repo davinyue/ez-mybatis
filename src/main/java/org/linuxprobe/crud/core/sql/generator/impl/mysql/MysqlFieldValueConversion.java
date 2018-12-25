@@ -1,13 +1,19 @@
 package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import org.linuxprobe.crud.core.annoatation.BooleanHandler;
+import org.linuxprobe.crud.core.annoatation.BooleanHandler.BooleanCustomerType;
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.DateHandler;
 import org.linuxprobe.crud.core.annoatation.DateHandler.DateCustomerType;
+import org.linuxprobe.crud.core.annoatation.EnumHandler;
+import org.linuxprobe.crud.core.annoatation.EnumHandler.EnumCustomerType;
+import org.linuxprobe.crud.core.annoatation.NumberHandler;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.StringHandler;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
@@ -94,16 +100,16 @@ public class MysqlFieldValueConversion {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * 获取时间值
+	 * 获取枚举值
 	 * 
 	 * @param record          保存对象
 	 * @param field           属性
 	 * @param enalbeCheckRule 启用校验规则
 	 */
 	private static String getEnumValue(Object record, Field field, boolean enalbeCheckRule) {
-		Enum<?> fieldValue = (Enum) FieldUtil.getFieldValue(record, field);
+		Enum<?> fieldValue = (Enum<?>) FieldUtil.getFieldValue(record, field);
 		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
 			Column column = field.getAnnotation(Column.class);
 			if (column.notNull() && fieldValue == null) {
@@ -111,36 +117,113 @@ public class MysqlFieldValueConversion {
 						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
 			}
 		}
-		return null;
+		String result = null;
+		if (fieldValue != null) {
+			result = fieldValue.ordinal() + "";
+			if (field.isAnnotationPresent(EnumHandler.class)) {
+				EnumHandler enumHandler = field.getAnnotation(EnumHandler.class);
+				if (enumHandler.value().equals(EnumCustomerType.Name)) {
+					result = "'" + fieldValue.name() + "'";
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 获取数字值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getNumberValue(Object record, Field field, boolean enalbeCheckRule) {
+		Number fieldValue = (Number) FieldUtil.getFieldValue(record, field);
+		String result = fieldValue + "";
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
+		}
+		if (enalbeCheckRule && field.isAnnotationPresent(NumberHandler.class)) {
+			NumberHandler numberHandler = field.getAnnotation(NumberHandler.class);
+			BigDecimal bigDecimalValue = new BigDecimal(result);
+			if (!numberHandler.minValue().isEmpty()) {
+				BigDecimal bigDecimalMinValue = new BigDecimal(numberHandler.minValue());
+				if (bigDecimalMinValue.compareTo(bigDecimalValue) > 0) {
+					throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+							+ " minValue is " + numberHandler.minValue());
+				}
+			}
+			if (!numberHandler.maxValue().isEmpty()) {
+				BigDecimal bigDecimalMaxValue = new BigDecimal(numberHandler.maxValue());
+				if (bigDecimalMaxValue.compareTo(bigDecimalValue) < 0) {
+					throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+							+ " maxValue is " + numberHandler.maxValue());
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 获取数字值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getBooleanValue(Object record, Field field, boolean enalbeCheckRule) {
+		Boolean fieldValue = (Boolean) FieldUtil.getFieldValue(record, field);
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
+		}
+		String result = null;
+		if (fieldValue != null) {
+			if (fieldValue) {
+				result = "1";
+			} else {
+				result = "0";
+			}
+			if (field.isAnnotationPresent(BooleanHandler.class)) {
+				BooleanHandler booleanHandler = field.getAnnotation(BooleanHandler.class);
+				if (booleanHandler.value().equals(BooleanCustomerType.YesAndNo)) {
+					if (fieldValue) {
+						result = "'yes'";
+					} else {
+						result = "'no'";
+					}
+				} else if (booleanHandler.value().equals(BooleanCustomerType.TrueAndFalse)) {
+					if (fieldValue) {
+						result = "'true'";
+					} else {
+						result = "'false'";
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
 	public static String updateConversion(Object entity, Field field) {
 		String result = null;
-		Object fieldValue = FieldUtil.getFieldValue(entity, field);
 		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
 			result = getStringValue(entity, field, true);
-		} else if (Number.class.isAssignableFrom(field.getType())) {
-			Number clounmValue = (Number) fieldValue;
-			if (clounmValue != null) {
-				result = clounmValue.toString();
-			}
-		} else if (Boolean.class.isAssignableFrom(field.getType())) {
-			Boolean clounmValue = (Boolean) fieldValue;
-			if (clounmValue != null) {
-				if (clounmValue) {
-					result = "1";
-				} else {
-					result = "0";
-				}
-			}
+		} else if (SqlFieldUtil.isFacultyOfNumber(field.getType())) {
+			result = getNumberValue(entity, field, true);
+		} else if (SqlFieldUtil.isFacultyOfBoolean(field.getType())) {
+			result = getBooleanValue(entity, field, true);
 		} else if (SqlFieldUtil.isFacultyOfDate(field.getType())) {
 			result = getDateValue(entity, field, true);
-		} else if (Enum.class.isAssignableFrom(field.getType())) {
-			Enum<?> clounmValue = (Enum<?>) fieldValue;
-			if (clounmValue != null) {
-				result = clounmValue.ordinal() + "";
-			}
+		} else if (SqlFieldUtil.isFacultyOfEnum(field.getType())) {
+			result = getEnumValue(entity, field, true);
 		}
 		return result;
 	}
