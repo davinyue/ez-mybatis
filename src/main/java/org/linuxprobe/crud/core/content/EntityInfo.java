@@ -11,7 +11,7 @@ import org.linuxprobe.crud.core.annoatation.Entity;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.annoatation.Transient;
-import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.crud.utils.SqlFieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
 
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class EntityInfo {
 			}
 			/** handle field */
 			this.fieldInfos = new LinkedList<>();
-			List<Field> fields = FieldUtil.getAllSqlSupportFields(entityType);
+			List<Field> fields = SqlFieldUtil.getAllSqlSupportFields(entityType);
 			if (null != fields && !fields.isEmpty()) {
 				for (Field field : fields) {
 					if (field.isAnnotationPresent(Transient.class)) {

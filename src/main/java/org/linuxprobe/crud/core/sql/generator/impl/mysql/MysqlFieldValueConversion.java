@@ -6,37 +6,110 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.linuxprobe.crud.core.annoatation.Column;
-import org.linuxprobe.crud.core.annoatation.Column.EnumHandler;
-import org.linuxprobe.crud.core.annoatation.Column.LengthHandler;
+import org.linuxprobe.crud.core.annoatation.DateHandler;
+import org.linuxprobe.crud.core.annoatation.DateHandler.DateCustomerType;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
+import org.linuxprobe.crud.core.annoatation.StringHandler;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
+import org.linuxprobe.crud.utils.SqlFieldUtil;
 
 public class MysqlFieldValueConversion {
-	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
-	public static String updateConversion(Object entity, Field field) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String result = null;
-		Object fieldValue = FieldUtil.getFieldValue(entity, field);
-		if (String.class.isAssignableFrom(field.getType())) {
-			String clounmValue = (String) fieldValue;
-			if (clounmValue != null) {
-				if (field.isAnnotationPresent(Column.class)) {
-					Column column = field.getAnnotation(Column.class);
-					if (column.length() > 0) {
-						if (clounmValue.length() > column.length()) {
-							if (column.lengthHandler().equals(LengthHandler.Sub)) {
-								clounmValue = clounmValue.substring(0, column.length());
-							} else {
-								throw new IllegalArgumentException(field.getName() + "字段的赋值超出规定长度" + column.length());
-							}
-						}
+	/**
+	 * 获取字符串值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getStringValue(Object record, Field field, boolean enalbeCheckRule) {
+		String fieldValue = (String) FieldUtil.getFieldValue(record, field);
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
+		}
+		if (fieldValue != null) {
+			if (enalbeCheckRule && field.isAnnotationPresent(StringHandler.class)) {
+				StringHandler stringHandler = field.getAnnotation(StringHandler.class);
+				if (stringHandler.minLeng() > 0) {
+					if (fieldValue.length() < stringHandler.minLeng()) {
+						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+								+ " minLeng is " + stringHandler.minLeng());
 					}
 				}
-				clounmValue = SqlEscapeUtil.mysqlEscape(clounmValue);
-				result = "'" + clounmValue + "'";
+				if (stringHandler.maxLeng() > 0) {
+					if (fieldValue.length() > stringHandler.maxLeng()) {
+						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+								+ " maxLeng is " + stringHandler.maxLeng());
+					}
+				}
+				if (!stringHandler.regex().isEmpty()) {
+					if (!fieldValue.matches(stringHandler.regex())) {
+						throw new IllegalArgumentException(
+								"in " + record.getClass().getName() + "," + "the value " + fieldValue + " of "
+										+ field.getName() + " cannot match the regex " + stringHandler.regex());
+					}
+				}
 			}
+		}
+		fieldValue = SqlEscapeUtil.mysqlEscape(fieldValue);
+		fieldValue = "'" + fieldValue + "'";
+		return fieldValue;
+	}
+
+	/**
+	 * 获取时间值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getDateValue(Object record, Field field, boolean enalbeCheckRule) {
+		Date fieldValue = (Date) FieldUtil.getFieldValue(record, field);
+		String result = null;
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
+		}
+		if (fieldValue != null) {
+			if (field.isAnnotationPresent(DateHandler.class)) {
+				DateHandler dateHandler = field.getAnnotation(DateHandler.class);
+				if (dateHandler.customerType().equals(DateCustomerType.String)) {
+					SimpleDateFormat dateFormat = new SimpleDateFormat(dateHandler.pattern());
+					result = "'" + dateFormat.format(fieldValue) + "'";
+				} else {
+					result = fieldValue.getTime() + "";
+				}
+			} else {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				result = "'" + dateFormat.format(fieldValue) + "'";
+			}
+		}
+		return result;
+	}
+
+	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
+	public static String conversion2(Object record, Field field) {
+		String result = null;
+		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
+			result = getStringValue(record, field, true);
+		}
+		return result;
+	}
+
+	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
+	public static String updateConversion(Object entity, Field field) {
+		String result = null;
+		Object fieldValue = FieldUtil.getFieldValue(entity, field);
+		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
+			result = getStringValue(entity, field, true);
 		} else if (Number.class.isAssignableFrom(field.getType())) {
 			Number clounmValue = (Number) fieldValue;
 			if (clounmValue != null) {
@@ -51,22 +124,12 @@ public class MysqlFieldValueConversion {
 					result = "0";
 				}
 			}
-		} else if (Date.class.isAssignableFrom(field.getType())) {
-			Date clounmValue = (Date) fieldValue;
-			if (clounmValue != null) {
-				result = "'" + dateFormat.format(clounmValue) + "'";
-			}
+		} else if (SqlFieldUtil.isFacultyOfDate(field.getType())) {
+			result = getDateValue(entity, field, true);
 		} else if (Enum.class.isAssignableFrom(field.getType())) {
 			Enum<?> clounmValue = (Enum<?>) fieldValue;
 			if (clounmValue != null) {
 				result = clounmValue.ordinal() + "";
-				/** 如果成员变量有Column注解 */
-				if (field.isAnnotationPresent(Column.class)) {
-					Column column = field.getAnnotation(Column.class);
-					if (column.enumHandler().equals(EnumHandler.Name)) {
-						result = "'" + clounmValue.toString() + "'";
-					}
-				}
 			}
 		}
 		return result;
