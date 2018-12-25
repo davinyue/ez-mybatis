@@ -94,14 +94,24 @@ public class MysqlFieldValueConversion {
 		}
 		return result;
 	}
-
-	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
-	public static String conversion2(Object record, Field field) {
-		String result = null;
-		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
-			result = getStringValue(record, field, true);
+	
+	/**
+	 * 获取时间值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getEnumValue(Object record, Field field, boolean enalbeCheckRule) {
+		Enum<?> fieldValue = (Enum) FieldUtil.getFieldValue(record, field);
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
 		}
-		return result;
+		return null;
 	}
 
 	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
