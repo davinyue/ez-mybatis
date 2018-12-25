@@ -1,18 +1,50 @@
 package org.linuxprobe.crud.utils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 /** 类的成员工具类 */
 public class FieldUtil {
+	/** 获取sql支持的类型 */
+	public static List<Class<?>> getSqlSuperClasss() {
+		List<Class<?>> result = new LinkedList<>();
+		result.add(Byte.class);
+		result.add(Character.class);
+		result.add(Short.class);
+		result.add(Boolean.class);
+		result.add(Integer.class);
+		result.add(Long.class);
+		result.add(Float.class);
+		result.add(Double.class);
+		result.add(BigDecimal.class);
+		result.add(Number.class);
+		result.add(String.class);
+		result.add(Enum.class);
+		result.add(Blob.class);
+		result.add(Serializable.class);
+		result.add(Byte[].class);
+		result.add(byte.class);
+		result.add(char.class);
+		result.add(short.class);
+		result.add(boolean.class);
+		result.add(int.class);
+		result.add(long.class);
+		result.add(float.class);
+		result.add(double.class);
+		result.add(byte[].class);
+		return result;
+	}
+
 	/** 获取该类型的所有成员，包括它的超类的成员 */
 	public static List<Field> getAllFields(Class<?> objClass) {
 		objClass = getRealCalssOfProxyClass(objClass);
@@ -34,21 +66,15 @@ public class FieldUtil {
 
 	/** 获取所有的sql支持的类型成员 */
 	public static List<Field> getAllSqlSupportFields(Class<?> objClass) {
-		objClass = getRealCalssOfProxyClass(objClass);
 		List<Field> fields = getAllFields(objClass);
 		List<Field> result = new LinkedList<>();
+		List<Class<?>> sqlSuperClasss = getSqlSuperClasss();
 		for (Field field : fields) {
-			Class<?> fieldType = field.getType();
-			if (String.class.isAssignableFrom(fieldType)) {
-				result.add(field);
-			} else if (Number.class.isAssignableFrom(fieldType)) {
-				result.add(field);
-			} else if (Boolean.class.isAssignableFrom(fieldType)) {
-				result.add(field);
-			} else if (Date.class.isAssignableFrom(fieldType)) {
-				result.add(field);
-			} else if (Enum.class.isAssignableFrom(fieldType)) {
-				result.add(field);
+			for (Class<?> superClass : sqlSuperClasss) {
+				if (superClass.getName().equals(field.getType().getName())) {
+					result.add(field);
+					break;
+				}
 			}
 		}
 		return result;
