@@ -20,7 +20,7 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 		}
 		String table = entityInfo.getTableName();
 		/** 获取主键值 */
-		String primaryKeyValue = MysqlFieldValueConversion.updateConversion(entity,
+		String primaryKeyValue = MysqlFieldValueConversion.updateModelConversion(entity,
 				entityInfo.getPrimaryKey().getField());
 		if (primaryKeyValue == null) {
 			throw new IllegalArgumentException("The primary key cannot be null");
@@ -34,13 +34,13 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
 		for (FieldInfo fieldInfo : fieldInfos) {
 			/** 如果指定忽略更新，跳过 */
-			if(fieldInfo.getField().isAnnotationPresent(Column.class)) {
+			if (fieldInfo.getField().isAnnotationPresent(Column.class)) {
 				Column column = fieldInfo.getField().getAnnotation(Column.class);
-				if(column.updateIgnore()) {
+				if (column.updateIgnore()) {
 					continue;
 				}
 			}
-			String value = MysqlFieldValueConversion.updateConversion(entity, fieldInfo.getField());
+			String value = MysqlFieldValueConversion.updateModelConversion(entity, fieldInfo.getField());
 			sqlBuilder.append("`" + fieldInfo.getColumnName() + "` = " + value + ", ");
 		}
 		if (sqlBuilder.indexOf(",") != -1)
@@ -59,7 +59,7 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 		}
 		String table = entityInfo.getTableName();
 		/** 获取主键值 */
-		String primaryKeyValue = MysqlFieldValueConversion.updateConversion(entity,
+		String primaryKeyValue = MysqlFieldValueConversion.updateModelConversion(entity,
 				entityInfo.getPrimaryKey().getField());
 		if (primaryKeyValue == null) {
 			throw new IllegalArgumentException("The primary key cannot be null");
@@ -74,13 +74,13 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
 		for (FieldInfo fieldInfo : fieldInfos) {
 			/** 如果指定忽略更新，跳过 */
-			if(fieldInfo.getField().isAnnotationPresent(Column.class)) {
+			if (fieldInfo.getField().isAnnotationPresent(Column.class)) {
 				Column column = fieldInfo.getField().getAnnotation(Column.class);
-				if(column.updateIgnore()) {
+				if (column.updateIgnore()) {
 					continue;
 				}
 			}
-			String value = MysqlFieldValueConversion.updateConversion(entity, fieldInfo.getField());
+			String value = MysqlFieldValueConversion.updateModelConversion(entity, fieldInfo.getField());
 			if (value == null) {
 				continue;
 			} else {

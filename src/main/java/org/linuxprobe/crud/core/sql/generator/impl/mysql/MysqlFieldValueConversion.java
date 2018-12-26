@@ -1,11 +1,16 @@
 package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import org.linuxprobe.crud.core.annoatation.BlobHandler;
 import org.linuxprobe.crud.core.annoatation.BooleanHandler;
 import org.linuxprobe.crud.core.annoatation.BooleanHandler.BooleanCustomerType;
 import org.linuxprobe.crud.core.annoatation.CharHandler;
@@ -21,6 +26,7 @@ import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
+import org.springframework.util.StreamUtils;
 
 public class MysqlFieldValueConversion {
 	/**
@@ -241,28 +247,115 @@ public class MysqlFieldValueConversion {
 		return result;
 	}
 
-	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
-	public static String updateConversion(Object entity, Field field) {
+	/**
+	 * 获取二进制值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getBlobValue(Object record, Field field, boolean enalbeCheckRule) {
+		Object fieldValue = FieldUtil.getFieldValue(record, field);
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
+		}
 		String result = null;
+		if (fieldValue != null) {
+			byte[] bin = null;
+			if (Blob.class.isAssignableFrom(field.getType())) {
+				Blob blob = (Blob) fieldValue;
+				try {
+					bin = StreamUtils.copyToByteArray(blob.getBinaryStream());
+				} catch (IOException | SQLException e) {
+					throw new IllegalArgumentException(e);
+				}
+			} else if (byte[].class.isAssignableFrom(field.getType())) {
+				bin = (byte[]) fieldValue;
+			} else if (Byte[].class.isAssignableFrom(field.getType())) {
+				Byte[] binB = (Byte[]) fieldValue;
+				bin = new byte[binB.length];
+				for (int i = 0; i < binB.length; i++) {
+					bin[i] = binB[i];
+				}
+			}
+			if (enalbeCheckRule && field.isAnnotationPresent(BlobHandler.class)) {
+				BlobHandler blobHandler = field.getAnnotation(BlobHandler.class);
+				if (blobHandler.minSize() != 0) {
+					if (bin.length < blobHandler.minSize()) {
+						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+								+ " minSize is " + blobHandler.minSize());
+					}
+				}
+				if (blobHandler.maxSize() != 0) {
+					if (bin.length > blobHandler.maxSize()) {
+						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+								+ " maxSize is " + blobHandler.maxSize());
+					}
+				}
+			}
+			try {
+				result = new String(bin, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+			result = SqlEscapeUtil.mysqlEscape(result);
+			result = "'" + result + "'";
+			result = "CONVERT( " + result + ", BINARY )";
+		}
+		return result;
+	}
+	
+	/** 删除模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
+	public static String deleteModelConversion(Object entity, Field field) {
+		String result = null;
+		boolean enalbeCheckRule = false;
 		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
-			result = getStringValue(entity, field, true);
+			result = getStringValue(entity, field, enalbeCheckRule);
 		} else if (SqlFieldUtil.isFacultyOfNumber(field.getType())) {
-			result = getNumberValue(entity, field, true);
+			result = getNumberValue(entity, field, enalbeCheckRule);
 		} else if (SqlFieldUtil.isFacultyOfBoolean(field.getType())) {
-			result = getBooleanValue(entity, field, true);
+			result = getBooleanValue(entity, field, enalbeCheckRule);
 		} else if (SqlFieldUtil.isFacultyOfDate(field.getType())) {
-			result = getDateValue(entity, field, true);
+			result = getDateValue(entity, field, enalbeCheckRule);
 		} else if (SqlFieldUtil.isFacultyOfEnum(field.getType())) {
-			result = getEnumValue(entity, field, true);
+			result = getEnumValue(entity, field, enalbeCheckRule);
 		} else if (SqlFieldUtil.isFacultyOfChar(field.getType())) {
-			result = getCharValue(entity, field, true);
+			result = getCharValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfBlob(field.getType())) {
+			result = getBlobValue(entity, field, enalbeCheckRule);
+		}
+		return result;
+	}
+
+	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
+	public static String updateModelConversion(Object entity, Field field) {
+		String result = null;
+		boolean enalbeCheckRule = true;
+		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
+			result = getStringValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfNumber(field.getType())) {
+			result = getNumberValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfBoolean(field.getType())) {
+			result = getBooleanValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfDate(field.getType())) {
+			result = getDateValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfEnum(field.getType())) {
+			result = getEnumValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfChar(field.getType())) {
+			result = getCharValue(entity, field, enalbeCheckRule);
+		} else if (SqlFieldUtil.isFacultyOfBlob(field.getType())) {
+			result = getBlobValue(entity, field, enalbeCheckRule);
 		}
 		return result;
 	}
 
 	/** 插入模式，检测id和生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
-	public static String insertConversion(Object entity, Field field) {
-		String result = updateConversion(entity, field);
+	public static String insertModelConversion(Object entity, Field field) {
+		String result = updateModelConversion(entity, field);
 		/** 如果是主键 */
 		if (field.isAnnotationPresent(PrimaryKey.class)) {
 			if (result == null) {

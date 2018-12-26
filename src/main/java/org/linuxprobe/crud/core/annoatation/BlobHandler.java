@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(FIELD)
 public @interface BlobHandler {
-	int minValue() default 0;
+	/** 最小大小 */
+	int minSize() default 0;
 
-	int maxValue() default 0;
+	/** 最大大小 */
+	int maxSize() default 0;
 }
