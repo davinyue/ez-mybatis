@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.linuxprobe.crud.core.annoatation.BooleanHandler;
 import org.linuxprobe.crud.core.annoatation.BooleanHandler.BooleanCustomerType;
+import org.linuxprobe.crud.core.annoatation.CharHandler;
 import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.DateHandler;
 import org.linuxprobe.crud.core.annoatation.DateHandler.DateCustomerType;
@@ -211,6 +212,35 @@ public class MysqlFieldValueConversion {
 		return result;
 	}
 
+	/**
+	 * 获取字符值
+	 * 
+	 * @param record          保存对象
+	 * @param field           属性
+	 * @param enalbeCheckRule 启用校验规则
+	 */
+	private static String getCharValue(Object record, Field field, boolean enalbeCheckRule) {
+		Character fieldValue = (Character) FieldUtil.getFieldValue(record, field);
+		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
+			Column column = field.getAnnotation(Column.class);
+			if (column.notNull() && fieldValue == null) {
+				throw new IllegalArgumentException(
+						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
+			}
+		}
+		String result = null;
+		if (fieldValue != null) {
+			result = (int) fieldValue + "";
+			if (enalbeCheckRule && field.isAnnotationPresent(CharHandler.class)) {
+				CharHandler charHandler = field.getAnnotation(CharHandler.class);
+				if (charHandler.value().equals(CharHandler.CharCustomerType.ToString)) {
+					result = "'" + fieldValue + "'";
+				}
+			}
+		}
+		return result;
+	}
+
 	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
 	public static String updateConversion(Object entity, Field field) {
 		String result = null;
@@ -224,6 +254,8 @@ public class MysqlFieldValueConversion {
 			result = getDateValue(entity, field, true);
 		} else if (SqlFieldUtil.isFacultyOfEnum(field.getType())) {
 			result = getEnumValue(entity, field, true);
+		} else if (SqlFieldUtil.isFacultyOfChar(field.getType())) {
+			result = getCharValue(entity, field, true);
 		}
 		return result;
 	}

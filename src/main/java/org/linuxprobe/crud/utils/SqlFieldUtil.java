@@ -125,8 +125,18 @@ public class SqlFieldUtil {
 	public static boolean isFacultyOfBoolean(Class<?> type) {
 		if (Boolean.class.isAssignableFrom(type)) {
 			return true;
+		} else if (boolean.class.isAssignableFrom(type)) {
+			return true;
+		} else {
+			return false;
 		}
-		if (boolean.class.isAssignableFrom(type)) {
+	}
+
+	/** 是否是字符系列类型 */
+	public static boolean isFacultyOfChar(Class<?> type) {
+		if (char.class.isAssignableFrom(type)) {
+			return true;
+		} else if (Character.class.isAssignableFrom(type)) {
 			return true;
 		} else {
 			return false;
