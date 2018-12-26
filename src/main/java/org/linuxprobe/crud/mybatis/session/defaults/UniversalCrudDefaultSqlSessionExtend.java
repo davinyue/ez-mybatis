@@ -1,7 +1,6 @@
 package org.linuxprobe.crud.mybatis.session.defaults;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
-import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
 
@@ -116,11 +114,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			T model = modelCglib.getInstance(type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
-				try {
-					EntityUtils.setField(model, column, mapperResult.get(column));
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new RuntimeException(e);
-				}
+				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
 			}
 			modelCglib.clearMark();
 			records.add(model);
@@ -155,11 +149,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			T model = modelCglib.getInstance(type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
-				try {
-					EntityUtils.setField(model, column, mapperResult.get(column));
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new RuntimeException(e);
-				}
+				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
 			}
 			modelCglib.clearMark();
 			records.add(model);

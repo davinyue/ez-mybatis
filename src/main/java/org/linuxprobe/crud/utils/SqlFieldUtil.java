@@ -299,6 +299,15 @@ public class SqlFieldUtil {
 					}
 				}
 			}
+			/** 如果是char */
+			else if (isFacultyOfChar(field.getType())) {
+				if (value instanceof String) {
+					FieldUtil.setField(entity, field, ((String) value).charAt(0));
+				} else if (isFacultyOfNumber(value.getClass())) {
+					int intValue = ((Number) value).intValue();
+					FieldUtil.setField(entity, field, (char) intValue);
+				}
+			}
 		}
 
 	}
