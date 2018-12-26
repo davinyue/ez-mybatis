@@ -3,9 +3,14 @@ package org.linuxprobe.crud.utils;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Blob;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
+import org.linuxprobe.crud.core.content.UniversalCrudContent;
 
 public class SqlFieldUtil {
 	/** 获取sql支持的类型 */
@@ -141,5 +146,40 @@ public class SqlFieldUtil {
 		} else {
 			return false;
 		}
+	}
+
+	/** 通过列名设置实体的field值 */
+	public static void setFieldValue(String column, Object entity, Object value) {
+		if (value == null) {
+			return;
+		}
+		System.out.println(value.getClass().getName());
+		FieldInfo fieldInfo = UniversalCrudContent.getEntityInfo(entity.getClass()).getColumnMapFieldInfo().get(column);
+		if (fieldInfo != null) {
+			Field field = fieldInfo.getField();
+			/** 如果是字符串 */
+			if (isFacultyOfString(field.getType())) {
+				FieldUtil.setField(entity, field, value.toString());
+			}
+			/** 如果是时间 */
+			else if (isFacultyOfDate(field.getType())) {
+				long timestamp = 0;
+				if (isFacultyOfDate(value.getClass())) {
+					timestamp = ((Date) value).getTime();
+				} else if (isFacultyOfNumber(value.getClass())) {
+					timestamp = ((Number) value).longValue();
+				}
+				if (java.sql.Date.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, new java.sql.Date(timestamp));
+				} else if (Timestamp.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, new Timestamp(timestamp));
+				} else if (Time.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, new Time(timestamp));
+				} else if (Date.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, new Date(timestamp));
+				}
+			}
+		}
+
 	}
 }

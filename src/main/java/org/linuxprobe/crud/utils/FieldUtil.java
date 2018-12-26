@@ -73,12 +73,15 @@ public class FieldUtil {
 		return methodOfGet;
 	}
 
-	public static void setField(Object obj, Field field, Object... arg)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public static void setField(Object obj, Field field, Object... arg) {
 		Class<?> objClass = getRealCalssOfProxyClass(obj.getClass());
 		Method methodOfSet = getMethodOfFieldSet(objClass, field);
 		if (methodOfSet != null) {
-			methodOfSet.invoke(obj, arg);
+			try {
+				methodOfSet.invoke(obj, arg);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new IllegalArgumentException(e);
+			}
 		}
 	}
 

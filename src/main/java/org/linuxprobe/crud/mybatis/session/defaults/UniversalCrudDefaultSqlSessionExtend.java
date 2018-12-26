@@ -20,6 +20,7 @@ import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.EntityUtils;
 import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.crud.utils.SqlFieldUtil;
 
 public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
@@ -45,19 +46,15 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			Object idValue = FieldUtil.getFieldValue(record, entityInfo.getPrimaryKey().getField());
 			if (idValue == null) {
 				Map<String, Object> idMap = sqlSession.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
-				try {
-					Number id = (Number) idMap.get("id");
-					if (entityInfo.getPrimaryKey().getField().getType().equals(Long.class)) {
-						id = id.longValue();
-					} else if (entityInfo.getPrimaryKey().getField().getType().equals(Integer.class)) {
-						id = id.intValue();
-					} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
-						id = id.shortValue();
-					}
-					FieldUtil.setField(record, entityInfo.getPrimaryKey().getField(), id);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					throw new IllegalArgumentException(e);
+				Number id = (Number) idMap.get("id");
+				if (entityInfo.getPrimaryKey().getField().getType().equals(Long.class)) {
+					id = id.longValue();
+				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Integer.class)) {
+					id = id.intValue();
+				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
+					id = id.shortValue();
 				}
+				FieldUtil.setField(record, entityInfo.getPrimaryKey().getField(), id);
 			}
 		}
 		if (FieldUtil.isProxyClass(record.getClass())) {
@@ -180,11 +177,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		T model = modelCglib.getInstance(type);
 		Set<String> columns = mapResult.keySet();
 		for (String column : columns) {
-			try {
-				EntityUtils.setField(model, column, mapResult.get(column));
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new RuntimeException(e);
-			}
+			SqlFieldUtil.setFieldValue(column, model, mapResult.get(column));
 		}
 		modelCglib.clearMark();
 		return model;
