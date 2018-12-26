@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.sql.rowset.serial.SerialBlob;
+
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.springframework.util.StreamUtils;
@@ -245,6 +247,18 @@ public class SqlFieldUtil {
 							bin[i] = byteb[i];
 						}
 						FieldUtil.setField(entity, field, bin);
+					} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
+						Byte[] byteb = (Byte[]) value;
+						byte[] bin = new byte[byteb.length];
+						for (int i = 0; i < bin.length; i++) {
+							bin[i] = byteb[i];
+						}
+						try {
+							SerialBlob serialBlob = new SerialBlob(bin);
+							FieldUtil.setField(entity, field, serialBlob);
+						} catch (SQLException e) {
+							throw new RuntimeException(e);
+						}
 					}
 				} else if (byte[].class.isAssignableFrom(value.getClass())) {
 					if (byte[].class.isAssignableFrom(field.getType())) {
@@ -256,6 +270,13 @@ public class SqlFieldUtil {
 							bin[i] = byteb[i];
 						}
 						FieldUtil.setField(entity, field, (Object) bin);
+					} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
+						try {
+							SerialBlob serialBlob = new SerialBlob((byte[]) value);
+							FieldUtil.setField(entity, field, serialBlob);
+						} catch (SQLException e) {
+							throw new RuntimeException(e);
+						}
 					}
 				}
 			}
