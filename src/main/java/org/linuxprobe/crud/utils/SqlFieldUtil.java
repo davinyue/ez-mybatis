@@ -125,6 +125,9 @@ public class SqlFieldUtil {
 	public static boolean isFacultyOfBoolean(Class<?> type) {
 		if (Boolean.class.isAssignableFrom(type)) {
 			return true;
+		}
+		if (boolean.class.isAssignableFrom(type)) {
+			return true;
 		} else {
 			return false;
 		}

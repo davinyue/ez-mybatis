@@ -48,16 +48,27 @@ public class FieldUtil {
 
 	/** 获取类的field get方法 */
 	public static Method getMethodOfFieldGet(Class<?> objClass, Field field) {
+
 		if (objClass == null || field == null) {
 			return null;
 		}
 		objClass = getRealCalssOfProxyClass(objClass);
 		String fieldName = field.getName();
+		String prefix = "get";
 		String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+		if (boolean.class.isAssignableFrom(field.getType())) {
+			if (fieldName.matches("^is[A-Z0-9_]+.*$")) {
+				prefix = "";
+				funSuffix = fieldName;
+			} else {
+				prefix = "is";
+			}
+		}
 		Method methodOfGet = null;
 		try {
-			methodOfGet = objClass.getMethod("get" + funSuffix);
+			methodOfGet = objClass.getMethod(prefix + funSuffix);
 		} catch (NoSuchMethodException | SecurityException e) {
+			throw new IllegalArgumentException(e);
 		}
 		return methodOfGet;
 	}
