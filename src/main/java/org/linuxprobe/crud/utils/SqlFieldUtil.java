@@ -1,8 +1,10 @@
 package org.linuxprobe.crud.utils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -11,6 +13,7 @@ import java.util.List;
 
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.springframework.util.StreamUtils;
 
 public class SqlFieldUtil {
 	/** 获取sql支持的类型 */
@@ -149,11 +152,11 @@ public class SqlFieldUtil {
 	}
 
 	/** 通过列名设置实体的field值 */
+	@SuppressWarnings("unchecked")
 	public static void setFieldValue(String column, Object entity, Object value) {
 		if (value == null) {
 			return;
 		}
-		System.out.println(value.getClass().getName());
 		FieldInfo fieldInfo = UniversalCrudContent.getEntityInfo(entity.getClass()).getColumnMapFieldInfo().get(column);
 		if (fieldInfo != null) {
 			Field field = fieldInfo.getField();
@@ -168,6 +171,9 @@ public class SqlFieldUtil {
 					timestamp = ((Date) value).getTime();
 				} else if (isFacultyOfNumber(value.getClass())) {
 					timestamp = ((Number) value).longValue();
+				} else {
+					throw new ClassCastException(
+							value.getClass().getName() + " can't cas to " + field.getType().getName());
 				}
 				if (java.sql.Date.class.isAssignableFrom(field.getType())) {
 					FieldUtil.setField(entity, field, new java.sql.Date(timestamp));
@@ -177,6 +183,99 @@ public class SqlFieldUtil {
 					FieldUtil.setField(entity, field, new Time(timestamp));
 				} else if (Date.class.isAssignableFrom(field.getType())) {
 					FieldUtil.setField(entity, field, new Date(timestamp));
+				}
+			}
+			/** 如果是数值 */
+			else if (isFacultyOfNumber(field.getType())) {
+				Number number = (Number) value;
+				if (BigDecimal.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, new BigDecimal(number.toString()));
+				} else if (byte.class.isAssignableFrom(field.getType())
+						|| Byte.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, number.byteValue());
+				} else if (short.class.isAssignableFrom(field.getType())
+						|| Short.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, number.shortValue());
+				} else if (int.class.isAssignableFrom(field.getType())
+						|| Integer.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, number.intValue());
+				} else if (long.class.isAssignableFrom(field.getType())
+						|| Long.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, number.longValue());
+				} else if (float.class.isAssignableFrom(field.getType())
+						|| Float.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, number.floatValue());
+				} else if (double.class.isAssignableFrom(field.getType())
+						|| Double.class.isAssignableFrom(field.getType())) {
+					FieldUtil.setField(entity, field, number.doubleValue());
+				}
+			}
+			/** 如果是blob */
+			else if (isFacultyOfBlob(field.getType())) {
+				field.setAccessible(true);
+				if (Blob.class.isAssignableFrom(value.getClass())) {
+					Blob blob = (Blob) value;
+					if (Blob.class.isAssignableFrom(field.getType())) {
+						FieldUtil.setField(entity, field, value);
+					} else if (Byte[].class.isAssignableFrom(field.getType())) {
+						try {
+							byte[] byteb = StreamUtils.copyToByteArray(blob.getBinaryStream());
+							Byte[] bin = new Byte[byteb.length];
+							for (int i = 0; i < bin.length; i++) {
+								bin[i] = byteb[i];
+							}
+							FieldUtil.setField(entity, field, (Object) bin);
+						} catch (Exception e) {
+							throw new IllegalArgumentException(e);
+						}
+					} else if (byte[].class.isAssignableFrom(field.getType())) {
+						try {
+							FieldUtil.setField(entity, field, StreamUtils.copyToByteArray(blob.getBinaryStream()));
+						} catch (IOException | SQLException e) {
+							throw new IllegalArgumentException(e);
+						}
+					}
+				} else if (Byte[].class.isAssignableFrom(value.getClass())) {
+					if (Byte[].class.isAssignableFrom(field.getType())) {
+						FieldUtil.setField(entity, field, value);
+					} else if (byte[].class.isAssignableFrom(field.getType())) {
+						Byte[] byteb = (Byte[]) value;
+						byte[] bin = new byte[byteb.length];
+						for (int i = 0; i < bin.length; i++) {
+							bin[i] = byteb[i];
+						}
+						FieldUtil.setField(entity, field, bin);
+					}
+				} else if (byte[].class.isAssignableFrom(value.getClass())) {
+					if (byte[].class.isAssignableFrom(field.getType())) {
+						FieldUtil.setField(entity, field, value);
+					} else if (Byte[].class.isAssignableFrom(field.getType())) {
+						byte[] byteb = (byte[]) value;
+						Byte[] bin = new Byte[byteb.length];
+						for (int i = 0; i < bin.length; i++) {
+							bin[i] = byteb[i];
+						}
+						FieldUtil.setField(entity, field, (Object) bin);
+					}
+				}
+			}
+			/** 如果是枚举 */
+			else if (isFacultyOfEnum(field.getType())) {
+				@SuppressWarnings({ "rawtypes" })
+				Class<Enum> enumType = (Class<Enum>) field.getType();
+				if (value instanceof String) {
+					FieldUtil.setField(entity, field, Enum.valueOf(enumType, (String) value));
+				} else if (isFacultyOfNumber(value.getClass())) {
+					int ordinal = ((Number) value).intValue();
+					@SuppressWarnings("rawtypes")
+					Enum[] enums = enumType.getEnumConstants();
+					for (@SuppressWarnings("rawtypes")
+					Enum tempEnum : enums) {
+						if (tempEnum.ordinal() == ordinal) {
+							FieldUtil.setField(entity, field, tempEnum);
+							break;
+						}
+					}
 				}
 			}
 		}
