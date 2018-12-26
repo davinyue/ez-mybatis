@@ -173,7 +173,7 @@ public class SqlFieldUtil {
 					timestamp = ((Number) value).longValue();
 				} else {
 					throw new ClassCastException(
-							value.getClass().getName() + " can't cas to " + field.getType().getName());
+							value.getClass().getName() + " can't cast to " + field.getType().getName());
 				}
 				if (java.sql.Date.class.isAssignableFrom(field.getType())) {
 					FieldUtil.setField(entity, field, new java.sql.Date(timestamp));
@@ -275,6 +275,27 @@ public class SqlFieldUtil {
 							FieldUtil.setField(entity, field, tempEnum);
 							break;
 						}
+					}
+				}
+			}
+			/** 如果是布尔 */
+			else if (isFacultyOfBoolean(field.getType())) {
+				if (value instanceof String) {
+					String strValue = ((String) value).toLowerCase();
+					if (!strValue.equals("yes") && !strValue.equals("no") && !strValue.equals("true")
+							&& !strValue.equals("false")) {
+						throw new ClassCastException("can't cast " + strValue + " to boolean");
+					} else if (strValue.equals("yes") || strValue.equals("true")) {
+						FieldUtil.setField(entity, field, true);
+					} else if (strValue.equals("no") || strValue.equals("false")) {
+						FieldUtil.setField(entity, field, false);
+					}
+				} else if (isFacultyOfNumber(value.getClass())) {
+					int intValue = ((Number) value).intValue();
+					if (intValue != 0) {
+						FieldUtil.setField(entity, field, true);
+					} else {
+						FieldUtil.setField(entity, field, false);
 					}
 				}
 			}
