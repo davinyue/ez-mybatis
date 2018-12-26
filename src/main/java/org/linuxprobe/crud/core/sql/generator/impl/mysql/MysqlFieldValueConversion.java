@@ -308,11 +308,10 @@ public class MysqlFieldValueConversion {
 		}
 		return result;
 	}
-	
-	/** 删除模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
-	public static String deleteModelConversion(Object entity, Field field) {
+
+	/** 值转换 */
+	public static String conversion(Object entity, Field field, boolean enalbeCheckRule) {
 		String result = null;
-		boolean enalbeCheckRule = false;
 		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
 			result = getStringValue(entity, field, enalbeCheckRule);
 		} else if (SqlFieldUtil.isFacultyOfNumber(field.getType())) {
@@ -331,25 +330,17 @@ public class MysqlFieldValueConversion {
 		return result;
 	}
 
+	/** 删除模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
+	public static String deleteModelConversion(Object entity, Field field) {
+		String result = null;
+		result = conversion(entity, field, false);
+		return result;
+	}
+
 	/** 更新模式，不检测id和不生成id，获取field的值，并把它转换为sql语句的部分，如果是字符串类型的值则会添加上单引号 */
 	public static String updateModelConversion(Object entity, Field field) {
 		String result = null;
-		boolean enalbeCheckRule = true;
-		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
-			result = getStringValue(entity, field, enalbeCheckRule);
-		} else if (SqlFieldUtil.isFacultyOfNumber(field.getType())) {
-			result = getNumberValue(entity, field, enalbeCheckRule);
-		} else if (SqlFieldUtil.isFacultyOfBoolean(field.getType())) {
-			result = getBooleanValue(entity, field, enalbeCheckRule);
-		} else if (SqlFieldUtil.isFacultyOfDate(field.getType())) {
-			result = getDateValue(entity, field, enalbeCheckRule);
-		} else if (SqlFieldUtil.isFacultyOfEnum(field.getType())) {
-			result = getEnumValue(entity, field, enalbeCheckRule);
-		} else if (SqlFieldUtil.isFacultyOfChar(field.getType())) {
-			result = getCharValue(entity, field, enalbeCheckRule);
-		} else if (SqlFieldUtil.isFacultyOfBlob(field.getType())) {
-			result = getBlobValue(entity, field, enalbeCheckRule);
-		}
+		result = conversion(entity, field, true);
 		return result;
 	}
 
