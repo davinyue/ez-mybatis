@@ -68,9 +68,9 @@ public class MysqlFieldValueConversion {
 					}
 				}
 			}
+			fieldValue = SqlEscapeUtil.mysqlEscape(fieldValue);
+			fieldValue = "'" + fieldValue + "'";
 		}
-		fieldValue = SqlEscapeUtil.mysqlEscape(fieldValue);
-		fieldValue = "'" + fieldValue + "'";
 		return fieldValue;
 	}
 
@@ -146,7 +146,7 @@ public class MysqlFieldValueConversion {
 	 */
 	private static String getNumberValue(Object record, Field field, boolean enalbeCheckRule) {
 		Number fieldValue = (Number) FieldUtil.getFieldValue(record, field);
-		String result = fieldValue + "";
+		String result = null;
 		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
 			Column column = field.getAnnotation(Column.class);
 			if (column.notNull() && fieldValue == null) {
@@ -154,21 +154,24 @@ public class MysqlFieldValueConversion {
 						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
 			}
 		}
-		if (enalbeCheckRule && field.isAnnotationPresent(NumberHandler.class)) {
-			NumberHandler numberHandler = field.getAnnotation(NumberHandler.class);
-			BigDecimal bigDecimalValue = new BigDecimal(result);
-			if (!numberHandler.minValue().isEmpty()) {
-				BigDecimal bigDecimalMinValue = new BigDecimal(numberHandler.minValue());
-				if (bigDecimalMinValue.compareTo(bigDecimalValue) > 0) {
-					throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-							+ " minValue is " + numberHandler.minValue());
+		if (fieldValue != null) {
+			result = fieldValue + "";
+			if (enalbeCheckRule && field.isAnnotationPresent(NumberHandler.class)) {
+				NumberHandler numberHandler = field.getAnnotation(NumberHandler.class);
+				BigDecimal bigDecimalValue = new BigDecimal(result);
+				if (!numberHandler.minValue().isEmpty()) {
+					BigDecimal bigDecimalMinValue = new BigDecimal(numberHandler.minValue());
+					if (bigDecimalMinValue.compareTo(bigDecimalValue) > 0) {
+						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+								+ " minValue is " + numberHandler.minValue());
+					}
 				}
-			}
-			if (!numberHandler.maxValue().isEmpty()) {
-				BigDecimal bigDecimalMaxValue = new BigDecimal(numberHandler.maxValue());
-				if (bigDecimalMaxValue.compareTo(bigDecimalValue) < 0) {
-					throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-							+ " maxValue is " + numberHandler.maxValue());
+				if (!numberHandler.maxValue().isEmpty()) {
+					BigDecimal bigDecimalMaxValue = new BigDecimal(numberHandler.maxValue());
+					if (bigDecimalMaxValue.compareTo(bigDecimalValue) < 0) {
+						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+								+ " maxValue is " + numberHandler.maxValue());
+					}
 				}
 			}
 		}
