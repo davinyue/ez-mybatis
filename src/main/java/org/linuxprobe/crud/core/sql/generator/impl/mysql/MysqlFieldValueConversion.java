@@ -3,25 +3,21 @@ package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-import org.linuxprobe.crud.core.annoatation.BlobHandler;
 import org.linuxprobe.crud.core.annoatation.BooleanHandler;
 import org.linuxprobe.crud.core.annoatation.BooleanHandler.BooleanCustomerType;
 import org.linuxprobe.crud.core.annoatation.CharHandler;
-import org.linuxprobe.crud.core.annoatation.Column;
 import org.linuxprobe.crud.core.annoatation.DateHandler;
 import org.linuxprobe.crud.core.annoatation.DateHandler.DateCustomerType;
 import org.linuxprobe.crud.core.annoatation.EnumHandler;
 import org.linuxprobe.crud.core.annoatation.EnumHandler.EnumCustomerType;
-import org.linuxprobe.crud.core.annoatation.NumberHandler;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
-import org.linuxprobe.crud.core.annoatation.StringHandler;
+import org.linuxprobe.crud.core.validation.FieldValidation;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
@@ -32,42 +28,12 @@ public class MysqlFieldValueConversion {
 	/**
 	 * 获取字符串值
 	 * 
-	 * @param record          保存对象
-	 * @param field           属性
-	 * @param enalbeCheckRule 启用校验规则
+	 * @param record 保存对象
+	 * @param field  属性
 	 */
-	private static String getStringValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getStringValue(Object record, Field field) {
 		String fieldValue = (String) FieldUtil.getFieldValue(record, field);
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		if (fieldValue != null) {
-			if (enalbeCheckRule && field.isAnnotationPresent(StringHandler.class)) {
-				StringHandler stringHandler = field.getAnnotation(StringHandler.class);
-				if (stringHandler.minLeng() > 0) {
-					if (fieldValue.length() < stringHandler.minLeng()) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-								+ " minLeng is " + stringHandler.minLeng());
-					}
-				}
-				if (stringHandler.maxLeng() > 0) {
-					if (fieldValue.length() > stringHandler.maxLeng()) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-								+ " maxLeng is " + stringHandler.maxLeng());
-					}
-				}
-				if (!stringHandler.regex().isEmpty()) {
-					if (!fieldValue.matches(stringHandler.regex())) {
-						throw new IllegalArgumentException(
-								"in " + record.getClass().getName() + "," + "the value " + fieldValue + " of "
-										+ field.getName() + " cannot match the regex " + stringHandler.regex());
-					}
-				}
-			}
 			fieldValue = SqlEscapeUtil.mysqlEscape(fieldValue);
 			fieldValue = "'" + fieldValue + "'";
 		}
@@ -77,20 +43,12 @@ public class MysqlFieldValueConversion {
 	/**
 	 * 获取时间值
 	 * 
-	 * @param record          保存对象
-	 * @param field           属性
-	 * @param enalbeCheckRule 启用校验规则
+	 * @param record 保存对象
+	 * @param field  属性
 	 */
-	private static String getDateValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getDateValue(Object record, Field field) {
 		Date fieldValue = (Date) FieldUtil.getFieldValue(record, field);
 		String result = null;
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		if (fieldValue != null) {
 			if (field.isAnnotationPresent(DateHandler.class)) {
 				DateHandler dateHandler = field.getAnnotation(DateHandler.class);
@@ -111,19 +69,11 @@ public class MysqlFieldValueConversion {
 	/**
 	 * 获取枚举值
 	 * 
-	 * @param record          保存对象
-	 * @param field           属性
-	 * @param enalbeCheckRule 启用校验规则
+	 * @param record 保存对象
+	 * @param field  属性
 	 */
-	private static String getEnumValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getEnumValue(Object record, Field field) {
 		Enum<?> fieldValue = (Enum<?>) FieldUtil.getFieldValue(record, field);
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		String result = null;
 		if (fieldValue != null) {
 			result = fieldValue.ordinal() + "";
@@ -140,60 +90,27 @@ public class MysqlFieldValueConversion {
 	/**
 	 * 获取数字值
 	 * 
-	 * @param record          保存对象
-	 * @param field           属性
-	 * @param enalbeCheckRule 启用校验规则
+	 * @param record 保存对象
+	 * @param field  属性
 	 */
-	private static String getNumberValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getNumberValue(Object record, Field field) {
 		Number fieldValue = (Number) FieldUtil.getFieldValue(record, field);
 		String result = null;
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		if (fieldValue != null) {
 			result = fieldValue + "";
-			if (enalbeCheckRule && field.isAnnotationPresent(NumberHandler.class)) {
-				NumberHandler numberHandler = field.getAnnotation(NumberHandler.class);
-				BigDecimal bigDecimalValue = new BigDecimal(result);
-				if (!numberHandler.minValue().isEmpty()) {
-					BigDecimal bigDecimalMinValue = new BigDecimal(numberHandler.minValue());
-					if (bigDecimalMinValue.compareTo(bigDecimalValue) > 0) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-								+ " minValue is " + numberHandler.minValue());
-					}
-				}
-				if (!numberHandler.maxValue().isEmpty()) {
-					BigDecimal bigDecimalMaxValue = new BigDecimal(numberHandler.maxValue());
-					if (bigDecimalMaxValue.compareTo(bigDecimalValue) < 0) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-								+ " maxValue is " + numberHandler.maxValue());
-					}
-				}
-			}
 		}
 		return result;
 	}
 
 	/**
-	 * 获取数字值
+	 * 获取布尔值
 	 * 
 	 * @param record          保存对象
 	 * @param field           属性
 	 * @param enalbeCheckRule 启用校验规则
 	 */
-	private static String getBooleanValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getBooleanValue(Object record, Field field) {
 		Boolean fieldValue = (Boolean) FieldUtil.getFieldValue(record, field);
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		String result = null;
 		if (fieldValue != null) {
 			if (fieldValue) {
@@ -224,23 +141,15 @@ public class MysqlFieldValueConversion {
 	/**
 	 * 获取字符值
 	 * 
-	 * @param record          保存对象
-	 * @param field           属性
-	 * @param enalbeCheckRule 启用校验规则
+	 * @param record 保存对象
+	 * @param field  属性
 	 */
-	private static String getCharValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getCharValue(Object record, Field field) {
 		Character fieldValue = (Character) FieldUtil.getFieldValue(record, field);
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		String result = null;
 		if (fieldValue != null) {
 			result = (int) fieldValue + "";
-			if (enalbeCheckRule && field.isAnnotationPresent(CharHandler.class)) {
+			if (field.isAnnotationPresent(CharHandler.class)) {
 				CharHandler charHandler = field.getAnnotation(CharHandler.class);
 				if (charHandler.value().equals(CharHandler.CharCustomerType.ToString)) {
 					result = "'" + fieldValue + "'";
@@ -253,19 +162,11 @@ public class MysqlFieldValueConversion {
 	/**
 	 * 获取二进制值
 	 * 
-	 * @param record          保存对象
-	 * @param field           属性
-	 * @param enalbeCheckRule 启用校验规则
+	 * @param record 保存对象
+	 * @param field  属性
 	 */
-	private static String getBlobValue(Object record, Field field, boolean enalbeCheckRule) {
+	private static String getBlobValue(Object record, Field field) {
 		Object fieldValue = FieldUtil.getFieldValue(record, field);
-		if (enalbeCheckRule && field.isAnnotationPresent(Column.class)) {
-			Column column = field.getAnnotation(Column.class);
-			if (column.notNull() && fieldValue == null) {
-				throw new IllegalArgumentException(
-						"in " + record.getClass().getName() + "," + field.getName() + " can't be null");
-			}
-		}
 		String result = null;
 		if (fieldValue != null) {
 			byte[] bin = null;
@@ -285,21 +186,6 @@ public class MysqlFieldValueConversion {
 					bin[i] = binB[i];
 				}
 			}
-			if (enalbeCheckRule && field.isAnnotationPresent(BlobHandler.class)) {
-				BlobHandler blobHandler = field.getAnnotation(BlobHandler.class);
-				if (blobHandler.minSize() != 0) {
-					if (bin.length < blobHandler.minSize()) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-								+ " minSize is " + blobHandler.minSize());
-					}
-				}
-				if (blobHandler.maxSize() != 0) {
-					if (bin.length > blobHandler.maxSize()) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
-								+ " maxSize is " + blobHandler.maxSize());
-					}
-				}
-			}
 			try {
 				result = new String(bin, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
@@ -314,21 +200,24 @@ public class MysqlFieldValueConversion {
 
 	/** 值转换 */
 	public static String conversion(Object entity, Field field, boolean enalbeCheckRule) {
+		if (enalbeCheckRule) {
+			FieldValidation.universalValidation(entity, field);
+		}
 		String result = null;
 		if (SqlFieldUtil.isFacultyOfString(field.getType())) {
-			result = getStringValue(entity, field, enalbeCheckRule);
+			result = getStringValue(entity, field);
 		} else if (SqlFieldUtil.isFacultyOfNumber(field.getType())) {
-			result = getNumberValue(entity, field, enalbeCheckRule);
+			result = getNumberValue(entity, field);
 		} else if (SqlFieldUtil.isFacultyOfBoolean(field.getType())) {
-			result = getBooleanValue(entity, field, enalbeCheckRule);
+			result = getBooleanValue(entity, field);
 		} else if (SqlFieldUtil.isFacultyOfDate(field.getType())) {
-			result = getDateValue(entity, field, enalbeCheckRule);
+			result = getDateValue(entity, field);
 		} else if (SqlFieldUtil.isFacultyOfEnum(field.getType())) {
-			result = getEnumValue(entity, field, enalbeCheckRule);
+			result = getEnumValue(entity, field);
 		} else if (SqlFieldUtil.isFacultyOfChar(field.getType())) {
-			result = getCharValue(entity, field, enalbeCheckRule);
+			result = getCharValue(entity, field);
 		} else if (SqlFieldUtil.isFacultyOfBlob(field.getType())) {
-			result = getBlobValue(entity, field, enalbeCheckRule);
+			result = getBlobValue(entity, field);
 		}
 		return result;
 	}

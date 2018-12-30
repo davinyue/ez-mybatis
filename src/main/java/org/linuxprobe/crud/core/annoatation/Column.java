@@ -13,10 +13,4 @@ import java.lang.annotation.Target;
 public @interface Column {
 	/** 列名 */
 	public String value() default "";
-
-	/** 忽略更新,生成的update sql 语句将不包含该字段 */
-	public boolean updateIgnore() default false;
-
-	/** 是否不能为空,默认可以为空 */
-	public boolean notNull() default false;
 }

@@ -2,7 +2,7 @@ package org.linuxprobe.crud.core.sql.generator.impl.mysql;
 
 import java.util.List;
 
-import org.linuxprobe.crud.core.annoatation.Column;
+import org.linuxprobe.crud.core.annoatation.UpdateIgnore;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
@@ -34,11 +34,8 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
 		for (FieldInfo fieldInfo : fieldInfos) {
 			/** 如果指定忽略更新，跳过 */
-			if (fieldInfo.getField().isAnnotationPresent(Column.class)) {
-				Column column = fieldInfo.getField().getAnnotation(Column.class);
-				if (column.updateIgnore()) {
-					continue;
-				}
+			if (fieldInfo.getField().isAnnotationPresent(UpdateIgnore.class)) {
+				continue;
 			}
 			String value = MysqlFieldValueConversion.updateModelConversion(entity, fieldInfo.getField());
 			sqlBuilder.append("`" + fieldInfo.getColumnName() + "` = " + value + ", ");
@@ -74,11 +71,8 @@ public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
 		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
 		for (FieldInfo fieldInfo : fieldInfos) {
 			/** 如果指定忽略更新，跳过 */
-			if (fieldInfo.getField().isAnnotationPresent(Column.class)) {
-				Column column = fieldInfo.getField().getAnnotation(Column.class);
-				if (column.updateIgnore()) {
-					continue;
-				}
+			if (fieldInfo.getField().isAnnotationPresent(UpdateIgnore.class)) {
+				continue;
 			}
 			String value = MysqlFieldValueConversion.updateModelConversion(entity, fieldInfo.getField());
 			if (value == null) {

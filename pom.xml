@@ -36,7 +36,7 @@
 	</distributionManagement>
 	<groupId>org.linuxprobe</groupId>
 	<artifactId>mybatis-universal-crud</artifactId>
-	<version>2.0.6.RELEASE</version>
+	<version>2.0.7.RELEASE</version>
 	<packaging>jar</packaging>
 	<name>mybatis-universal-crud</name>
 	<description>mybatis-universal-crud</description>
@@ -92,6 +92,22 @@
 			<artifactId>guava</artifactId>
 			<version>20.0</version>
 		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.1.Final</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.apache.bval</groupId>
+			<artifactId>bval-jsr303</artifactId>
+			<version>0.5</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.apache.bval</groupId>
+			<artifactId>bval-jsr</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
