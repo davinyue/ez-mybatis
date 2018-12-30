@@ -27,8 +27,8 @@
 ```text
 <dependency>
     <groupId>org.linuxprobe</groupId>
-    <artifactId>mybatis-universal-crud-simple</artifactId>
-    <version>2.0.1.RELEASE</version>
+    <artifactId>mybatis-universal-crud</artifactId>
+    <version>2.0.7.RELEASE</version>
 </dependency>
 ```
 

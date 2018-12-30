@@ -91,13 +91,13 @@ public class FieldValidation {
 				Size size = field.getAnnotation(Size.class);
 				if (size.min() != 0) {
 					if (bin.length < size.min()) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+						throw new ValidationException("in " + record.getClass().getName() + " class," + field.getName()
 								+ " minSize is " + size.min());
 					}
 				}
 				if (size.max() != 0) {
 					if (bin.length > size.max()) {
-						throw new IllegalArgumentException("in " + record.getClass().getName() + "," + field.getName()
+						throw new ValidationException("in " + record.getClass().getName() + " class," + field.getName()
 								+ " maxSize is " + size.max());
 					}
 				}
