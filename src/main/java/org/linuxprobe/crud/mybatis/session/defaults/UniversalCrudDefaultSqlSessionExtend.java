@@ -81,25 +81,54 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	@Override
 	public int deleteByPrimaryKey(Serializable id, Class<?> entityType) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
-		return sqlSession.delete(deleteStatement, deleteSqlGenerator.toDeleteSqlByPrimaryKey(id, entityType));
+		return sqlSession.delete(deleteStatement, deleteSqlGenerator.generateDeleteSqlByPrimaryKey(id, entityType));
 	}
 
 	@Override
 	public int batchDeleteByPrimaryKey(Collection<Serializable> ids, Class<?> entityType) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
-		return sqlSession.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSqlByPrimaryKey(ids, entityType));
+		return sqlSession.delete(deleteStatement,
+				deleteSqlGenerator.generateBatchDeleteSqlByPrimaryKey(ids, entityType));
 	}
 
 	@Override
 	public int delete(Object record) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
-		return sqlSession.delete(deleteStatement, deleteSqlGenerator.toDeleteSql(record));
+		return sqlSession.delete(deleteStatement, deleteSqlGenerator.generateDeleteSql(record));
 	}
 
 	@Override
 	public int batchDelete(Collection<?> records) {
 		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
-		return sqlSession.delete(deleteStatement, deleteSqlGenerator.toBatchDeleteSql(records));
+		return sqlSession.delete(deleteStatement, deleteSqlGenerator.generateBatchDeleteSql(records));
+	}
+
+	@Override
+	public int deleteByColumnName(String columnName, Serializable columnValue, Class<?> modelType) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return sqlSession.delete(deleteStatement,
+				deleteSqlGenerator.generateDeleteSqlByColumnName(columnName, columnValue, modelType));
+	}
+
+	@Override
+	public int deleteByColumnNames(String[] columnNames, Serializable[] columnValues, Class<?> modelType) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return sqlSession.delete(deleteStatement,
+				deleteSqlGenerator.generateDeleteSqlByColumnNames(columnNames, columnValues, modelType));
+	}
+
+	@Override
+	public int deleteByFieldName(String fieldName, Serializable fieldValue, Class<?> modelType) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return sqlSession.delete(deleteStatement,
+				deleteSqlGenerator.generateDeleteSqlByFieldName(fieldName, fieldValue, modelType));
+	}
+
+	@Override
+	public int deleteByFieldNames(String[] fieldNames, Serializable[] fieldValues, Class<?> modelType) {
+		DeleteSqlGenerator deleteSqlGenerator = UniversalCrudContent.getDeleteSqlGenerator();
+		return sqlSession.delete(deleteStatement,
+				deleteSqlGenerator.generateDeleteSqlByFieldNames(fieldNames, fieldValues, modelType));
 	}
 
 	@Override

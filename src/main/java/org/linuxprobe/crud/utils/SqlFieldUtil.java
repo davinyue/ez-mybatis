@@ -301,7 +301,11 @@ public class SqlFieldUtil {
 			}
 			/** 如果是布尔 */
 			else if (isFacultyOfBoolean(field.getType())) {
-				if (value instanceof String) {
+				if (value instanceof Boolean) {
+					FieldUtil.setField(entity, field, value);
+				} else if (boolean.class.isAssignableFrom(value.getClass())) {
+					FieldUtil.setField(entity, field, value);
+				} else if (value instanceof String) {
 					String strValue = ((String) value).toLowerCase();
 					if (!strValue.equals("yes") && !strValue.equals("no") && !strValue.equals("true")
 							&& !strValue.equals("false")) {

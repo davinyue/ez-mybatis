@@ -47,6 +47,42 @@ public interface SqlSessionExtend {
 	/** 批量删除 */
 	public int batchDelete(Collection<?> records);
 
+	/**
+	 * 根据列名生成删除sql
+	 * 
+	 * @param columnName  列名
+	 * @param columnValue 列值
+	 * @param modelType   model类型
+	 */
+	public int deleteByColumnName(String columnName, Serializable columnValue, Class<?> modelType);
+
+	/**
+	 * 根据列名生成删除sql，列名称与列值请一一对象
+	 * 
+	 * @param columnNames  列名
+	 * @param columnValues 列值
+	 * @param modelType    model类型
+	 */
+	public int deleteByColumnNames(String[] columnNames, Serializable[] columnValues, Class<?> modelType);
+
+	/**
+	 * 根据类的成员名称生成删除sql
+	 * 
+	 * @param fieldName  属性名称
+	 * @param fieldValue 属性值
+	 * @param modelType  model类型
+	 */
+	public int deleteByFieldName(String fieldName, Serializable fieldValue, Class<?> modelType);
+
+	/**
+	 * 根据属性删除，属性名称与属性值请一一对应
+	 * 
+	 * @param fieldNames  属性名称
+	 * @param fieldValues 属性值
+	 * @param modelType   model类型
+	 */
+	public int deleteByFieldNames(String[] fieldNames, Serializable[] fieldValues, Class<?> modelType);
+
 	/** 根据sql查询数据 */
 	public List<Map<String, Object>> selectBySql(String sql);
 

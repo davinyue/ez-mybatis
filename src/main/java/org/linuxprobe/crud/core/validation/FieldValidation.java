@@ -34,7 +34,7 @@ public class FieldValidation {
 	 * 
 	 * @exception ValidationException
 	 */
-	public static <T> void validationAll(T object) {
+	public static <T> void validation(T object) {
 		Set<ConstraintViolation<T>> results = validator.validate(object, Default.class);
 		if (results != null && !results.isEmpty()) {
 			StringBuilder messageBuilder = new StringBuilder("in " + object.getClass().getName() + " class,");
@@ -111,5 +111,10 @@ public class FieldValidation {
 		if (SqlFieldUtil.isFacultyOfBlob(field.getType())) {
 			blobValidation(entity, field);
 		}
+	}
+
+	/** 验证全部属性是否合法 */
+	public static void universalValidation(Object entity) {
+		validation(entity);
 	}
 }

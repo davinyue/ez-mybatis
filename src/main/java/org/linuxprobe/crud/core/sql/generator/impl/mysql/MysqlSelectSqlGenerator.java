@@ -27,6 +27,7 @@ import org.linuxprobe.crud.core.query.param.impl.StringParam.Fuzzt;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlEscapeUtil;
+import org.springframework.util.StringUtils;
 
 public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/** 转换为查询sql */
@@ -45,8 +46,10 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 转换为查询sql
 	 * 
-	 * @param id        主键
-	 * @param modelType model类型
+	 * @param id
+	 *            主键
+	 * @param modelType
+	 *            model类型
 	 * @return 返回生成sql
 	 */
 	@Override
@@ -66,13 +69,13 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		String table = entityInfo.getTableName();
 		String idColumn = entityInfo.getPrimaryKey().getColumnName();
 		if (String.class.isAssignableFrom(id.getClass())) {
-			id = SqlEscapeUtil.mysqlEscape((String)id);
+			id = SqlEscapeUtil.mysqlEscape((String) id);
 			id = "'" + id + "'";
 		}
 		String sql = "SELECT * FROM `" + table + "` WHERE `" + idColumn + "` = " + id;
 		return sql;
 	}
-	
+
 	@Override
 	public String toSelectSql(String column, Serializable columnValue, Class<?> modelType) {
 		if (column == null) {
@@ -89,25 +92,25 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
 		String table = entityInfo.getTableName();
 		if (String.class.isAssignableFrom(columnValue.getClass())) {
-			columnValue = SqlEscapeUtil.mysqlEscape((String)columnValue);
+			columnValue = SqlEscapeUtil.mysqlEscape((String) columnValue);
 			columnValue = "'" + columnValue + "'";
 		}
 		String sql = "SELECT * FROM `" + table + "` WHERE `" + column + "` = " + columnValue;
 		return sql;
 	}
-	
+
 	@Override
 	public String toSelectSqlByFieldName(String fieldName, Serializable fieldValue, Class<?> modelType) {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
 		List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
 		String columnName = null;
-		for(FieldInfo fieldInfo:fieldInfos) {
-			if(fieldInfo.getField().getName().equals(fieldName)) {
+		for (FieldInfo fieldInfo : fieldInfos) {
+			if (fieldInfo.getField().getName().equals(fieldName)) {
 				columnName = fieldInfo.getColumnName();
 			}
 		}
-		if(columnName==null) {
-			throw new IllegalArgumentException(fieldName+" is not "+modelType.getClass().getName()+" field");
+		if (columnName == null) {
+			throw new IllegalArgumentException(fieldName + " is not " + modelType.getClass().getName() + " field");
 		}
 		return this.toSelectSql(columnName, fieldValue, modelType);
 	}
@@ -134,6 +137,42 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 				"SELECT " + countFun + " FROM `" + getTable(searcher.getClass()) + "` AS `" + alias + "` ");
 		sqlBuilder.append(toJoin(searcher));
 		sqlBuilder.append(getFormatWhere(searcher));
+		return sqlBuilder.toString();
+	}
+
+	@Override
+	public String generateManyToManySelectSql(String middleTable, String joinColumn, String conditionColumn,
+			Serializable conditionColumnValue, Class<?> modelType) {
+		if (StringUtils.isEmpty(middleTable)) {
+			throw new IllegalArgumentException("middleTable cannot be empty");
+		}
+		if (StringUtils.isEmpty(joinColumn)) {
+			throw new IllegalArgumentException("joinColumn cannot be empty");
+		}
+		if (StringUtils.isEmpty(conditionColumn)) {
+			throw new IllegalArgumentException("conditionColumn cannot be empty");
+		}
+		if (StringUtils.isEmpty(conditionColumnValue)) {
+			throw new IllegalArgumentException("conditionColumnValue cannot be empty");
+		}
+		if (modelType == null) {
+			throw new IllegalArgumentException("modelType cannot be null");
+		}
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
+		String table = entityInfo.getTableName();
+		String primaryKey = entityInfo.getPrimaryKey().getColumnName();
+		String alias = table + "_01";
+		String middleTableAlias = middleTable + "_01";
+		StringBuilder sqlBuilder = new StringBuilder("SELECT ");
+		sqlBuilder.append("`" + alias + "`.* ");
+		sqlBuilder.append("FROM `" + table + "` AS `" + alias + "` ");
+		sqlBuilder.append("LEFT JOIN `" + middleTable + "` as `" + middleTableAlias + "` ");
+		sqlBuilder.append("ON `" + alias + "`.`" + primaryKey + "` = `" + middleTableAlias + "`.`" + joinColumn + "` ");
+		if (conditionColumnValue instanceof String) {
+			conditionColumnValue = SqlEscapeUtil.mysqlEscape((String) conditionColumnValue);
+			conditionColumnValue = "'" + conditionColumnValue + "'";
+		}
+		sqlBuilder.append("WHERE `" + middleTableAlias + "`.`" + conditionColumn + "` = " + conditionColumnValue);
 		return sqlBuilder.toString();
 	}
 
@@ -310,7 +349,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取模型对应的表的主键列名称
 	 * 
-	 * @param modelType 模型的类型
+	 * @param modelType
+	 *            模型的类型
 	 */
 	private static String getPrimaryKeyName(Class<?> modelType) {
 		return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getColumnName();
@@ -319,7 +359,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取要查询的模型类型
 	 * 
-	 * @param searcherType 用于查询的对象类型
+	 * @param searcherType
+	 *            用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
 	private static Class<?> getModelType(Class<?> queryType) {
@@ -334,7 +375,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取要搜索的表名
 	 * 
-	 * @param searcherType 用于查询的对象类型
+	 * @param searcherType
+	 *            用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
 	private static String getTable(Class<?> queryType) {

@@ -12,22 +12,46 @@ import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
 import org.linuxprobe.crud.service.UniversalService;
 import org.linuxprobe.crud.utils.FieldUtil;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @param <Model> 模型类型
- * @param <IdType> 主键类型
- * @param <Query> 查询类型
+ * @param <Model>
+ *            模型类型
+ * @param <IdType>
+ *            主键类型
+ * @param <Query>
+ *            查询类型
  */
 public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
 		implements UniversalService<Model, IdType, Query> {
 	@Autowired
 	public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
+	private UniversalService<Model, IdType, Query> proxy;
+
 	private Class<?> getModelCalss() {
 		Type type = FieldUtil.getGenericSuperType(this.getClass(), 0);
 		return UniversalCrudContent.getEntityInfo(type.getTypeName()).getEntityType();
+	}
+
+	/** 获取当前对象的代理对象,用代理对象调用代替this调用,可解决内部调用切面无效问题 */
+	@SuppressWarnings("unchecked")
+	public UniversalService<Model, IdType, Query> getProxy() {
+		if (proxy == null) {
+			proxy = (UniversalService<Model, IdType, Query>) AopContext.currentProxy();
+		}
+		return proxy;
+	}
+
+	/** 获取当前对象的代理对象,用代理对象调用代替this调用,可解决内部调用切面无效问题 */
+	@SuppressWarnings("unchecked")
+	public <T> T getProxy2() {
+		if (proxy == null) {
+			proxy = (UniversalService<Model, IdType, Query>) AopContext.currentProxy();
+		}
+		return (T) proxy;
 	}
 
 	@Override
@@ -69,6 +93,30 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 		return this.sqlSessionTemplate.batchDelete(records);
 	}
 
+	@Override
+	@Transactional
+	public int removeByColumnName(String columnName, Serializable columnValue) {
+		return this.sqlSessionTemplate.deleteByColumnName(columnName, columnValue, this.getModelCalss());
+	}
+
+	@Override
+	@Transactional
+	public int removeByColumnNames(String[] columnNames, Serializable[] columnValues) {
+		return this.sqlSessionTemplate.deleteByColumnNames(columnNames, columnValues, this.getModelCalss());
+	}
+
+	@Override
+	@Transactional
+	public int removeyByFieldName(String fieldName, Serializable fieldValue) {
+		return this.sqlSessionTemplate.deleteByFieldName(fieldName, fieldValue, this.getModelCalss());
+	}
+
+	@Override
+	@Transactional
+	public int removeByFieldNames(String[] fieldNames, Serializable[] fieldValues) {
+		return this.sqlSessionTemplate.deleteByFieldNames(fieldNames, fieldValues, this.getModelCalss());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Model getByPrimaryKey(IdType id) {
@@ -93,8 +141,8 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 		Page<Model> result = new Page<Model>();
 		result.setCurrentPage(param.getLimit().getCurrentPage());
 		result.setPageSize(param.getLimit().getPageSize());
-		result.setData(this.getByQueryParam(param));
-		result.setTotal(this.getCountByQueryParam(param));
+		result.setData(this.getProxy().getByQueryParam(param));
+		result.setTotal(this.getProxy().getCountByQueryParam(param));
 		return result;
 	}
 

@@ -55,6 +55,26 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 	}
 
 	@Override
+	public int deleteByColumnName(String columnName, Serializable columnValue, Class<?> modelType) {
+		return this.sqlSessionExtend.deleteByColumnName(columnName, columnValue, modelType);
+	}
+
+	@Override
+	public int deleteByColumnNames(String[] columnNames, Serializable[] columnValues, Class<?> modelType) {
+		return this.sqlSessionExtend.deleteByColumnNames(columnNames, columnValues, modelType);
+	}
+
+	@Override
+	public int deleteByFieldName(String fieldName, Serializable fieldValue, Class<?> modelType) {
+		return this.sqlSessionExtend.deleteByFieldName(fieldName, fieldValue, modelType);
+	}
+
+	@Override
+	public int deleteByFieldNames(String[] fieldNames, Serializable[] fieldValues, Class<?> modelType) {
+		return this.sqlSessionExtend.deleteByFieldNames(fieldNames, fieldValues, modelType);
+	}
+
+	@Override
 	public <T> List<T> universalSelect(BaseQuery param) {
 		return sqlSessionExtend.universalSelect(param);
 	}
