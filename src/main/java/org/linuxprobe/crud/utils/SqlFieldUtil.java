@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 
-import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
+import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.springframework.util.StreamUtils;
 
@@ -159,9 +159,23 @@ public class SqlFieldUtil {
 		if (value == null) {
 			return;
 		}
-		FieldInfo fieldInfo = UniversalCrudContent.getEntityInfo(entity.getClass()).getColumnMapFieldInfo().get(column);
-		if (fieldInfo != null) {
-			Field field = fieldInfo.getField();
+		Field field = null;
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
+		if (entityInfo == null) {
+			try {
+				field = entity.getClass().getDeclaredField(column);
+				if (field == null) {
+					field = entity.getClass().getDeclaredField(StringHumpTool.lineToHump(column, "_"));
+				}
+			} catch (NoSuchFieldException | SecurityException e) {
+				throw new IllegalArgumentException(e);
+			}
+		} else {
+			field = entityInfo.getColumnMapFieldInfo().get(column).getField();
+		}
+		if (field == null) {
+			return;
+		} else {
 			/** 如果是字符串 */
 			if (isFacultyOfString(field.getType())) {
 				FieldUtil.setField(entity, field, value.toString());

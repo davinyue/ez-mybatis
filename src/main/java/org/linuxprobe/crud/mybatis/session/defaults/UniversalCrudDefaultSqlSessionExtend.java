@@ -173,14 +173,28 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	public <T> List<T> selectBySql(String sql, Class<T> type) {
 		List<Map<String, Object>> mapResult = this.selectBySql(sql);
 		List<T> records = new LinkedList<>();
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
 		for (Map<String, Object> mapperResult : mapResult) {
-			ModelCglib modelCglib = new ModelCglib(this);
-			T model = modelCglib.getInstance(type);
+			ModelCglib modelCglib = null;
+			T model = null;
+			/** 如果获取不到实体信息，则不使用代理对象 */
+			if (entityInfo == null) {
+				try {
+					model = type.newInstance();
+				} catch (InstantiationException | IllegalAccessException e) {
+					throw new IllegalArgumentException(e);
+				}
+			} else {
+				modelCglib = new ModelCglib(this);
+				model = modelCglib.getInstance(type);
+			}
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
 				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
 			}
-			modelCglib.clearMark();
+			if (entityInfo != null) {
+				modelCglib.clearMark();
+			}
 			records.add(model);
 		}
 		return records;
@@ -192,13 +206,27 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		if (mapResult == null) {
 			return null;
 		}
-		ModelCglib modelCglib = new ModelCglib(this);
-		T model = modelCglib.getInstance(type);
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
+		ModelCglib modelCglib = null;
+		T model = null;
+		/** 如果获取不到实体信息，则不使用代理对象 */
+		if (entityInfo == null) {
+			try {
+				model = type.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new IllegalArgumentException(e);
+			}
+		} else {
+			modelCglib = new ModelCglib(this);
+			model = modelCglib.getInstance(type);
+		}
 		Set<String> columns = mapResult.keySet();
 		for (String column : columns) {
 			SqlFieldUtil.setFieldValue(column, model, mapResult.get(column));
 		}
-		modelCglib.clearMark();
+		if (entityInfo != null) {
+			modelCglib.clearMark();
+		}
 		return model;
 	}
 
