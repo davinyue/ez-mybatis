@@ -160,7 +160,11 @@ public class SqlFieldUtil {
 			return;
 		}
 		Field field = null;
-		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
+		EntityInfo entityInfo = null;
+		try {
+			entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
+		} catch (Exception e) {
+		}
 		if (entityInfo == null) {
 			try {
 				field = entity.getClass().getDeclaredField(column);
