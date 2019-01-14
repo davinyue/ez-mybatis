@@ -9,7 +9,7 @@ public interface DeleteSqlGenerator {
 	 * 
 	 * @param record 需要删除的记录
 	 */
-	public String generateDeleteSql(Object recode);
+	public String generateDeleteSql(Object record);
 
 	/**
 	 * 生成删除sql

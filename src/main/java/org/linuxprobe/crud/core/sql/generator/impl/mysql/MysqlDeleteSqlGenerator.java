@@ -13,12 +13,12 @@ import org.linuxprobe.crud.utils.SqlEscapeUtil;
 
 public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 	@Override
-	public String generateDeleteSql(Object entity) {
-		if (entity == null) {
+	public String generateDeleteSql(Object record) {
+		if (record == null) {
 			throw new NullPointerException("entity can't be null");
 		}
-		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
-		String idValue = MysqlFieldValueConversion.deleteModelConversion(entity, entityInfo.getPrimaryKey().getField());
+		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
+		String idValue = MysqlFieldValueConversion.deleteModelConversion(record, entityInfo.getPrimaryKey().getField());
 		String sql = "DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
 				+ entityInfo.getPrimaryKey().getColumnName() + "` = " + idValue;
 		return sql;

@@ -117,7 +117,6 @@ public class UniversalCrudSqlSessionFactoryBean
 	 * Gets the DatabaseIdProvider
 	 *
 	 * @since 1.1.0
-	 * @return
 	 */
 	public DatabaseIdProvider getDatabaseIdProvider() {
 		return databaseIdProvider;
