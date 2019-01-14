@@ -14,7 +14,7 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
-import org.apache.bval.jsr.ApacheValidationProvider;
+import org.hibernate.validator.HibernateValidator;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
 import org.springframework.util.StreamUtils;
@@ -23,7 +23,13 @@ import org.springframework.util.StreamUtils;
  * 实体属性校验
  */
 public class FieldValidation {
-	private static ValidatorFactory validatorFactory = Validation.byProvider(ApacheValidationProvider.class).configure()
+	/**
+	 * import org.apache.bval.jsr.ApacheValidationProvider; private static
+	 * ValidatorFactory apacheValidatorFactory =
+	 * Validation.byProvider(ApacheValidationProvider.class)
+	 * .configure().buildValidatorFactory();
+	 */
+	private static ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class).configure()
 			.buildValidatorFactory();
 	private static Validator validator = validatorFactory.getValidator();
 	// private static Validator defalutValidator =
