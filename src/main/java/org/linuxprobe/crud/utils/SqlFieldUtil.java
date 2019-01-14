@@ -2,6 +2,7 @@ package org.linuxprobe.crud.utils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -54,6 +55,11 @@ public class SqlFieldUtil {
 		List<Field> result = new LinkedList<>();
 		List<Class<?>> sqlSuperClasss = getSqlSuperClasss();
 		for (Field field : fields) {
+			int modifiers = field.getModifiers();
+			if (Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers) && Modifier.isFinal(modifiers)
+					&& field.getName().equals("serialVersionUID")) {
+				continue;
+			}
 			for (Class<?> superClass : sqlSuperClasss) {
 				if (superClass.isAssignableFrom(field.getType())) {
 					result.add(field);
