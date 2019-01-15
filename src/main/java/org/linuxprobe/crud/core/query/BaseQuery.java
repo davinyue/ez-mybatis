@@ -9,8 +9,18 @@ import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
-/** 实体查询dto */
+/**
+ * 实体查询dto
+ *
+ * @author LarryYu
+ * @version 2.0.9.RELEASE
+ */
 public abstract class BaseQuery {
+	/**
+	 * <p>
+	 * Constructor for BaseQuery.
+	 * </p>
+	 */
 	public BaseQuery() {
 		this.alias = AliasGenerate.getAlias();
 	}
@@ -54,6 +64,13 @@ public abstract class BaseQuery {
 	@Setter
 	private JoinType joinType = JoinType.LeftJoin;
 
+	/**
+	 * <p>
+	 * Setter for the field <code>order</code>.
+	 * </p>
+	 *
+	 * @param order a {@link java.lang.String} object.
+	 */
 	public void setOrder(String order) {
 		if (order == null) {
 			return;
@@ -137,21 +154,25 @@ public abstract class BaseQuery {
 			return pageSize;
 		}
 
+		/** 设置当前页 */
 		public void setCurrentPage(int currentPage) {
 			this.currentPage = currentPage;
 			this.init();
 		}
 
+		/** 设置页大小 */
 		public void setPageSize(int pageSize) {
 			this.pageSize = pageSize;
 			this.init();
 		}
 
+		/** 获取开始行 */
 		public int getStartRow() {
 			return this.startRow;
 		}
 	}
 
+	/** join类型枚举 */
 	public static enum JoinType {
 		LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin;
 	}
@@ -162,6 +183,14 @@ class AliasGenerate {
 	private static char first = 96;
 	private static int second = 0;
 
+	/**
+	 * <p>
+	 * getAlias.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 * @param prefix a {@link java.lang.String} object.
+	 */
 	public static String getAlias(String prefix) {
 		first++;
 		if (first == 123) {
@@ -174,6 +203,11 @@ class AliasGenerate {
 		return prefix + String.valueOf(first) + second;
 	}
 
+	/**
+	 * <p>getAlias.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public static String getAlias() {
 		return getAlias("t");
 	}
