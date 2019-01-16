@@ -259,16 +259,23 @@ public class ModelCglib implements MethodInterceptor {
 
 	/** 把传入对象的值复制给代理对象 */
 	public void copy(Object source) {
-		List<FieldInfo> fieldInfos = UniversalCrudContent.getEntityInfo(instance.getClass()).getFieldInfos();
-		for (FieldInfo fieldInfo : fieldInfos) {
-			Field field = fieldInfo.getField();
-			Object value = FieldUtil.getFieldValue(source, field);
-			FieldUtil.setField(instance, field, value);
+		Class<?> realCalss = FieldUtil.getRealCalssOfProxyClass(instance.getClass());
+		if (!source.getClass().getName().equals(realCalss.getName())) {
+			throw new IllegalArgumentException("instance attributes of " + source.getClass().getName()
+					+ " cannot be copied to " + realCalss.getName() + " object");
 		}
-		this.handledMethod.clear();
+		List<Field> fields = FieldUtil.getAllFields(source.getClass());
+		for (Field field : fields) {
+			field.setAccessible(true);
+			try {
+				field.set(instance, field.get(source));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+			}
+		}
 	}
 
-	public void clearMark() {
+	/** 清除get和set方法调用标记 */
+	public void cleanMark() {
 		this.handledMethod.clear();
 	}
 }
