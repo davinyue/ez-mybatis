@@ -13,15 +13,16 @@ public abstract class BaseParam<T extends Serializable> {
 	private Condition condition = Condition.and;
 
 	public boolean isEmpty() {
-		if (this.getOperator() == Operator.isNull || this.getOperator() == Operator.isNotNull) {
+		Operator operator = this.getOperator();
+		if (Operator.isNull.equals(operator) || Operator.isNotNull.equals(operator)) {
 			return false;
-		} else if (this.getOperator() == Operator.between || this.getOperator() == Operator.notBetween) {
+		} else if (Operator.between.equals(operator) || Operator.notBetween.equals(operator)) {
 			if (this.getMinValue() == null || this.getMaxValue() == null) {
 				return true;
 			} else {
 				return false;
 			}
-		} else if (this.getOperator() == Operator.in || this.getOperator() == Operator.notIn) {
+		} else if (Operator.in.equals(operator) || Operator.notIn.equals(operator)) {
 			return this.getMultiValues() != null ? false : true;
 		} else {
 			return this.getValue() == null ? true : false;
@@ -66,27 +67,85 @@ public abstract class BaseParam<T extends Serializable> {
 	/** 操作符 =,!=,like... */
 	public static class Operator {
 		private Operator(String operator) {
+			if ("equal".equals(operator)) {
+				this.operator = "=";
+			} else if ("unequal".equals(operator)) {
+				this.operator = "!=";
+			} else if ("more".equals(operator)) {
+				this.operator = ">";
+			} else if ("less".equals(operator)) {
+				this.operator = "<";
+			} else if ("moreOrEqual".equals(operator)) {
+				this.operator = ">=";
+			} else if ("lessOrEqual".equals(operator)) {
+				this.operator = "<=";
+			} else if ("between".equals(operator)) {
+				this.operator = "BETWEEN";
+			} else if ("notBetween".equals(operator)) {
+				this.operator = "NOT BETWEEN";
+			} else if ("in".equals(operator)) {
+				this.operator = "IN";
+			} else if ("notIn".equals(operator)) {
+				this.operator = "NOT IN";
+			} else if ("like".equals(operator)) {
+				this.operator = "LIKE";
+			} else if ("unlike".equals(operator)) {
+				this.operator = "NOT LIKE";
+			} else if ("isNull".equals(operator)) {
+				this.operator = "IS";
+			} else if ("isNotNull".equals(operator)) {
+				this.operator = "IS NOT";
+			} else if ("regexp".equals(operator)) {
+				this.operator = "REGEXP";
+			} else {
+				throw new IllegalArgumentException("can't support operator '" + operator + "'");
+			}
 			this.operator = operator;
 		}
 
 		@Getter
 		private String operator = "=";
-		public static final Operator equal = new Operator("=");
-		public static final Operator unequal = new Operator("!=");
-		public static final Operator more = new Operator(">");
-		public static final Operator less = new Operator("<");
-		public static final Operator moreOrEqual = new Operator(">=");
-		public static final Operator lessOrEqual = new Operator("<=");
-		public static final Operator between = new Operator("BETWEEN");
-		public static final Operator notBetween = new Operator("NOT BETWEEN");
-		public static final Operator in = new Operator("IN");
-		public static final Operator notIn = new Operator("NOT IN");
-		public static final Operator like = new Operator("LIKE");
-		public static final Operator unlike = new Operator("NOT LIKE");
-		public static final Operator isNull = new Operator("IS");
-		public static final Operator isNotNull = new Operator("IS NOT");
+		public static final Operator equal = new Operator("equal");
+		public static final Operator unequal = new Operator("unequal");
+		public static final Operator more = new Operator("more");
+		public static final Operator less = new Operator("less");
+		public static final Operator moreOrEqual = new Operator("moreOrEqual");
+		public static final Operator lessOrEqual = new Operator("lessOrEqual");
+		public static final Operator between = new Operator("between");
+		public static final Operator notBetween = new Operator("notBetween");
+		public static final Operator in = new Operator("in");
+		public static final Operator notIn = new Operator("notIn");
+		public static final Operator like = new Operator("like");
+		public static final Operator unlike = new Operator("unlike");
+		public static final Operator isNull = new Operator("isNull");
+		public static final Operator isNotNull = new Operator("isNotNull");
 		/** 正则,只有字符串类,时间类支持 */
-		public static final Operator regexp = new Operator("REGEXP");
+		public static final Operator regexp = new Operator("regexp");
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((operator == null) ? 0 : operator.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Operator other = (Operator) obj;
+			if (operator == null) {
+				if (other.operator != null)
+					return false;
+			} else if (!operator.equals(other.operator))
+				return false;
+			return true;
+		}
 	}
 
 	/** 条件,and or */
