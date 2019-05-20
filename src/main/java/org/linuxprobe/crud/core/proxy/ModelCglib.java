@@ -29,7 +29,6 @@ import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -260,7 +259,12 @@ public class ModelCglib implements MethodInterceptor {
 
 	/** 把传入对象的值复制给代理对象 */
 	public void copy(Object source) {
-		BeanUtils.copyProperties(source, instance);
+		List<FieldInfo> fieldInfos = UniversalCrudContent.getEntityInfo(instance.getClass()).getFieldInfos();
+		for (FieldInfo fieldInfo : fieldInfos) {
+			Field field = fieldInfo.getField();
+			Object value = FieldUtil.getFieldValue(source, field);
+			FieldUtil.setField(instance, field, value);
+		}
 		this.handledMethod.clear();
 	}
 

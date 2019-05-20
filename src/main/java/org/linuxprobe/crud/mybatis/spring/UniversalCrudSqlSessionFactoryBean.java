@@ -23,7 +23,6 @@ import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
@@ -117,7 +116,6 @@ public class UniversalCrudSqlSessionFactoryBean
 	 * Gets the DatabaseIdProvider
 	 *
 	 * @since 1.1.0
-	 * @return
 	 */
 	public DatabaseIdProvider getDatabaseIdProvider() {
 		return databaseIdProvider;
