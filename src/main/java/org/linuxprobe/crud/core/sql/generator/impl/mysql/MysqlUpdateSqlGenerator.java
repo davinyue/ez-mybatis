@@ -6,10 +6,11 @@ import org.linuxprobe.crud.core.annoatation.UpdateIgnore;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.linuxprobe.crud.core.sql.generator.Escape;
 import org.linuxprobe.crud.core.sql.generator.UpdateSqlGenerator;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 
-public class MysqlUpdateSqlGenerator implements UpdateSqlGenerator {
+public class MysqlUpdateSqlGenerator extends MysqlEscape implements UpdateSqlGenerator, Escape {
 	/** 生成字段全更新sql */
 	@Override
 	public String toGlobalUpdateSql(Object entity) {

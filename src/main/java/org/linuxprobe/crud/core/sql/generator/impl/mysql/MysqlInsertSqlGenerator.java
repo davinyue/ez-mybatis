@@ -7,10 +7,11 @@ import java.util.List;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.linuxprobe.crud.core.sql.generator.Escape;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 
-public class MysqlInsertSqlGenerator implements InsertSqlGenerator {
+public class MysqlInsertSqlGenerator extends MysqlEscape implements InsertSqlGenerator, Escape {
 	/** 生成同一模型的批量插入sql */
 	@Override
 	public String toBatchInsertSql(Collection<?> records) {

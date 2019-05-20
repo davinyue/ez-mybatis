@@ -3,7 +3,7 @@ package org.linuxprobe.crud.core.sql.generator;
 import java.io.Serializable;
 import java.util.Collection;
 
-public interface DeleteSqlGenerator {
+public interface DeleteSqlGenerator extends Escape {
 	/**
 	 * 生成删除sql
 	 * 
