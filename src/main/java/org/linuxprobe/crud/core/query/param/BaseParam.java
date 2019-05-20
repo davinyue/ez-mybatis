@@ -100,7 +100,6 @@ public abstract class BaseParam<T extends Serializable> {
 			} else {
 				throw new IllegalArgumentException("can't support operator '" + operator + "'");
 			}
-			this.operator = operator;
 		}
 
 		@Getter
