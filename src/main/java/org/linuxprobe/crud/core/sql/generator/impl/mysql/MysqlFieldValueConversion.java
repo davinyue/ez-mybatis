@@ -20,11 +20,12 @@ import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.validation.FieldValidation;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
 import org.linuxprobe.crud.utils.FieldUtil;
-import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
 import org.springframework.util.StreamUtils;
 
 public class MysqlFieldValueConversion {
+	private static MysqlEscape mysqlEscape = new MysqlEscape();
+
 	/**
 	 * 获取字符串值
 	 * 
@@ -34,8 +35,8 @@ public class MysqlFieldValueConversion {
 	private static String getStringValue(Object record, Field field) {
 		String fieldValue = (String) FieldUtil.getFieldValue(record, field);
 		if (fieldValue != null) {
-			fieldValue = SqlEscapeUtil.mysqlEscape(fieldValue);
-			fieldValue = "'" + fieldValue + "'";
+			fieldValue = mysqlEscape.escape(fieldValue);
+			fieldValue = mysqlEscape.getQuotation() + fieldValue + mysqlEscape.getQuotation();
 		}
 		return fieldValue;
 	}
@@ -54,13 +55,13 @@ public class MysqlFieldValueConversion {
 				DateHandler dateHandler = field.getAnnotation(DateHandler.class);
 				if (dateHandler.customerType().equals(DateCustomerType.String)) {
 					SimpleDateFormat dateFormat = new SimpleDateFormat(dateHandler.pattern());
-					result = "'" + dateFormat.format(fieldValue) + "'";
+					result = mysqlEscape.getQuotation() + dateFormat.format(fieldValue) + mysqlEscape.getQuotation();
 				} else {
 					result = fieldValue.getTime() + "";
 				}
 			} else {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				result = "'" + dateFormat.format(fieldValue) + "'";
+				result = mysqlEscape.getQuotation() + dateFormat.format(fieldValue) + mysqlEscape.getQuotation();
 			}
 		}
 		return result;
@@ -80,7 +81,7 @@ public class MysqlFieldValueConversion {
 			if (field.isAnnotationPresent(EnumHandler.class)) {
 				EnumHandler enumHandler = field.getAnnotation(EnumHandler.class);
 				if (enumHandler.value().equals(EnumCustomerType.Name)) {
-					result = "'" + fieldValue.name() + "'";
+					result = mysqlEscape.getQuotation() + fieldValue.name() + mysqlEscape.getQuotation();
 				}
 			}
 		}
@@ -152,7 +153,7 @@ public class MysqlFieldValueConversion {
 			if (field.isAnnotationPresent(CharHandler.class)) {
 				CharHandler charHandler = field.getAnnotation(CharHandler.class);
 				if (charHandler.value().equals(CharHandler.CharCustomerType.ToString)) {
-					result = "'" + fieldValue + "'";
+					result = mysqlEscape.getQuotation() + fieldValue + mysqlEscape.getQuotation();
 				}
 			}
 		}
@@ -191,8 +192,8 @@ public class MysqlFieldValueConversion {
 			} catch (UnsupportedEncodingException e) {
 				throw new RuntimeException(e);
 			}
-			result = SqlEscapeUtil.mysqlEscape(result);
-			result = "'" + result + "'";
+			result = mysqlEscape.escape(result);
+			result = mysqlEscape.getQuotation() + result + mysqlEscape.getQuotation();
 			result = "CONVERT( " + result + ", BINARY )";
 		}
 		return result;
@@ -248,7 +249,7 @@ public class MysqlFieldValueConversion {
 					try {
 						String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 						FieldUtil.setField(entity, field, uuid);
-						result = "'" + uuid + "'";
+						result = mysqlEscape.getQuotation() + uuid + mysqlEscape.getQuotation();
 					} catch (Exception e) {
 						throw new OperationNotSupportedException("未找到主键的set方法", e);
 					}

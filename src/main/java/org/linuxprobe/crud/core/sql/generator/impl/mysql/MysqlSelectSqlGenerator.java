@@ -24,12 +24,12 @@ import org.linuxprobe.crud.core.query.param.impl.DateParam;
 import org.linuxprobe.crud.core.query.param.impl.NumberParam;
 import org.linuxprobe.crud.core.query.param.impl.StringParam;
 import org.linuxprobe.crud.core.query.param.impl.StringParam.Fuzzt;
+import org.linuxprobe.crud.core.sql.generator.Escape;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.utils.FieldUtil;
-import org.linuxprobe.crud.utils.SqlEscapeUtil;
 import org.springframework.util.StringUtils;
 
-public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
+public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGenerator, Escape {
 	/** 转换为查询sql */
 	@Override
 	public String toSelectSql(BaseQuery searcher) {
@@ -46,10 +46,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 转换为查询sql
 	 * 
-	 * @param id
-	 *            主键
-	 * @param modelType
-	 *            model类型
+	 * @param id        主键
+	 * @param modelType model类型
 	 * @return 返回生成sql
 	 */
 	@Override
@@ -69,8 +67,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		String table = entityInfo.getTableName();
 		String idColumn = entityInfo.getPrimaryKey().getColumnName();
 		if (String.class.isAssignableFrom(id.getClass())) {
-			id = SqlEscapeUtil.mysqlEscape((String) id);
-			id = "'" + id + "'";
+			id = super.escape((String) id);
+			id = super.getQuotation() + id + super.getQuotation();
 		}
 		String sql = "SELECT * FROM `" + table + "` WHERE `" + idColumn + "` = " + id;
 		return sql;
@@ -92,8 +90,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
 		String table = entityInfo.getTableName();
 		if (String.class.isAssignableFrom(columnValue.getClass())) {
-			columnValue = SqlEscapeUtil.mysqlEscape((String) columnValue);
-			columnValue = "'" + columnValue + "'";
+			columnValue = super.escape((String) columnValue);
+			columnValue = super.getQuotation() + columnValue + super.getQuotation();
 		}
 		String sql = "SELECT * FROM `" + table + "` WHERE `" + column + "` = " + columnValue;
 		return sql;
@@ -169,8 +167,8 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		sqlBuilder.append("LEFT JOIN `" + middleTable + "` as `" + middleTableAlias + "` ");
 		sqlBuilder.append("ON `" + alias + "`.`" + primaryKey + "` = `" + middleTableAlias + "`.`" + joinColumn + "` ");
 		if (conditionColumnValue instanceof String) {
-			conditionColumnValue = SqlEscapeUtil.mysqlEscape((String) conditionColumnValue);
-			conditionColumnValue = "'" + conditionColumnValue + "'";
+			conditionColumnValue = super.escape((String) conditionColumnValue);
+			conditionColumnValue = super.getQuotation() + conditionColumnValue + super.getQuotation();
 		}
 		sqlBuilder.append("WHERE `" + middleTableAlias + "`.`" + conditionColumn + "` = " + conditionColumnValue);
 		return sqlBuilder.toString();
@@ -349,8 +347,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取模型对应的表的主键列名称
 	 * 
-	 * @param modelType
-	 *            模型的类型
+	 * @param modelType 模型的类型
 	 */
 	private static String getPrimaryKeyName(Class<?> modelType) {
 		return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getColumnName();
@@ -359,8 +356,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取要查询的模型类型
 	 * 
-	 * @param searcherType
-	 *            用于查询的对象类型
+	 * @param searcherType 用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
 	private static Class<?> getModelType(Class<?> queryType) {
@@ -375,8 +371,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 	/**
 	 * 获取要搜索的表名
 	 * 
-	 * @param searcherType
-	 *            用于查询的对象类型
+	 * @param searcherType 用于查询的对象类型
 	 * @return 返回对象不会为空，没有结果会抛出异常
 	 */
 	private static String getTable(Class<?> queryType) {
@@ -403,18 +398,18 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 		if (param == null || param.isEmpty()) {
 			return " ";
 		} else {
-			String escape = "'";
+			String escape = super.getQuotation();
 			Operator operator = param.getOperator();
-			if (operator == Operator.equal || operator == Operator.unequal || operator == Operator.more
-					|| operator == Operator.less || operator == Operator.moreOrEqual || operator == Operator.lessOrEqual
-					|| operator == Operator.regexp) {
+			if (Operator.equal.equals(operator) || Operator.unequal.equals(operator) || Operator.more.equals(operator)
+					|| Operator.less.equals(operator) || Operator.moreOrEqual.equals(operator)
+					|| Operator.lessOrEqual.equals(operator) || Operator.regexp.equals(operator)) {
 				String value = param.getValue();
-				value = SqlEscapeUtil.mysqlEscape(value);
+				value = super.escape(value);
 				value = escape + value + escape;
 				return operator.getOperator() + " " + value + " ";
-			} else if (operator == Operator.like || operator == Operator.unlike) {
+			} else if (Operator.like.equals(operator) || Operator.unlike.equals(operator)) {
 				String value = param.getValue();
-				value = SqlEscapeUtil.mysqlEscape(value);
+				value = super.escape(value);
 				if (Fuzzt.Left.equals(param.getFuzzt())) {
 					value = "%" + value;
 				} else if (Fuzzt.Right.equals(param.getFuzzt())) {
@@ -424,20 +419,20 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 				}
 				value = escape + value + escape;
 				return operator.getOperator() + " " + value + " ";
-			} else if (operator == Operator.between || operator == Operator.notBetween) {
+			} else if (Operator.between.equals(operator) || Operator.notBetween.equals(operator)) {
 				String minValue = param.getMinValue();
-				minValue = SqlEscapeUtil.mysqlEscape(minValue);
+				minValue = super.escape(minValue);
 				minValue = escape + minValue + escape;
 				String maxValue = param.getMaxValue();
-				maxValue = SqlEscapeUtil.mysqlEscape(maxValue);
+				maxValue = super.escape(maxValue);
 				maxValue = escape + maxValue + escape;
 				return operator.getOperator() + " " + minValue + " AND " + maxValue + " ";
-			} else if (operator == Operator.in || operator == Operator.notIn) {
+			} else if (Operator.in.equals(operator) || Operator.notIn.equals(operator)) {
 				List<String> multiValues = param.getMultiValues();
 				StringBuilder stringValues = new StringBuilder();
 				for (int i = 0; i < multiValues.size(); i++) {
 					String multiValue = multiValues.get(i);
-					multiValue = SqlEscapeUtil.mysqlEscape(multiValue);
+					multiValue = super.escape(multiValue);
 					if (i + 1 == multiValues.size()) {
 						multiValue = escape + multiValue + escape;
 					} else {
@@ -446,7 +441,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 					stringValues.append(multiValue);
 				}
 				return operator.getOperator() + "(" + stringValues.toString() + ") ";
-			} else if (operator == Operator.isNull || operator == Operator.isNotNull) {
+			} else if (Operator.isNull.equals(operator) || Operator.isNotNull.equals(operator)) {
 				return operator.getOperator() + " NULL ";
 			} else {
 				return " ";
@@ -481,13 +476,13 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 			return " ";
 		} else {
 			Operator operator = param.getOperator();
-			if (operator == Operator.equal || operator == Operator.unequal || operator == Operator.more
-					|| operator == Operator.less || operator == Operator.moreOrEqual
-					|| operator == Operator.lessOrEqual) {
+			if (Operator.equal.equals(operator) || Operator.unequal.equals(operator) || Operator.more.equals(operator)
+					|| Operator.less.equals(operator) || Operator.moreOrEqual.equals(operator)
+					|| Operator.lessOrEqual.equals(operator)) {
 				return operator.getOperator() + " " + param.getValue() + " ";
-			} else if (operator == Operator.between || operator == Operator.notBetween) {
+			} else if (Operator.between.equals(operator) || Operator.notBetween.equals(operator)) {
 				return operator.getOperator() + " " + param.getMinValue() + " AND " + param.getMaxValue() + " ";
-			} else if (operator == Operator.in || operator == Operator.notIn) {
+			} else if (Operator.in.equals(operator) || Operator.notIn.equals(operator)) {
 				List<Number> multiValues = param.getMultiValues();
 				StringBuilder stringValues = new StringBuilder();
 				for (int i = 0; i < multiValues.size(); i++) {
@@ -499,7 +494,7 @@ public class MysqlSelectSqlGenerator implements SelectSqlGenerator {
 					}
 				}
 				return operator.getOperator() + "(" + stringValues.toString() + ") ";
-			} else if (operator == Operator.isNull || operator == Operator.isNotNull) {
+			} else if (Operator.isNull.equals(operator) || Operator.isNotNull.equals(operator)) {
 				return operator.getOperator() + " NULL ";
 			} else {
 				return " ";

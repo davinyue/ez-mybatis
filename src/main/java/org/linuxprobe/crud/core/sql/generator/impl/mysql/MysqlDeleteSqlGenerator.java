@@ -9,9 +9,9 @@ import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
-import org.linuxprobe.crud.utils.SqlEscapeUtil;
+import org.linuxprobe.crud.core.sql.generator.Escape;
 
-public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
+public class MysqlDeleteSqlGenerator extends MysqlEscape implements DeleteSqlGenerator, Escape {
 	@Override
 	public String generateDeleteSql(Object record) {
 		if (record == null) {
@@ -33,7 +33,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 			throw new NullPointerException("type can't be null");
 		}
 		if (String.class.isAssignableFrom(id.getClass())) {
-			id = "'" + id + "'";
+			id = super.getQuotation() + id + super.getQuotation();
 		}
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
 		String sql = "DELETE FROM `" + entityInfo.getTableName() + "` WHERE `"
@@ -63,7 +63,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 				throw new NullPointerException(entity.toString() + " id can't be null");
 			}
 			if (String.class.isAssignableFrom(idValue.getClass())) {
-				idValue = "'" + idValue + "'";
+				idValue = super.getQuotation() + idValue + super.getQuotation();
 			}
 			sqlBuilder.append(idValue + ", ");
 		}
@@ -89,7 +89,7 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		while (idIterator.hasNext()) {
 			Serializable idValue = idIterator.next();
 			if (String.class.isAssignableFrom(idValue.getClass())) {
-				idValue = "'" + idValue + "', ";
+				idValue = super.getQuotation() + idValue + "', ";
 			}
 			sqlBuilder.append(idValue + ", ");
 		}
@@ -116,8 +116,8 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
 		String table = entityInfo.getTableName();
 		if (String.class.isAssignableFrom(columnValue.getClass())) {
-			columnValue = SqlEscapeUtil.mysqlEscape((String) columnValue);
-			columnValue = "'" + columnValue + "'";
+			columnValue = super.escape((String) columnValue);
+			columnValue = super.getQuotation() + columnValue + super.getQuotation();
 		}
 		String sql = "DElETE  FROM `" + table + "` WHERE `" + columnName + "` = " + columnValue;
 		return sql;
@@ -162,8 +162,8 @@ public class MysqlDeleteSqlGenerator implements DeleteSqlGenerator {
 			String columnName = columnNames[i];
 			Serializable columnValue = columnValues[i];
 			if (String.class.isAssignableFrom(columnValue.getClass())) {
-				columnValue = SqlEscapeUtil.mysqlEscape((String) columnValue);
-				columnValue = "'" + columnValue + "'";
+				columnValue = super.escape((String) columnValue);
+				columnValue = super.getQuotation() + columnValue + super.getQuotation();
 			}
 			if (i + 1 < columnNames.length) {
 				sqlBuilder.append("`" + columnName + "` = " + columnValue + " AND ");
