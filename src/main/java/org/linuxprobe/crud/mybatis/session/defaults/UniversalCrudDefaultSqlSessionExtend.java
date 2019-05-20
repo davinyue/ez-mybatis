@@ -145,7 +145,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			for (String column : columns) {
 				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
 			}
-			modelCglib.clearMark();
+			modelCglib.cleanMark();
 			records.add(model);
 		}
 		return records;
@@ -193,7 +193,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
 			}
 			if (entityInfo != null) {
-				modelCglib.clearMark();
+				modelCglib.cleanMark();
 			}
 			records.add(model);
 		}
@@ -225,7 +225,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			SqlFieldUtil.setFieldValue(column, model, mapResult.get(column));
 		}
 		if (entityInfo != null) {
-			modelCglib.clearMark();
+			modelCglib.cleanMark();
 		}
 		return model;
 	}
