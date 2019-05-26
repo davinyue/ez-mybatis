@@ -27,8 +27,8 @@ import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
-import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -60,7 +60,7 @@ public class ModelCglib implements MethodInterceptor {
 			handledMethod.add(method.getName().replace("set", "get"));
 			return result;
 		} else if (method.getName().startsWith("get")) {
-			Field field = FieldUtil.getFieldByMethod(obj.getClass(), method);
+			Field field = ReflectionUtils.getFieldByMethod(obj.getClass(), method);
 			if (field.isAnnotationPresent(OneToOne.class)) {
 				/** 标记该方法已经处理 */
 				handledMethod.add(method.getName());
@@ -103,11 +103,11 @@ public class ModelCglib implements MethodInterceptor {
 		if (correlationFieldInfo == null) {
 			throw new IllegalArgumentException(columnName + " column does not have a corresponding field.");
 		}
-		Serializable correlationFieldValue = (Serializable) FieldUtil.getFieldValue(obj,
+		Serializable correlationFieldValue = (Serializable) ReflectionUtils.getFieldValue(obj,
 				correlationFieldInfo.getField());
 		if (correlationFieldValue != null) {
 			Object result = sqlSessionExtend.selectByPrimaryKey(correlationFieldValue, field.getType());
-			FieldUtil.setField(obj, field, result);
+			ReflectionUtils.setField(obj, field, result);
 			return result;
 		} else {
 			return null;
@@ -139,8 +139,8 @@ public class ModelCglib implements MethodInterceptor {
 		if (!"".equals(oneToMany.subordinate())) {
 			subordinateColumn = oneToMany.subordinate();
 		}
-		Class<?> subordinateClass = FieldUtil.getFiledGenericclass(field, 0);
-		Serializable principalFieldValue = (Serializable) FieldUtil.getFieldValue(obj, principalField);
+		Class<?> subordinateClass = ReflectionUtils.getFiledGenericclass(field, 0);
+		Serializable principalFieldValue = (Serializable) ReflectionUtils.getFieldValue(obj, principalField);
 		if (principalFieldValue == null) {
 			return null;
 		}
@@ -148,7 +148,7 @@ public class ModelCglib implements MethodInterceptor {
 		List<Object> daoResults = (List<Object>) sqlSessionExtend.selectByColumn(subordinateColumn, principalFieldValue,
 				subordinateClass);
 		Collection<?> result = this.resultConvert(daoResults, field);
-		FieldUtil.setField(obj, field, result);
+		ReflectionUtils.setField(obj, field, result);
 		return result;
 	}
 
@@ -165,8 +165,9 @@ public class ModelCglib implements MethodInterceptor {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(obj.getClass());
 		String currentTable = entityInfo.getTableName();
 		/** 中间表条件字段的值 */
-		Serializable primaryKey = (Serializable) FieldUtil.getFieldValue(obj, entityInfo.getPrimaryKey().getField());
-		Class<?> needSelectModelType = FieldUtil.getFiledGenericclass(field, 0);
+		Serializable primaryKey = (Serializable) ReflectionUtils.getFieldValue(obj,
+				entityInfo.getPrimaryKey().getField());
+		Class<?> needSelectModelType = ReflectionUtils.getFiledGenericclass(field, 0);
 		EntityInfo needSelectEntityInfo = UniversalCrudContent.getEntityInfo(needSelectModelType);
 		String needSelectTable = needSelectEntityInfo.getTableName();
 		/** 中间表 */
@@ -188,7 +189,7 @@ public class ModelCglib implements MethodInterceptor {
 		@SuppressWarnings("unchecked")
 		List<Object> datas = (List<Object>) this.sqlSessionExtend.selectBySql(sql, needSelectModelType);
 		Collection<?> result = this.resultConvert(datas, field);
-		FieldUtil.setField(obj, field, result);
+		ReflectionUtils.setField(obj, field, result);
 		return result;
 	}
 
@@ -259,12 +260,12 @@ public class ModelCglib implements MethodInterceptor {
 
 	/** 把传入对象的值复制给代理对象 */
 	public void copy(Object source) {
-		Class<?> realCalss = FieldUtil.getRealCalssOfProxyClass(instance.getClass());
+		Class<?> realCalss = ReflectionUtils.getRealCalssOfProxyClass(instance.getClass());
 		if (!source.getClass().getName().equals(realCalss.getName())) {
 			throw new IllegalArgumentException("instance attributes of " + source.getClass().getName()
 					+ " cannot be copied to " + realCalss.getName() + " object");
 		}
-		List<Field> fields = FieldUtil.getAllFields(source.getClass());
+		List<Field> fields = ReflectionUtils.getAllFields(source.getClass());
 		for (Field field : fields) {
 			field.setAccessible(true);
 			try {

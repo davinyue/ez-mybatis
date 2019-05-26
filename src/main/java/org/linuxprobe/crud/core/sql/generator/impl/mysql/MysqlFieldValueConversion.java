@@ -19,8 +19,8 @@ import org.linuxprobe.crud.core.annoatation.EnumHandler.EnumCustomerType;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.validation.FieldValidation;
 import org.linuxprobe.crud.exception.OperationNotSupportedException;
-import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.util.StreamUtils;
 
 public class MysqlFieldValueConversion {
@@ -33,7 +33,7 @@ public class MysqlFieldValueConversion {
 	 * @param field  属性
 	 */
 	private static String getStringValue(Object record, Field field) {
-		String fieldValue = (String) FieldUtil.getFieldValue(record, field);
+		String fieldValue = (String) ReflectionUtils.getFieldValue(record, field);
 		if (fieldValue != null) {
 			fieldValue = mysqlEscape.escape(fieldValue);
 			fieldValue = mysqlEscape.getQuotation() + fieldValue + mysqlEscape.getQuotation();
@@ -48,7 +48,7 @@ public class MysqlFieldValueConversion {
 	 * @param field  属性
 	 */
 	private static String getDateValue(Object record, Field field) {
-		Date fieldValue = (Date) FieldUtil.getFieldValue(record, field);
+		Date fieldValue = (Date) ReflectionUtils.getFieldValue(record, field);
 		String result = null;
 		if (fieldValue != null) {
 			if (field.isAnnotationPresent(DateHandler.class)) {
@@ -74,7 +74,7 @@ public class MysqlFieldValueConversion {
 	 * @param field  属性
 	 */
 	private static String getEnumValue(Object record, Field field) {
-		Enum<?> fieldValue = (Enum<?>) FieldUtil.getFieldValue(record, field);
+		Enum<?> fieldValue = (Enum<?>) ReflectionUtils.getFieldValue(record, field);
 		String result = null;
 		if (fieldValue != null) {
 			result = fieldValue.ordinal() + "";
@@ -95,7 +95,7 @@ public class MysqlFieldValueConversion {
 	 * @param field  属性
 	 */
 	private static String getNumberValue(Object record, Field field) {
-		Number fieldValue = (Number) FieldUtil.getFieldValue(record, field);
+		Number fieldValue = (Number) ReflectionUtils.getFieldValue(record, field);
 		String result = null;
 		if (fieldValue != null) {
 			result = fieldValue + "";
@@ -111,7 +111,7 @@ public class MysqlFieldValueConversion {
 	 * @param enalbeCheckRule 启用校验规则
 	 */
 	private static String getBooleanValue(Object record, Field field) {
-		Boolean fieldValue = (Boolean) FieldUtil.getFieldValue(record, field);
+		Boolean fieldValue = (Boolean) ReflectionUtils.getFieldValue(record, field);
 		String result = null;
 		if (fieldValue != null) {
 			if (fieldValue) {
@@ -146,7 +146,7 @@ public class MysqlFieldValueConversion {
 	 * @param field  属性
 	 */
 	private static String getCharValue(Object record, Field field) {
-		Character fieldValue = (Character) FieldUtil.getFieldValue(record, field);
+		Character fieldValue = (Character) ReflectionUtils.getFieldValue(record, field);
 		String result = null;
 		if (fieldValue != null) {
 			result = (int) fieldValue + "";
@@ -167,7 +167,7 @@ public class MysqlFieldValueConversion {
 	 * @param field  属性
 	 */
 	private static String getBlobValue(Object record, Field field) {
-		Object fieldValue = FieldUtil.getFieldValue(record, field);
+		Object fieldValue = ReflectionUtils.getFieldValue(record, field);
 		String result = null;
 		if (fieldValue != null) {
 			byte[] bin = null;
@@ -248,7 +248,7 @@ public class MysqlFieldValueConversion {
 				if (primaryKey.value().equals(PrimaryKey.Strategy.UUID)) {
 					try {
 						String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-						FieldUtil.setField(entity, field, uuid);
+						ReflectionUtils.setField(entity, field, uuid);
 						result = mysqlEscape.getQuotation() + uuid + mysqlEscape.getQuotation();
 					} catch (Exception e) {
 						throw new OperationNotSupportedException("未找到主键的set方法", e);

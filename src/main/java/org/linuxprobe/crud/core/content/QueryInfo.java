@@ -11,8 +11,8 @@ import org.linuxprobe.crud.core.annoatation.JoinColumn;
 import org.linuxprobe.crud.core.annoatation.Query;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.param.BaseParam;
-import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.StringHumpTool;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,7 +36,7 @@ public class QueryInfo {
 			this.queryFieldInfos = new LinkedList<>();
 			this.queryParamFieldInfos = new LinkedList<>();
 			this.baseQueryFieldInfos = new LinkedList<>();
-			List<Field> fields = FieldUtil.getAllFields(queryType);
+			List<Field> fields = ReflectionUtils.getAllFields(queryType);
 			for (Field field : fields) {
 				if (!BaseParam.class.isAssignableFrom(field.getType())
 						&& !BaseQuery.class.isAssignableFrom(field.getType())) {

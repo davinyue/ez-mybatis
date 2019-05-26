@@ -11,18 +11,15 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
 import org.linuxprobe.crud.service.UniversalService;
-import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @param <Model>
- *            模型类型
- * @param <IdType>
- *            主键类型
- * @param <Query>
- *            查询类型
+ * @param <Model> 模型类型
+ * @param <IdType> 主键类型
+ * @param <Query> 查询类型
  */
 public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
 		implements UniversalService<Model, IdType, Query> {
@@ -32,7 +29,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 	private UniversalService<Model, IdType, Query> proxy;
 
 	private Class<?> getModelCalss() {
-		Type type = FieldUtil.getGenericSuperType(this.getClass(), 0);
+		Type type = ReflectionUtils.getGenericSuperType(this.getClass(), 0);
 		return UniversalCrudContent.getEntityInfo(type.getTypeName()).getEntityType();
 	}
 

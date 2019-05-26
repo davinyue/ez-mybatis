@@ -17,8 +17,8 @@ import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
-import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 
 public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
@@ -41,7 +41,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		sqlSession.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
 		if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
-			Object idValue = FieldUtil.getFieldValue(record, entityInfo.getPrimaryKey().getField());
+			Object idValue = ReflectionUtils.getFieldValue(record, entityInfo.getPrimaryKey().getField());
 			if (idValue == null) {
 				Map<String, Object> idMap = sqlSession.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
 				Number id = (Number) idMap.get("id");
@@ -52,10 +52,10 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
 					id = id.shortValue();
 				}
-				FieldUtil.setField(record, entityInfo.getPrimaryKey().getField(), id);
+				ReflectionUtils.setField(record, entityInfo.getPrimaryKey().getField(), id);
 			}
 		}
-		if (FieldUtil.isProxyClass(record.getClass())) {
+		if (ReflectionUtils.isProxyClass(record.getClass())) {
 			return record;
 		} else {
 			ModelCglib modelCglib = new ModelCglib(this);
@@ -273,7 +273,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	@Override
 	public <T> T globalUpdate(T record) {
 		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
-		if (!FieldUtil.isProxyClass(record.getClass())) {
+		if (!ReflectionUtils.isProxyClass(record.getClass())) {
 			ModelCglib modelCglib = new ModelCglib(this);
 			Object proxyRecord = modelCglib.getInstance(record.getClass());
 			modelCglib.copy(record);
@@ -286,7 +286,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	@Override
 	public <T> T localUpdate(T record) {
 		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
-		if (!FieldUtil.isProxyClass(record.getClass())) {
+		if (!ReflectionUtils.isProxyClass(record.getClass())) {
 			ModelCglib modelCglib = new ModelCglib(this);
 			Object proxyRecord = modelCglib.getInstance(record.getClass());
 			modelCglib.copy(record);
