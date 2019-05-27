@@ -12,7 +12,7 @@ import org.linuxprobe.crud.core.annoatation.PrimaryKey;
 import org.linuxprobe.crud.core.annoatation.Table;
 import org.linuxprobe.crud.core.annoatation.Transient;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
-import org.linuxprobe.crud.utils.StringHumpTool;
+import org.linuxprobe.luava.string.StringUtils;
 
 import lombok.Getter;
 
@@ -28,7 +28,7 @@ public class EntityInfo {
 		} else {
 			this.entityType = entityType;
 			/** handle table name */
-			this.tableName = StringHumpTool.humpToLine2(entityType.getSimpleName(), "_");
+			this.tableName = StringUtils.humpToLine(entityType.getSimpleName());
 			if (entityType.isAnnotationPresent(Table.class)) {
 				Table table = entityType.getAnnotation(Table.class);
 				if (!table.value().isEmpty()) {
@@ -44,7 +44,7 @@ public class EntityInfo {
 						continue;
 					}
 					String fieldName = field.getName();
-					String filedColumn = StringHumpTool.humpToLine2(fieldName, "_");
+					String filedColumn = StringUtils.humpToLine(fieldName);
 					/** 如果有column注解 */
 					if (field.isAnnotationPresent(Column.class)) {
 						Column column = field.getAnnotation(Column.class);

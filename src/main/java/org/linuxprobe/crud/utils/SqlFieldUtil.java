@@ -17,6 +17,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
+import org.linuxprobe.luava.string.StringUtils;
 import org.springframework.util.StreamUtils;
 
 public class SqlFieldUtil {
@@ -176,7 +177,7 @@ public class SqlFieldUtil {
 			try {
 				field = entity.getClass().getDeclaredField(column);
 				if (field == null) {
-					field = entity.getClass().getDeclaredField(StringHumpTool.lineToHump(column, "_"));
+					field = entity.getClass().getDeclaredField(StringUtils.lineToHump(column));
 				}
 			} catch (NoSuchFieldException | SecurityException e) {
 				throw new IllegalArgumentException(e);
@@ -251,7 +252,7 @@ public class SqlFieldUtil {
 							for (int i = 0; i < bin.length; i++) {
 								bin[i] = byteb[i];
 							}
-							ReflectionUtils.setField(entity, field, (Object) bin);
+							ReflectionUtils.setField(entity, field, bin);
 						} catch (Exception e) {
 							throw new IllegalArgumentException(e);
 						}
@@ -295,7 +296,7 @@ public class SqlFieldUtil {
 						for (int i = 0; i < bin.length; i++) {
 							bin[i] = byteb[i];
 						}
-						ReflectionUtils.setField(entity, field, (Object) bin);
+						ReflectionUtils.setField(entity, field, bin);
 					} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
 						try {
 							SerialBlob serialBlob = new SerialBlob((byte[]) value);

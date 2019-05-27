@@ -27,8 +27,8 @@ import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
-import org.linuxprobe.crud.utils.StringHumpTool;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
+import org.linuxprobe.luava.string.StringUtils;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
@@ -93,7 +93,7 @@ public class ModelCglib implements MethodInterceptor {
 	 * @throws Exception
 	 */
 	private Object handldeOneToOne(Object obj, Field field) throws Exception {
-		String columnName = StringHumpTool.humpToLine2(field.getName(), "_") + "_id";
+		String columnName = StringUtils.humpToLine(field.getName()) + "_id";
 		if (!field.getAnnotation(OneToOne.class).value().isEmpty()) {
 			columnName = field.getAnnotation(OneToOne.class).value();
 		}

@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>org.linuxprobe</groupId>
 			<artifactId>luava</artifactId>
-			<version>0.0.2.RELEASE</version>
+			<version>0.0.3.RELEASE</version>
 		</dependency>
 	</dependencies>
 	<build>
