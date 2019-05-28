@@ -18,6 +18,7 @@ import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
+import org.linuxprobe.luava.proxy.ProxyFactory;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 
 public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
@@ -59,7 +60,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			return record;
 		} else {
 			ModelCglib modelCglib = new ModelCglib(this);
-			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
 			modelCglib.copy(record);
 			return (T) proxyRecord;
 		}
@@ -140,7 +141,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		List<T> records = new LinkedList<>();
 		for (Map<String, Object> mapperResult : mapperResults) {
 			ModelCglib modelCglib = new ModelCglib(this);
-			T model = modelCglib.getInstance(type);
+			T model = ProxyFactory.getProxyInstance(modelCglib, type);
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
 				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
@@ -186,7 +187,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				}
 			} else {
 				modelCglib = new ModelCglib(this);
-				model = modelCglib.getInstance(type);
+				model = ProxyFactory.getProxyInstance(modelCglib, type);
 			}
 			Set<String> columns = mapperResult.keySet();
 			for (String column : columns) {
@@ -218,7 +219,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			}
 		} else {
 			modelCglib = new ModelCglib(this);
-			model = modelCglib.getInstance(type);
+			model = ProxyFactory.getProxyInstance(modelCglib, type);
 		}
 		Set<String> columns = mapResult.keySet();
 		for (String column : columns) {
@@ -275,7 +276,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
 		if (!ReflectionUtils.isProxyClass(record.getClass())) {
 			ModelCglib modelCglib = new ModelCglib(this);
-			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
 			modelCglib.copy(record);
 			return (T) proxyRecord;
 		}
@@ -288,7 +289,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
 		if (!ReflectionUtils.isProxyClass(record.getClass())) {
 			ModelCglib modelCglib = new ModelCglib(this);
-			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
 			modelCglib.copy(record);
 			return (T) proxyRecord;
 		}
