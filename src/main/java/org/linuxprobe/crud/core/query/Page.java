@@ -1,6 +1,7 @@
 package org.linuxprobe.crud.core.query;
 
-import java.util.Collection;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Page<T> {
 	/** 数据 */
-	private Collection<T> data;
+	private List<T> data;
 	/** 总数量 */
 	private Long total;
 	/** 当前页号 */
