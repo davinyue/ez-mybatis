@@ -3,6 +3,7 @@ package org.linuxprobe.crud.core.proxy;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -242,21 +243,24 @@ public class ModelInterceptor extends AbstractMethodInterceptor {
 	}
 
 	/** 把传入对象的值复制给代理对象 */
-	public void copy(Object source, Object target) {
-		Class<?> realCalss = ReflectionUtils.getRealCalssOfProxyClass(target.getClass());
+	public void copy(Object source) {
+		Class<?> realCalss = ReflectionUtils.getRealCalssOfProxyClass(this.getInstance().getClass());
 		if (!source.getClass().getName().equals(realCalss.getName())) {
 			throw new IllegalArgumentException("instance attributes of " + source.getClass().getName()
 					+ " cannot be copied to " + realCalss.getName() + " object");
 		}
 		List<Field> fields = ReflectionUtils.getAllFields(source.getClass());
 		for (Field field : fields) {
+			int modifiers = field.getModifiers();
+			if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers)) {
+				continue;
+			}
 			field.setAccessible(true);
 			try {
-				field.set(target, field.get(source));
+				field.set(this.getInstance(), field.get(source));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 			}
 		}
-		this.cleanMark();
 	}
 
 	/** 清除get和set方法调用标记 */
