@@ -107,7 +107,7 @@ public class ModelCglib implements MethodInterceptor {
 				correlationFieldInfo.getField());
 		if (correlationFieldValue != null) {
 			Object result = sqlSessionExtend.selectByPrimaryKey(correlationFieldValue, field.getType());
-			ReflectionUtils.setField(obj, field, result);
+			ReflectionUtils.setFieldValue(obj, field, result, true);
 			return result;
 		} else {
 			return null;
@@ -148,7 +148,7 @@ public class ModelCglib implements MethodInterceptor {
 		List<Object> daoResults = (List<Object>) sqlSessionExtend.selectByColumn(subordinateColumn, principalFieldValue,
 				subordinateClass);
 		Collection<?> result = this.resultConvert(daoResults, field);
-		ReflectionUtils.setField(obj, field, result);
+		ReflectionUtils.setFieldValue(obj, field, result, true);
 		return result;
 	}
 
@@ -189,7 +189,7 @@ public class ModelCglib implements MethodInterceptor {
 		@SuppressWarnings("unchecked")
 		List<Object> datas = (List<Object>) this.sqlSessionExtend.selectBySql(sql, needSelectModelType);
 		Collection<?> result = this.resultConvert(datas, field);
-		ReflectionUtils.setField(obj, field, result);
+		ReflectionUtils.setFieldValue(obj, field, result, true);
 		return result;
 	}
 

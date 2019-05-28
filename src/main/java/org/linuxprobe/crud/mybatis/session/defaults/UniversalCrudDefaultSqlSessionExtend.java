@@ -52,7 +52,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
 					id = id.shortValue();
 				}
-				ReflectionUtils.setField(record, entityInfo.getPrimaryKey().getField(), id);
+				ReflectionUtils.setFieldValue(record, entityInfo.getPrimaryKey().getField(), id, true);
 			}
 		}
 		if (ReflectionUtils.isProxyClass(record.getClass())) {

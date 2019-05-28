@@ -248,7 +248,7 @@ public class MysqlFieldValueConversion {
 				if (primaryKey.value().equals(PrimaryKey.Strategy.UUID)) {
 					try {
 						String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-						ReflectionUtils.setField(entity, field, uuid);
+						ReflectionUtils.setFieldValue(entity, field, uuid, true);
 						result = mysqlEscape.getQuotation() + uuid + mysqlEscape.getQuotation();
 					} catch (Exception e) {
 						throw new OperationNotSupportedException("未找到主键的set方法", e);

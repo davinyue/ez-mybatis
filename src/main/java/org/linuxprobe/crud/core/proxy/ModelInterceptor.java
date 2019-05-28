@@ -104,7 +104,7 @@ public class ModelInterceptor extends AbstractMethodInterceptor {
 				correlationFieldInfo.getField());
 		if (correlationFieldValue != null) {
 			Object result = sqlSessionExtend.selectByPrimaryKey(correlationFieldValue, field.getType());
-			ReflectionUtils.setField(obj, field, result);
+			ReflectionUtils.setFieldValue(obj, field, result, true);
 			return result;
 		} else {
 			return null;
@@ -145,7 +145,7 @@ public class ModelInterceptor extends AbstractMethodInterceptor {
 		List<Object> daoResults = (List<Object>) sqlSessionExtend.selectByColumn(subordinateColumn, principalFieldValue,
 				subordinateClass);
 		Collection<?> result = this.resultConvert(daoResults, field);
-		ReflectionUtils.setField(obj, field, result);
+		ReflectionUtils.setFieldValue(obj, field, result, true);
 		return result;
 	}
 
@@ -186,7 +186,7 @@ public class ModelInterceptor extends AbstractMethodInterceptor {
 		@SuppressWarnings("unchecked")
 		List<Object> datas = (List<Object>) this.sqlSessionExtend.selectBySql(sql, needSelectModelType);
 		Collection<?> result = this.resultConvert(datas, field);
-		ReflectionUtils.setField(obj, field, result);
+		ReflectionUtils.setFieldValue(obj, field, result, true);
 		return result;
 	}
 
