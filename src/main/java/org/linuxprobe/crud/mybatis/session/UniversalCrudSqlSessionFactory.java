@@ -32,5 +32,5 @@ public interface UniversalCrudSqlSessionFactory extends SqlSessionFactory {
 	UniversalCrudSqlSession openSession(ExecutorType execType, Connection connection);
 
 	@Override
-	public UniversalCrudConfiguration getConfiguration();
+	UniversalCrudConfiguration getConfiguration();
 }
