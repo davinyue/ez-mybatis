@@ -111,41 +111,41 @@ public class UniversalCrudSqlSessionFactoryBean
 	}
 
 	protected UniversalCrudSqlSessionFactory buildSqlSessionFactory() throws Exception {
-		final UniversalCrudConfiguration targetConfiguration;
+		final UniversalCrudConfiguration configuration;
 		UniversalCrudXMLConfigBuilder xmlConfigBuilder = null;
 		if (this.configuration != null) {
-			targetConfiguration = this.configuration;
-			if (targetConfiguration.getVariables() == null) {
-				targetConfiguration.setVariables(this.configurationProperties);
+			configuration = this.configuration;
+			if (configuration.getVariables() == null) {
+				configuration.setVariables(this.configurationProperties);
 			} else if (this.configurationProperties != null) {
-				targetConfiguration.getVariables().putAll(this.configurationProperties);
+				configuration.getVariables().putAll(this.configurationProperties);
 			}
 		} else if (this.configLocation != null) {
 			xmlConfigBuilder = new UniversalCrudXMLConfigBuilder(this.configLocation.getInputStream(), null,
 					this.configurationProperties);
-			targetConfiguration = (UniversalCrudConfiguration) xmlConfigBuilder.getConfiguration();
+			configuration = (UniversalCrudConfiguration) xmlConfigBuilder.getConfiguration();
 		} else {
 			LOGGER.debug(
 					"Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-			targetConfiguration = new UniversalCrudConfiguration();
-			Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
+			configuration = new UniversalCrudConfiguration();
+			Optional.ofNullable(this.configurationProperties).ifPresent(configuration::setVariables);
 		}
-		Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
-		Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
-		Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
+		Optional.ofNullable(this.objectFactory).ifPresent(configuration::setObjectFactory);
+		Optional.ofNullable(this.objectWrapperFactory).ifPresent(configuration::setObjectWrapperFactory);
+		Optional.ofNullable(this.vfs).ifPresent(configuration::setVfsImpl);
 		if (hasLength(this.typeAliasesPackage)) {
 			scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType)
-					.forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
+					.forEach(configuration.getTypeAliasRegistry()::registerAlias);
 		}
 		if (!isEmpty(this.typeAliases)) {
 			Stream.of(this.typeAliases).forEach(typeAlias -> {
-				targetConfiguration.getTypeAliasRegistry().registerAlias(typeAlias);
+				configuration.getTypeAliasRegistry().registerAlias(typeAlias);
 				LOGGER.debug("Registered type alias: '" + typeAlias + "'");
 			});
 		}
 		if (!isEmpty(this.plugins)) {
 			Stream.of(this.plugins).forEach(plugin -> {
-				targetConfiguration.addInterceptor(plugin);
+				configuration.addInterceptor(plugin);
 				LOGGER.debug("Registered plugin: '" + plugin + "'");
 			});
 		}
@@ -153,22 +153,22 @@ public class UniversalCrudSqlSessionFactoryBean
 			scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isInterface())
 					.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 					.filter(clazz -> ClassUtils.getConstructorIfAvailable(clazz) != null)
-					.forEach(targetConfiguration.getTypeHandlerRegistry()::register);
+					.forEach(configuration.getTypeHandlerRegistry()::register);
 		}
 		if (!isEmpty(this.typeHandlers)) {
 			Stream.of(this.typeHandlers).forEach(typeHandler -> {
-				targetConfiguration.getTypeHandlerRegistry().register(typeHandler);
+				configuration.getTypeHandlerRegistry().register(typeHandler);
 				LOGGER.debug("Registered type handler: '" + typeHandler + "'");
 			});
 		}
 		if (this.databaseIdProvider != null) {// fix #64 set databaseId before parse mapper xmls
 			try {
-				targetConfiguration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
+				configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
 			} catch (SQLException e) {
 				throw new NestedIOException("Failed getting a databaseId", e);
 			}
 		}
-		Optional.ofNullable(this.cache).ifPresent(targetConfiguration::addCache);
+		Optional.ofNullable(this.cache).ifPresent(configuration::addCache);
 
 		if (xmlConfigBuilder != null) {
 			try {
@@ -180,7 +180,7 @@ public class UniversalCrudSqlSessionFactoryBean
 				ErrorContext.instance().reset();
 			}
 		}
-		targetConfiguration.setEnvironment(new Environment(this.environment,
+		configuration.setEnvironment(new Environment(this.environment,
 				this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
 				this.dataSource));
 		if (this.mapperLocations != null) {
@@ -193,7 +193,7 @@ public class UniversalCrudSqlSessionFactoryBean
 					}
 					try {
 						XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
-								targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
+								configuration, mapperLocation.toString(), configuration.getSqlFragments());
 						xmlMapperBuilder.parse();
 					} catch (Exception e) {
 						throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
@@ -207,7 +207,7 @@ public class UniversalCrudSqlSessionFactoryBean
 			LOGGER.debug("Property 'mapperLocations' was not specified.");
 		}
 		configuration.setUniversalCrudScan(universalCrudScan);
-		return this.sqlSessionFactoryBuilder.build(targetConfiguration);
+		return this.sqlSessionFactoryBuilder.build(configuration);
 	}
 
 	public void afterPropertiesSet() throws Exception {
