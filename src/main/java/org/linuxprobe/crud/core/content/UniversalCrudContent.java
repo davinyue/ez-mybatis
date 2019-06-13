@@ -34,7 +34,7 @@ public class UniversalCrudContent {
 	public static void init(UniversalCrudConfiguration universalCrudConfiguration) {
 		UniversalCrudContent.universalCrudConfiguration = universalCrudConfiguration;
 		/** 扫描类信息 */
-		String[] scans = universalCrudConfiguration.getUniversalCrudScan().split(",");
+		String[] scans = universalCrudConfiguration.getUniversalCrudScan().split(";");
 		/** 必须先扫描实体信息 */
 		for (String scan : scans) {
 			Reflections reflections = new Reflections(scan);

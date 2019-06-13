@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class UniversalCrudConfiguration extends Configuration {
 	/** 实体和查询类扫描路径 */
-	protected String universalCrudScan;
+	private String universalCrudScan;
 
 	public String getDriverClassName() {
 		DataSource dataSource = this.getEnvironment().getDataSource();
