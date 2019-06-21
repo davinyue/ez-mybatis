@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey.Strategy;
@@ -142,10 +141,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		for (Map<String, Object> mapperResult : mapperResults) {
 			ModelCglib modelCglib = new ModelCglib(this);
 			T model = ProxyFactory.getProxyInstance(modelCglib, type);
-			Set<String> columns = mapperResult.keySet();
-			for (String column : columns) {
-				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
-			}
+			SqlFieldUtil.copyColumnValueToObject(mapperResult, model);
 			modelCglib.cleanMark();
 			records.add(model);
 		}
@@ -189,10 +185,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				modelCglib = new ModelCglib(this);
 				model = ProxyFactory.getProxyInstance(modelCglib, type);
 			}
-			Set<String> columns = mapperResult.keySet();
-			for (String column : columns) {
-				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
-			}
+			SqlFieldUtil.copyColumnValueToObject(mapperResult, model);
 			if (entityInfo != null) {
 				modelCglib.cleanMark();
 			}
@@ -221,10 +214,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			modelCglib = new ModelCglib(this);
 			model = ProxyFactory.getProxyInstance(modelCglib, type);
 		}
-		Set<String> columns = mapResult.keySet();
-		for (String column : columns) {
-			SqlFieldUtil.setFieldValue(column, model, mapResult.get(column));
-		}
+		SqlFieldUtil.copyColumnValueToObject(mapResult, model);
 		if (entityInfo != null) {
 			modelCglib.cleanMark();
 		}
