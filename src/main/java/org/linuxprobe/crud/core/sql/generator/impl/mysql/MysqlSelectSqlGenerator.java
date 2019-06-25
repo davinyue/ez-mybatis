@@ -26,7 +26,7 @@ import org.linuxprobe.crud.core.query.param.impl.StringParam;
 import org.linuxprobe.crud.core.query.param.impl.StringParam.Fuzzt;
 import org.linuxprobe.crud.core.sql.generator.Escape;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
-import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGenerator, Escape {
@@ -183,7 +183,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
 		for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
 			Field field = queryFieldInfo.getField();
 			/** 获得该对象 */
-			BaseQuery member = (BaseQuery) FieldUtil.getFieldValue(searcher, field);
+			BaseQuery member = (BaseQuery) ReflectionUtils.getFieldValue(searcher, field);
 			/** 如果对象不为空，则需要join */
 			if (member != null) {
 				/** 设置主表链接列 */
@@ -268,7 +268,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
 				/** 如果第一层名称匹配上 */
 				if (searcherField.getName().equals(fieldNames[0])) {
 					if (BaseQuery.class.isAssignableFrom(searcherField.getType())) {
-						BaseQuery sonSearcher = (BaseQuery) FieldUtil.getFieldValue(searcher, searcherField);
+						BaseQuery sonSearcher = (BaseQuery) ReflectionUtils.getFieldValue(searcher, searcherField);
 						if (sonSearcher != null) {
 							return getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
 						}
@@ -300,7 +300,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
 			/** 列名 */
 			String columnName = queryFieldInfo.getColumnName();
 			/** 获得该对象 */
-			Object member = FieldUtil.getFieldValue(searcher, field);
+			Object member = ReflectionUtils.getFieldValue(searcher, field);
 			/** 如果该成员是空值，则不需要加入where条件 */
 			if (member == null) {
 				continue;

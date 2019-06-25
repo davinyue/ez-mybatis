@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
 import org.linuxprobe.crud.core.annoatation.PrimaryKey.Strategy;
@@ -17,8 +16,9 @@ import org.linuxprobe.crud.core.sql.generator.DeleteSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.InsertSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
-import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
+import org.linuxprobe.luava.proxy.ProxyFactory;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 
 public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	private static final String selectStatement = "org.linuxprobe.crud.mapper.UniversalMapper.universalSelect";
@@ -41,7 +41,7 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		sqlSession.insert(insertStatement, insertSqlGenerator.toInsertSql(record));
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
 		if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
-			Object idValue = FieldUtil.getFieldValue(record, entityInfo.getPrimaryKey().getField());
+			Object idValue = ReflectionUtils.getFieldValue(record, entityInfo.getPrimaryKey().getField());
 			if (idValue == null) {
 				Map<String, Object> idMap = sqlSession.selectOne(selectOneStatement, "SELECT LAST_INSERT_ID() as id");
 				Number id = (Number) idMap.get("id");
@@ -52,14 +52,14 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				} else if (entityInfo.getPrimaryKey().getField().getType().equals(Short.class)) {
 					id = id.shortValue();
 				}
-				FieldUtil.setField(record, entityInfo.getPrimaryKey().getField(), id);
+				ReflectionUtils.setFieldValue(record, entityInfo.getPrimaryKey().getField(), id, true);
 			}
 		}
-		if (FieldUtil.isProxyClass(record.getClass())) {
+		if (ReflectionUtils.isProxyClass(record.getClass())) {
 			return record;
 		} else {
 			ModelCglib modelCglib = new ModelCglib(this);
-			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
 			modelCglib.copy(record);
 			return (T) proxyRecord;
 		}
@@ -140,11 +140,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 		List<T> records = new LinkedList<>();
 		for (Map<String, Object> mapperResult : mapperResults) {
 			ModelCglib modelCglib = new ModelCglib(this);
-			T model = modelCglib.getInstance(type);
-			Set<String> columns = mapperResult.keySet();
-			for (String column : columns) {
-				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
-			}
+			T model = ProxyFactory.getProxyInstance(modelCglib, type);
+			SqlFieldUtil.copyColumnValueToObject(mapperResult, model);
 			modelCglib.cleanMark();
 			records.add(model);
 		}
@@ -186,12 +183,9 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 				}
 			} else {
 				modelCglib = new ModelCglib(this);
-				model = modelCglib.getInstance(type);
+				model = ProxyFactory.getProxyInstance(modelCglib, type);
 			}
-			Set<String> columns = mapperResult.keySet();
-			for (String column : columns) {
-				SqlFieldUtil.setFieldValue(column, model, mapperResult.get(column));
-			}
+			SqlFieldUtil.copyColumnValueToObject(mapperResult, model);
 			if (entityInfo != null) {
 				modelCglib.cleanMark();
 			}
@@ -218,12 +212,9 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 			}
 		} else {
 			modelCglib = new ModelCglib(this);
-			model = modelCglib.getInstance(type);
+			model = ProxyFactory.getProxyInstance(modelCglib, type);
 		}
-		Set<String> columns = mapResult.keySet();
-		for (String column : columns) {
-			SqlFieldUtil.setFieldValue(column, model, mapResult.get(column));
-		}
+		SqlFieldUtil.copyColumnValueToObject(mapResult, model);
 		if (entityInfo != null) {
 			modelCglib.cleanMark();
 		}
@@ -273,9 +264,9 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	@Override
 	public <T> T globalUpdate(T record) {
 		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
-		if (!FieldUtil.isProxyClass(record.getClass())) {
+		if (!ReflectionUtils.isProxyClass(record.getClass())) {
 			ModelCglib modelCglib = new ModelCglib(this);
-			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
 			modelCglib.copy(record);
 			return (T) proxyRecord;
 		}
@@ -286,9 +277,9 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 	@Override
 	public <T> T localUpdate(T record) {
 		sqlSession.update(updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
-		if (!FieldUtil.isProxyClass(record.getClass())) {
+		if (!ReflectionUtils.isProxyClass(record.getClass())) {
 			ModelCglib modelCglib = new ModelCglib(this);
-			Object proxyRecord = modelCglib.getInstance(record.getClass());
+			Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
 			modelCglib.copy(record);
 			return (T) proxyRecord;
 		}

@@ -14,38 +14,24 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 public class UniversalCrudSqlSessionTemplate extends SqlSessionTemplate implements UniversalCrudSqlSession {
-	// private SqlSession sqlSession;
 	private final UniversalCrudDefaultSqlSessionExtend sqlSessionExtend;
 
 	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory, ExecutorType executorType,
 			PersistenceExceptionTranslator exceptionTranslator) {
 		super(sqlSessionFactory, executorType, exceptionTranslator);
-		// initSqlSession();
 		this.sqlSessionExtend = new UniversalCrudDefaultSqlSessionExtend(this);
 	}
 
 	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory,
 			ExecutorType executorType) {
 		super(sqlSessionFactory, executorType);
-		// initSqlSession();
 		this.sqlSessionExtend = new UniversalCrudDefaultSqlSessionExtend(this);
 	}
 
 	public UniversalCrudSqlSessionTemplate(UniversalCrudSqlSessionFactory sqlSessionFactory) {
 		super(sqlSessionFactory);
-		// initSqlSession();
 		this.sqlSessionExtend = new UniversalCrudDefaultSqlSessionExtend(this);
 	}
-
-//	private void initSqlSession() {
-//		try {
-//			Field sqlSessionProxyFiels = SqlSessionTemplate.class.getDeclaredField("sqlSessionProxy");
-//			sqlSessionProxyFiels.setAccessible(true);
-//			sqlSession = (SqlSession) sqlSessionProxyFiels.get(this);
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
 
 	@Override
 	public <T> T insert(T record) {

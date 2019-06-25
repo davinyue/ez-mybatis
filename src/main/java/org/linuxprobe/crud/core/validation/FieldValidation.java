@@ -15,8 +15,8 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.hibernate.validator.HibernateValidator;
-import org.linuxprobe.crud.utils.FieldUtil;
 import org.linuxprobe.crud.utils.SqlFieldUtil;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -74,7 +74,7 @@ public class FieldValidation {
 	 * @param field  属性
 	 */
 	private static void blobValidation(Object record, Field field) {
-		Object fieldValue = FieldUtil.getFieldValue(record, field);
+		Object fieldValue = ReflectionUtils.getFieldValue(record, field);
 		if (fieldValue != null) {
 			byte[] bin = null;
 			if (Blob.class.isAssignableFrom(field.getType())) {

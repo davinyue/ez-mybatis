@@ -3,6 +3,7 @@ package org.linuxprobe.crud.core.proxy;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,63 +28,59 @@ import org.linuxprobe.crud.core.content.EntityInfo;
 import org.linuxprobe.crud.core.content.EntityInfo.FieldInfo;
 import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.mybatis.session.SqlSessionExtend;
-import org.linuxprobe.crud.utils.FieldUtil;
-import org.linuxprobe.crud.utils.StringHumpTool;
-import org.springframework.cglib.proxy.Enhancer;
-import org.springframework.cglib.proxy.MethodInterceptor;
+import org.linuxprobe.luava.proxy.AbstractMethodInterceptor;
+import org.linuxprobe.luava.proxy.CglibJoinPoint;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
+import org.linuxprobe.luava.string.StringUtils;
 import org.springframework.cglib.proxy.MethodProxy;
 
-public class ModelCglib implements MethodInterceptor {
+public class ModelCglib extends AbstractMethodInterceptor {
 	private SqlSessionExtend sqlSessionExtend;
-
-	private Object instance;
+	private Set<String> handledMethod = new HashSet<>();
 
 	public ModelCglib(SqlSessionExtend sqlSessionExtend) {
 		this.sqlSessionExtend = sqlSessionExtend;
 	}
 
-	private Set<String> handledMethod = new HashSet<>();
+	@Override
+	public boolean preHandle(CglibJoinPoint joinPoint) throws Throwable {
+		return true;
+	}
 
 	@Override
-	public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-		Object result = proxy.invokeSuper(obj, args);
-		/** 如果结果不是null,则说明用户已经调用过set方法，则直接返回结果 */
-		if (result != null) {
-			return result;
-		}
-		/** 如果已经处理过该方法，直接返回结果 */
-		else if (handledMethod.contains(method.getName())) {
-			return result;
-		}
-		/** 如果用户调用了对应属性的set方法，则标记get方法为已经处理，直接返回get的结果 */
-		else if (method.getName().startsWith("set")) {
-			handledMethod.add(method.getName().replace("set", "get"));
-			return result;
-		} else if (method.getName().startsWith("get")) {
-			Field field = FieldUtil.getFieldByMethod(obj.getClass(), method);
-			if (field.isAnnotationPresent(OneToOne.class)) {
-				/** 标记该方法已经处理 */
-				handledMethod.add(method.getName());
-				handldeOneToOne(obj, field);
-				/** 调用目标对象的方法，方便用户对数据进行进一步处理 */
-				return method.invoke(obj);
-			} else if (field.isAnnotationPresent(OneToMany.class)) {
-				/** 标记该方法已经处理 */
-				handledMethod.add(method.getName());
-				handldeOneToMany(obj, field);
-				/** 调用目标对象的方法，方便用户对数据进行进一步处理 */
-				return method.invoke(obj);
-			} else if (field.isAnnotationPresent(ManyToMany.class)) {
-				/** 标记该方法已经处理 */
-				handledMethod.add(method.getName());
-				handldeManyToMany(obj, field);
-				/** 调用目标对象的方法，方便用户对数据进行进一步处理 */
-				return method.invoke(obj);
-			} else {
-				return result;
+	public void afterCompletion(CglibJoinPoint joinPoint) throws Throwable {
+		Method method = joinPoint.getMethod();
+		MethodProxy methodProxy = joinPoint.getMethodProxy();
+		Object result = joinPoint.getResult();
+		Object obj = joinPoint.getProxy();
+		Object[] args = joinPoint.getArgs();
+		/** 如果没处理过该方法 */
+		if (result == null && !handledMethod.contains(method.getName())) {
+			/** 如果用户调用set方法, 则认为已经处理过get方法 */
+			if (method.getName().startsWith("set")) {
+				handledMethod.add(method.getName().replace("set", "get"));
+			} else if (method.getName().startsWith("get")) {
+				Field field = ReflectionUtils.getFieldByMethod(obj.getClass(), method);
+				if (field.isAnnotationPresent(OneToOne.class)) {
+					/** 标记该方法已经处理 */
+					handledMethod.add(method.getName());
+					handldeOneToOne(obj, field);
+					/** 调用目标对象的方法，方便用户对数据进行进一步处理 */
+					joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+				} else if (field.isAnnotationPresent(OneToMany.class)) {
+					/** 标记该方法已经处理 */
+					handledMethod.add(method.getName());
+					handldeOneToMany(obj, field);
+					/** 调用目标对象的方法，方便用户对数据进行进一步处理 */
+					joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+				} else if (field.isAnnotationPresent(ManyToMany.class)) {
+					/** 标记该方法已经处理 */
+					handledMethod.add(method.getName());
+					handldeManyToMany(obj, field);
+					/** 调用目标对象的方法，方便用户对数据进行进一步处理 */
+					joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+				}
 			}
-		} else {
-			return result;
 		}
 	}
 
@@ -93,7 +90,7 @@ public class ModelCglib implements MethodInterceptor {
 	 * @throws Exception
 	 */
 	private Object handldeOneToOne(Object obj, Field field) throws Exception {
-		String columnName = StringHumpTool.humpToLine2(field.getName(), "_") + "_id";
+		String columnName = StringUtils.humpToLine(field.getName()) + "_id";
 		if (!field.getAnnotation(OneToOne.class).value().isEmpty()) {
 			columnName = field.getAnnotation(OneToOne.class).value();
 		}
@@ -103,11 +100,11 @@ public class ModelCglib implements MethodInterceptor {
 		if (correlationFieldInfo == null) {
 			throw new IllegalArgumentException(columnName + " column does not have a corresponding field.");
 		}
-		Serializable correlationFieldValue = (Serializable) FieldUtil.getFieldValue(obj,
+		Serializable correlationFieldValue = (Serializable) ReflectionUtils.getFieldValue(obj,
 				correlationFieldInfo.getField());
 		if (correlationFieldValue != null) {
 			Object result = sqlSessionExtend.selectByPrimaryKey(correlationFieldValue, field.getType());
-			FieldUtil.setField(obj, field, result);
+			ReflectionUtils.setFieldValue(obj, field, result, true);
 			return result;
 		} else {
 			return null;
@@ -139,8 +136,8 @@ public class ModelCglib implements MethodInterceptor {
 		if (!"".equals(oneToMany.subordinate())) {
 			subordinateColumn = oneToMany.subordinate();
 		}
-		Class<?> subordinateClass = FieldUtil.getFiledGenericclass(field, 0);
-		Serializable principalFieldValue = (Serializable) FieldUtil.getFieldValue(obj, principalField);
+		Class<?> subordinateClass = ReflectionUtils.getFiledGenericclass(field, 0);
+		Serializable principalFieldValue = (Serializable) ReflectionUtils.getFieldValue(obj, principalField);
 		if (principalFieldValue == null) {
 			return null;
 		}
@@ -148,7 +145,11 @@ public class ModelCglib implements MethodInterceptor {
 		List<Object> daoResults = (List<Object>) sqlSessionExtend.selectByColumn(subordinateColumn, principalFieldValue,
 				subordinateClass);
 		Collection<?> result = this.resultConvert(daoResults, field);
-		FieldUtil.setField(obj, field, result);
+		if (result != null && !result.isEmpty()) {
+			ReflectionUtils.setFieldValue(obj, field, result, true);
+		} else {
+			result = null;
+		}
 		return result;
 	}
 
@@ -165,8 +166,9 @@ public class ModelCglib implements MethodInterceptor {
 		EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(obj.getClass());
 		String currentTable = entityInfo.getTableName();
 		/** 中间表条件字段的值 */
-		Serializable primaryKey = (Serializable) FieldUtil.getFieldValue(obj, entityInfo.getPrimaryKey().getField());
-		Class<?> needSelectModelType = FieldUtil.getFiledGenericclass(field, 0);
+		Serializable primaryKey = (Serializable) ReflectionUtils.getFieldValue(obj,
+				entityInfo.getPrimaryKey().getField());
+		Class<?> needSelectModelType = ReflectionUtils.getFiledGenericclass(field, 0);
 		EntityInfo needSelectEntityInfo = UniversalCrudContent.getEntityInfo(needSelectModelType);
 		String needSelectTable = needSelectEntityInfo.getTableName();
 		/** 中间表 */
@@ -188,7 +190,11 @@ public class ModelCglib implements MethodInterceptor {
 		@SuppressWarnings("unchecked")
 		List<Object> datas = (List<Object>) this.sqlSessionExtend.selectBySql(sql, needSelectModelType);
 		Collection<?> result = this.resultConvert(datas, field);
-		FieldUtil.setField(obj, field, result);
+		if (result != null && !result.isEmpty()) {
+			ReflectionUtils.setFieldValue(obj, field, result, true);
+		} else {
+			result = null;
+		}
 		return result;
 	}
 
@@ -243,32 +249,22 @@ public class ModelCglib implements MethodInterceptor {
 		return result;
 	}
 
-	/** 创建代理对象 */
-	@SuppressWarnings("unchecked")
-	public <T> T getInstance(Class<T> entityType) {
-		/** 创建加强器，用来创建动态代理类 */
-		Enhancer enhancer = new Enhancer();
-		/** 为加强器指定要代理的业务类（即：为下面生成的代理类指定父类） */
-		enhancer.setSuperclass(entityType);
-		/** 设置回调：对于代理类上所有方法的调用，都会调用CallBack，而Callback则需要实现intercept()方法进行拦 */
-		enhancer.setCallback(this);
-		/** 创建动态代理类对象并返回 */
-		instance = enhancer.create();
-		return (T) instance;
-	}
-
 	/** 把传入对象的值复制给代理对象 */
 	public void copy(Object source) {
-		Class<?> realCalss = FieldUtil.getRealCalssOfProxyClass(instance.getClass());
+		Class<?> realCalss = ReflectionUtils.getRealCalssOfProxyClass(this.getInstance().getClass());
 		if (!source.getClass().getName().equals(realCalss.getName())) {
 			throw new IllegalArgumentException("instance attributes of " + source.getClass().getName()
 					+ " cannot be copied to " + realCalss.getName() + " object");
 		}
-		List<Field> fields = FieldUtil.getAllFields(source.getClass());
+		List<Field> fields = ReflectionUtils.getAllFields(source.getClass());
 		for (Field field : fields) {
+			int modifiers = field.getModifiers();
+			if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers)) {
+				continue;
+			}
 			field.setAccessible(true);
 			try {
-				field.set(instance, field.get(source));
+				field.set(this.getInstance(), field.get(source));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 			}
 		}

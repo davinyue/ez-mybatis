@@ -11,11 +11,13 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.rowset.serial.SerialBlob;
 
-import org.linuxprobe.crud.core.content.EntityInfo;
-import org.linuxprobe.crud.core.content.UniversalCrudContent;
+import org.linuxprobe.crud.core.annoatation.Column;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
+import org.linuxprobe.luava.string.StringUtils;
 import org.springframework.util.StreamUtils;
 
 public class SqlFieldUtil {
@@ -51,7 +53,7 @@ public class SqlFieldUtil {
 
 	/** 获取所有的sql支持的类型成员 */
 	public static List<Field> getAllSqlSupportFields(Class<?> objClass) {
-		List<Field> fields = FieldUtil.getAllFields(objClass);
+		List<Field> fields = ReflectionUtils.getAllFields(objClass);
 		List<Field> result = new LinkedList<>();
 		List<Class<?>> sqlSuperClasss = getSqlSuperClasss();
 		for (Field field : fields) {
@@ -159,205 +161,203 @@ public class SqlFieldUtil {
 		}
 	}
 
-	/** 通过列名设置实体的field值 */
+	/** 设置实体的属性值 */
 	@SuppressWarnings("unchecked")
-	public static void setFieldValue(String column, Object entity, Object value) {
-		if (value == null) {
-			return;
+	public static void setFieldValue(Object object, Field field, Object value) {
+		/** 如果是字符串 */
+		if (isFacultyOfString(field.getType())) {
+			ReflectionUtils.setFieldValue(object, field, value.toString(), true);
 		}
-		Field field = null;
-		EntityInfo entityInfo = null;
-		try {
-			entityInfo = UniversalCrudContent.getEntityInfo(entity.getClass());
-		} catch (Exception e) {
+		/** 如果是时间 */
+		else if (isFacultyOfDate(field.getType())) {
+			long timestamp = 0;
+			if (isFacultyOfDate(value.getClass())) {
+				timestamp = ((Date) value).getTime();
+			} else if (isFacultyOfNumber(value.getClass())) {
+				timestamp = ((Number) value).longValue();
+			} else {
+				throw new ClassCastException(
+						value.getClass().getName() + " can't cast to " + field.getType().getName());
+			}
+			if (java.sql.Date.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, new java.sql.Date(timestamp), true);
+			} else if (Timestamp.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, new Timestamp(timestamp), true);
+			} else if (Time.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, new Time(timestamp), true);
+			} else if (Date.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, new Date(timestamp), true);
+			}
 		}
-		if (entityInfo == null) {
-			try {
-				field = entity.getClass().getDeclaredField(column);
-				if (field == null) {
-					field = entity.getClass().getDeclaredField(StringHumpTool.lineToHump(column, "_"));
-				}
-			} catch (NoSuchFieldException | SecurityException e) {
-				throw new IllegalArgumentException(e);
+		/** 如果是数值 */
+		else if (isFacultyOfNumber(field.getType())) {
+			Number number = (Number) value;
+			if (BigDecimal.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, new BigDecimal(number.toString()), true);
+			} else if (byte.class.isAssignableFrom(field.getType()) || Byte.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, number.byteValue(), true);
+			} else if (short.class.isAssignableFrom(field.getType()) || Short.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, number.shortValue(), true);
+			} else if (int.class.isAssignableFrom(field.getType()) || Integer.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, number.intValue(), true);
+			} else if (long.class.isAssignableFrom(field.getType()) || Long.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, number.longValue(), true);
+			} else if (float.class.isAssignableFrom(field.getType()) || Float.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, number.floatValue(), true);
+			} else if (double.class.isAssignableFrom(field.getType())
+					|| Double.class.isAssignableFrom(field.getType())) {
+				ReflectionUtils.setFieldValue(object, field, number.doubleValue(), true);
 			}
-		} else {
-			field = entityInfo.getColumnMapFieldInfo().get(column).getField();
 		}
-		if (field == null) {
-			return;
-		} else {
-			/** 如果是字符串 */
-			if (isFacultyOfString(field.getType())) {
-				FieldUtil.setField(entity, field, value.toString());
-			}
-			/** 如果是时间 */
-			else if (isFacultyOfDate(field.getType())) {
-				long timestamp = 0;
-				if (isFacultyOfDate(value.getClass())) {
-					timestamp = ((Date) value).getTime();
-				} else if (isFacultyOfNumber(value.getClass())) {
-					timestamp = ((Number) value).longValue();
-				} else {
-					throw new ClassCastException(
-							value.getClass().getName() + " can't cast to " + field.getType().getName());
-				}
-				if (java.sql.Date.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, new java.sql.Date(timestamp));
-				} else if (Timestamp.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, new Timestamp(timestamp));
-				} else if (Time.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, new Time(timestamp));
-				} else if (Date.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, new Date(timestamp));
-				}
-			}
-			/** 如果是数值 */
-			else if (isFacultyOfNumber(field.getType())) {
-				Number number = (Number) value;
-				if (BigDecimal.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, new BigDecimal(number.toString()));
-				} else if (byte.class.isAssignableFrom(field.getType())
-						|| Byte.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, number.byteValue());
-				} else if (short.class.isAssignableFrom(field.getType())
-						|| Short.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, number.shortValue());
-				} else if (int.class.isAssignableFrom(field.getType())
-						|| Integer.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, number.intValue());
-				} else if (long.class.isAssignableFrom(field.getType())
-						|| Long.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, number.longValue());
-				} else if (float.class.isAssignableFrom(field.getType())
-						|| Float.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, number.floatValue());
-				} else if (double.class.isAssignableFrom(field.getType())
-						|| Double.class.isAssignableFrom(field.getType())) {
-					FieldUtil.setField(entity, field, number.doubleValue());
-				}
-			}
-			/** 如果是blob */
-			else if (isFacultyOfBlob(field.getType())) {
-				field.setAccessible(true);
-				if (Blob.class.isAssignableFrom(value.getClass())) {
-					Blob blob = (Blob) value;
-					if (Blob.class.isAssignableFrom(field.getType())) {
-						FieldUtil.setField(entity, field, value);
-					} else if (Byte[].class.isAssignableFrom(field.getType())) {
-						try {
-							byte[] byteb = StreamUtils.copyToByteArray(blob.getBinaryStream());
-							Byte[] bin = new Byte[byteb.length];
-							for (int i = 0; i < bin.length; i++) {
-								bin[i] = byteb[i];
-							}
-							FieldUtil.setField(entity, field, (Object) bin);
-						} catch (Exception e) {
-							throw new IllegalArgumentException(e);
-						}
-					} else if (byte[].class.isAssignableFrom(field.getType())) {
-						try {
-							FieldUtil.setField(entity, field, StreamUtils.copyToByteArray(blob.getBinaryStream()));
-						} catch (IOException | SQLException e) {
-							throw new IllegalArgumentException(e);
-						}
-					}
-				} else if (Byte[].class.isAssignableFrom(value.getClass())) {
-					if (Byte[].class.isAssignableFrom(field.getType())) {
-						FieldUtil.setField(entity, field, value);
-					} else if (byte[].class.isAssignableFrom(field.getType())) {
-						Byte[] byteb = (Byte[]) value;
-						byte[] bin = new byte[byteb.length];
-						for (int i = 0; i < bin.length; i++) {
-							bin[i] = byteb[i];
-						}
-						FieldUtil.setField(entity, field, bin);
-					} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
-						Byte[] byteb = (Byte[]) value;
-						byte[] bin = new byte[byteb.length];
-						for (int i = 0; i < bin.length; i++) {
-							bin[i] = byteb[i];
-						}
-						try {
-							SerialBlob serialBlob = new SerialBlob(bin);
-							FieldUtil.setField(entity, field, serialBlob);
-						} catch (SQLException e) {
-							throw new RuntimeException(e);
-						}
-					}
-				} else if (byte[].class.isAssignableFrom(value.getClass())) {
-					if (byte[].class.isAssignableFrom(field.getType())) {
-						FieldUtil.setField(entity, field, value);
-					} else if (Byte[].class.isAssignableFrom(field.getType())) {
-						byte[] byteb = (byte[]) value;
+		/** 如果是blob */
+		else if (isFacultyOfBlob(field.getType())) {
+			field.setAccessible(true);
+			if (Blob.class.isAssignableFrom(value.getClass())) {
+				Blob blob = (Blob) value;
+				if (Blob.class.isAssignableFrom(field.getType())) {
+					ReflectionUtils.setFieldValue(object, field, value, true);
+				} else if (Byte[].class.isAssignableFrom(field.getType())) {
+					try {
+						byte[] byteb = StreamUtils.copyToByteArray(blob.getBinaryStream());
 						Byte[] bin = new Byte[byteb.length];
 						for (int i = 0; i < bin.length; i++) {
 							bin[i] = byteb[i];
 						}
-						FieldUtil.setField(entity, field, (Object) bin);
-					} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
-						try {
-							SerialBlob serialBlob = new SerialBlob((byte[]) value);
-							FieldUtil.setField(entity, field, serialBlob);
-						} catch (SQLException e) {
-							throw new RuntimeException(e);
-						}
+						ReflectionUtils.setFieldValue(object, field, bin, true);
+					} catch (Exception e) {
+						throw new IllegalArgumentException(e);
+					}
+				} else if (byte[].class.isAssignableFrom(field.getType())) {
+					try {
+						ReflectionUtils.setFieldValue(object, field,
+								StreamUtils.copyToByteArray(blob.getBinaryStream()), true);
+					} catch (IOException | SQLException e) {
+						throw new IllegalArgumentException(e);
 					}
 				}
-			}
-			/** 如果是枚举 */
-			else if (isFacultyOfEnum(field.getType())) {
-				@SuppressWarnings({ "rawtypes" })
-				Class<Enum> enumType = (Class<Enum>) field.getType();
-				if (value instanceof String) {
-					FieldUtil.setField(entity, field, Enum.valueOf(enumType, (String) value));
-				} else if (isFacultyOfNumber(value.getClass())) {
-					int ordinal = ((Number) value).intValue();
-					@SuppressWarnings("rawtypes")
-					Enum[] enums = enumType.getEnumConstants();
-					for (@SuppressWarnings("rawtypes")
-					Enum tempEnum : enums) {
-						if (tempEnum.ordinal() == ordinal) {
-							FieldUtil.setField(entity, field, tempEnum);
-							break;
-						}
+			} else if (Byte[].class.isAssignableFrom(value.getClass())) {
+				if (Byte[].class.isAssignableFrom(field.getType())) {
+					ReflectionUtils.setFieldValue(object, field, value, true);
+				} else if (byte[].class.isAssignableFrom(field.getType())) {
+					Byte[] byteb = (Byte[]) value;
+					byte[] bin = new byte[byteb.length];
+					for (int i = 0; i < bin.length; i++) {
+						bin[i] = byteb[i];
+					}
+					ReflectionUtils.setFieldValue(object, field, bin, true);
+				} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
+					Byte[] byteb = (Byte[]) value;
+					byte[] bin = new byte[byteb.length];
+					for (int i = 0; i < bin.length; i++) {
+						bin[i] = byteb[i];
+					}
+					try {
+						SerialBlob serialBlob = new SerialBlob(bin);
+						ReflectionUtils.setFieldValue(object, field, serialBlob, true);
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
 					}
 				}
-			}
-			/** 如果是布尔 */
-			else if (isFacultyOfBoolean(field.getType())) {
-				if (value instanceof Boolean) {
-					FieldUtil.setField(entity, field, value);
-				} else if (boolean.class.isAssignableFrom(value.getClass())) {
-					FieldUtil.setField(entity, field, value);
-				} else if (value instanceof String) {
-					String strValue = ((String) value).toLowerCase();
-					if (!strValue.equals("yes") && !strValue.equals("no") && !strValue.equals("true")
-							&& !strValue.equals("false")) {
-						throw new ClassCastException("can't cast " + strValue + " to boolean");
-					} else if (strValue.equals("yes") || strValue.equals("true")) {
-						FieldUtil.setField(entity, field, true);
-					} else if (strValue.equals("no") || strValue.equals("false")) {
-						FieldUtil.setField(entity, field, false);
+			} else if (byte[].class.isAssignableFrom(value.getClass())) {
+				if (byte[].class.isAssignableFrom(field.getType())) {
+					ReflectionUtils.setFieldValue(object, field, value, true);
+				} else if (Byte[].class.isAssignableFrom(field.getType())) {
+					byte[] byteb = (byte[]) value;
+					Byte[] bin = new Byte[byteb.length];
+					for (int i = 0; i < bin.length; i++) {
+						bin[i] = byteb[i];
 					}
-				} else if (isFacultyOfNumber(value.getClass())) {
-					int intValue = ((Number) value).intValue();
-					if (intValue != 0) {
-						FieldUtil.setField(entity, field, true);
-					} else {
-						FieldUtil.setField(entity, field, false);
+					ReflectionUtils.setFieldValue(object, field, bin, true);
+				} else if (SerialBlob.class.isAssignableFrom(field.getType())) {
+					try {
+						SerialBlob serialBlob = new SerialBlob((byte[]) value);
+						ReflectionUtils.setFieldValue(object, field, serialBlob, true);
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
 					}
-				}
-			}
-			/** 如果是char */
-			else if (isFacultyOfChar(field.getType())) {
-				if (value instanceof String) {
-					FieldUtil.setField(entity, field, ((String) value).charAt(0));
-				} else if (isFacultyOfNumber(value.getClass())) {
-					int intValue = ((Number) value).intValue();
-					FieldUtil.setField(entity, field, (char) intValue);
 				}
 			}
 		}
+		/** 如果是枚举 */
+		else if (isFacultyOfEnum(field.getType())) {
+			@SuppressWarnings({ "rawtypes" })
+			Class<Enum> enumType = (Class<Enum>) field.getType();
+			if (value instanceof String && !((String) value).matches("^[0-9]+$")) {
+				ReflectionUtils.setFieldValue(object, field, Enum.valueOf(enumType, (String) value), true);
+			} else if (isFacultyOfNumber(value.getClass()) && ((String) value).matches("^[0-9]+$")) {
+				int ordinal = 0;
+				if (((String) value).matches("^[0-9]+$")) {
+					ordinal = Integer.valueOf((String) value);
+				} else {
+					ordinal = ((Number) value).intValue();
+				}
+				@SuppressWarnings("rawtypes")
+				Enum[] enums = enumType.getEnumConstants();
+				for (@SuppressWarnings("rawtypes")
+				Enum tempEnum : enums) {
+					if (tempEnum.ordinal() == ordinal) {
+						ReflectionUtils.setFieldValue(object, field, tempEnum, true);
+						break;
+					}
+				}
+			}
+		}
+		/** 如果是布尔 */
+		else if (isFacultyOfBoolean(field.getType())) {
+			if (value instanceof Boolean) {
+				ReflectionUtils.setFieldValue(object, field, value, true);
+			} else if (boolean.class.isAssignableFrom(value.getClass())) {
+				ReflectionUtils.setFieldValue(object, field, value, true);
+			} else if (value instanceof String) {
+				String strValue = ((String) value).toLowerCase();
+				if (!strValue.equals("yes") && !strValue.equals("no") && !strValue.equals("true")
+						&& !strValue.equals("false")) {
+					throw new ClassCastException("can't cast " + strValue + " to boolean");
+				} else if (strValue.equals("yes") || strValue.equals("true")) {
+					ReflectionUtils.setFieldValue(object, field, true, true);
+				} else if (strValue.equals("no") || strValue.equals("false")) {
+					ReflectionUtils.setFieldValue(object, field, false, true);
+				}
+			} else if (isFacultyOfNumber(value.getClass())) {
+				int intValue = ((Number) value).intValue();
+				if (intValue != 0) {
+					ReflectionUtils.setFieldValue(object, field, true, true);
+				} else {
+					ReflectionUtils.setFieldValue(object, field, false, true);
+				}
+			}
+		}
+		/** 如果是char */
+		else if (isFacultyOfChar(field.getType())) {
+			if (value instanceof String) {
+				ReflectionUtils.setFieldValue(object, field, ((String) value).charAt(0), true);
+			} else if (isFacultyOfNumber(value.getClass())) {
+				int intValue = ((Number) value).intValue();
+				ReflectionUtils.setFieldValue(object, field, (char) intValue, true);
+			}
+		}
+	}
 
+	/**
+	 * 把数据库列与值的map复制到其它对象
+	 * 
+	 * @param columnValue 数据库列与列值map
+	 * @param object      要设置的对象
+	 */
+	public static void copyColumnValueToObject(Map<String, Object> columnValue, Object object) {
+		List<Field> fields = getAllSqlSupportFields(object.getClass());
+		for (Field field : fields) {
+			String column = null;
+			if (field.isAnnotationPresent(Column.class)) {
+				column = field.getAnnotation(Column.class).value();
+			} else {
+				column = field.getName();
+				if (!column.contains(column)) {
+					column = StringUtils.humpToLine(column);
+				}
+			}
+			Object value = columnValue.get(column);
+			setFieldValue(object, field, value);
+		}
 	}
 }

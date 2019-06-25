@@ -15,7 +15,7 @@ import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlInsertSqlGenerator
 import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlSelectSqlGenerator;
 import org.linuxprobe.crud.core.sql.generator.impl.mysql.MysqlUpdateSqlGenerator;
 import org.linuxprobe.crud.mybatis.session.UniversalCrudConfiguration;
-import org.linuxprobe.crud.utils.FieldUtil;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class UniversalCrudContent {
 	public static void init(UniversalCrudConfiguration universalCrudConfiguration) {
 		UniversalCrudContent.universalCrudConfiguration = universalCrudConfiguration;
 		/** 扫描类信息 */
-		String[] scans = universalCrudConfiguration.getUniversalCrudScan().split(",");
+		String[] scans = universalCrudConfiguration.getUniversalCrudScan().split(";");
 		/** 必须先扫描实体信息 */
 		for (String scan : scans) {
 			Reflections reflections = new Reflections(scan);
@@ -108,7 +108,7 @@ public class UniversalCrudContent {
 	}
 
 	public static EntityInfo getEntityInfo(Class<?> entityType) {
-		entityType = FieldUtil.getRealCalssOfProxyClass(entityType);
+		entityType = ReflectionUtils.getRealCalssOfProxyClass(entityType);
 		logger.trace("get entityInfo of " + entityType.getName());
 		EntityInfo result = entityInfos.get(entityType.getName());
 		if (result == null) {

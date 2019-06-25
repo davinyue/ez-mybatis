@@ -11,8 +11,8 @@ import org.linuxprobe.crud.core.annoatation.JoinColumn;
 import org.linuxprobe.crud.core.annoatation.Query;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.param.BaseParam;
-import org.linuxprobe.crud.utils.FieldUtil;
-import org.linuxprobe.crud.utils.StringHumpTool;
+import org.linuxprobe.luava.reflection.ReflectionUtils;
+import org.linuxprobe.luava.string.StringUtils;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,7 +36,7 @@ public class QueryInfo {
 			this.queryFieldInfos = new LinkedList<>();
 			this.queryParamFieldInfos = new LinkedList<>();
 			this.baseQueryFieldInfos = new LinkedList<>();
-			List<Field> fields = FieldUtil.getAllFields(queryType);
+			List<Field> fields = ReflectionUtils.getAllFields(queryType);
 			for (Field field : fields) {
 				if (!BaseParam.class.isAssignableFrom(field.getType())
 						&& !BaseQuery.class.isAssignableFrom(field.getType())) {
@@ -46,7 +46,7 @@ public class QueryInfo {
 					fieldInfo.setField(field);
 					/** 如果是基本类型参数 */
 					if (BaseParam.class.isAssignableFrom(field.getType())) {
-						fieldInfo.setColumnName(StringHumpTool.humpToLine2(field.getName(), "_"));
+						fieldInfo.setColumnName(StringUtils.humpToLine(field.getName()));
 						if (field.isAnnotationPresent(Column.class)) {
 							Column column = field.getAnnotation(Column.class);
 							if (column.value() != null) {
@@ -57,7 +57,7 @@ public class QueryInfo {
 					}
 					/** 如果是查询类型参数 */
 					else if (BaseQuery.class.isAssignableFrom(field.getType())) {
-						fieldInfo.setPrincipalColumn(StringHumpTool.humpToLine2(field.getName() + "Id", "_"));
+						fieldInfo.setPrincipalColumn(StringUtils.humpToLine(field.getName() + "Id"));
 						EntityInfo querEntityInfo = UniversalCrudContent.getEntityInfo(queryEntityCalss);
 						fieldInfo.setSubordinateColumn(querEntityInfo.getPrimaryKey().getColumnName());
 						if (field.isAnnotationPresent(JoinColumn.class)) {
