@@ -7,7 +7,7 @@ import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-public class UniversalResultSetExtractor<T> implements ResultSetExtractor<T> {
+public abstract class UniversalResultSetExtractor<T> implements ResultSetExtractor<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override

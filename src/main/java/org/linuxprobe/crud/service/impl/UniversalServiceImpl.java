@@ -1,36 +1,35 @@
 package org.linuxprobe.crud.service.impl;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.linuxprobe.crud.core.content.UniversalCrudContent;
 import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
 import org.linuxprobe.crud.service.UniversalService;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.aop.framework.AopContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @param <Model> 模型类型
+ * @param <Model>  模型类型
  * @param <IdType> 主键类型
- * @param <Query> 查询类型
+ * @param <Query>  查询类型
  */
 public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
 		implements UniversalService<Model, IdType, Query> {
-	@Autowired
+	public UniversalServiceImpl(UniversalCrudSqlSessionTemplate sqlSessionTemplate) {
+		this.sqlSessionTemplate = sqlSessionTemplate;
+	}
+
 	public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
 	private UniversalService<Model, IdType, Query> proxy;
 
 	private Class<?> getModelCalss() {
-		Type type = ReflectionUtils.getGenericSuperType(this.getClass(), 0);
-		return UniversalCrudContent.getEntityInfo(type.getTypeName()).getEntityType();
+		return ReflectionUtils.getGenericSuperclass(this.getClass(), 0);
 	}
 
 	/** 获取当前对象的代理对象,用代理对象调用代替this调用,可解决内部调用切面无效问题 */

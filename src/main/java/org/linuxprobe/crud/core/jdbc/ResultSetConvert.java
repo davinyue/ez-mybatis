@@ -90,9 +90,9 @@ public class ResultSetConvert {
 			throw new IllegalArgumentException(e);
 		}
 		List<String> columns = new LinkedList<>();
-		while (count >= 0) {
+		while (count > 0) {
 			try {
-				columns.add(resultSet.getMetaData().getCatalogName(count - 1));
+				columns.add(resultSet.getMetaData().getColumnName(count));
 			} catch (SQLException e) {
 				throw new IllegalArgumentException(e);
 			}

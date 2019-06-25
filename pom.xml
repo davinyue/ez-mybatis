@@ -102,8 +102,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.linuxprobe</groupId>
-			<artifactId>luava</artifactId>
-			<version>0.0.4.RELEASE</version>
+			<artifactId>luava-reflection</artifactId>
+			<version>0.0.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.linuxprobe</groupId>
+			<artifactId>luava-proxy</artifactId>
+			<version>0.0.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.linuxprobe</groupId>
+			<artifactId>luava-other</artifactId>
+			<version>0.0.1.RELEASE</version>
 		</dependency>
 	</dependencies>
 	<build>

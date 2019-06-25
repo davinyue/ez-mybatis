@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.jdbc.core.RowMapper;
 
-public class UniversalRowMapper<T> implements RowMapper<T> {
+public abstract class UniversalRowMapper<T> implements RowMapper<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
