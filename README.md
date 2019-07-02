@@ -37,10 +37,20 @@
         <!-- 扫描sql配置文件:mapper需要的xml文件 -->
         <property name="mapperLocations" value="classpath:mapper/*.xml"/>
     </bean>
+	<bean name="sqlSessionTemplaten" class="org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplaten">
+        <constructor-arg ref="sqlSessionFactory"/>
+    </bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.linuxprobe.**.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+    </bean>
 </beans>
 ```
+
+
+
+## 和spring boot集成
 
 [项目地址请点击](https://github.com/linuxprobe-org/java-project-demo)
 
 [代码实现请点击](https://github.com/linuxprobe-org/java-project-demo/blob/master/src/test/java/org/linuxprobe/demo/MybatisTest.java)
-
