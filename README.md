@@ -21,32 +21,32 @@
 ```
 ## 和spring集成
 1. spring xml配置文件加入
-````
+
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
-    <aop:aspectj-autoproxy poxy-target-class="true"/>
+    <aop:aspectj-autoproxy poxy-target-class="true"></aop:aspectj>
     <!-- datasource的配置省略 -->
-    <bean id="datasource" class="com.zaxxer.hikari.HikariDataSource"/>
+    <bean id="datasource" class="com.zaxxer.hikari.HikariDataSource"></bean>
     <bean name="sqlSessionFactory" class="org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionFactoryBean">
-        <property name="dataSource" ref="datasource"/>
-        <property name="universalCrudScan" value="org.linuxprobe.crud.demo.model;org.linuxprobe.crud.demo.query"/>
-        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="dataSource" ref="datasource"></property>
+        <property name="universalCrudScan" value="org.linuxprobe.crud.demo.model;org.linuxprobe.crud.demo.query"></property>
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
         <!-- 扫描sql配置文件:mapper需要的xml文件 -->
-        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
     </bean>
 	<bean name="sqlSessionTemplaten" class="org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplaten">
-        <constructor-arg ref="sqlSessionFactory"/>
+        <constructor-arg ref="sqlSessionFactory"></constructor>
     </bean>
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="org.linuxprobe.**.mapper"/>
+        <property name="basePackage" value="org.linuxprobe.**.mapper"></property>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
     </bean>
 </beans>
 ```
-
 
 
 ## 和spring boot集成
