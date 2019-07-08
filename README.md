@@ -2,16 +2,18 @@
 
 该项目基于mybatis封装, 目前只支持mysql, 旨在提供一个对dao层通用的操作，支持普通java程序和spring程序.
 
-# 特性：
+# 1 特性：
 1. 关键字转义，防止sql注入；
 2. 注解支持；
 3. 查询, 普通条件查询, 连表查询, 懒加载;
 4. 更新, 替换更新和非空字段更新;
 5. 插入, 单条插入, 批量插入，指定枚举处理, 时间处理, boolean处理;
-6. 删除, 根据主键删除
+6. 删除, 根据主键删除；
+7. 实体字段支持javax.validation验证。
 
-# 使用
-## maven依赖
+# 2 使用
+## 2.1 和spring集成
+### 2.1.1 maven依赖
 ```
 <dependency>
 	<groupId>org.linuxprobe</groupId>
@@ -19,8 +21,7 @@
 	<version>2.1.1.RELEASE</version>
 </dependency>
 ```
-## 和spring集成
-1. spring xml配置文件加入
+### 2.1.2 spring xml配置文件加入
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -49,8 +50,8 @@
 ```
 
 
-## 和spring boot集成
-### pom引入spring boot专用依赖
+## 2.2 和spring boot集成
+### 2.2.1 pom引入spring boot专用依赖
 ```
 <dependency>
 	<groupId>org.linuxprobe</groupId>
@@ -65,21 +66,68 @@
 </dependency>
 ```
 
-### yml配置
-```
+### 2.2.2 yml配置
+```yaml
 mybatis:
   mapperLocations: classpath*:org/linuxprobe/**/mapping/*.xml
   configLocation: classpath:/mybatis-config.xml
+  #配置查询类所在包, 实体所在包, 可配置多个
   universalCrudScans:
     - org.linuxprobe.universalcrudspringbootdemo.query
       org.linuxprobe.universalcrudspringbootdemo.model
 ```
 
-### 启用类添加注解
+### 2.2.3 启用类添加注解
 ```
 @EnableAspectJAutoProxy(exposeProxy = true)
+/** 此处指定你的mapper接口所在包 */
 @MapperScan(basePackages = "org.linuxprobe")
 ```
-[项目地址请点击](https://github.com/linuxprobe-org/java-project-demo)
 
-[代码实现请点击](https://github.com/linuxprobe-org/java-project-demo/blob/master/src/test/java/org/linuxprobe/demo/MybatisTest.java)
+
+## 2.3 crud示例
+### 2.3.1 新建实体类
+urer实体
+```java
+package org.linuxprobe.universalcrudspringbootdemo.model;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.linuxprobe.crud.core.annoatation.*;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+/**
+ * 使用@Entity标注一个实体;
+ * 使用@Table(指定对应的表面
+ */
+@Entity
+@Table(value = "permission")
+@Getter
+@Setter
+@Accessors(chain = true)
+public class User {
+    @PrimaryKey(PrimaryKey.Strategy.NATIVE)
+    private Integer id;
+
+    private String name;
+
+    private List<Role> roles;
+    /**
+     * 使用@Column指定列明;
+     * 使用@EnumHandler来指定枚举的保存方式
+     */
+    @Column("sex")
+    @NotNull
+    @EnumHandler(EnumHandler.EnumCustomerType.Ordinal)
+    private Sex xingbie;
+
+    public static enum Sex {
+        Man,
+        WoMan
+    }
+}
+
+```
