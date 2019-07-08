@@ -101,7 +101,7 @@ import java.util.List;
 
 /**
  * 使用@Entity标注一个实体;
- * 使用@Table(指定对应的表面
+ * 使用@Table指定对应的表名
  */
 @Entity
 @Table(value = "permission")
