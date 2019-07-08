@@ -50,7 +50,36 @@
 
 
 ## 和spring boot集成
+### pom引入spring boot专用依赖
+```
+<dependency>
+	<groupId>org.linuxprobe</groupId>
+	<artifactId>
+		mybatis-universal-crud-spring-boot-starter
+	</artifactId>
+	<version>2.1.0.RELEASE</version>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+```
 
+### yml配置
+```
+mybatis:
+  mapperLocations: classpath*:org/linuxprobe/**/mapping/*.xml
+  configLocation: classpath:/mybatis-config.xml
+  universalCrudScans:
+    - org.linuxprobe.universalcrudspringbootdemo.query
+      org.linuxprobe.universalcrudspringbootdemo.model
+```
+
+### 启用类添加注解
+```
+@EnableAspectJAutoProxy(exposeProxy = true)
+@MapperScan(basePackages = "org.linuxprobe")
+```
 [项目地址请点击](https://github.com/linuxprobe-org/java-project-demo)
 
 [代码实现请点击](https://github.com/linuxprobe-org/java-project-demo/blob/master/src/test/java/org/linuxprobe/demo/MybatisTest.java)
