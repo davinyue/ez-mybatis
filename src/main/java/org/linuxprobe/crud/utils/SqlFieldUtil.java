@@ -1,6 +1,7 @@
 package org.linuxprobe.crud.utils;
 
 import org.linuxprobe.crud.core.annoatation.Column;
+import org.linuxprobe.crud.core.annoatation.Transient;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.linuxprobe.luava.string.StringUtils;
 import org.springframework.util.StreamUtils;
@@ -61,8 +62,10 @@ public class SqlFieldUtil {
         List<Class<?>> sqlSuperClasss = getSqlSuperClasss();
         for (Field field : fields) {
             int modifiers = field.getModifiers();
-            if (Modifier.isStatic(modifiers) && Modifier.isPrivate(modifiers) && Modifier.isFinal(modifiers)
-                    && field.getName().equals("serialVersionUID")) {
+            if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers)) {
+                continue;
+            }
+            if (field.isAnnotationPresent(Transient.class)) {
                 continue;
             }
             for (Class<?> superClass : sqlSuperClasss) {
@@ -182,9 +185,13 @@ public class SqlFieldUtil {
      * 设置实体的属性值
      */
     public static void setFieldValue(Object object, Field field, Object value) {
+        if (value == null) {
+            ReflectionUtils.setFieldValue(object, field, null, true);
+            return;
+        }
         /** 如果是字符串 */
         if (isFacultyOfString(field.getType())) {
-            ReflectionUtils.setFieldValue(object, field, value.toString(), true);
+            ReflectionUtils.setFieldValue(object, field, (String) value, true);
         }
         /** 如果是时间 */
         else if (isFacultyOfDate(field.getType())) {
