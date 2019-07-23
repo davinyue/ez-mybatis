@@ -18,7 +18,7 @@
 <dependency>
 	<groupId>org.linuxprobe</groupId>
 	<artifactId>mybatis-universal-crud</artifactId>
-	<version>2.1.2.RELEASE</version>
+	<version>2.1.5.RELEASE</version>
 </dependency>
 ```
 ### 2.1.2 spring xml配置文件加入
@@ -58,7 +58,7 @@
 	<artifactId>
 		mybatis-universal-crud-spring-boot-starter
 	</artifactId>
-	<version>2.1.2.RELEASE</version>
+	<version>2.1.5.RELEASE</version>
 </dependency>
 <dependency>
 	<groupId>org.springframework.boot</groupId>
@@ -74,7 +74,7 @@ mybatis:
   #配置查询类所在包, 实体所在包, 可配置多个
   universalCrudScans:
     - org.linuxprobe.universalcrudspringbootdemo.query
-      org.linuxprobe.universalcrudspringbootdemo.model
+    - org.linuxprobe.universalcrudspringbootdemo.model
 ```
 
 ### 2.2.3 启用类添加注解
