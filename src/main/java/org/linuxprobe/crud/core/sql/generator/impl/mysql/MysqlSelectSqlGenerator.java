@@ -31,6 +31,9 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
      */
     @Override
     public String toSelectSql(BaseQuery searcher) {
+        if (searcher == null) {
+            throw new IllegalArgumentException("searcher cannot be null");
+        }
         String alias = searcher.getAlias();
         StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
         sqlBuilder.append(alias);
@@ -82,6 +85,9 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         if (column == null) {
             throw new IllegalArgumentException("column cannot be null");
         }
+        if (columnValue == null) {
+            throw new IllegalArgumentException("columnValue cannot be null");
+        }
         if (columnValue instanceof String) {
             if ("".equals(columnValue)) {
                 throw new IllegalArgumentException("columnValue cannot be empty");
@@ -105,6 +111,15 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
 
     @Override
     public String toSelectSqlByFieldName(String fieldName, Serializable fieldValue, boolean singleResult, Class<?> modelType) {
+        if (fieldName == null) {
+            throw new IllegalArgumentException("fieldName cannot be null");
+        }
+        if (fieldValue == null) {
+            throw new IllegalArgumentException("fieldValue cannot be null");
+        }
+        if (modelType == null) {
+            throw new IllegalArgumentException("modelType cannot be null");
+        }
         EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(modelType);
         List<FieldInfo> fieldInfos = entityInfo.getFieldInfos();
         String columnName = null;
@@ -124,6 +139,12 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
      */
     @Override
     public String toSelectCountSql(BaseQuery searcher, String clounm) {
+        if (searcher == null) {
+            throw new IllegalArgumentException("searcher cannot be null");
+        }
+        if (clounm == null) {
+            throw new IllegalArgumentException("clounm cannot be null");
+        }
         String alias = searcher.getAlias();
         String countFun = "COUNT(DISTINCT `" + alias + "`.`" + clounm + "`)";
         StringBuilder sqlBuilder = new StringBuilder(
@@ -138,6 +159,9 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
      */
     @Override
     public String toSelectCountSql(BaseQuery searcher) {
+        if (searcher == null) {
+            throw new IllegalArgumentException("searcher cannot be null");
+        }
         String alias = searcher.getAlias();
         String countFun = "COUNT(DISTINCT `" + alias + "`.`" + MysqlSelectSqlGenerator.getPrimaryKeyName(MysqlSelectSqlGenerator.getModelType(searcher.getClass()))
                 + "`)";
