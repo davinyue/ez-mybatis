@@ -1,13 +1,10 @@
 package org.linuxprobe.crud.core.query;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.linuxprobe.crud.core.content.UniversalCrudContent;
-import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 实体查询dto
@@ -16,199 +13,206 @@ import lombok.Setter;
  * @version 2.0.9.RELEASE
  */
 public abstract class BaseQuery {
-	/**
-	 * <p>
-	 * Constructor for BaseQuery.
-	 * </p>
-	 */
-	public BaseQuery() {
-		this.alias = AliasGenerate.getAlias();
-	}
+    /**
+     * <p>
+     * Constructor for BaseQuery.
+     * </p>
+     */
+    public BaseQuery() {
+        this.alias = AliasGenerate.getAlias();
+    }
 
-	/** 因为mybatis不能直接调用参数的方法，但能调用参数成员的方法，故这个类就出现了 */
-	public class Sqlr {
-		public String toSelectSql() throws Exception {
-			SelectSqlGenerator sqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
-			return sqlGenerator.toSelectSql(BaseQuery.this);
-		}
+    /**
+     * 排序
+     */
+    @Getter
+    private String order;
+    /**
+     * 分页
+     */
+    @Getter
+    @Setter
+    private Limit limit = new Limit();
 
-		public String toSelectCountSql() throws Exception {
-			SelectSqlGenerator sqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
-			return sqlGenerator.toSelectCountSql(BaseQuery.this);
-		}
+    /**
+     * 别名
+     */
+    @Getter
+    @Setter
+    private String alias;
 
-		public String toSelectCountSql(String clounm) throws Exception {
-			SelectSqlGenerator sqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
-			return sqlGenerator.toSelectCountSql(BaseQuery.this, clounm);
-		}
-	}
+    /**
+     * 被连接方式
+     */
+    @Getter
+    @Setter
+    private JoinType joinType = JoinType.LeftJoin;
 
-	/** sql管理对象 */
-	@Getter
-	private Sqlr sqlr = new Sqlr();
-	/** 排序 */
-	@Getter
-	private String order;
-	/** 分页 */
-	@Getter
-	@Setter
-	private Limit limit = new Limit();
+    /**
+     * <p>
+     * Setter for the field <code>order</code>.
+     * </p>
+     *
+     * @param order a {@link java.lang.String} object.
+     */
+    public void setOrder(String order) {
+        if (order == null) {
+            return;
+        }
+        order = order.trim();
+        if (order.isEmpty()) {
+            return;
+        }
+        String[] orders = order.split(",");
+        StringBuilder result = new StringBuilder();
+        if (orders != null) {
+            for (int i = 0; i < orders.length; i++) {
+                String[] tempOrderMembers = orders[i].trim().split(" ");
+                /** 删除值是空格的元素 */
+                List<String> orderMembers = new LinkedList<>();
+                for (String tempOrderMember : tempOrderMembers) {
+                    if (!tempOrderMember.trim().isEmpty()) {
+                        orderMembers.add(tempOrderMember);
+                    }
+                }
+                if (orderMembers.size() > 2) {
+                    throw new IllegalArgumentException(
+                            "参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
+                } else if (orderMembers.size() == 1) {
+                    result.append(orderMembers.get(0) + " " + "ASC,");
+                } else if (orderMembers.size() == 2) {
+                    if (orderMembers.get(1).equalsIgnoreCase("asc")) {
+                        result.append(orderMembers.get(0) + " " + "ASC,");
+                    } else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
+                        result.append(orderMembers.get(0) + " " + "DESC,");
+                    } else {
+                        throw new IllegalArgumentException("排序模式只能为asc和desc");
+                    }
+                }
+            }
+        }
+        if (result.indexOf(",") != -1) {
+            result.delete(result.length() - 1, result.length());
+        }
+        this.order = result.length() == 0 ? null : result.toString();
+    }
 
-	/** 别名 */
-	@Getter
-	@Setter
-	private String alias;
+    public static class Limit {
+        /**
+         * 开始行号
+         */
+        private int startRow = 0;
+        /**
+         * 当前页
+         */
+        private int currentPage = 1;
+        /**
+         * 页大小
+         */
+        private int pageSize = 10;
 
-	/** 被连接方式 */
-	@Getter
-	@Setter
-	private JoinType joinType = JoinType.LeftJoin;
+        private void init() {
+            if (this.currentPage < 1) {
+                this.currentPage = 1;
+            }
+            if (this.pageSize < 1) {
+                this.pageSize = 10;
+            }
+            this.startRow = (this.currentPage - 1) * this.pageSize;
+        }
 
-	/**
-	 * <p>
-	 * Setter for the field <code>order</code>.
-	 * </p>
-	 *
-	 * @param order a {@link java.lang.String} object.
-	 */
-	public void setOrder(String order) {
-		if (order == null) {
-			return;
-		}
-		order = order.trim();
-		if (order.isEmpty()) {
-			return;
-		}
-		String[] orders = order.split(",");
-		StringBuilder result = new StringBuilder();
-		if (orders != null) {
-			for (int i = 0; i < orders.length; i++) {
-				String[] tempOrderMembers = orders[i].trim().split(" ");
-				/** 删除值是空格的元素 */
-				List<String> orderMembers = new LinkedList<>();
-				for (String tempOrderMember : tempOrderMembers) {
-					if (!tempOrderMember.trim().isEmpty()) {
-						orderMembers.add(tempOrderMember);
-					}
-				}
-				if (orderMembers.size() > 2) {
-					throw new IllegalArgumentException(
-							"参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
-				} else if (orderMembers.size() == 1) {
-					result.append(orderMembers.get(0) + " " + "ASC,");
-				} else if (orderMembers.size() == 2) {
-					if (orderMembers.get(1).equalsIgnoreCase("asc")) {
-						result.append(orderMembers.get(0) + " " + "ASC,");
-					} else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
-						result.append(orderMembers.get(0) + " " + "DESC,");
-					} else {
-						throw new IllegalArgumentException("排序模式只能为asc和desc");
-					}
-				}
-			}
-		}
-		if (result.indexOf(",") != -1) {
-			result.delete(result.length() - 1, result.length());
-		}
-		this.order = result.length() == 0 ? null : result.toString();
-	}
+        public Limit() {
+        }
 
-	public static class Limit {
-		/** 开始行号 */
-		private int startRow = 0;
-		/** 当前页 */
-		private int currentPage = 1;
-		/** 页大小 */
-		private int pageSize = 10;
+        public Limit(String currentPage, String pageSize) {
+            this(Integer.parseInt(currentPage), Integer.parseInt(pageSize));
+        }
 
-		private void init() {
-			if (currentPage < 1) {
-				currentPage = 1;
-			}
-			if (pageSize < 1) {
-				pageSize = 10;
-			}
-			this.startRow = (currentPage - 1) * pageSize;
-		}
+        public Limit(int currentPage, int pageSize) {
+            this.currentPage = currentPage;
+            this.pageSize = pageSize;
+            this.init();
+        }
 
-		public Limit() {
-		}
+        /**
+         * 获取当前页号
+         */
+        public int getCurrentPage() {
+            return this.currentPage;
+        }
 
-		public Limit(String currentPage, String pageSize) {
-			this(Integer.parseInt(currentPage), Integer.parseInt(pageSize));
-		}
+        /**
+         * 获取页大小
+         */
+        public int getPageSize() {
+            return this.pageSize;
+        }
 
-		public Limit(int currentPage, int pageSize) {
-			this.currentPage = currentPage;
-			this.pageSize = pageSize;
-			this.init();
-		}
+        /**
+         * 设置当前页
+         */
+        public void setCurrentPage(int currentPage) {
+            this.currentPage = currentPage;
+            this.init();
+        }
 
-		/** 获取当前页号 */
-		public int getCurrentPage() {
-			return currentPage;
-		}
+        /**
+         * 设置页大小
+         */
+        public void setPageSize(int pageSize) {
+            this.pageSize = pageSize;
+            this.init();
+        }
 
-		/** 获取页大小 */
-		public int getPageSize() {
-			return pageSize;
-		}
+        /**
+         * 获取开始行
+         */
+        public int getStartRow() {
+            return this.startRow;
+        }
+    }
 
-		/** 设置当前页 */
-		public void setCurrentPage(int currentPage) {
-			this.currentPage = currentPage;
-			this.init();
-		}
-
-		/** 设置页大小 */
-		public void setPageSize(int pageSize) {
-			this.pageSize = pageSize;
-			this.init();
-		}
-
-		/** 获取开始行 */
-		public int getStartRow() {
-			return this.startRow;
-		}
-	}
-
-	/** join类型枚举 */
-	public static enum JoinType {
-		LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin;
-	}
+    /**
+     * join类型枚举
+     */
+    public static enum JoinType {
+        LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin
+    }
 }
 
-/** 生成表别名 */
+/**
+ * 生成表别名
+ */
 class AliasGenerate {
-	private static char first = 96;
-	private static int second = 0;
+    private static char first = 96;
+    private static int second = 0;
 
-	/**
-	 * <p>
-	 * getAlias.
-	 * </p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 * @param prefix a {@link java.lang.String} object.
-	 */
-	public static String getAlias(String prefix) {
-		first++;
-		if (first == 123) {
-			first = 97;
-		}
-		second++;
-		if (second == 10) {
-			second = 1;
-		}
-		return prefix + String.valueOf(first) + second;
-	}
+    /**
+     * <p>
+     * getAlias.
+     * </p>
+     *
+     * @param prefix a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
+    public static String getAlias(String prefix) {
+        AliasGenerate.first++;
+        if (AliasGenerate.first == 123) {
+            AliasGenerate.first = 97;
+        }
+        AliasGenerate.second++;
+        if (AliasGenerate.second == 10) {
+            AliasGenerate.second = 1;
+        }
+        return prefix + String.valueOf(AliasGenerate.first) + AliasGenerate.second;
+    }
 
-	/**
-	 * <p>getAlias.</p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	public static String getAlias() {
-		return getAlias("t");
-	}
+    /**
+     * <p>getAlias.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
+    public static String getAlias() {
+        return AliasGenerate.getAlias("t");
+    }
 }
