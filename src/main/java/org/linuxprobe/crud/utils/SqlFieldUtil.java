@@ -303,17 +303,24 @@ public class SqlFieldUtil {
                 }
             }
         }
-        /** 如果是枚举 */
+        // 如果是枚举
         else if (isFacultyOfEnum(field.getType())) {
             Class<Enum> enumType = (Class<Enum>) field.getType();
-            if (value instanceof String && !((String) value).matches("^[0-9]+$")) {
+            // 不是数字类型也不是字符串类型
+            if (!isFacultyOfNumber(value.getClass()) && !isFacultyOfString(value.getClass())) {
+                throw new IllegalArgumentException(value.getClass().getName() + "can not cast to enum");
+            }
+            // 如果是字符串,但不能转换为数字
+            else if (value instanceof String && !((String) value).matches("^[0-9]+$")) {
                 ReflectionUtils.setFieldValue(object, field, Enum.valueOf(enumType, (String) value), true);
-            } else if (isFacultyOfNumber(value.getClass()) && ((String) value).matches("^[0-9]+$")) {
+            }
+            // 如果是数字或者是能够转换为数字的字符串
+            else if (isFacultyOfNumber(value.getClass()) || ((String) value).matches("^[0-9]+$")) {
                 int ordinal = 0;
-                if (((String) value).matches("^[0-9]+$")) {
-                    ordinal = Integer.valueOf((String) value);
-                } else {
+                if (isFacultyOfNumber(value.getClass())) {
                     ordinal = ((Number) value).intValue();
+                } else {
+                    ordinal = Integer.valueOf((String) value);
                 }
                 Enum[] enums = enumType.getEnumConstants();
                 for (
