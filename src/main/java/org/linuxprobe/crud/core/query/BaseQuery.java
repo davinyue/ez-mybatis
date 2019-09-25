@@ -178,41 +178,42 @@ public abstract class BaseQuery {
     public static enum JoinType {
         LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin
     }
-}
-
-/**
- * 生成表别名
- */
-class AliasGenerate {
-    private static char first = 96;
-    private static int second = 0;
 
     /**
-     * <p>
-     * getAlias.
-     * </p>
-     *
-     * @param prefix a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
+     * 生成表别名
      */
-    public static String getAlias(String prefix) {
-        AliasGenerate.first++;
-        if (AliasGenerate.first == 123) {
-            AliasGenerate.first = 97;
-        }
-        AliasGenerate.second++;
-        if (AliasGenerate.second == 10) {
-            AliasGenerate.second = 1;
-        }
-        return prefix + String.valueOf(AliasGenerate.first) + AliasGenerate.second;
-    }
+    public static class AliasGenerate {
+        private static char first = 96;
+        private static int second = 0;
 
-    /**
-     * <p>getAlias.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public static String getAlias() {
-        return AliasGenerate.getAlias("t");
+        /**
+         * <p>
+         * getAlias.
+         * </p>
+         *
+         * @param prefix a {@link java.lang.String} object.
+         * @return a {@link java.lang.String} object.
+         */
+        public static String getAlias(String prefix) {
+            AliasGenerate.first++;
+            if (AliasGenerate.first == 123) {
+                AliasGenerate.first = 97;
+            }
+            AliasGenerate.second++;
+            if (AliasGenerate.second == 10) {
+                AliasGenerate.second = 1;
+            }
+            return prefix + String.valueOf(AliasGenerate.first) + AliasGenerate.second;
+        }
+
+        /**
+         * <p>getAlias.</p>
+         *
+         * @return a {@link java.lang.String} object.
+         */
+        public static String getAlias() {
+            return AliasGenerate.getAlias("t");
+        }
     }
 }
+

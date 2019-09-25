@@ -103,8 +103,10 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
     @Override
     public Page<Model> getPageInfo(Query param) {
         Page<Model> result = new Page<>();
-        result.setCurrentPage(param.getLimit().getCurrentPage());
-        result.setPageSize(param.getLimit().getPageSize());
+        if (param.getLimit() != null) {
+            result.setCurrentPage(param.getLimit().getCurrentPage());
+            result.setPageSize(param.getLimit().getPageSize());
+        }
         result.setData(this.getByQueryParam(param));
         result.setTotal(this.getCountByQueryParam(param));
         return result;

@@ -34,18 +34,65 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         if (searcher == null) {
             throw new IllegalArgumentException("searcher cannot be null");
         }
+        String idColumn = getPrimaryKeyName(getModelType(searcher.getClass()));
         String alias = searcher.getAlias();
+        String talbe = MysqlSelectSqlGenerator.getTable(searcher.getClass());
+        //构造主键层查询sql
         StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
         sqlBuilder.append(alias);
-        sqlBuilder.append("`.* FROM `");
-        sqlBuilder.append(MysqlSelectSqlGenerator.getTable(searcher.getClass()));
+        sqlBuilder.append("`.");
+        //如果进行分页查询,则只查询主键列
+        if (searcher.getLimit() != null) {
+            sqlBuilder.append("`");
+            sqlBuilder.append(idColumn);
+            sqlBuilder.append("`");
+        } else {
+            sqlBuilder.append("*");
+        }
+        sqlBuilder.append(" FROM `");
+        sqlBuilder.append(talbe);
         sqlBuilder.append("` AS `");
-        sqlBuilder.append(searcher.getAlias());
+        sqlBuilder.append(alias);
         sqlBuilder.append("` ");
         sqlBuilder.append(MysqlSelectSqlGenerator.toJoin(searcher));
         sqlBuilder.append(this.getFormatWhere(searcher));
-        sqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
+        //如果进行分页查询, 把排序给数据查询层
+        if (searcher.getLimit() == null) {
+            sqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
+        }
         sqlBuilder.append(MysqlSelectSqlGenerator.toLimit(searcher));
+        //构造数据层查询sql
+        String dataAlias = BaseQuery.AliasGenerate.getAlias();
+        String derivedAlias = BaseQuery.AliasGenerate.getAlias();
+        //如果进行分页查询,使用内连接查询优化分页性能问题
+        if (searcher.getLimit() != null) {
+            StringBuilder dataSqlBuilder = new StringBuilder("SELECT `")
+                    .append(dataAlias)
+                    .append("`.*")
+                    .append(" FROM `")
+                    .append(talbe)
+                    .append("` AS `")
+                    .append(dataAlias)
+                    .append("` ")
+                    .append("INNER JOIN (")
+                    .append(sqlBuilder)
+                    .append(") AS `")
+                    .append(derivedAlias)
+                    .append("` ON `")
+                    .append(derivedAlias)
+                    .append("`.`")
+                    .append(idColumn)
+                    .append("` ")
+                    .append("= `")
+                    .append(dataAlias)
+                    .append("`.`")
+                    .append(idColumn)
+                    .append("` ");
+            searcher.setAlias(dataAlias);
+            dataSqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
+            searcher.setAlias(alias);
+            sqlBuilder = dataSqlBuilder;
+        }
         return sqlBuilder.toString();
     }
 
