@@ -58,7 +58,7 @@
 	<artifactId>
 		mybatis-universal-crud-spring-boot-starter
 	</artifactId>
-	<version>2.1.5.RELEASE</version>
+	<version>2.1.8.RELEASE</version>
 </dependency>
 <dependency>
 	<groupId>org.springframework.boot</groupId>
