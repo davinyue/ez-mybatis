@@ -56,10 +56,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         sqlBuilder.append("` ");
         sqlBuilder.append(MysqlSelectSqlGenerator.toJoin(searcher));
         sqlBuilder.append(this.getFormatWhere(searcher));
-        //如果进行分页查询, 把排序给数据查询层
-        if (searcher.getLimit() == null) {
-            sqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
-        }
+        sqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
         sqlBuilder.append(MysqlSelectSqlGenerator.toLimit(searcher));
         //构造数据层查询sql
         String dataAlias = BaseQuery.AliasGenerate.getAlias();
@@ -88,9 +85,6 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
                     .append("`.`")
                     .append(idColumn)
                     .append("` ");
-            searcher.setAlias(dataAlias);
-            dataSqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
-            searcher.setAlias(alias);
             sqlBuilder = dataSqlBuilder;
         }
         return sqlBuilder.toString();
