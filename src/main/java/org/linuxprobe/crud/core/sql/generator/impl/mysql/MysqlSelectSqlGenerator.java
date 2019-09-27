@@ -239,7 +239,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         StringBuilder sqlBuilder = new StringBuilder("SELECT ");
         sqlBuilder.append("`" + alias + "`.* ");
         sqlBuilder.append("FROM `" + table + "` AS `" + alias + "` ");
-        sqlBuilder.append("LEFT JOIN `" + middleTable + "` as `" + middleTableAlias + "` ");
+        sqlBuilder.append("INNER JOIN `" + middleTable + "` as `" + middleTableAlias + "` ");
         sqlBuilder.append("ON `" + alias + "`.`" + primaryKey + "` = `" + middleTableAlias + "`.`" + joinColumn + "` ");
         if (conditionColumnValue instanceof String) {
             conditionColumnValue = super.escape((String) conditionColumnValue);
