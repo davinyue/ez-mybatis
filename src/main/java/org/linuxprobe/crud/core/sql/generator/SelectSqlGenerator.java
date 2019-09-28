@@ -59,4 +59,9 @@ public interface SelectSqlGenerator extends Escape {
      */
     public String generateManyToManySelectSql(String middleTable, String joinColumn, String conditionColumn,
                                               Serializable conditionColumnValue, Class<?> modelType);
+
+    /**
+     * 获取最后插入一条记录id的sql
+     */
+    public String getLastInsertIdSql();
 }

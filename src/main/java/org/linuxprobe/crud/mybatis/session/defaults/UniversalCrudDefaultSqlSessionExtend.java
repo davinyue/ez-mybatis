@@ -37,12 +37,13 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
     @Override
     public <T> T insert(T record) {
         InsertSqlGenerator insertSqlGenerator = UniversalCrudContent.getInsertSqlGenerator();
+        SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
         this.sqlSession.insert(UniversalCrudDefaultSqlSessionExtend.insertStatement, insertSqlGenerator.toInsertSql(record));
         EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(record.getClass());
         if (entityInfo.getPrimaryKey().getPrimaryKey().value().equals(Strategy.NATIVE)) {
             Object idValue = ReflectionUtils.getFieldValue(record, entityInfo.getPrimaryKey().getField());
             if (idValue == null) {
-                Map<String, Object> idMap = this.sqlSession.selectOne(UniversalCrudDefaultSqlSessionExtend.selectOneStatement, "SELECT LAST_INSERT_ID() as id");
+                Map<String, Object> idMap = this.sqlSession.selectOne(UniversalCrudDefaultSqlSessionExtend.selectOneStatement, selectSqlGenerator.getLastInsertIdSql());
                 Number id = (Number) idMap.get("id");
                 if (entityInfo.getPrimaryKey().getField().getType().equals(Long.class)) {
                     id = id.longValue();
@@ -65,15 +66,21 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
     }
 
     @Override
-    public <T> List<T> batchInsert(Collection<T> records) {
+    public <T> List<T> batchInsert(Collection<T> records, boolean loop) {
         if (records == null || records.isEmpty()) {
             return null;
         } else {
-            List<T> result = new LinkedList<>();
-            for (T record : records) {
-                result.add(this.insert(record));
+            if (loop) {
+                List<T> result = new LinkedList<>();
+                for (T record : records) {
+                    result.add(this.insert(record));
+                }
+                return result;
+            } else {
+                InsertSqlGenerator insertSqlGenerator = UniversalCrudContent.getInsertSqlGenerator();
+                this.sqlSession.insert(UniversalCrudDefaultSqlSessionExtend.insertStatement, insertSqlGenerator.toBatchInsertSql(records));
+                return new LinkedList<>(records);
             }
-            return result;
         }
     }
 

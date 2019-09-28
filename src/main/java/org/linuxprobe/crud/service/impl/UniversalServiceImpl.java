@@ -5,9 +5,11 @@ import org.linuxprobe.crud.core.query.BaseQuery;
 import org.linuxprobe.crud.core.query.Page;
 import org.linuxprobe.crud.mybatis.spring.UniversalCrudSqlSessionTemplate;
 import org.linuxprobe.crud.service.UniversalService;
+import org.linuxprobe.crud.service.UniversalServiceEventListener;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +25,14 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
         this.sqlSessionTemplate = sqlSessionTemplate;
     }
 
+    public UniversalServiceImpl(UniversalCrudSqlSessionTemplate sqlSessionTemplate, UniversalServiceEventListener eventListener) {
+        this.sqlSessionTemplate = sqlSessionTemplate;
+        this.eventListener = eventListener;
+    }
+
     public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
+
+    private UniversalServiceEventListener eventListener;
 
     private UniversalService<Model, IdType, Query> proxy;
 
@@ -33,12 +42,36 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 
     @Override
     public Model save(Model model) {
-        return this.sqlSessionTemplate.insert(model);
+        Class<?> thisClass = null;
+        Method thisMethod = null;
+        if (this.eventListener != null) {
+            thisClass = this.getClass();
+            thisMethod = new Object() {
+            }.getClass().getEnclosingMethod();
+            this.eventListener.before(thisClass, thisMethod, model);
+        }
+        Model result = this.sqlSessionTemplate.insert(model);
+        if (this.eventListener != null) {
+            this.eventListener.after(thisClass, thisMethod, result, model);
+        }
+        return result;
     }
 
     @Override
-    public List<Model> batchSave(List<Model> models) {
-        return this.sqlSessionTemplate.batchInsert(models);
+    public List<Model> batchSave(List<Model> models, boolean loop) {
+        Class<?> thisClass = null;
+        Method thisMethod = null;
+        if (this.eventListener != null) {
+            thisClass = this.getClass();
+            thisMethod = new Object() {
+            }.getClass().getEnclosingMethod();
+            this.eventListener.before(thisClass, thisMethod, models, loop);
+        }
+        List<Model> result = this.sqlSessionTemplate.batchInsert(models, loop);
+        if (this.eventListener != null) {
+            this.eventListener.after(thisClass, thisMethod, result, models, loop);
+        }
+        return result;
     }
 
     @Override
@@ -154,11 +187,31 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 
     @Override
     public Model globalUpdate(Model model) {
-        return this.sqlSessionTemplate.globalUpdate(model);
+        Method thisMethod = null;
+        if (this.eventListener != null) {
+            thisMethod = new Object() {
+            }.getClass().getEnclosingMethod();
+            this.eventListener.before(this.getClass(), thisMethod, model);
+        }
+        Model result = this.sqlSessionTemplate.globalUpdate(model);
+        if (this.eventListener != null) {
+            this.eventListener.after(this.getClass(), thisMethod, result, model);
+        }
+        return result;
     }
 
     @Override
     public Model localUpdate(Model model) {
-        return this.sqlSessionTemplate.localUpdate(model);
+        Method thisMethod = null;
+        if (this.eventListener != null) {
+            thisMethod = new Object() {
+            }.getClass().getEnclosingMethod();
+            this.eventListener.before(this.getClass(), thisMethod, model);
+        }
+        Model result = this.sqlSessionTemplate.localUpdate(model);
+        if (this.eventListener != null) {
+            this.eventListener.after(this.getClass(), thisMethod, result, model);
+        }
+        return result;
     }
 }

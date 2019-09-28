@@ -34,7 +34,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         if (searcher == null) {
             throw new IllegalArgumentException("searcher cannot be null");
         }
-        String idColumn = getPrimaryKeyName(getModelType(searcher.getClass()));
+        String idColumn = MysqlSelectSqlGenerator.getPrimaryKeyName(MysqlSelectSqlGenerator.getModelType(searcher.getClass()));
         String alias = searcher.getAlias();
         String talbe = MysqlSelectSqlGenerator.getTable(searcher.getClass());
         //构造主键层查询sql
@@ -247,6 +247,11 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         }
         sqlBuilder.append("WHERE `" + middleTableAlias + "`.`" + conditionColumn + "` = " + conditionColumnValue);
         return sqlBuilder.toString();
+    }
+
+    @Override
+    public String getLastInsertIdSql() {
+        return "SELECT LAST_INSERT_ID() as id";
     }
 
     /**
