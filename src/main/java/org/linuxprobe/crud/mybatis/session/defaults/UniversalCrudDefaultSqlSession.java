@@ -26,12 +26,22 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
 
     @Override
     public <T> T insert(T record) {
+        return this.insert(record, this.getClass().getClassLoader());
+    }
+
+    @Override
+    public <T> T insert(T record, ClassLoader classLoader) {
         return this.sqlSessionExtend.insert(record);
     }
 
     @Override
     public <T> List<T> batchInsert(Collection<T> records, boolean loop) {
         return this.sqlSessionExtend.batchInsert(records, loop);
+    }
+
+    @Override
+    public <T> List<T> batchInsert(Collection<T> records, boolean loop, ClassLoader classLoader) {
+        return this.sqlSessionExtend.batchInsert(records, loop, classLoader);
     }
 
     @Override
@@ -80,6 +90,11 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
     }
 
     @Override
+    public <T> List<T> universalSelect(BaseQuery param, ClassLoader classLoader) {
+        return this.sqlSessionExtend.universalSelect(param, classLoader);
+    }
+
+    @Override
     public long selectCount(BaseQuery param) {
         return this.sqlSessionExtend.selectCount(param);
     }
@@ -100,8 +115,18 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
     }
 
     @Override
+    public <T> List<T> selectBySql(String sql, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectBySql(sql, type, classLoader);
+    }
+
+    @Override
     public <T> T selectOneBySql(String sql, Class<T> type) {
         return this.sqlSessionExtend.selectOneBySql(sql, type);
+    }
+
+    @Override
+    public <T> T selectOneBySql(String sql, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectOneBySql(sql, type, classLoader);
     }
 
     @Override
@@ -110,8 +135,18 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
     }
 
     @Override
+    public <T> T globalUpdate(T record, ClassLoader classLoader) {
+        return this.sqlSessionExtend.globalUpdate(record, classLoader);
+    }
+
+    @Override
     public <T> T localUpdate(T record) {
         return this.sqlSessionExtend.localUpdate(record);
+    }
+
+    @Override
+    public <T> T localUpdate(T record, ClassLoader classLoader) {
+        return this.sqlSessionExtend.localUpdate(record, classLoader);
     }
 
     @Override
@@ -120,8 +155,18 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
     }
 
     @Override
+    public <T> T selectByPrimaryKey(Serializable id, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectByPrimaryKey(id, type, classLoader);
+    }
+
+    @Override
     public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type) {
         return this.sqlSessionExtend.selectByColumn(column, columnValue, type);
+    }
+
+    @Override
+    public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectByColumn(column, columnValue, type, classLoader);
     }
 
     @Override
@@ -130,12 +175,27 @@ public class UniversalCrudDefaultSqlSession extends DefaultSqlSession implements
     }
 
     @Override
+    public <T> List<T> selectByField(String fieldName, Serializable fieldValue, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectByField(fieldName, fieldValue, type, classLoader);
+    }
+
+    @Override
     public <T> T selectOneByColumn(String column, Serializable columnValue, Class<T> type) {
         return this.sqlSessionExtend.selectOneByColumn(column, columnValue, type);
     }
 
     @Override
+    public <T> T selectOneByColumn(String column, Serializable columnValue, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectOneByColumn(column, columnValue, type, classLoader);
+    }
+
+    @Override
     public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type) {
         return this.sqlSessionExtend.selectOneByField(fieldName, fieldValue, type);
+    }
+
+    @Override
+    public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type, ClassLoader classLoader) {
+        return this.sqlSessionExtend.selectOneByField(fieldName, fieldValue, type, classLoader);
     }
 }

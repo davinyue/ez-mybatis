@@ -22,22 +22,28 @@ import java.util.Map;
 public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
         implements UniversalService<Model, IdType, Query> {
     public UniversalServiceImpl(UniversalCrudSqlSessionTemplate sqlSessionTemplate) {
-        this.sqlSessionTemplate = sqlSessionTemplate;
+        this(sqlSessionTemplate, null);
     }
 
     public UniversalServiceImpl(UniversalCrudSqlSessionTemplate sqlSessionTemplate, UniversalServiceEventListener eventListener) {
         this.sqlSessionTemplate = sqlSessionTemplate;
         this.eventListener = eventListener;
+        this.classLoader = this.getClass().getClassLoader();
     }
 
     public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
 
     private UniversalServiceEventListener eventListener;
 
-    private UniversalService<Model, IdType, Query> proxy;
+    private ClassLoader classLoader;
 
     private Class<?> getModelCalss() {
-        return UniversalCrudContent.getEntityInfo(ReflectionUtils.getGenericSuperclass(this.getClass(), 0).getName()).getEntityType();
+        Class<?> entityType = UniversalCrudContent.getEntityInfo(ReflectionUtils.getGenericSuperclass(this.getClass(), 0).getName()).getEntityType();
+        try {
+            entityType = Class.forName(entityType.getName(), true, this.classLoader);
+        } catch (ClassNotFoundException ignored) {
+        }
+        return entityType;
     }
 
     @Override
@@ -50,7 +56,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
             }.getClass().getEnclosingMethod();
             this.eventListener.before(thisClass, thisMethod, model);
         }
-        Model result = this.sqlSessionTemplate.insert(model);
+        Model result = this.sqlSessionTemplate.insert(model, this.classLoader);
         if (this.eventListener != null) {
             this.eventListener.after(thisClass, thisMethod, result, model);
         }
@@ -67,7 +73,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
             }.getClass().getEnclosingMethod();
             this.eventListener.before(thisClass, thisMethod, models, loop);
         }
-        List<Model> result = this.sqlSessionTemplate.batchInsert(models, loop);
+        List<Model> result = this.sqlSessionTemplate.batchInsert(models, loop, this.classLoader);
         if (this.eventListener != null) {
             this.eventListener.after(thisClass, thisMethod, result, models, loop);
         }
@@ -119,13 +125,13 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
     @Override
     public Model getByPrimaryKey(IdType id) {
         Class<?> modelClass = this.getModelCalss();
-        Model model = (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass);
+        Model model = (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass, this.classLoader);
         return model;
     }
 
     @Override
     public List<Model> getByQueryParam(Query param) {
-        return (List<Model>) this.sqlSessionTemplate.universalSelect(param);
+        return (List<Model>) this.sqlSessionTemplate.universalSelect(param, this.classLoader);
     }
 
     @Override
@@ -157,32 +163,32 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 
     @Override
     public <T> List<T> getBySql(String sql, Class<T> type) {
-        return this.sqlSessionTemplate.selectBySql(sql, type);
+        return this.sqlSessionTemplate.selectBySql(sql, type, this.classLoader);
     }
 
     @Override
     public <T> T getOneBySql(String sql, Class<T> type) {
-        return this.sqlSessionTemplate.selectOneBySql(sql, type);
+        return this.sqlSessionTemplate.selectOneBySql(sql, type, this.classLoader);
     }
 
     @Override
     public List<Model> getByColumn(String column, Serializable columnValue) {
-        return (List<Model>) this.sqlSessionTemplate.selectByColumn(column, columnValue, this.getModelCalss());
+        return (List<Model>) this.sqlSessionTemplate.selectByColumn(column, columnValue, this.getModelCalss(), this.classLoader);
     }
 
     @Override
     public List<Model> getByFiled(String fieldName, Serializable fieldValue) {
-        return (List<Model>) this.sqlSessionTemplate.selectByField(fieldName, fieldValue, this.getModelCalss());
+        return (List<Model>) this.sqlSessionTemplate.selectByField(fieldName, fieldValue, this.getModelCalss(), this.classLoader);
     }
 
     @Override
     public Model getOneByColumn(String column, Serializable columnValue) {
-        return (Model) this.sqlSessionTemplate.selectOneByColumn(column, columnValue, this.getModelCalss());
+        return (Model) this.sqlSessionTemplate.selectOneByColumn(column, columnValue, this.getModelCalss(), this.classLoader);
     }
 
     @Override
     public Model getOneByFiled(String fieldName, Serializable fieldValue) {
-        return (Model) this.sqlSessionTemplate.selectOneByField(fieldName, fieldValue, this.getModelCalss());
+        return (Model) this.sqlSessionTemplate.selectOneByField(fieldName, fieldValue, this.getModelCalss(), this.classLoader);
     }
 
     @Override
@@ -193,7 +199,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
             }.getClass().getEnclosingMethod();
             this.eventListener.before(this.getClass(), thisMethod, model);
         }
-        Model result = this.sqlSessionTemplate.globalUpdate(model);
+        Model result = this.sqlSessionTemplate.globalUpdate(model, this.classLoader);
         if (this.eventListener != null) {
             this.eventListener.after(this.getClass(), thisMethod, result, model);
         }
@@ -208,7 +214,7 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
             }.getClass().getEnclosingMethod();
             this.eventListener.before(this.getClass(), thisMethod, model);
         }
-        Model result = this.sqlSessionTemplate.localUpdate(model);
+        Model result = this.sqlSessionTemplate.localUpdate(model, this.classLoader);
         if (this.eventListener != null) {
             this.eventListener.after(this.getClass(), thisMethod, result, model);
         }

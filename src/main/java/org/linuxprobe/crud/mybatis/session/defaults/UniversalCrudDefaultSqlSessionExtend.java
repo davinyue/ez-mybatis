@@ -36,6 +36,11 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
     @Override
     public <T> T insert(T record) {
+        return this.insert(record, record.getClass().getClassLoader());
+    }
+
+    @Override
+    public <T> T insert(T record, ClassLoader classLoader) {
         InsertSqlGenerator insertSqlGenerator = UniversalCrudContent.getInsertSqlGenerator();
         SelectSqlGenerator selectSqlGenerator = UniversalCrudContent.getSelectSqlGenerator();
         this.sqlSession.insert(UniversalCrudDefaultSqlSessionExtend.insertStatement, insertSqlGenerator.toInsertSql(record));
@@ -58,8 +63,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
         if (ReflectionUtils.isProxyClass(record.getClass())) {
             return record;
         } else {
-            ModelCglib modelCglib = new ModelCglib(this);
-            Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
+            ModelCglib modelCglib = new ModelCglib(this, classLoader);
+            Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass(), classLoader);
             modelCglib.copy(record);
             return (T) proxyRecord;
         }
@@ -67,13 +72,18 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
     @Override
     public <T> List<T> batchInsert(Collection<T> records, boolean loop) {
+        return this.batchInsert(records, loop, this.getClass().getClassLoader());
+    }
+
+    @Override
+    public <T> List<T> batchInsert(Collection<T> records, boolean loop, ClassLoader classLoader) {
         if (records == null || records.isEmpty()) {
             return null;
         } else {
             if (loop) {
                 List<T> result = new LinkedList<>();
                 for (T record : records) {
-                    result.add(this.insert(record));
+                    result.add(this.insert(record, classLoader));
                 }
                 return result;
             } else {
@@ -139,13 +149,18 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
     @Override
     public <T> List<T> universalSelect(BaseQuery param) {
+        return this.universalSelect(param, this.getClass().getClassLoader());
+    }
+
+    @Override
+    public <T> List<T> universalSelect(BaseQuery param, ClassLoader classLoader) {
         Class<T> type = (Class<T>) UniversalCrudContent.getQueryInfo(param.getClass()).getQueryEntityCalss();
         String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(param);
         List<Map<String, Object>> mapperResults = this.sqlSession.selectList(UniversalCrudDefaultSqlSessionExtend.selectStatement, sql);
         List<T> records = new LinkedList<>();
         for (Map<String, Object> mapperResult : mapperResults) {
-            ModelCglib modelCglib = new ModelCglib(this);
-            T model = ProxyFactory.getProxyInstance(modelCglib, type);
+            ModelCglib modelCglib = new ModelCglib(this, classLoader);
+            T model = ProxyFactory.getProxyInstance(modelCglib, type, classLoader);
             SqlFieldUtil.copyColumnValueToObject(mapperResult, model);
             modelCglib.cleanMark();
             records.add(model);
@@ -173,6 +188,11 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
     @Override
     public <T> List<T> selectBySql(String sql, Class<T> type) {
+        return this.selectBySql(sql, type, type.getClassLoader());
+    }
+
+    @Override
+    public <T> List<T> selectBySql(String sql, Class<T> type, ClassLoader classLoader) {
         List<Map<String, Object>> mapResult = this.selectBySql(sql);
         List<T> records = new LinkedList<>();
         EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(type);
@@ -187,8 +207,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
                     throw new IllegalArgumentException(e);
                 }
             } else {
-                modelCglib = new ModelCglib(this);
-                model = ProxyFactory.getProxyInstance(modelCglib, type);
+                modelCglib = new ModelCglib(this, classLoader);
+                model = ProxyFactory.getProxyInstance(modelCglib, type, classLoader);
             }
             SqlFieldUtil.copyColumnValueToObject(mapperResult, model);
             if (entityInfo != null) {
@@ -201,6 +221,11 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
     @Override
     public <T> T selectOneBySql(String sql, Class<T> type) {
+        return this.selectOneBySql(sql, type, type.getClassLoader());
+    }
+
+    @Override
+    public <T> T selectOneBySql(String sql, Class<T> type, ClassLoader classLoader) {
         Map<String, Object> mapResult = this.sqlSession.selectOne(UniversalCrudDefaultSqlSessionExtend.selectOneStatement, sql);
         if (mapResult == null) {
             return null;
@@ -216,8 +241,8 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
                 throw new IllegalArgumentException(e);
             }
         } else {
-            modelCglib = new ModelCglib(this);
-            model = ProxyFactory.getProxyInstance(modelCglib, type);
+            modelCglib = new ModelCglib(this, classLoader);
+            model = ProxyFactory.getProxyInstance(modelCglib, type, classLoader);
         }
         SqlFieldUtil.copyColumnValueToObject(mapResult, model);
         if (entityInfo != null) {
@@ -233,15 +258,31 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
     }
 
     @Override
+    public <T> T selectByPrimaryKey(Serializable id, Class<T> type, ClassLoader classLoader) {
+        String sql = UniversalCrudContent.getSelectSqlGenerator().toSelectSql(id, type);
+        return this.selectOneBySql(sql, type, classLoader);
+    }
+
+    @Override
     public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type) {
+        return this.selectByColumn(column, columnValue, type, type.getClassLoader());
+    }
+
+    @Override
+    public <T> List<T> selectByColumn(String column, Serializable columnValue, Class<T> type, ClassLoader classLoader) {
         return this.selectBySql(UniversalCrudContent.getSelectSqlGenerator().toSelectSql(column, columnValue, false, type),
-                type);
+                type, classLoader);
     }
 
     @Override
     public <T> List<T> selectByField(String fieldName, Serializable fieldValue, Class<T> type) {
+        return this.selectByField(fieldName, fieldValue, type, type.getClassLoader());
+    }
+
+    @Override
+    public <T> List<T> selectByField(String fieldName, Serializable fieldValue, Class<T> type, ClassLoader classLoader) {
         return this.selectBySql(
-                UniversalCrudContent.getSelectSqlGenerator().toSelectSqlByFieldName(fieldName, fieldValue, false, type), type);
+                UniversalCrudContent.getSelectSqlGenerator().toSelectSqlByFieldName(fieldName, fieldValue, false, type), type, classLoader);
     }
 
     @Override
@@ -251,17 +292,34 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
     }
 
     @Override
+    public <T> T selectOneByColumn(String column, Serializable columnValue, Class<T> type, ClassLoader classLoader) {
+        return this.selectOneBySql(UniversalCrudContent.getSelectSqlGenerator().toSelectSql(column, columnValue, true, type),
+                type, classLoader);
+    }
+
+    @Override
     public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type) {
         return this.selectOneBySql(
                 UniversalCrudContent.getSelectSqlGenerator().toSelectSqlByFieldName(fieldName, fieldValue, true, type), type);
     }
 
     @Override
+    public <T> T selectOneByField(String fieldName, Serializable fieldValue, Class<T> type, ClassLoader classLoader) {
+        return this.selectOneBySql(
+                UniversalCrudContent.getSelectSqlGenerator().toSelectSqlByFieldName(fieldName, fieldValue, true, type), type, classLoader);
+    }
+
+    @Override
     public <T> T globalUpdate(T record) {
+        return this.globalUpdate(record, record.getClass().getClassLoader());
+    }
+
+    @Override
+    public <T> T globalUpdate(T record, ClassLoader classLoader) {
         this.sqlSession.update(UniversalCrudDefaultSqlSessionExtend.updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toGlobalUpdateSql(record));
         if (!ReflectionUtils.isProxyClass(record.getClass())) {
-            ModelCglib modelCglib = new ModelCglib(this);
-            Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
+            ModelCglib modelCglib = new ModelCglib(this, classLoader);
+            Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass(), classLoader);
             modelCglib.copy(record);
             return (T) proxyRecord;
         }
@@ -270,10 +328,15 @@ public class UniversalCrudDefaultSqlSessionExtend implements SqlSessionExtend {
 
     @Override
     public <T> T localUpdate(T record) {
+        return this.localUpdate(record, record.getClass().getClassLoader());
+    }
+
+    @Override
+    public <T> T localUpdate(T record, ClassLoader classLoader) {
         this.sqlSession.update(UniversalCrudDefaultSqlSessionExtend.updateStatement, UniversalCrudContent.getUpdateSqlGenerator().toLocalUpdateSql(record));
         if (!ReflectionUtils.isProxyClass(record.getClass())) {
-            ModelCglib modelCglib = new ModelCglib(this);
-            Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass());
+            ModelCglib modelCglib = new ModelCglib(this, classLoader);
+            Object proxyRecord = ProxyFactory.getProxyInstance(modelCglib, record.getClass(), classLoader);
             modelCglib.copy(record);
             return (T) proxyRecord;
         }
