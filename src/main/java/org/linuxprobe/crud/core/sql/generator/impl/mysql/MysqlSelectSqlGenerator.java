@@ -102,11 +102,6 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         if (id == null) {
             throw new IllegalArgumentException("id cannot be null");
         }
-        if (id instanceof String) {
-            if ("".equals(id)) {
-                throw new IllegalArgumentException("id cannot be empty");
-            }
-        }
         if (modelType == null) {
             throw new IllegalArgumentException("modelType cannot be null");
         }
