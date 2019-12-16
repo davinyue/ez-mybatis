@@ -85,6 +85,9 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
                     .append("`.`")
                     .append(idColumn)
                     .append("` ");
+            searcher.setAlias(dataAlias);
+            dataSqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
+            searcher.setAlias(alias);
             sqlBuilder = dataSqlBuilder;
         }
         return sqlBuilder.toString();
