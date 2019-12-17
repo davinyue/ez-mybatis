@@ -130,7 +130,7 @@ public class ModelCglib extends AbstractMethodInterceptor {
         if (!"".equals(oneToMany.subordinate())) {
             subordinateColumn = oneToMany.subordinate();
         }
-        Class<?> subordinateClass = ReflectionUtils.getFiledGenericclass(field, 0);
+        Class<?> subordinateClass = ReflectionUtils.getFiledGenericClass(field, 0);
         Serializable principalFieldValue = (Serializable) ReflectionUtils.getFieldValue(obj, principalField);
         if (principalFieldValue == null) {
             return null;
@@ -161,7 +161,7 @@ public class ModelCglib extends AbstractMethodInterceptor {
         /** 中间表条件字段的值 */
         Serializable primaryKey = (Serializable) ReflectionUtils.getFieldValue(obj,
                 entityInfo.getPrimaryKey().getField());
-        Class<?> needSelectModelType = ReflectionUtils.getFiledGenericclass(field, 0);
+        Class<?> needSelectModelType = ReflectionUtils.getFiledGenericClass(field, 0);
         EntityInfo needSelectEntityInfo = UniversalCrudContent.getEntityInfo(needSelectModelType);
         String needSelectTable = needSelectEntityInfo.getTableName();
         /** 中间表 */

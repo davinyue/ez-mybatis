@@ -23,7 +23,9 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGenerator, Escape {
     /**
@@ -115,8 +117,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
             id = super.escape((String) id);
             id = super.getQuotation() + id + super.getQuotation();
         }
-        String sql = "SELECT * FROM `" + table + "` WHERE `" + idColumn + "` = " + id;
-        return sql;
+        return "SELECT * FROM `" + table + "` WHERE `" + idColumn + "` = " + id;
     }
 
     @Override
@@ -258,22 +259,22 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
     private static StringBuilder toJoin(BaseQuery searcher) {
         StringBuilder joinBuffer = new StringBuilder();
         QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
-        /** 获取所有关联查询field */
+        // 获取所有关联查询field
         List<QueryFieldInfo> baseQueryFieldInfos = queryInfo.getBaseQueryFieldInfos();
         for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
             Field field = queryFieldInfo.getField();
-            /** 获得该对象 */
+            // 获得该对象
             BaseQuery member = (BaseQuery) ReflectionUtils.getFieldValue(searcher, field);
-            /** 如果对象不为空，则需要join */
+            // 如果对象不为空，则需要join
             if (member != null) {
-                /** 设置主表链接列 */
+                // 设置主表链接列
                 String principalColumn = queryFieldInfo.getPrincipalColumn();
-                /** 从表链接列 */
+                // 从表链接列
                 String subordinateColumn = queryFieldInfo.getSubordinateColumn();
-                /** 获取需要链接的表名 */
+                // 获取需要链接的表名
                 String joinTable = MysqlSelectSqlGenerator.getTable(field.getType());
                 String joinTableAlias = member.getAlias();
-                /** 处理连接方式 */
+                // 处理连接方式
                 String joinStr = "LEFT";
                 JoinType joinType = member.getJoinType();
                 if (joinType.equals(JoinType.RightJoin)) {
@@ -285,9 +286,9 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
                 } else if (joinType.equals(JoinType.CrossJoin)) {
                     joinStr = "CROSS";
                 }
-                joinBuffer.append(joinStr + " JOIN `" + joinTable + "` AS `" + joinTableAlias + "` ON ");
-                joinBuffer.append("`" + joinTableAlias + "`.`" + subordinateColumn + "` = ");
-                joinBuffer.append("`" + searcher.getAlias() + "`.`" + principalColumn + "` ");
+                joinBuffer.append(joinStr).append(" JOIN `").append(joinTable).append("` AS `").append(joinTableAlias).append("` ON ");
+                joinBuffer.append("`").append(joinTableAlias).append("`.`").append(subordinateColumn).append("` = ");
+                joinBuffer.append("`").append(searcher.getAlias()).append("`.`").append(principalColumn).append("` ");
                 joinBuffer.append(MysqlSelectSqlGenerator.toJoin(member));
             }
         }
@@ -302,12 +303,12 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         String strOrder = baseQuery.getOrder();
         if (strOrder != null) {
             String[] orders = strOrder.split(",");
-            for (int i = 0; i < orders.length; i++) {
-                String[] parts = orders[i].split(" ");
+            for (String order : orders) {
+                String[] parts = order.split(" ");
                 String fieldName = parts[0];
                 String orderName = MysqlSelectSqlGenerator.getOrderMember(baseQuery, fieldName);
                 if (orderName != null) {
-                    result.append(orderName + " " + parts[1] + ", ");
+                    result.append(orderName).append(" ").append(parts[1]).append(", ");
                 } else {
                     throw new IllegalArgumentException(baseQuery.getClass().getName() + "类查询对象里没有与'" + fieldName
                             + "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
@@ -323,31 +324,28 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
     }
 
     private static String getOrderMember(BaseQuery searcher, String fieldName) {
-        /** 拆分层次 */
+        // 拆分层次
         String[] fieldNames = fieldName.split("\\.");
-        /** 获取查询对象的成员 */
+        // 获取查询对象的成员
         QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
         List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
         for (QueryFieldInfo queryFieldInfo : queryFieldInfos) {
             Field searcherField = queryFieldInfo.getField();
-            /**
-             * 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
-             */
-            /** 第一种情况 */
+            // 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
+            // 第一种情况
             if (fieldNames.length == 1) {
-                /** 如果名称匹配上 */
+                // 如果名称匹配上
                 if (searcherField.getName().equals(fieldName)) {
-                    /** 如果是查询类参数对象 */
+                    // 如果是查询类参数对象
                     if (BaseParam.class.isAssignableFrom(searcherField.getType())) {
-                        String orderName = "`" + searcher.getAlias() + "`.`" + queryFieldInfo.getColumnName() + "`";
-                        return orderName;
+                        return "`" + searcher.getAlias() + "`.`" + queryFieldInfo.getColumnName() + "`";
                     }
                     break;
                 }
             }
-            /** 第二种情况 */
+            // 第二种情况
             else {
-                /** 如果第一层名称匹配上 */
+                // 如果第一层名称匹配上
                 if (searcherField.getName().equals(fieldNames[0])) {
                     if (BaseQuery.class.isAssignableFrom(searcherField.getType())) {
                         BaseQuery sonSearcher = (BaseQuery) ReflectionUtils.getFieldValue(searcher, searcherField);
@@ -383,15 +381,15 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
         for (QueryFieldInfo queryFieldInfo : queryFieldInfos) {
             Field field = queryFieldInfo.getField();
-            /** 列名 */
+            // 列名
             String columnName = queryFieldInfo.getColumnName();
-            /** 获得该对象 */
+            // 获得该对象
             Object member = ReflectionUtils.getFieldValue(searcher, field);
-            /** 如果该成员是空值，则不需要加入where条件 */
+            // 如果该成员是空值，则不需要加入where条件
             if (member == null) {
                 continue;
             }
-            /** 如果是基础查询对象 */
+            // 如果是基础查询对象
             if (BaseParam.class.isAssignableFrom(field.getType())) {
                 BaseParam<Serializable> baseMember = (BaseParam<Serializable>) member;
                 if (!baseMember.isEmpty()) {
@@ -399,7 +397,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
                             + this.paramToSqlPart(baseMember) + " ");
                 }
             }
-            /** 如果是关联查询对象 */
+            // 如果是关联查询对象
             else if (field.getType().isAnnotationPresent(Query.class)) {
                 result.addAll(this.toWhere((BaseQuery) member));
             }
@@ -412,18 +410,13 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
      */
     private StringBuilder getFormatWhere(BaseQuery searcher) {
         List<String> wheres = this.toWhere(searcher);
-        /** 把and的条件排序在前面 */
-        Collections.sort(wheres, new Comparator<String>() {
-            @Override
-            public int compare(String str1, String str2) {
-                return str1.trim().compareToIgnoreCase(str2.trim());
-            }
-        });
+        // 把and的条件排序在前面
+        wheres.sort((str1, str2) -> str1.trim().compareToIgnoreCase(str2.trim()));
         StringBuilder resultBuffer = new StringBuilder();
         for (String where : wheres) {
             resultBuffer.append(where);
         }
-        /** 有条件 */
+        // 有条件
         if (resultBuffer.indexOf("AND") != -1 || resultBuffer.indexOf("OR") != -1) {
             resultBuffer.delete(0, resultBuffer.indexOf(" "));
             resultBuffer.insert(0, "WHERE");
@@ -451,8 +444,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
             throw new IllegalArgumentException("queryType cant not be null");
         }
         QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
-        Class<?> modelType = queryInfo.getQueryEntityCalss();
-        return modelType;
+        return queryInfo.getQueryEntityCalss();
     }
 
     /**
@@ -577,7 +569,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
                     if (i + 1 == multiValues.size()) {
                         stringValues.append(multiValue);
                     } else {
-                        stringValues.append(multiValue + ", ");
+                        stringValues.append(multiValue).append(", ");
                     }
                 }
                 return operator.getOperator() + "(" + stringValues.toString() + ") ";
