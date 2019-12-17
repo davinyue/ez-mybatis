@@ -18,7 +18,7 @@
 <dependency>
 	<groupId>org.linuxprobe</groupId>
 	<artifactId>mybatis-universal-crud</artifactId>
-	<version>2.1.5.RELEASE</version>
+	<version>2.2.1.RELEASE</version>
 </dependency>
 ```
 ### 2.1.2 spring xml配置文件加入
