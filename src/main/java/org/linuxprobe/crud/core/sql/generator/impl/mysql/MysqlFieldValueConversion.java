@@ -11,8 +11,8 @@ import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -102,9 +102,8 @@ public class MysqlFieldValueConversion {
     /**
      * 获取布尔值
      *
-     * @param record          保存对象
-     * @param field           属性
-     * @param enalbeCheckRule 启用校验规则
+     * @param record 保存对象
+     * @param field  属性
      */
     private static String getBooleanValue(Object record, Field field) {
         Boolean fieldValue = (Boolean) ReflectionUtils.getFieldValue(record, field);
@@ -183,11 +182,7 @@ public class MysqlFieldValueConversion {
                     bin[i] = binB[i];
                 }
             }
-            try {
-                result = new String(bin, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
+            result = new String(bin, StandardCharsets.UTF_8);
             result = mysqlEscape.escape(result);
             result = mysqlEscape.getQuotation() + result + mysqlEscape.getQuotation();
             result = "CONVERT( " + result + ", BINARY )";
@@ -242,21 +237,24 @@ public class MysqlFieldValueConversion {
      */
     public static String insertModelConversion(Object entity, Field field) {
         String result = updateModelConversion(entity, field);
-        /** 如果是主键 */
+        // 如果是主键
         if (field.isAnnotationPresent(PrimaryKey.class)) {
             if (result == null) {
                 PrimaryKey primaryKey = field.getAnnotation(PrimaryKey.class);
-                /** 如果指定主键生成模式是uuid */
+                // 如果指定主键生成模式是uuid
                 if (primaryKey.value().equals(PrimaryKey.Strategy.UUID)) {
                     try {
-                        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+                        String uuid = ReflectionUtils.getFieldValue(entity, field);
+                        if (uuid == null) {
+                            uuid = UUID.randomUUID().toString().replaceAll("-", "");
+                        }
                         ReflectionUtils.setFieldValue(entity, field, uuid, true);
                         result = mysqlEscape.getQuotation() + uuid + mysqlEscape.getQuotation();
                     } catch (Exception e) {
                         throw new OperationNotSupportedException("未找到主键的set方法", e);
                     }
                 }
-                /** 如果指定主键生成模式是程序指定 */
+                // 如果指定主键生成模式是程序指定
                 else if (primaryKey.value().equals(PrimaryKey.Strategy.ASSIGNED)) {
                     throw new NullPointerException("primaryKey can't not be null");
                 }
