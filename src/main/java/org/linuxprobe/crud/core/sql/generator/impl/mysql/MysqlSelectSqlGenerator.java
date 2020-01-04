@@ -40,8 +40,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         String alias = searcher.getAlias();
         String talbe = MysqlSelectSqlGenerator.getTable(searcher.getClass());
         //构造主键层查询sql
-        //StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
-        StringBuilder sqlBuilder = new StringBuilder("SELECT `");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
         sqlBuilder.append(alias);
         sqlBuilder.append("`.");
         //如果进行分页查询,则只查询主键列
@@ -183,11 +182,8 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         }
         String alias = searcher.getAlias();
         String countFun = "COUNT(DISTINCT `" + alias + "`.`" + clounm + "`)";
-        StringBuilder sqlBuilder = new StringBuilder(
-                "SELECT " + countFun + " FROM `" + MysqlSelectSqlGenerator.getTable(searcher.getClass()) + "` AS `" + alias + "` ");
-        sqlBuilder.append(MysqlSelectSqlGenerator.toJoin(searcher));
-        sqlBuilder.append(this.getFormatWhere(searcher));
-        return sqlBuilder.toString();
+        return "SELECT " + countFun + " FROM `" + MysqlSelectSqlGenerator.getTable(searcher.getClass()) + "` AS `" + alias + "` " + MysqlSelectSqlGenerator.toJoin(searcher) +
+                this.getFormatWhere(searcher);
     }
 
     /**
@@ -201,11 +197,8 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         String alias = searcher.getAlias();
         String countFun = "COUNT(DISTINCT `" + alias + "`.`" + MysqlSelectSqlGenerator.getPrimaryKeyName(MysqlSelectSqlGenerator.getModelType(searcher.getClass()))
                 + "`)";
-        StringBuilder sqlBuilder = new StringBuilder(
-                "SELECT " + countFun + " FROM `" + MysqlSelectSqlGenerator.getTable(searcher.getClass()) + "` AS `" + alias + "` ");
-        sqlBuilder.append(MysqlSelectSqlGenerator.toJoin(searcher));
-        sqlBuilder.append(this.getFormatWhere(searcher));
-        return sqlBuilder.toString();
+        return "SELECT " + countFun + " FROM `" + MysqlSelectSqlGenerator.getTable(searcher.getClass()) + "` AS `" + alias + "` " + MysqlSelectSqlGenerator.toJoin(searcher) +
+                this.getFormatWhere(searcher);
     }
 
     @Override
@@ -260,7 +253,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
             Field field = queryFieldInfo.getField();
             // 获得该对象
-            BaseQuery member = (BaseQuery) ReflectionUtils.getFieldValue(searcher, field);
+            BaseQuery member = ReflectionUtils.getFieldValue(searcher, field);
             // 如果对象不为空，则需要join
             if (member != null) {
                 // 设置主表链接列
@@ -344,7 +337,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
                 // 如果第一层名称匹配上
                 if (searcherField.getName().equals(fieldNames[0])) {
                     if (BaseQuery.class.isAssignableFrom(searcherField.getType())) {
-                        BaseQuery sonSearcher = (BaseQuery) ReflectionUtils.getFieldValue(searcher, searcherField);
+                        BaseQuery sonSearcher = ReflectionUtils.getFieldValue(searcher, searcherField);
                         if (sonSearcher != null) {
                             return MysqlSelectSqlGenerator.getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
                         }
