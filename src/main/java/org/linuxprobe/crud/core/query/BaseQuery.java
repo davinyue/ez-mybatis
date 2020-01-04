@@ -12,6 +12,8 @@ import java.util.List;
  * @author LarryYu
  * @version 2.0.9.RELEASE
  */
+@Getter
+@Setter
 public abstract class BaseQuery {
     /**
      * <p>
@@ -25,37 +27,34 @@ public abstract class BaseQuery {
     /**
      * 排序
      */
-    @Getter
-    private String order;
+    private String sort;
     /**
      * 分页
      */
-    @Getter
-    @Setter
     private Limit limit = new Limit();
 
     /**
      * 别名
      */
-    @Getter
-    @Setter
     private String alias;
 
     /**
      * 被连接方式
      */
-    @Getter
-    @Setter
     private JoinType joinType = JoinType.LeftJoin;
 
     /**
-     * <p>
-     * Setter for the field <code>order</code>.
-     * </p>
-     *
-     * @param order a {@link java.lang.String} object.
+     * 请使用 {@link #setSort(String)}
      */
+    @Deprecated
     public void setOrder(String order) {
+        this.setSort(order);
+    }
+
+    /**
+     * 设置排序
+     */
+    public void setSort(String order) {
         if (order == null) {
             return;
         }
@@ -65,36 +64,34 @@ public abstract class BaseQuery {
         }
         String[] orders = order.split(",");
         StringBuilder result = new StringBuilder();
-        if (orders != null) {
-            for (int i = 0; i < orders.length; i++) {
-                String[] tempOrderMembers = orders[i].trim().split(" ");
-                /** 删除值是空格的元素 */
-                List<String> orderMembers = new LinkedList<>();
-                for (String tempOrderMember : tempOrderMembers) {
-                    if (!tempOrderMember.trim().isEmpty()) {
-                        orderMembers.add(tempOrderMember);
-                    }
+        for (String s : orders) {
+            String[] tempOrderMembers = s.trim().split(" ");
+            // 删除值是空格的元素
+            List<String> orderMembers = new LinkedList<>();
+            for (String tempOrderMember : tempOrderMembers) {
+                if (!tempOrderMember.trim().isEmpty()) {
+                    orderMembers.add(tempOrderMember);
                 }
-                if (orderMembers.size() > 2) {
-                    throw new IllegalArgumentException(
-                            "参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
-                } else if (orderMembers.size() == 1) {
-                    result.append(orderMembers.get(0) + " " + "ASC,");
-                } else if (orderMembers.size() == 2) {
-                    if (orderMembers.get(1).equalsIgnoreCase("asc")) {
-                        result.append(orderMembers.get(0) + " " + "ASC,");
-                    } else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
-                        result.append(orderMembers.get(0) + " " + "DESC,");
-                    } else {
-                        throw new IllegalArgumentException("排序模式只能为asc和desc");
-                    }
+            }
+            if (orderMembers.size() > 2) {
+                throw new IllegalArgumentException(
+                        "参数格式错误，eg:单字段排序'name desc',多字段排序'name desc, code asc, email desc'");
+            } else if (orderMembers.size() == 1) {
+                result.append(orderMembers.get(0)).append(" ").append("ASC,");
+            } else if (orderMembers.size() == 2) {
+                if (orderMembers.get(1).equalsIgnoreCase("asc")) {
+                    result.append(orderMembers.get(0)).append(" ").append("ASC,");
+                } else if (orderMembers.get(1).equalsIgnoreCase("desc")) {
+                    result.append(orderMembers.get(0)).append(" ").append("DESC,");
+                } else {
+                    throw new IllegalArgumentException("排序模式只能为asc和desc");
                 }
             }
         }
         if (result.indexOf(",") != -1) {
             result.delete(result.length() - 1, result.length());
         }
-        this.order = result.length() == 0 ? null : result.toString();
+        this.sort = result.length() == 0 ? null : result.toString();
     }
 
     public static class Limit {

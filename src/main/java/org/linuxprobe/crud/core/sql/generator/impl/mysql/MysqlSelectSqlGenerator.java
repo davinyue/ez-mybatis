@@ -40,7 +40,8 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         String alias = searcher.getAlias();
         String talbe = MysqlSelectSqlGenerator.getTable(searcher.getClass());
         //构造主键层查询sql
-        StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
+        //StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT `");
         sqlBuilder.append(alias);
         sqlBuilder.append("`.");
         //如果进行分页查询,则只查询主键列
@@ -127,11 +128,6 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         }
         if (columnValue == null) {
             throw new IllegalArgumentException("columnValue cannot be null");
-        }
-        if (columnValue instanceof String) {
-            if ("".equals(columnValue)) {
-                throw new IllegalArgumentException("columnValue cannot be empty");
-            }
         }
         if (modelType == null) {
             throw new IllegalArgumentException("modelType cannot be null");
@@ -236,15 +232,15 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         String alias = table + "_01";
         String middleTableAlias = middleTable + "_01";
         StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-        sqlBuilder.append("`" + alias + "`.* ");
-        sqlBuilder.append("FROM `" + table + "` AS `" + alias + "` ");
-        sqlBuilder.append("INNER JOIN `" + middleTable + "` as `" + middleTableAlias + "` ");
-        sqlBuilder.append("ON `" + alias + "`.`" + primaryKey + "` = `" + middleTableAlias + "`.`" + joinColumn + "` ");
+        sqlBuilder.append("`").append(alias).append("`.* ");
+        sqlBuilder.append("FROM `").append(table).append("` AS `").append(alias).append("` ");
+        sqlBuilder.append("INNER JOIN `").append(middleTable).append("` as `").append(middleTableAlias).append("` ");
+        sqlBuilder.append("ON `").append(alias).append("`.`").append(primaryKey).append("` = `").append(middleTableAlias).append("`.`").append(joinColumn).append("` ");
         if (conditionColumnValue instanceof String) {
             conditionColumnValue = super.escape((String) conditionColumnValue);
             conditionColumnValue = super.getQuotation() + conditionColumnValue + super.getQuotation();
         }
-        sqlBuilder.append("WHERE `" + middleTableAlias + "`.`" + conditionColumn + "` = " + conditionColumnValue);
+        sqlBuilder.append("WHERE `").append(middleTableAlias).append("`.`").append(conditionColumn).append("` = ").append(conditionColumnValue);
         return sqlBuilder.toString();
     }
 
@@ -300,7 +296,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
      */
     private static StringBuilder toOrder(BaseQuery baseQuery) {
         StringBuilder result = new StringBuilder();
-        String strOrder = baseQuery.getOrder();
+        String strOrder = baseQuery.getSort();
         if (strOrder != null) {
             String[] orders = strOrder.split(",");
             for (String order : orders) {

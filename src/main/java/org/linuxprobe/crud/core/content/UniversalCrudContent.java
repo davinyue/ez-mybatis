@@ -35,9 +35,9 @@ public class UniversalCrudContent {
      */
     public static void init(UniversalCrudConfiguration universalCrudConfiguration) {
         UniversalCrudContent.universalCrudConfiguration = universalCrudConfiguration;
-        /** 扫描类信息 */
+        // 扫描类信息
         String[] scans = universalCrudConfiguration.getUniversalCrudScan().split(";");
-        /** 必须先扫描实体信息 */
+        // 必须先扫描实体信息
         for (String scan : scans) {
             Reflections reflections = new Reflections(scan);
             Set<Class<?>> entityClasss = reflections.getTypesAnnotatedWith(Entity.class);
@@ -46,7 +46,7 @@ public class UniversalCrudContent {
                 UniversalCrudContent.addEntityInfo(entityClass);
             }
         }
-        /** 实体信息扫描完后扫描搜索类信息，因为搜索类需要读取实体类信息 */
+        // 实体信息扫描完后扫描搜索类信息，因为搜索类需要读取实体类信息
         for (String scan : scans) {
             Reflections reflections = new Reflections(scan);
             Set<Class<?>> queryClasss = reflections.getTypesAnnotatedWith(Query.class);
@@ -59,7 +59,7 @@ public class UniversalCrudContent {
 
     public static InsertSqlGenerator getInsertSqlGenerator() {
         String driverClassType = UniversalCrudContent.universalCrudConfiguration.getDriverClassName();
-        if (driverClassType.indexOf("mysql") != -1) {
+        if (driverClassType.contains("mysql")) {
             if (UniversalCrudContent.mysqlInsertSqlGenerator == null) {
                 UniversalCrudContent.mysqlInsertSqlGenerator = new MysqlInsertSqlGenerator();
             }
@@ -71,7 +71,7 @@ public class UniversalCrudContent {
 
     public static DeleteSqlGenerator getDeleteSqlGenerator() {
         String driverClassType = UniversalCrudContent.universalCrudConfiguration.getDriverClassName();
-        if (driverClassType.indexOf("mysql") != -1) {
+        if (driverClassType.contains("mysql")) {
             if (UniversalCrudContent.mysqlDeleteSqlGenerator == null) {
                 UniversalCrudContent.mysqlDeleteSqlGenerator = new MysqlDeleteSqlGenerator();
             }
@@ -83,7 +83,7 @@ public class UniversalCrudContent {
 
     public static SelectSqlGenerator getSelectSqlGenerator() {
         String driverClassType = UniversalCrudContent.universalCrudConfiguration.getDriverClassName();
-        if (driverClassType.indexOf("mysql") != -1) {
+        if (driverClassType.contains("mysql")) {
             if (UniversalCrudContent.mysqlSelectSqlGenerator == null) {
                 UniversalCrudContent.mysqlSelectSqlGenerator = new MysqlSelectSqlGenerator();
             }
@@ -95,7 +95,7 @@ public class UniversalCrudContent {
 
     public static UpdateSqlGenerator getUpdateSqlGenerator() {
         String driverClassType = UniversalCrudContent.universalCrudConfiguration.getDriverClassName();
-        if (driverClassType.indexOf("mysql") != -1) {
+        if (driverClassType.contains("mysql")) {
             if (UniversalCrudContent.mysqlUpdateSqlGenerator == null) {
                 UniversalCrudContent.mysqlUpdateSqlGenerator = new MysqlUpdateSqlGenerator();
             }
