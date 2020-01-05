@@ -38,24 +38,21 @@ public class QueryInfo {
 			this.baseQueryFieldInfos = new LinkedList<>();
 			List<Field> fields = ReflectionUtils.getAllFields(queryType);
 			for (Field field : fields) {
-				if (!BaseParam.class.isAssignableFrom(field.getType())
-						&& !BaseQuery.class.isAssignableFrom(field.getType())) {
-					continue;
-				} else {
+				if (BaseParam.class.isAssignableFrom(field.getType()) || BaseQuery.class.isAssignableFrom(field.getType())) {
 					QueryFieldInfo fieldInfo = new QueryFieldInfo();
 					fieldInfo.setField(field);
-					/** 如果是基本类型参数 */
+					// 如果是基本类型参数
 					if (BaseParam.class.isAssignableFrom(field.getType())) {
 						fieldInfo.setColumnName(StringUtils.humpToLine(field.getName()));
 						if (field.isAnnotationPresent(Column.class)) {
 							Column column = field.getAnnotation(Column.class);
-							if (column.value() != null) {
+							if (!column.value().isEmpty()) {
 								fieldInfo.setColumnName(column.value());
 							}
 						}
 						this.queryParamFieldInfos.add(fieldInfo);
 					}
-					/** 如果是查询类型参数 */
+					// 如果是查询类型参数
 					else if (BaseQuery.class.isAssignableFrom(field.getType())) {
 						fieldInfo.setPrincipalColumn(StringUtils.humpToLine(field.getName() + "Id"));
 						EntityInfo querEntityInfo = UniversalCrudContent.getEntityInfo(queryEntityCalss);
@@ -104,11 +101,7 @@ public class QueryInfo {
 
 		/** 是否是查询类对象 */
 		public boolean isQueryClass() {
-			if (BaseQuery.class.isAssignableFrom(field.getType())) {
-				return true;
-			} else {
-				return false;
-			}
+			return BaseQuery.class.isAssignableFrom(field.getType());
 		}
 	}
 }

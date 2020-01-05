@@ -27,7 +27,7 @@ public class EntityInfo {
 					+ " does not have callout org.linuxprobe.crud.core.annoatation.Entity annotation");
 		} else {
 			this.entityType = entityType;
-			/** handle table name */
+			// handle table name
 			this.tableName = StringUtils.humpToLine(entityType.getSimpleName());
 			if (entityType.isAnnotationPresent(Table.class)) {
 				Table table = entityType.getAnnotation(Table.class);
@@ -35,24 +35,24 @@ public class EntityInfo {
 					this.tableName = table.value();
 				}
 			}
-			/** handle field */
+			// handle field
 			this.fieldInfos = new LinkedList<>();
 			List<Field> fields = SqlFieldUtil.getAllSqlSupportFields(entityType);
-			if (null != fields && !fields.isEmpty()) {
+			if (!fields.isEmpty()) {
 				for (Field field : fields) {
 					if (field.isAnnotationPresent(Transient.class)) {
 						continue;
 					}
 					String fieldName = field.getName();
 					String filedColumn = StringUtils.humpToLine(fieldName);
-					/** 如果有column注解 */
+					// 如果有column注解
 					if (field.isAnnotationPresent(Column.class)) {
 						Column column = field.getAnnotation(Column.class);
 						if (!column.value().isEmpty()) {
 							filedColumn = column.value();
 						}
 					}
-					/** 如果该字段是主键 */
+					// 如果该字段是主键
 					FieldInfo fieldInfo = null;
 					if (field.isAnnotationPresent(PrimaryKey.class)) {
 						fieldInfo = new FieldInfo(field, filedColumn, field.getAnnotation(PrimaryKey.class));

@@ -48,30 +48,30 @@ public class ModelCglib extends AbstractMethodInterceptor {
         Object result = joinPoint.getResult();
         Object obj = joinPoint.getProxy();
         Object[] args = joinPoint.getArgs();
-        /** 如果没处理过该方法 */
+        // 如果没处理过该方法
         if (result == null && !this.handledMethod.contains(method.getName())) {
-            /** 如果用户调用set方法, 则认为已经处理过get方法 */
+            // 如果用户调用set方法, 则认为已经处理过get方法
             if (method.getName().startsWith("set")) {
                 this.handledMethod.add(method.getName().replace("set", "get"));
             } else if (method.getName().startsWith("get")) {
                 Field field = ReflectionUtils.getFieldByMethod(obj.getClass(), method);
                 if (field.isAnnotationPresent(OneToOne.class)) {
-                    /** 标记该方法已经处理 */
+                    // 标记该方法已经处理
                     this.handledMethod.add(method.getName());
                     this.handldeOneToOne(obj, field);
-                    /** 调用目标对象的方法，方便用户对数据进行进一步处理 */
+                    // 调用目标对象的方法，方便用户对数据进行进一步处理
                     joinPoint.setResult(methodProxy.invokeSuper(obj, args));
                 } else if (field.isAnnotationPresent(OneToMany.class)) {
-                    /** 标记该方法已经处理 */
+                    // 标记该方法已经处理
                     this.handledMethod.add(method.getName());
                     this.handldeOneToMany(obj, field);
-                    /** 调用目标对象的方法，方便用户对数据进行进一步处理 */
+                    // 调用目标对象的方法，方便用户对数据进行进一步处理
                     joinPoint.setResult(methodProxy.invokeSuper(obj, args));
                 } else if (field.isAnnotationPresent(ManyToMany.class)) {
-                    /** 标记该方法已经处理 */
+                    // 标记该方法已经处理
                     this.handledMethod.add(method.getName());
                     this.handldeManyToMany(obj, field);
-                    /** 调用目标对象的方法，方便用户对数据进行进一步处理 */
+                    // 调用目标对象的方法，方便用户对数据进行进一步处理
                     joinPoint.setResult(methodProxy.invokeSuper(obj, args));
                 }
             }
@@ -80,15 +80,13 @@ public class ModelCglib extends AbstractMethodInterceptor {
 
     /**
      * 一对一关系处理
-     *
-     * @throws Exception
      */
     private Object handldeOneToOne(Object obj, Field field) throws Exception {
         String columnName = StringUtils.humpToLine(field.getName()) + "_id";
         if (!field.getAnnotation(OneToOne.class).value().isEmpty()) {
             columnName = field.getAnnotation(OneToOne.class).value();
         }
-        /** 获取列对应的field info */
+        // 获取列对应的field info
         FieldInfo correlationFieldInfo = UniversalCrudContent.getEntityInfo(obj.getClass()).getColumnMapFieldInfo()
                 .get(columnName);
         if (correlationFieldInfo == null) {
@@ -107,19 +105,18 @@ public class ModelCglib extends AbstractMethodInterceptor {
 
     /**
      * 一对多关系处理
-     *
-     * @throws Exception
      */
+    @SuppressWarnings({"unchecked"})
     private Object handldeOneToMany(Object obj, Field field) throws Exception {
         if (!Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("in " + obj.getClass().getName() + " " + field.getType().getName()
                     + " must be a subclass of " + Collection.class.getName());
         }
-        /** 默认的关联属性定义为主键 */
+        // 默认的关联属性定义为主键
         Field principalField = UniversalCrudContent.getEntityInfo(obj.getClass()).getPrimaryKey().getField();
-        /** 从表默认的条件列为主表的表名加‘_id’ */
+        // 从表默认的条件列为主表的表名加‘_id’
         String subordinateColumn = UniversalCrudContent.getEntityInfo(obj.getClass()).getTableName() + "_id";
-        /** 判断是否需要更加注解改写以上两个变量的值 */
+        // 判断是否需要更加注解改写以上两个变量的值
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
         EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(obj.getClass());
         if (!"".equals(oneToMany.value())) {
@@ -149,8 +146,8 @@ public class ModelCglib extends AbstractMethodInterceptor {
     /**
      * 多对多关系处理
      *
-     * @throws Exception
      */
+    @SuppressWarnings({"unchecked"})
     private Object handldeManyToMany(Object obj, Field field) throws Exception {
         if (!Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("in " + obj.getClass().getName() + " " + field.getType().getName()
@@ -158,13 +155,13 @@ public class ModelCglib extends AbstractMethodInterceptor {
         }
         EntityInfo entityInfo = UniversalCrudContent.getEntityInfo(obj.getClass());
         String currentTable = entityInfo.getTableName();
-        /** 中间表条件字段的值 */
+        // 中间表条件字段的值
         Serializable primaryKey = (Serializable) ReflectionUtils.getFieldValue(obj,
                 entityInfo.getPrimaryKey().getField());
         Class<?> needSelectModelType = ReflectionUtils.getFiledGenericClass(field, 0);
         EntityInfo needSelectEntityInfo = UniversalCrudContent.getEntityInfo(needSelectModelType);
         String needSelectTable = needSelectEntityInfo.getTableName();
-        /** 中间表 */
+        // 中间表
         String middleTable = currentTable + "_" + needSelectTable;
         String joinColumn = needSelectTable + "_id";
         String conditionColumn = entityInfo.getTableName() + "_id";
@@ -208,9 +205,7 @@ public class ModelCglib extends AbstractMethodInterceptor {
             stack.addAll(datas);
             result = stack;
         } else if (Vector.class.isAssignableFrom(field.getType())) {
-            Vector<Object> vector = new Vector<>();
-            vector.addAll(datas);
-            result = vector;
+            result = new Vector<>(datas);
         } else if (List.class.isAssignableFrom(field.getType())) {
             result = new LinkedList<>(datas);
         }
@@ -230,15 +225,11 @@ public class ModelCglib extends AbstractMethodInterceptor {
         }
         // queue
         else if (Queue.class.isAssignableFrom(field.getType())) {
-            PriorityQueue<Object> priorityQueue = new PriorityQueue<>();
-            priorityQueue.addAll(datas);
-            result = priorityQueue;
+            result = new PriorityQueue<>(datas);
         }
         // deque
         else if (Deque.class.isAssignableFrom(field.getType())) {
-            ArrayDeque<Object> arrayDeque = new ArrayDeque<>();
-            arrayDeque.addAll(datas);
-            result = arrayDeque;
+            result = new ArrayDeque<>(datas);
         }
         return result;
     }
@@ -261,7 +252,7 @@ public class ModelCglib extends AbstractMethodInterceptor {
             field.setAccessible(true);
             try {
                 field.set(this.getInstance(), field.get(source));
-            } catch (IllegalArgumentException | IllegalAccessException e) {
+            } catch (IllegalArgumentException | IllegalAccessException ignored) {
             }
         }
     }

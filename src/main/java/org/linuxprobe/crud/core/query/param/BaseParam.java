@@ -41,7 +41,7 @@ public abstract class BaseParam<T extends Serializable> {
         Class<?> modelClass = null;
         try {
             modelClass = Class.forName(type.getTypeName());
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ignored) {
         }
         return modelClass;
     }
@@ -144,13 +144,10 @@ public abstract class BaseParam<T extends Serializable> {
             }
             Operator other = (Operator) obj;
             if (this.operator == null) {
-                if (other.operator != null) {
-                    return false;
-                }
-            } else if (!this.operator.equals(other.operator)) {
-                return false;
+                return other.operator == null;
+            } else {
+                return this.operator.equals(other.operator);
             }
-            return true;
         }
     }
 

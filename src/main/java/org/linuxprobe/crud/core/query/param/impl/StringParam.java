@@ -187,7 +187,7 @@ public class StringParam extends BaseParam<String> {
         } else if (Operator.between.equals(operator) || Operator.notBetween.equals(operator)) {
             return this.getMinValue() == null || this.getMaxValue() == null;
         } else if (Operator.in.equals(operator) || Operator.notIn.equals(operator)) {
-            return this.getMultiValues() == null;
+            return this.getMultiValues() == null || this.getMultiValues().isEmpty();
         } else {
             return StringUtils.isEmpty(this.value);
         }

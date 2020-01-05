@@ -37,15 +37,13 @@ public class FieldValidation {
 
 	/**
 	 * JSR349验证，校验实体属性是否合法，校验不通过将抛出异常
-	 * 
-	 * @exception ValidationException
 	 */
 	public static <T> void validation(T object) {
 		Set<ConstraintViolation<T>> results = validator.validate(object, Default.class);
 		if (results != null && !results.isEmpty()) {
 			StringBuilder messageBuilder = new StringBuilder("in " + object.getClass().getName() + " class,");
 			for (ConstraintViolation<T> result : results) {
-				messageBuilder.append(result.getPropertyPath().toString() + " " + result.getMessage() + ";");
+				messageBuilder.append(result.getPropertyPath().toString()).append(" ").append(result.getMessage()).append(";");
 			}
 			throw new ValidationException(messageBuilder.toString());
 		}
@@ -53,15 +51,13 @@ public class FieldValidation {
 
 	/**
 	 * JSR349验证，校验实体属性是否合法，校验不通过将抛出异常
-	 * 
-	 * @exception ValidationException
 	 */
 	private static <T> void validationField(T object, Field field) {
 		Set<ConstraintViolation<T>> results = validator.validateProperty(object, field.getName(), Default.class);
 		if (results != null && !results.isEmpty()) {
 			StringBuilder messageBuilder = new StringBuilder("in " + object.getClass().getName() + " class,");
 			for (ConstraintViolation<T> result : results) {
-				messageBuilder.append(result.getPropertyPath().toString() + " " + result.getMessage() + ";");
+				messageBuilder.append(result.getPropertyPath().toString()).append(" ").append(result.getMessage()).append(";");
 			}
 			throw new ValidationException(messageBuilder.toString());
 		}

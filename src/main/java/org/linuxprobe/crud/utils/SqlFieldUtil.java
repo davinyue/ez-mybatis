@@ -82,22 +82,14 @@ public class SqlFieldUtil {
      * 是否是字符串系列类型
      */
     public static boolean isFacultyOfString(Class<?> type) {
-        if (String.class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        return String.class.isAssignableFrom(type);
     }
 
     /**
      * 是否是时间系列类型
      */
     public static boolean isFacultyOfDate(Class<?> type) {
-        if (Date.class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Date.class.isAssignableFrom(type);
     }
 
     /**
@@ -122,11 +114,7 @@ public class SqlFieldUtil {
         if (float.class.isAssignableFrom(type)) {
             return true;
         }
-        if (double.class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        return double.class.isAssignableFrom(type);
     }
 
     /**
@@ -137,22 +125,14 @@ public class SqlFieldUtil {
             return true;
         } else if (byte[].class.isAssignableFrom(type)) {
             return true;
-        } else if (Byte[].class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return Byte[].class.isAssignableFrom(type);
     }
 
     /**
      * 是否是枚举系列类型
      */
     public static boolean isFacultyOfEnum(Class<?> type) {
-        if (Enum.class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        return Enum.class.isAssignableFrom(type);
     }
 
     /**
@@ -161,11 +141,7 @@ public class SqlFieldUtil {
     public static boolean isFacultyOfBoolean(Class<?> type) {
         if (Boolean.class.isAssignableFrom(type)) {
             return true;
-        } else if (boolean.class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return boolean.class.isAssignableFrom(type);
     }
 
     /**
@@ -174,26 +150,23 @@ public class SqlFieldUtil {
     public static boolean isFacultyOfChar(Class<?> type) {
         if (char.class.isAssignableFrom(type)) {
             return true;
-        } else if (Character.class.isAssignableFrom(type)) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return Character.class.isAssignableFrom(type);
     }
 
     /**
      * 设置实体的属性值
      */
+    @SuppressWarnings({"unchecked","rawtypes"})
     public static void setFieldValue(Object object, Field field, Object value) {
         if (value == null) {
             ReflectionUtils.setFieldValue(object, field, null, true);
             return;
         }
-        /** 如果是字符串 */
+        // 如果是字符串
         if (isFacultyOfString(field.getType())) {
             ReflectionUtils.setFieldValue(object, field, (String) value, true);
         }
-        /** 如果是时间 */
+        // 如果是时间
         else if (isFacultyOfDate(field.getType())) {
             long timestamp = 0;
             if (isFacultyOfDate(value.getClass())) {
@@ -214,7 +187,7 @@ public class SqlFieldUtil {
                 ReflectionUtils.setFieldValue(object, field, new Date(timestamp), true);
             }
         }
-        /** 如果是数值 */
+        // 如果是数值
         else if (isFacultyOfNumber(field.getType())) {
             Number number = (Number) value;
             if (BigDecimal.class.isAssignableFrom(field.getType())) {
@@ -234,7 +207,7 @@ public class SqlFieldUtil {
                 ReflectionUtils.setFieldValue(object, field, number.doubleValue(), true);
             }
         }
-        /** 如果是blob */
+        // 如果是blob
         else if (isFacultyOfBlob(field.getType())) {
             field.setAccessible(true);
             if (Blob.class.isAssignableFrom(value.getClass())) {
@@ -332,7 +305,7 @@ public class SqlFieldUtil {
                 }
             }
         }
-        /** 如果是布尔 */
+        // 如果是布尔
         else if (isFacultyOfBoolean(field.getType())) {
             if (value instanceof Boolean) {
                 ReflectionUtils.setFieldValue(object, field, value, true);
@@ -345,7 +318,7 @@ public class SqlFieldUtil {
                     throw new ClassCastException("can't cast " + strValue + " to boolean");
                 } else if (strValue.equals("yes") || strValue.equals("true")) {
                     ReflectionUtils.setFieldValue(object, field, true, true);
-                } else if (strValue.equals("no") || strValue.equals("false")) {
+                } else {
                     ReflectionUtils.setFieldValue(object, field, false, true);
                 }
             } else if (isFacultyOfNumber(value.getClass())) {
@@ -357,7 +330,7 @@ public class SqlFieldUtil {
                 }
             }
         }
-        /** 如果是char */
+        // 如果是char
         else if (isFacultyOfChar(field.getType())) {
             if (value instanceof String) {
                 ReflectionUtils.setFieldValue(object, field, ((String) value).charAt(0), true);
