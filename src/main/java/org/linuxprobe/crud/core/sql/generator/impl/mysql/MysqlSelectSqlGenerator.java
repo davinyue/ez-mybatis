@@ -40,7 +40,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         String alias = searcher.getAlias();
         String talbe = MysqlSelectSqlGenerator.getTable(searcher.getClass());
         //构造主键层查询sql
-        StringBuilder sqlBuilder = new StringBuilder("SELECT DISTINCT `");
+        StringBuilder sqlBuilder = new StringBuilder("SELECT `");
         sqlBuilder.append(alias);
         sqlBuilder.append("`.");
         //如果进行分页查询,则只查询主键列
@@ -181,7 +181,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
             throw new IllegalArgumentException("clounm cannot be null");
         }
         String alias = searcher.getAlias();
-        String countFun = "COUNT(DISTINCT `" + alias + "`.`" + clounm + "`)";
+        String countFun = "COUNT(`" + alias + "`.`" + clounm + "`)";
         return "SELECT " + countFun + " FROM `" + MysqlSelectSqlGenerator.getTable(searcher.getClass()) + "` AS `" + alias + "` " + MysqlSelectSqlGenerator.toJoin(searcher) +
                 this.getFormatWhere(searcher);
     }
@@ -195,7 +195,7 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
             throw new IllegalArgumentException("searcher cannot be null");
         }
         String alias = searcher.getAlias();
-        String countFun = "COUNT(DISTINCT `" + alias + "`.`" + MysqlSelectSqlGenerator.getPrimaryKeyName(MysqlSelectSqlGenerator.getModelType(searcher.getClass()))
+        String countFun = "COUNT(`" + alias + "`.`" + MysqlSelectSqlGenerator.getPrimaryKeyName(MysqlSelectSqlGenerator.getModelType(searcher.getClass()))
                 + "`)";
         return "SELECT " + countFun + " FROM `" + MysqlSelectSqlGenerator.getTable(searcher.getClass()) + "` AS `" + alias + "` " + MysqlSelectSqlGenerator.toJoin(searcher) +
                 this.getFormatWhere(searcher);

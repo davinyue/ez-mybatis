@@ -41,7 +41,7 @@ public abstract class BaseQuery {
     /**
      * 被连接方式
      */
-    private JoinType joinType = JoinType.LeftJoin;
+    private JoinType joinType = JoinType.InnerJoin;
 
     /**
      * 请使用 {@link #setSort(String)}
