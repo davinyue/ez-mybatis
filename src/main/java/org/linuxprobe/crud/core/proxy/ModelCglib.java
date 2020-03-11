@@ -55,24 +55,26 @@ public class ModelCglib extends AbstractMethodInterceptor {
                 this.handledMethod.add(method.getName().replace("set", "get"));
             } else if (method.getName().startsWith("get")) {
                 Field field = ReflectionUtils.getFieldByMethod(obj.getClass(), method);
-                if (field.isAnnotationPresent(OneToOne.class)) {
-                    // 标记该方法已经处理
-                    this.handledMethod.add(method.getName());
-                    this.handldeOneToOne(obj, field);
-                    // 调用目标对象的方法，方便用户对数据进行进一步处理
-                    joinPoint.setResult(methodProxy.invokeSuper(obj, args));
-                } else if (field.isAnnotationPresent(OneToMany.class)) {
-                    // 标记该方法已经处理
-                    this.handledMethod.add(method.getName());
-                    this.handldeOneToMany(obj, field);
-                    // 调用目标对象的方法，方便用户对数据进行进一步处理
-                    joinPoint.setResult(methodProxy.invokeSuper(obj, args));
-                } else if (field.isAnnotationPresent(ManyToMany.class)) {
-                    // 标记该方法已经处理
-                    this.handledMethod.add(method.getName());
-                    this.handldeManyToMany(obj, field);
-                    // 调用目标对象的方法，方便用户对数据进行进一步处理
-                    joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+                if (field != null) {
+                    if (field.isAnnotationPresent(OneToOne.class)) {
+                        // 标记该方法已经处理
+                        this.handledMethod.add(method.getName());
+                        this.handldeOneToOne(obj, field);
+                        // 调用目标对象的方法，方便用户对数据进行进一步处理
+                        joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+                    } else if (field.isAnnotationPresent(OneToMany.class)) {
+                        // 标记该方法已经处理
+                        this.handledMethod.add(method.getName());
+                        this.handldeOneToMany(obj, field);
+                        // 调用目标对象的方法，方便用户对数据进行进一步处理
+                        joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+                    } else if (field.isAnnotationPresent(ManyToMany.class)) {
+                        // 标记该方法已经处理
+                        this.handledMethod.add(method.getName());
+                        this.handldeManyToMany(obj, field);
+                        // 调用目标对象的方法，方便用户对数据进行进一步处理
+                        joinPoint.setResult(methodProxy.invokeSuper(obj, args));
+                    }
                 }
             }
         }
@@ -145,7 +147,6 @@ public class ModelCglib extends AbstractMethodInterceptor {
 
     /**
      * 多对多关系处理
-     *
      */
     @SuppressWarnings({"unchecked"})
     private Object handldeManyToMany(Object obj, Field field) throws Exception {
