@@ -9,7 +9,6 @@ import org.linuxprobe.crud.service.UniversalServiceEventListener;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,21 +20,26 @@ import java.util.Map;
  */
 public class UniversalServiceImpl<Model, IdType extends Serializable, Query extends BaseQuery>
         implements UniversalService<Model, IdType, Query> {
+    public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
+    private UniversalServiceEventListener eventListener;
+    private ClassLoader classLoader;
+
     public UniversalServiceImpl(UniversalCrudSqlSessionTemplate sqlSessionTemplate) {
         this(sqlSessionTemplate, null);
     }
 
     public UniversalServiceImpl(UniversalCrudSqlSessionTemplate sqlSessionTemplate, UniversalServiceEventListener eventListener) {
+//        获取当前执行方法
+//        Method thisMethod = new Object() {
+//        }.getClass().getEnclosingMethod();
+        if (eventListener == null) {
+            eventListener = new UniversalServiceEventListener() {
+            };
+        }
         this.sqlSessionTemplate = sqlSessionTemplate;
         this.eventListener = eventListener;
         this.classLoader = this.getClass().getClassLoader();
     }
-
-    public UniversalCrudSqlSessionTemplate sqlSessionTemplate;
-
-    private UniversalServiceEventListener eventListener;
-
-    private ClassLoader classLoader;
 
     private Class<?> getModelCalss() {
         Class<?> entityType = UniversalCrudContent.getEntityInfo(ReflectionUtils.getGenericSuperclass(this.getClass(), 0).getName()).getEntityType();
@@ -48,58 +52,64 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 
     @Override
     public Model save(Model model) {
-        Class<?> thisClass = null;
-        Method thisMethod = null;
-        if (this.eventListener != null) {
-            thisClass = this.getClass();
-            thisMethod = new Object() {
-            }.getClass().getEnclosingMethod();
-            this.eventListener.before(thisClass, thisMethod, model);
-        }
-        Model result = this.sqlSessionTemplate.insert(model, this.classLoader);
-        if (this.eventListener != null) {
-            this.eventListener.after(thisClass, thisMethod, result, model);
+        Model result = null;
+        if (this.eventListener.beforeSave(this, model)) {
+            result = this.sqlSessionTemplate.insert(model, this.classLoader);
+            result = this.eventListener.afterSave(this, model, result);
         }
         return result;
     }
 
     @Override
     public List<Model> batchSave(List<Model> models, boolean loop) {
-        Class<?> thisClass = null;
-        Method thisMethod = null;
-        if (this.eventListener != null) {
-            thisClass = this.getClass();
-            thisMethod = new Object() {
-            }.getClass().getEnclosingMethod();
-            this.eventListener.before(thisClass, thisMethod, models, loop);
-        }
-        List<Model> result = this.sqlSessionTemplate.batchInsert(models, loop, this.classLoader);
-        if (this.eventListener != null) {
-            this.eventListener.after(thisClass, thisMethod, result, models, loop);
+        List<Model> result = null;
+        if (this.eventListener.beforeBatchSave(this, models, loop)) {
+            result = this.sqlSessionTemplate.batchInsert(models, loop, this.classLoader);
+            result = this.eventListener.afterBatchSave(this, models, result, loop);
         }
         return result;
     }
 
     @Override
     public int removeByPrimaryKey(IdType id) {
+        int result = 0;
         Class<?> modelClass = this.getModelCalss();
-        return this.sqlSessionTemplate.deleteByPrimaryKey(id, modelClass);
+        if (this.eventListener.beforeRemoveByPrimaryKey(this, modelClass, id)) {
+            result = this.sqlSessionTemplate.deleteByPrimaryKey(id, modelClass);
+            result = this.eventListener.afterRemoveByPrimaryKey(this, modelClass, id, result);
+        }
+        return result;
     }
 
     @Override
     public long batchRemoveByPrimaryKey(List<IdType> ids) throws Exception {
+        long result = 0;
         Class<?> modelClass = this.getModelCalss();
-        return this.sqlSessionTemplate.batchDeleteByPrimaryKey((Collection<Serializable>) ids, modelClass);
+        if (this.eventListener.beforeBatchRemoveByPrimaryKey(this, modelClass, ids)) {
+            result = this.sqlSessionTemplate.batchDeleteByPrimaryKey((Collection<Serializable>) ids, modelClass);
+            result = this.eventListener.afterBatchRemoveByPrimaryKey(this, modelClass, ids, result);
+        }
+        return result;
     }
 
     @Override
     public int remove(Model record) {
-        return this.sqlSessionTemplate.delete(record);
+        int result = 0;
+        if (this.eventListener.beforeRemove(this, record)) {
+            result = this.sqlSessionTemplate.delete(record);
+            result = this.eventListener.afterRemove(this, record, result);
+        }
+        return result;
     }
 
     @Override
     public int batchRemove(List<Model> records) {
-        return this.sqlSessionTemplate.batchDelete(records);
+        int result = 0;
+        if (this.eventListener.beforeBatchRemove(this, records)) {
+            result = this.sqlSessionTemplate.batchDelete(records);
+            result = this.eventListener.afterBatchRemove(this, records, result);
+        }
+        return result;
     }
 
     @Override
@@ -124,19 +134,33 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 
     @Override
     public Model getByPrimaryKey(IdType id) {
+        Model model = null;
         Class<?> modelClass = this.getModelCalss();
-        Model model = (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass, this.classLoader);
+        if (this.eventListener.beforeGetByPrimaryKey(this, modelClass, id)) {
+            model = (Model) this.sqlSessionTemplate.selectByPrimaryKey(id, modelClass, this.classLoader);
+            model = this.eventListener.afterGetByPrimaryKey(this, modelClass, id, model);
+        }
         return model;
     }
 
     @Override
     public List<Model> getByQueryParam(Query param) {
-        return (List<Model>) this.sqlSessionTemplate.universalSelect(param, this.classLoader);
+        List<Model> result = null;
+        if (this.eventListener.beforeGetByQueryParam(this, param)) {
+            result = this.sqlSessionTemplate.universalSelect(param, this.classLoader);
+            result = this.eventListener.afterGetByQueryParam(this, param, result);
+        }
+        return result;
     }
 
     @Override
     public long getCountByQueryParam(Query param) {
-        return this.sqlSessionTemplate.selectCount(param);
+        long result = 0;
+        if (this.eventListener.beforeGetCountByQueryParam(this, param)) {
+            result = this.sqlSessionTemplate.selectCount(param);
+            result = this.eventListener.afterGetCountByQueryParam(this, param, result);
+        }
+        return result;
     }
 
     @Override
@@ -193,30 +217,20 @@ public class UniversalServiceImpl<Model, IdType extends Serializable, Query exte
 
     @Override
     public Model globalUpdate(Model model) {
-        Method thisMethod = null;
-        if (this.eventListener != null) {
-            thisMethod = new Object() {
-            }.getClass().getEnclosingMethod();
-            this.eventListener.before(this.getClass(), thisMethod, model);
-        }
-        Model result = this.sqlSessionTemplate.globalUpdate(model, this.classLoader);
-        if (this.eventListener != null) {
-            this.eventListener.after(this.getClass(), thisMethod, result, model);
+        Model result = null;
+        if (this.eventListener.beforeGlobalUpdate(this, model)) {
+            result = this.sqlSessionTemplate.globalUpdate(model, this.classLoader);
+            result = this.eventListener.afterGlobalUpdate(this, model, result);
         }
         return result;
     }
 
     @Override
     public Model localUpdate(Model model) {
-        Method thisMethod = null;
-        if (this.eventListener != null) {
-            thisMethod = new Object() {
-            }.getClass().getEnclosingMethod();
-            this.eventListener.before(this.getClass(), thisMethod, model);
-        }
-        Model result = this.sqlSessionTemplate.localUpdate(model, this.classLoader);
-        if (this.eventListener != null) {
-            this.eventListener.after(this.getClass(), thisMethod, result, model);
+        Model result = null;
+        if (this.eventListener.beforeLocalUpdate(this, model)) {
+            result = this.sqlSessionTemplate.localUpdate(model, this.classLoader);
+            result = this.eventListener.afterLocalUpdate(this, model, result);
         }
         return result;
     }
