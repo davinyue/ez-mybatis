@@ -19,10 +19,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public class ModelCglib extends AbstractMethodInterceptor {
-    private SqlSessionExtend sqlSessionExtend;
-    private Set<String> handledMethod = new HashSet<>();
-    private ClassLoader classLoader;
+public class ModelCglib extends AbstractMethodInterceptor implements Serializable {
+    private static final long serialVersionUID = -4926541484203162722L;
+    private transient SqlSessionExtend sqlSessionExtend;
+    private transient Set<String> handledMethod = new HashSet<>();
+    private transient ClassLoader classLoader;
 
     public ModelCglib(SqlSessionExtend sqlSessionExtend) {
         this.sqlSessionExtend = sqlSessionExtend;
@@ -43,6 +44,9 @@ public class ModelCglib extends AbstractMethodInterceptor {
 
     @Override
     public void afterCompletion(CglibJoinPoint joinPoint) throws Throwable {
+        if (this.sqlSessionExtend == null || this.handledMethod == null || this.classLoader == null) {
+            return;
+        }
         Method method = joinPoint.getMethod();
         MethodProxy methodProxy = joinPoint.getMethodProxy();
         Object result = joinPoint.getResult();
@@ -108,7 +112,6 @@ public class ModelCglib extends AbstractMethodInterceptor {
     /**
      * 一对多关系处理
      */
-    @SuppressWarnings({"unchecked"})
     private Object handldeOneToMany(Object obj, Field field) throws Exception {
         if (!Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("in " + obj.getClass().getName() + " " + field.getType().getName()
@@ -148,7 +151,6 @@ public class ModelCglib extends AbstractMethodInterceptor {
     /**
      * 多对多关系处理
      */
-    @SuppressWarnings({"unchecked"})
     private Object handldeManyToMany(Object obj, Field field) throws Exception {
         if (!Collection.class.isAssignableFrom(field.getType())) {
             throw new IllegalArgumentException("in " + obj.getClass().getName() + " " + field.getType().getName()
