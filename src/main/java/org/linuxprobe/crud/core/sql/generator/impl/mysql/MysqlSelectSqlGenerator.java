@@ -525,9 +525,8 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         stringParam.setOperator(param.getOperator());
         if (param.getValue() != null) {
             stringParam.setValue(dateForma.format(param.getValue()));
-        } else if (param.getMinValue() != null) {
+        } else if (param.getMinValue() != null && param.getMaxValue() != null) {
             stringParam.setMinValue(dateForma.format(param.getMinValue()));
-        } else if (param.getMaxValue() != null) {
             stringParam.setMaxValue(dateForma.format(param.getMaxValue()));
         } else if (param.getMultiValues() != null) {
             List<String> multiValues = new LinkedList<>();
@@ -577,10 +576,9 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         if (param.getValue() != null) {
             Number value = param.getValue() ? 1 : 0;
             numberParam.setValue(value);
-        } else if (param.getMinValue() != null) {
+        } else if (param.getMinValue() != null && param.getMaxValue() != null) {
             Number minValue = param.getMinValue() ? 1 : 0;
             numberParam.setMinValue(minValue);
-        } else if (param.getMaxValue() != null) {
             Number maxValue = param.getMaxValue() ? 1 : 0;
             numberParam.setMaxValue(maxValue);
         } else if (param.getMultiValues() != null) {
