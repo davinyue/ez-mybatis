@@ -2,6 +2,7 @@ package org.linuxprobe.crud.core.query;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.linuxprobe.crud.utils.TableAliasGenerate;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,15 +17,6 @@ import java.util.List;
 @Setter
 public abstract class BaseQuery {
     /**
-     * <p>
-     * Constructor for BaseQuery.
-     * </p>
-     */
-    public BaseQuery() {
-        this.alias = AliasGenerate.getAlias();
-    }
-
-    /**
      * 排序
      */
     private String sort;
@@ -32,16 +24,23 @@ public abstract class BaseQuery {
      * 分页
      */
     private Limit limit = new Limit();
-
     /**
      * 别名
      */
     private String alias;
-
     /**
      * 被连接方式
      */
     private JoinType joinType = JoinType.InnerJoin;
+
+    /**
+     * <p>
+     * Constructor for BaseQuery.
+     * </p>
+     */
+    public BaseQuery() {
+        this.alias = TableAliasGenerate.getAlias();
+    }
 
     /**
      * 请使用 {@link #setSort(String)}
@@ -94,6 +93,13 @@ public abstract class BaseQuery {
         this.sort = result.length() == 0 ? null : result.toString();
     }
 
+    /**
+     * join类型枚举
+     */
+    public static enum JoinType {
+        LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin
+    }
+
     public static class Limit {
         /**
          * 开始行号
@@ -108,16 +114,6 @@ public abstract class BaseQuery {
          */
         private int pageSize = 10;
 
-        private void init() {
-            if (this.currentPage < 1) {
-                this.currentPage = 1;
-            }
-            if (this.pageSize < 1) {
-                this.pageSize = 10;
-            }
-            this.startRow = (this.currentPage - 1) * this.pageSize;
-        }
-
         public Limit() {
         }
 
@@ -131,6 +127,16 @@ public abstract class BaseQuery {
             this.init();
         }
 
+        private void init() {
+            if (this.currentPage < 1) {
+                this.currentPage = 1;
+            }
+            if (this.pageSize < 1) {
+                this.pageSize = 10;
+            }
+            this.startRow = (this.currentPage - 1) * this.pageSize;
+        }
+
         /**
          * 获取当前页号
          */
@@ -139,18 +145,18 @@ public abstract class BaseQuery {
         }
 
         /**
-         * 获取页大小
-         */
-        public int getPageSize() {
-            return this.pageSize;
-        }
-
-        /**
          * 设置当前页
          */
         public void setCurrentPage(int currentPage) {
             this.currentPage = currentPage;
             this.init();
+        }
+
+        /**
+         * 获取页大小
+         */
+        public int getPageSize() {
+            return this.pageSize;
         }
 
         /**
@@ -166,50 +172,6 @@ public abstract class BaseQuery {
          */
         public int getStartRow() {
             return this.startRow;
-        }
-    }
-
-    /**
-     * join类型枚举
-     */
-    public static enum JoinType {
-        LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin
-    }
-
-    /**
-     * 生成表别名
-     */
-    public static class AliasGenerate {
-        private static char first = 96;
-        private static int second = 0;
-
-        /**
-         * <p>
-         * getAlias.
-         * </p>
-         *
-         * @param prefix a {@link java.lang.String} object.
-         * @return a {@link java.lang.String} object.
-         */
-        public static String getAlias(String prefix) {
-            AliasGenerate.first++;
-            if (AliasGenerate.first == 123) {
-                AliasGenerate.first = 97;
-            }
-            AliasGenerate.second++;
-            if (AliasGenerate.second == 10) {
-                AliasGenerate.second = 1;
-            }
-            return prefix + String.valueOf(AliasGenerate.first) + AliasGenerate.second;
-        }
-
-        /**
-         * <p>getAlias.</p>
-         *
-         * @return a {@link java.lang.String} object.
-         */
-        public static String getAlias() {
-            return AliasGenerate.getAlias("t");
         }
     }
 }

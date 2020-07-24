@@ -17,6 +17,7 @@ import org.linuxprobe.crud.core.query.param.impl.StringParam;
 import org.linuxprobe.crud.core.query.param.impl.StringParam.Fuzzt;
 import org.linuxprobe.crud.core.sql.generator.Escape;
 import org.linuxprobe.crud.core.sql.generator.SelectSqlGenerator;
+import org.linuxprobe.crud.utils.TableAliasGenerate;
 import org.linuxprobe.luava.reflection.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +29,160 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGenerator, Escape {
+    /**
+     * 转换为join part
+     */
+    private static StringBuilder toJoin(BaseQuery searcher) {
+        StringBuilder joinBuffer = new StringBuilder();
+        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
+        // 获取所有关联查询field
+        List<QueryFieldInfo> baseQueryFieldInfos = queryInfo.getBaseQueryFieldInfos();
+        for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
+            Field field = queryFieldInfo.getField();
+            // 获得该对象
+            BaseQuery member = ReflectionUtils.getFieldValue(searcher, field);
+            // 如果对象不为空，则需要join
+            if (member != null) {
+                // 设置主表链接列
+                String principalColumn = queryFieldInfo.getPrincipalColumn();
+                // 从表链接列
+                String subordinateColumn = queryFieldInfo.getSubordinateColumn();
+                // 获取需要链接的表名
+                String joinTable = MysqlSelectSqlGenerator.getTable(field.getType());
+                String joinTableAlias = member.getAlias();
+                // 处理连接方式
+                String joinStr = "LEFT";
+                JoinType joinType = member.getJoinType();
+                if (joinType.equals(JoinType.RightJoin)) {
+                    joinStr = "RIGHT";
+                } else if (joinType.equals(JoinType.FullJoin)) {
+                    joinStr = "FULL";
+                } else if (joinType.equals(JoinType.InnerJoin)) {
+                    joinStr = "INNER";
+                } else if (joinType.equals(JoinType.CrossJoin)) {
+                    joinStr = "CROSS";
+                }
+                joinBuffer.append(joinStr).append(" JOIN `").append(joinTable).append("` AS `").append(joinTableAlias).append("` ON ");
+                joinBuffer.append("`").append(joinTableAlias).append("`.`").append(subordinateColumn).append("` = ");
+                joinBuffer.append("`").append(searcher.getAlias()).append("`.`").append(principalColumn).append("` ");
+                joinBuffer.append(MysqlSelectSqlGenerator.toJoin(member));
+            }
+        }
+        return joinBuffer;
+    }
+
+    /**
+     * 转换为order by part
+     */
+    private static StringBuilder toOrder(BaseQuery baseQuery) {
+        StringBuilder result = new StringBuilder();
+        String strOrder = baseQuery.getSort();
+        if (strOrder != null) {
+            String[] orders = strOrder.split(",");
+            for (String order : orders) {
+                String[] parts = order.split(" ");
+                String fieldName = parts[0];
+                String orderName = MysqlSelectSqlGenerator.getOrderMember(baseQuery, fieldName);
+                if (orderName != null) {
+                    result.append(orderName).append(" ").append(parts[1]).append(", ");
+                } else {
+                    throw new IllegalArgumentException(baseQuery.getClass().getName() + "类查询对象里没有与'" + fieldName
+                            + "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
+                }
+            }
+        }
+        if (result.indexOf(", ") != -1) {
+            result.delete(result.length() - 2, result.length());
+            result.insert(0, "ORDER BY ");
+        }
+        result.append(" ");
+        return result;
+    }
+
+    private static String getOrderMember(BaseQuery searcher, String fieldName) {
+        // 拆分层次
+        String[] fieldNames = fieldName.split("\\.");
+        // 获取查询对象的成员
+        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
+        List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
+        for (QueryFieldInfo queryFieldInfo : queryFieldInfos) {
+            Field searcherField = queryFieldInfo.getField();
+            // 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
+            // 第一种情况
+            if (fieldNames.length == 1) {
+                // 如果名称匹配上
+                if (searcherField.getName().equals(fieldName)) {
+                    // 如果是查询类参数对象
+                    if (BaseParam.class.isAssignableFrom(searcherField.getType())) {
+                        return "`" + searcher.getAlias() + "`.`" + queryFieldInfo.getColumnName() + "`";
+                    }
+                    break;
+                }
+            }
+            // 第二种情况
+            else {
+                // 如果第一层名称匹配上
+                if (searcherField.getName().equals(fieldNames[0])) {
+                    if (BaseQuery.class.isAssignableFrom(searcherField.getType())) {
+                        BaseQuery sonSearcher = ReflectionUtils.getFieldValue(searcher, searcherField);
+                        if (sonSearcher != null) {
+                            return MysqlSelectSqlGenerator.getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
+                        }
+                    } else {
+                        throw new IllegalArgumentException("深层次排序必须指定在连接查询上");
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 转换为分页部分
+     */
+    private static String toLimit(BaseQuery baseQuery) {
+        if (baseQuery.getLimit() != null) {
+            return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize() + " ";
+        } else {
+            return " ";
+        }
+    }
+
+    /**
+     * 获取模型对应的表的主键列名称
+     *
+     * @param modelType 模型的类型
+     */
+    private static String getPrimaryKeyName(Class<?> modelType) {
+        return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getColumnName();
+    }
+
+    /**
+     * 获取要查询的模型类型
+     *
+     * @param queryType 用于查询的对象类型
+     * @return 返回对象不会为空，没有结果会抛出异常
+     */
+    private static Class<?> getModelType(Class<?> queryType) {
+        if (queryType == null) {
+            throw new IllegalArgumentException("queryType cant not be null");
+        }
+        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
+        return queryInfo.getQueryEntityCalss();
+    }
+
+    /**
+     * 获取要搜索的表名
+     *
+     * @param queryType 用于查询的对象类型
+     * @return 返回对象不会为空，没有结果会抛出异常
+     */
+    private static String getTable(Class<?> queryType) {
+        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
+        Class<?> modelType = queryInfo.getQueryEntityCalss();
+        return UniversalCrudContent.getEntityInfo(modelType).getTableName();
+    }
+
     /**
      * 转换为查询sql
      */
@@ -61,8 +216,8 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
         sqlBuilder.append(MysqlSelectSqlGenerator.toOrder(searcher));
         sqlBuilder.append(MysqlSelectSqlGenerator.toLimit(searcher));
         //构造数据层查询sql
-        String dataAlias = BaseQuery.AliasGenerate.getAlias();
-        String derivedAlias = BaseQuery.AliasGenerate.getAlias();
+        String dataAlias = TableAliasGenerate.getAlias();
+        String derivedAlias = TableAliasGenerate.getAlias();
         //如果进行分页查询,使用内连接查询优化分页性能问题
         if (searcher.getLimit() != null) {
             StringBuilder dataSqlBuilder = new StringBuilder("SELECT `")
@@ -243,125 +398,6 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
     }
 
     /**
-     * 转换为join part
-     */
-    private static StringBuilder toJoin(BaseQuery searcher) {
-        StringBuilder joinBuffer = new StringBuilder();
-        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
-        // 获取所有关联查询field
-        List<QueryFieldInfo> baseQueryFieldInfos = queryInfo.getBaseQueryFieldInfos();
-        for (QueryFieldInfo queryFieldInfo : baseQueryFieldInfos) {
-            Field field = queryFieldInfo.getField();
-            // 获得该对象
-            BaseQuery member = ReflectionUtils.getFieldValue(searcher, field);
-            // 如果对象不为空，则需要join
-            if (member != null) {
-                // 设置主表链接列
-                String principalColumn = queryFieldInfo.getPrincipalColumn();
-                // 从表链接列
-                String subordinateColumn = queryFieldInfo.getSubordinateColumn();
-                // 获取需要链接的表名
-                String joinTable = MysqlSelectSqlGenerator.getTable(field.getType());
-                String joinTableAlias = member.getAlias();
-                // 处理连接方式
-                String joinStr = "LEFT";
-                JoinType joinType = member.getJoinType();
-                if (joinType.equals(JoinType.RightJoin)) {
-                    joinStr = "RIGHT";
-                } else if (joinType.equals(JoinType.FullJoin)) {
-                    joinStr = "FULL";
-                } else if (joinType.equals(JoinType.InnerJoin)) {
-                    joinStr = "INNER";
-                } else if (joinType.equals(JoinType.CrossJoin)) {
-                    joinStr = "CROSS";
-                }
-                joinBuffer.append(joinStr).append(" JOIN `").append(joinTable).append("` AS `").append(joinTableAlias).append("` ON ");
-                joinBuffer.append("`").append(joinTableAlias).append("`.`").append(subordinateColumn).append("` = ");
-                joinBuffer.append("`").append(searcher.getAlias()).append("`.`").append(principalColumn).append("` ");
-                joinBuffer.append(MysqlSelectSqlGenerator.toJoin(member));
-            }
-        }
-        return joinBuffer;
-    }
-
-    /**
-     * 转换为order by part
-     */
-    private static StringBuilder toOrder(BaseQuery baseQuery) {
-        StringBuilder result = new StringBuilder();
-        String strOrder = baseQuery.getSort();
-        if (strOrder != null) {
-            String[] orders = strOrder.split(",");
-            for (String order : orders) {
-                String[] parts = order.split(" ");
-                String fieldName = parts[0];
-                String orderName = MysqlSelectSqlGenerator.getOrderMember(baseQuery, fieldName);
-                if (orderName != null) {
-                    result.append(orderName).append(" ").append(parts[1]).append(", ");
-                } else {
-                    throw new IllegalArgumentException(baseQuery.getClass().getName() + "类查询对象里没有与'" + fieldName
-                            + "'对应的字段,如果这是一个深层次排序，这可能是关联查询对象未赋值引起的");
-                }
-            }
-        }
-        if (result.indexOf(", ") != -1) {
-            result.delete(result.length() - 2, result.length());
-            result.insert(0, "ORDER BY ");
-        }
-        result.append(" ");
-        return result;
-    }
-
-    private static String getOrderMember(BaseQuery searcher, String fieldName) {
-        // 拆分层次
-        String[] fieldNames = fieldName.split("\\.");
-        // 获取查询对象的成员
-        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(searcher.getClass());
-        List<QueryFieldInfo> queryFieldInfos = queryInfo.getQueryFieldInfos();
-        for (QueryFieldInfo queryFieldInfo : queryFieldInfos) {
-            Field searcherField = queryFieldInfo.getField();
-            // 两种情况，1指定了单层次排序，eg:name desc;2指定了深层次排序,eg:parent.name asc
-            // 第一种情况
-            if (fieldNames.length == 1) {
-                // 如果名称匹配上
-                if (searcherField.getName().equals(fieldName)) {
-                    // 如果是查询类参数对象
-                    if (BaseParam.class.isAssignableFrom(searcherField.getType())) {
-                        return "`" + searcher.getAlias() + "`.`" + queryFieldInfo.getColumnName() + "`";
-                    }
-                    break;
-                }
-            }
-            // 第二种情况
-            else {
-                // 如果第一层名称匹配上
-                if (searcherField.getName().equals(fieldNames[0])) {
-                    if (BaseQuery.class.isAssignableFrom(searcherField.getType())) {
-                        BaseQuery sonSearcher = ReflectionUtils.getFieldValue(searcher, searcherField);
-                        if (sonSearcher != null) {
-                            return MysqlSelectSqlGenerator.getOrderMember(sonSearcher, fieldName.substring(fieldName.indexOf(".") + 1));
-                        }
-                    } else {
-                        throw new IllegalArgumentException("深层次排序必须指定在连接查询上");
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 转换为分页部分
-     */
-    private static String toLimit(BaseQuery baseQuery) {
-        if (baseQuery.getLimit() != null) {
-            return "LIMIT " + baseQuery.getLimit().getStartRow() + "," + baseQuery.getLimit().getPageSize() + " ";
-        } else {
-            return " ";
-        }
-    }
-
-    /**
      * 转换为where part
      */
     private LinkedList<String> toWhere(BaseQuery searcher) {
@@ -411,41 +447,6 @@ public class MysqlSelectSqlGenerator extends MysqlEscape implements SelectSqlGen
             resultBuffer.insert(0, "WHERE");
         }
         return resultBuffer;
-    }
-
-    /**
-     * 获取模型对应的表的主键列名称
-     *
-     * @param modelType 模型的类型
-     */
-    private static String getPrimaryKeyName(Class<?> modelType) {
-        return UniversalCrudContent.getEntityInfo(modelType).getPrimaryKey().getColumnName();
-    }
-
-    /**
-     * 获取要查询的模型类型
-     *
-     * @param queryType 用于查询的对象类型
-     * @return 返回对象不会为空，没有结果会抛出异常
-     */
-    private static Class<?> getModelType(Class<?> queryType) {
-        if (queryType == null) {
-            throw new IllegalArgumentException("queryType cant not be null");
-        }
-        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
-        return queryInfo.getQueryEntityCalss();
-    }
-
-    /**
-     * 获取要搜索的表名
-     *
-     * @param queryType 用于查询的对象类型
-     * @return 返回对象不会为空，没有结果会抛出异常
-     */
-    private static String getTable(Class<?> queryType) {
-        QueryInfo queryInfo = UniversalCrudContent.getQueryInfo(queryType);
-        Class<?> modelType = queryInfo.getQueryEntityCalss();
-        return UniversalCrudContent.getEntityInfo(modelType).getTableName();
     }
 
     private String paramToSqlPart(BaseParam<? extends Serializable> param) {
