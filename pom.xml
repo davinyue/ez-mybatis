@@ -36,13 +36,13 @@
     </distributionManagement>
     <groupId>org.linuxprobe</groupId>
     <artifactId>mybatis-universal-crud</artifactId>
-    <version>2.2.6.RELEASE</version>
+    <version>2.3.0.RELEASE</version>
     <packaging>jar</packaging>
     <name>mybatis-universal-crud</name>
     <description>mybatis-universal-crud</description>
     <url>https://github.com/linuxprobe-org/mybatis-universal-crud.git</url>
     <properties>
-        <spring.vsersion>5.2.3.RELEASE</spring.vsersion>
+        <spring.vsersion>5.2.8.RELEASE</spring.vsersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
@@ -51,6 +51,11 @@
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.linuxprobe</groupId>
+            <artifactId>mybatis-universal-crud-annoatation</artifactId>
+            <version>0.1.1.RELEASE</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
@@ -85,7 +90,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
+            <version>0.9.12</version>
         </dependency>
         <!-- google开源工具包guava -->
         <dependency>
