@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.linuxprobe</groupId>
             <artifactId>mybatis-universal-crud-annoatation</artifactId>
-            <version>0.1.1.RELEASE</version>
+            <version>0.0.1.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

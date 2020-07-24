@@ -60,9 +60,6 @@ public class MysqlDeleteSqlGenerator extends MysqlEscape implements DeleteSqlGen
             if (idValue == null) {
                 throw new NullPointerException(entity.toString() + " id can't be null");
             }
-            if (String.class.isAssignableFrom(entityInfo.getPrimaryKey().getField().getType())) {
-                idValue = super.getQuotation() + idValue + super.getQuotation();
-            }
             sqlBuilder.append(idValue).append(", ");
         }
         if (sqlBuilder.lastIndexOf(", ") != -1) {
