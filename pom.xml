@@ -53,7 +53,7 @@
     <dependencies>
         <dependency>
             <groupId>org.linuxprobe</groupId>
-            <artifactId>mybatis-universal-crud-annoatation</artifactId>
+            <artifactId>mybatis-universal-crud-base</artifactId>
             <version>0.0.1.RELEASE</version>
         </dependency>
         <dependency>
