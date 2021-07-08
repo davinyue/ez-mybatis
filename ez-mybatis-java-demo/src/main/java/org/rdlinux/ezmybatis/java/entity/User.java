@@ -1,0 +1,23 @@
+package org.rdlinux.ezmybatis.java.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "tb_user")
+@Getter
+@Setter
+public class User extends BaseEntity {
+    @Column(name = "last_name")
+    private String name;
+    private Integer age;
+    @Transient
+    private String ignore;
+
+    private String firstName;
+}

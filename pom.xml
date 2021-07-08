@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.rdlinux</groupId>
+    <artifactId>ez-mybatis</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1.RS1</version>
+    <modules>
+        <module>ez-mybatis-core</module>
+        <module>ez-mybatis-annotation</module>
+        <module>ez-mybatis-spring</module>
+        <module>ez-mybatis-spring-boot-start</module>
+        <module>ez-mybatis-java-demo</module>
+    </modules>
+</project>
