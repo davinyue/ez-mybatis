@@ -1,12 +1,12 @@
 package org.rdlinux.ezmybatis.java;
 
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.java.entity.User;
+import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,9 +30,8 @@ public class Main {
     public static void main(String[] args) {
 //        sqlSession.insert("org.rdlinux.ezmybatis.java.mapper.UserMapper.insert", new User());
 //        sqlSession.commit();
-        MetaObject metaObject = SystemMetaObject.forObject(new User());
-        User user = sqlSession.selectOne("org.rdlinux.ezmybatis.java.mapper.UserMapper.selectByPrimaryKey",
-                1);
-        System.out.println("test");
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        User user = mapper.selectById(User.class, 3);
+        System.out.println(JacksonUtils.toJsonString(user));
     }
 }

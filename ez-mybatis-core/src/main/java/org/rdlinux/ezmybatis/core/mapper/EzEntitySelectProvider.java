@@ -1,8 +1,10 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
-public class EzEntitySelectProvider implements EzProviderSqlGenerate {
-    @Override
-    public String generate(Object param) {
-        return "select * from user where id = 1";
+import org.apache.ibatis.annotations.Param;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+
+public class EzEntitySelectProvider {
+    public String generate(@Param("ntClass") Class<?> ntClass, @Param("id") Object id) {
+        return SqlGenerateFactory.getSqlGenerate().getSelectByPrimaryKeySql(ntClass, id);
     }
 }
