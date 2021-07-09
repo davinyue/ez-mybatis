@@ -27,6 +27,9 @@
         <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisUpdateInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
+        <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisResultSetInterceptor">
+            <property name="dialect" value="mysql"/>
+        </plugin>
     </plugins>
     <!-- 配置环境：可以配置多个环境，default：配置某一个环境的唯一标识，表示默认使用哪个环境 -->
     <environments default="development">
@@ -36,7 +39,7 @@
                 <!-- 配置连接信息 -->
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url"
-                          value="jdbc:mysql://192.168.163.12:3306/ez_mybatis?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false"/>
+                          value="jdbc:mysql://192.168.163.12:3306/ez_mybatis?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>

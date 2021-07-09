@@ -20,4 +20,6 @@ public class User extends BaseEntity {
     private String ignore;
 
     private String firstName;
+
+    private String sex;
 }
