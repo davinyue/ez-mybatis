@@ -1,11 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
-import org.rdlinux.ezmybatis.core.content.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SelectByPrimaryKeySqlGenerate;
-import org.rdlinux.ezmybatis.core.utils.Assert;
+import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractSelectByPrimaryKeySqlGenerate;
 
-public class MysqlSelectByPrimaryKeySqlGenerate implements SelectByPrimaryKeySqlGenerate {
+public class MysqlSelectByPrimaryKeySqlGenerate extends AbstractSelectByPrimaryKeySqlGenerate {
     private static volatile MysqlSelectByPrimaryKeySqlGenerate instance;
 
     private MysqlSelectByPrimaryKeySqlGenerate() {
@@ -22,16 +19,9 @@ public class MysqlSelectByPrimaryKeySqlGenerate implements SelectByPrimaryKeySql
         return instance;
     }
 
+
     @Override
-    public String getSelectByPrimaryKeySql(Class<?> ntClass, Object id) {
-        Assert.notNull(id, "id can not be null");
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass, true);
-        String table = entityClassInfo.getTableName();
-        String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        String escape = "$";
-        if (id instanceof CharSequence) {
-            escape = "#";
-        }
-        return String.format("SELECT * FROM `%s` WHERE `%s` = %s{id}", table, idColumn, escape);
+    protected String getKeywordQM() {
+        return "`";
     }
 }
