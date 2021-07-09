@@ -1,6 +1,6 @@
 package org.rdlinux;
 
-import org.rdlinux.ezmybatis.core.EntityInfo;
+import org.rdlinux.ezmybatis.core.content.EntityInfo;
 import org.rdlinux.ezmybatis.java.entity.User;
 
 public class EntityInfoTest {

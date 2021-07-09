@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core;
+package org.rdlinux.ezmybatis.core.content;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.IntegerTypeHandler;
@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
 import org.rdlinux.ezmybatis.core.utils.SqlReflectionUtils;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.lang.reflect.Field;
@@ -26,8 +25,6 @@ public class EntityInfo {
 
     public EntityInfo(Class<?> entityClass) {
         Assert.notNull(entityClass);
-        Assert.isTrue(entityClass.isAnnotationPresent(Entity.class),
-                "entity class must annotation present javax.persistence.Entity");
         this.tableName = HumpLineStringUtils.humpToLine(entityClass.getSimpleName());
         if (entityClass.isAnnotationPresent(Table.class)) {
             Table annotation = entityClass.getAnnotation(Table.class);
