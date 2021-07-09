@@ -16,7 +16,7 @@ public class EzResultClassInfoFactory {
 
     /**
      * @param resultClass                结果对象类型
-     * @param isMapUnderscoreToCamelCase 师傅将下划线转换为驼峰
+     * @param isMapUnderscoreToCamelCase 是否将下划线转换为驼峰
      */
     public static ResultClassInfo forClass(Class<?> resultClass, boolean isMapUnderscoreToCamelCase) {
         ResultClassInfo resultClassInfo = infoMap.get(resultClass.getName());

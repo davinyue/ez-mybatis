@@ -24,4 +24,9 @@ public class MySqlSqlGenerate implements SqlGenerate {
     public String getInsertSql(Object entity) {
         return MySqlInsertSqlGenerate.getInstance().getInsertSql(entity);
     }
+
+    @Override
+    public String getSelectByPrimaryKeySql(Class<?> ntClass, Object id) {
+        return MysqlSelectByPrimaryKeySqlGenerate.getInstance().getSelectByPrimaryKeySql(ntClass, id);
+    }
 }

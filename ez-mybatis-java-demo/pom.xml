@@ -26,11 +26,16 @@
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.baomidou</groupId>-->
-<!--            <artifactId>mybatis-plus</artifactId>-->
-<!--            <version>3.4.3.1</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.linuxprobe</groupId>
+            <artifactId>luava-json</artifactId>
+            <version>0.0.8.RELEASE</version>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.baomidou</groupId>-->
+        <!--            <artifactId>mybatis-plus</artifactId>-->
+        <!--            <version>3.4.3.1</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
 </project>

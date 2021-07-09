@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 
 import java.io.Serializable;
@@ -66,13 +66,11 @@ public interface EzMapper<Nt, Pt extends Serializable> {
      * 根据主键查询
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "generate")
-//    @ResultMap("userMap")
-    @Results(id = "userMap", value = {})
-    Nt selectByPrimaryKey(Pt id);
+    Nt selectById(@Param("ntClass") Class<Nt> ntClass, @Param("id") Pt id);
 
     /**
      * 根据主键批量查询
      */
     @InsertProvider(type = EzEntityInsertProvider.class, method = "generate")
-    List<Nt> selectByPrimaryKeys(List<Pt> ids);
+    List<Nt> selectByIds(List<Pt> ids);
 }
