@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlgenerate.postgresql;
+package org.rdlinux.ezmybatis.core.sqlgenerate.postgre;
 
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
