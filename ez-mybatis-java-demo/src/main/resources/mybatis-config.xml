@@ -25,13 +25,13 @@
             <package name="com.wj.mybatis.bean"></package> -->
     </typeAliases>
     <plugins>
-        <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisUpdateInterceptor">
+        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.MybatisUpdateInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
-        <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisResultSetInterceptor">
+        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ResultSetHandlerInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
-        <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisParameterInterceptor">
+        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ExecutorInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
     </plugins>

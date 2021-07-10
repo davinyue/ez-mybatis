@@ -34,12 +34,12 @@ public class Main {
 //        sqlSession.commit();
         //sqlSession.selectList("", "");
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-        User user = mapper.selectById(User.class, 3);
+        User user = mapper.selectById("1s");
         System.out.println(JacksonUtils.toJsonString(user));
-        List<Integer> ids = new LinkedList<>();
-        ids.add(1);
-        ids.add(3);
-        List<User> users = mapper.selectByIds(User.class, ids);
+        List<String> ids = new LinkedList<>();
+        ids.add("1s");
+        ids.add("3s");
+        List<User> users = mapper.selectByIds(ids);
         System.out.println(JacksonUtils.toJsonString(users));
     }
 }

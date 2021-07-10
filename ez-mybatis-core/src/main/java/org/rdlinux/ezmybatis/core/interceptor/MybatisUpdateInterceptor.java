@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.Interceptor;
+package org.rdlinux.ezmybatis.core.interceptor;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -9,10 +9,10 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
-import org.rdlinux.ezmybatis.core.Interceptor.listener.DeleteListener;
-import org.rdlinux.ezmybatis.core.Interceptor.listener.InsertListener;
-import org.rdlinux.ezmybatis.core.Interceptor.listener.UpdateListener;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.interceptor.listener.DeleteListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.InsertListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.UpdateListener;
 
 import java.util.LinkedList;
 import java.util.List;
