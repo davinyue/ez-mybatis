@@ -14,7 +14,7 @@ public class InsertTest extends BaseTest {
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
-        user.setFirstName("王");
+        //user.setFirstName("王");
         user.setAge(27);
         user.setSex("女");
         int insert = BaseTest.sqlSession.getMapper(UserMapper.class).insert(user);

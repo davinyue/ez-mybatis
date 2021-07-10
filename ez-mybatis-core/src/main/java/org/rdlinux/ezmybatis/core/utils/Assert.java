@@ -13,13 +13,13 @@ public class Assert {
         notNull(object, "object can not be null");
     }
 
-    public static void isTrue(Boolean object, String message) {
-        if (object == null || !object) {
+    public static void isTrue(boolean object, String message) {
+        if (!object) {
             throw new IllegalArgumentException(message);
         }
     }
 
-    public static void isTrue(Boolean object) {
+    public static void isTrue(boolean object) {
         isTrue(object, "object must be true");
     }
 
