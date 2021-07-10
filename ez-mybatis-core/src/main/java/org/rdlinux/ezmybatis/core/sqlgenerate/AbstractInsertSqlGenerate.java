@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
@@ -45,24 +44,6 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             i++;
         }
         sqlBuilder.append(columnBuilder).append(" VALUES ").append(paramBuilder);
-        return sqlBuilder.toString();
-    }
-
-    @Override
-    public String getBatchInsertSql(Configuration configuration, List<Object> entitys) {
-        String insertSql = this.getInsertSql(configuration, entitys.get(0));
-        String flag = "VALUES ";
-        int vIndex = insertSql.indexOf(flag);
-        String valve = insertSql.substring(vIndex + flag.length());
-        String prefix = insertSql.substring(0, vIndex + flag.length());
-        StringBuilder sqlBuilder = new StringBuilder(prefix);
-        for (int i = 0; i < entitys.size(); i++) {
-            sqlBuilder.append(valve.replaceAll(EzMybatisConstant.MAPPER_PARAM_ENTITY + ".",
-                    EzMybatisConstant.MAPPER_PARAM_ENTITYS + "[" + i + "]" + "."));
-            if (i + 1 < entitys.size()) {
-                sqlBuilder.append(", ");
-            }
-        }
         return sqlBuilder.toString();
     }
 }
