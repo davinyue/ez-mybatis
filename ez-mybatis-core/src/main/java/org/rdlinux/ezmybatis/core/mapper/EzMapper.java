@@ -65,12 +65,12 @@ public interface EzMapper<Nt, Pt extends Serializable> {
     /**
      * 根据主键查询
      */
-    @SelectProvider(type = EzEntitySelectProvider.class, method = "generate")
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "selectById")
     Nt selectById(@Param("ntClass") Class<Nt> ntClass, @Param("id") Pt id);
 
     /**
      * 根据主键批量查询
      */
-    @InsertProvider(type = EzEntityInsertProvider.class, method = "generate")
-    List<Nt> selectByIds(List<Pt> ids);
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "selectByIds")
+    List<Nt> selectByIds(@Param("ntClass") Class<Nt> ntClass, @Param("ids") List<Pt> ids);
 }

@@ -2,6 +2,8 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
+import java.util.List;
+
 public class MySqlSqlGenerate implements SqlGenerate {
     private static volatile MySqlSqlGenerate instance;
 
@@ -26,7 +28,12 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getSelectByPrimaryKeySql(Class<?> ntClass, Object id) {
-        return MysqlSelectByPrimaryKeySqlGenerate.getInstance().getSelectByPrimaryKeySql(ntClass, id);
+    public String getSelectByIdSql(Class<?> ntClass, Object id) {
+        return MysqlSelectSqlGenerate.getInstance().getSelectByIdSql(ntClass, id);
+    }
+
+    @Override
+    public String getSelectByIdsSql(Class<?> ntClass, List<?> ids) {
+        return MysqlSelectSqlGenerate.getInstance().getSelectByIdsSql(ntClass, ids);
     }
 }

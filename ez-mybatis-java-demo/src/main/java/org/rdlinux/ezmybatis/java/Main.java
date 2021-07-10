@@ -10,6 +10,8 @@ import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Main {
     private static SqlSession sqlSession;
@@ -30,8 +32,14 @@ public class Main {
     public static void main(String[] args) {
 //        sqlSession.insert("org.rdlinux.ezmybatis.java.mapper.UserMapper.insert", new User());
 //        sqlSession.commit();
+        //sqlSession.selectList("", "");
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         User user = mapper.selectById(User.class, 3);
         System.out.println(JacksonUtils.toJsonString(user));
+        List<Integer> ids = new LinkedList<>();
+        ids.add(1);
+        ids.add(3);
+        List<User> users = mapper.selectByIds(User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
     }
 }

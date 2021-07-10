@@ -1,4 +1,4 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
-public interface SqlGenerate extends InsertSqlGenerate, SelectByPrimaryKeySqlGenerate {
+public interface SqlGenerate extends InsertSqlGenerate, SelectSqlGenerate {
 }
