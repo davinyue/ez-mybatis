@@ -51,7 +51,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             //有字段更新, sql才有效
             invalidSql = false;
         }
-        Assert.isTrue(!invalidSql, "cannot update entity");
+        Assert.isTrue(!invalidSql, "cannot update empty entity");
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
                 .append(" = ").append(MybatisParamEscape.getEscapeChar(idValue)).append("{")
