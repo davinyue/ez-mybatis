@@ -25,9 +25,9 @@
             <package name="com.wj.mybatis.bean"></package> -->
     </typeAliases>
     <plugins>
-        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.MybatisUpdateInterceptor">
-            <property name="dialect" value="mysql"/>
-        </plugin>
+        <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.MybatisUpdateInterceptor">-->
+        <!--            <property name="dialect" value="mysql"/>-->
+        <!--        </plugin>-->
         <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ResultSetHandlerInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
