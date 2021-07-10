@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.Interceptor.listener;
+package org.rdlinux.ezmybatis.core.interceptor.listener;
 
 import java.util.List;
 

@@ -28,4 +28,32 @@ public abstract class EzMybatisConstant {
      * 批量删除实体方法名
      */
     public static final String BATCH_DELETE_METHOD_NAME = "batchDelete";
+    /**
+     * mapper参数, mapper的class参数名称
+     */
+    public static final String MAPPER_PARAM_MAPPER_CLASS = "mapperClass";
+    /**
+     * mapper参数, 实体的class参数名称
+     */
+    public static final String MAPPER_PARAM_ENTITY_CLASS = "ntClass";
+    /**
+     * mapper参数, mybatis配置参数名称
+     */
+    public static final String MAPPER_PARAM_CONFIGURATION = "configuration";
+    /**
+     * mapper参数, id
+     */
+    public static final String MAPPER_PARAM_ID = "id";
+    /**
+     * mapper参数, ids
+     */
+    public static final String MAPPER_PARAM_IDS = "ids";
+    /**
+     * mapper参数, entity
+     */
+    public static final String MAPPER_PARAM_ENTITY = "entity";
+    /**
+     * mapper参数, entitys
+     */
+    public static final String MAPPER_PARAM_ENTITYS = "entitys";
 }

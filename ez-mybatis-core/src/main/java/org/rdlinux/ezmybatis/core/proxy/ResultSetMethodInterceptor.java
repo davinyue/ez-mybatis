@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.Interceptor.proxy;
+package org.rdlinux.ezmybatis.core.proxy;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
