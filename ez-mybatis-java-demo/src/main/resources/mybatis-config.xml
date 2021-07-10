@@ -31,6 +31,9 @@
         <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisResultSetInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
+        <plugin interceptor="org.rdlinux.ezmybatis.core.Interceptor.MybatisParameterInterceptor">
+            <property name="dialect" value="mysql"/>
+        </plugin>
     </plugins>
     <!-- 配置环境：可以配置多个环境，default：配置某一个环境的唯一标识，表示默认使用哪个环境 -->
     <environments default="development">
