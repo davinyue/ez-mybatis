@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
 import java.util.List;
@@ -23,17 +24,22 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
 
     @Override
-    public String getInsertSql(Object entity) {
-        return MySqlInsertSqlGenerate.getInstance().getInsertSql(entity);
+    public String getInsertSql(Configuration configuration, Object entity) {
+        return MySqlInsertSqlGenerate.getInstance().getInsertSql(configuration, entity);
     }
 
     @Override
-    public String getSelectByIdSql(Class<?> ntClass, Object id) {
-        return MysqlSelectSqlGenerate.getInstance().getSelectByIdSql(ntClass, id);
+    public String getBatchInsertSql(Configuration configuration, List<Object> entitys) {
+        return MySqlInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, entitys);
     }
 
     @Override
-    public String getSelectByIdsSql(Class<?> ntClass, List<?> ids) {
-        return MysqlSelectSqlGenerate.getInstance().getSelectByIdsSql(ntClass, ids);
+    public String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id) {
+        return MysqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, ntClass, id);
+    }
+
+    @Override
+    public String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
+        return MysqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, ntClass, ids);
     }
 }

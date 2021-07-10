@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.InsertSqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 
-public class MySqlInsertSqlGenerate implements InsertSqlGenerate {
+public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
     private static volatile MySqlInsertSqlGenerate instance;
 
     private MySqlInsertSqlGenerate() {
@@ -20,7 +20,7 @@ public class MySqlInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
-    public String getInsertSql(Object entity) {
-        return "INSERT INTO `user` (`name`) VALUES ('李四');";
+    protected String getKeywordQM() {
+        return "`";
     }
 }

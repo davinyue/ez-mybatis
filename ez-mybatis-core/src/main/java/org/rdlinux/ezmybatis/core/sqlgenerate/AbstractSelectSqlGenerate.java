@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.utils.Assert;
@@ -13,23 +14,22 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
     protected abstract String getKeywordQM();
 
     @Override
-    public String getSelectByIdSql(Class<?> ntClass, Object id) {
+    public String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id) {
         Assert.notNull(id, "id can not be null");
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass, true);
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass,
+                configuration.isMapUnderscoreToCamelCase());
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        String escape = "$";
-        if (id instanceof CharSequence) {
-            escape = "#";
-        }
+        String escape = MybatisParamEscape.getEscapeChar(id);
         String kwQM = this.getKeywordQM();
         return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + escape + "{id}";
     }
 
     @Override
-    public String getSelectByIdsSql(Class<?> ntClass, List<?> ids) {
+    public String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
         Assert.notEmpty(ids, "ids can not be null");
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass, true);
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass,
+                configuration.isMapUnderscoreToCamelCase());
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String kwQM = this.getKeywordQM();
@@ -37,11 +37,9 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         for (int i = 0; i < ids.size(); i++) {
             Object id = ids.get(i);
-            if (id instanceof CharSequence) {
-                sqlBuilder.append("#{ids[").append(i).append("]}");
-            } else {
-                sqlBuilder.append("${ids[").append(i).append("]}");
-            }
+            Assert.notNull(id, "id can not be null");
+            String escape = MybatisParamEscape.getEscapeChar(id);
+            sqlBuilder.append(escape).append("{ids[").append(i).append("]}");
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

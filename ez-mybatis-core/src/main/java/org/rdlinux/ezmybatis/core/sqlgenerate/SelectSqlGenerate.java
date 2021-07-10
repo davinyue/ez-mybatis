@@ -1,9 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import org.apache.ibatis.session.Configuration;
+
 import java.util.List;
 
 public interface SelectSqlGenerate {
-    String getSelectByIdSql(Class<?> ntClass, Object id);
+    String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id);
 
-    String getSelectByIdsSql(Class<?> ntClass, List<?> ids);
+    String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids);
 }

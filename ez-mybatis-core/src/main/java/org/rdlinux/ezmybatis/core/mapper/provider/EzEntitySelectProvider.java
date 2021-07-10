@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.mapper;
+package org.rdlinux.ezmybatis.core.mapper.provider;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.Configuration;
@@ -11,11 +11,12 @@ public class EzEntitySelectProvider {
     public String selectById(@Param(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION) Configuration configuration,
                              @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
                              @Param(EzMybatisConstant.MAPPER_PARAM_ID) Object id) {
-        return SqlGenerateFactory.getSqlGenerate().getSelectByIdSql(ntClass, id);
+        return SqlGenerateFactory.getSqlGenerate().getSelectByIdSql(configuration, ntClass, id);
     }
 
-    public String selectByIds(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
+    public String selectByIds(@Param(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION) Configuration configuration,
+                              @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
                               @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Object> ids) {
-        return SqlGenerateFactory.getSqlGenerate().getSelectByIdsSql(ntClass, ids);
+        return SqlGenerateFactory.getSqlGenerate().getSelectByIdsSql(configuration, ntClass, ids);
     }
 }
