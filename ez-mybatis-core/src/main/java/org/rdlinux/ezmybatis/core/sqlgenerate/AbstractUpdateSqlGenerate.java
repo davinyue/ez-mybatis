@@ -42,7 +42,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             }
             sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ");
             if (fieldValue == null) {
-                sqlBuilder.append(" NULL, ");
+                sqlBuilder.append("NULL, ");
             } else {
                 sqlBuilder.append(MybatisParamEscape.getEscapeChar(fieldValue)).append("{")
                         .append(EzMybatisConstant.MAPPER_PARAM_ENTITY).append(".").append(field.getName())
