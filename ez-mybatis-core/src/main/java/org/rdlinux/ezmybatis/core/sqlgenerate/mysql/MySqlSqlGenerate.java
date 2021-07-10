@@ -35,11 +35,21 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id) {
-        return MysqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, ntClass, id);
+        return MySqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, ntClass, id);
     }
 
     @Override
     public String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
-        return MysqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, ntClass, ids);
+        return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, ntClass, ids);
+    }
+
+    @Override
+    public String getUpdateSql(Configuration configuration, Object entity, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getUpdateSql(configuration, entity, isReplace);
+    }
+
+    @Override
+    public String getBatchUpdateSql(Configuration configuration, List<Object> entitys, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, entitys, isReplace);
     }
 }

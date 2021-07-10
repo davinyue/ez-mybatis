@@ -30,10 +30,15 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         int i = 1;
         for (String column : columnMapFieldInfo.keySet()) {
             Field field = columnMapFieldInfo.get(column).getField();
+            Object fieldValue = ReflectionUtils.getFieldValue(entity, field);
             String escape = MybatisParamEscape.getEscapeChar(ReflectionUtils.getFieldValue(entity, field));
             columnBuilder.append(keywordQM).append(column).append(keywordQM);
-            paramBuilder.append(escape).append("{").append(EzMybatisConstant.MAPPER_PARAM_ENTITY).append(".")
-                    .append(field.getName()).append("}");
+            if (fieldValue == null) {
+                paramBuilder.append("NULL");
+            } else {
+                paramBuilder.append(escape).append("{").append(EzMybatisConstant.MAPPER_PARAM_ENTITY).append(".")
+                        .append(field.getName()).append("}");
+            }
             if (i < columnMapFieldInfo.size()) {
                 columnBuilder.append(", ");
                 paramBuilder.append(", ");

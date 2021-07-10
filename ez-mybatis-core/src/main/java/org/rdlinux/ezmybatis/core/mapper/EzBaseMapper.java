@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.*;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntitySelectProvider;
+import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityUpdateProvider;
 
 import java.io.Serializable;
 import java.util.List;
@@ -30,25 +31,25 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     /**
      * 更新, 只更新非空字段
      */
-    @UpdateProvider(type = EzEntityInsertProvider.class, method = "insert")
+    @UpdateProvider(type = EzEntityUpdateProvider.class, method = "update")
     int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
 
     /**
      * 批量更新, 只更新非空字段
      */
-    @DeleteProvider(type = EzEntityInsertProvider.class, method = "batchInsert")
+    @DeleteProvider(type = EzEntityUpdateProvider.class, method = "batchUpdate")
     int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<Nt> entitys);
 
     /**
      * 更新, 更新所有字段
      */
-    @UpdateProvider(type = EzEntityInsertProvider.class, method = "insert")
+    @UpdateProvider(type = EzEntityUpdateProvider.class, method = "replace")
     int replace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
 
     /**
      * 批量更新, 更新所有字段
      */
-    @DeleteProvider(type = EzEntityInsertProvider.class, method = "insert")
+    @DeleteProvider(type = EzEntityUpdateProvider.class, method = "batchReplace")
     int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<Nt> entitys);
 
     /**
