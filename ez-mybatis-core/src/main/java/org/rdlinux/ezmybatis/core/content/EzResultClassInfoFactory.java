@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.content;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
 import org.rdlinux.ezmybatis.core.utils.SqlReflectionUtils;
 
@@ -15,29 +16,29 @@ public class EzResultClassInfoFactory {
     private static Map<String, ResultClassInfo> infoMap = new HashMap<>();
 
     /**
-     * @param resultClass                结果对象类型
-     * @param isMapUnderscoreToCamelCase 是否将下划线转换为驼峰
+     * @param resultClass   结果对象类型
+     * @param configuration mybatis配置
      */
-    public static ResultClassInfo forClass(Class<?> resultClass, boolean isMapUnderscoreToCamelCase) {
+    public static ResultClassInfo forClass(Configuration configuration, Class<?> resultClass) {
         ResultClassInfo resultClassInfo = infoMap.get(resultClass.getName());
         if (resultClassInfo == null) {
             synchronized (lockO) {
                 resultClassInfo = infoMap.get(resultClass.getName());
                 if (resultClassInfo == null) {
-                    resultClassInfo = buildInfo(resultClass, isMapUnderscoreToCamelCase);
+                    resultClassInfo = buildInfo(configuration, resultClass);
                 }
             }
         }
         return resultClassInfo;
     }
 
-    private static ResultClassInfo buildInfo(Class<?> resultClass, boolean isMapUnderscoreToCamelCase) {
+    private static ResultClassInfo buildInfo(Configuration configuration, Class<?> resultClass) {
         List<Field> fields = SqlReflectionUtils.getSupportFields(resultClass);
         Map<String, String> columnMapProperty = new HashMap<>((int) (fields.size() / 0.75) + 1);
         fields.forEach(field -> {
             field.setAccessible(true);
             String columnName = field.getName();
-            if (isMapUnderscoreToCamelCase) {
+            if (configuration.isMapUnderscoreToCamelCase()) {
                 HumpLineStringUtils.humpToLine(field.getName());
             }
             if (field.isAnnotationPresent(Column.class)) {

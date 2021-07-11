@@ -179,8 +179,8 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 //final String property = metaObject.findProperty(skipPfCN, this.configuration
                 //.isMapUnderscoreToCamelCase());
                 //改为调用自定义的查找逻辑
-                String property = EzResultClassInfoFactory.forClass(metaObject.getOriginalObject().getClass(),
-                        this.configuration.isMapUnderscoreToCamelCase()).getPropertyByColumn(skipPfCN);
+                String property = EzResultClassInfoFactory.forClass(this.configuration, metaObject.getOriginalObject()
+                        .getClass()).getPropertyByColumn(skipPfCN);
                 if (property != null && metaObject.hasSetter(property)) {
                     if (resultMap.getMappedProperties().contains(property)) {
                         continue;

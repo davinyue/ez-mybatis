@@ -10,7 +10,7 @@ public interface DeleteListener {
 
     void onBatchDelete(List<Object> entity);
 
-    void onDeleteByPrimaryKey(Object id, Class<?> ntClass);
+    void onDeleteById(Object id, Class<?> ntClass);
 
-    void onDeleteByPrimaryKeys(List<Object> ids, Class<?> ntClass);
+    void onBatchDeleteById(List<Object> ids, Class<?> ntClass);
 }

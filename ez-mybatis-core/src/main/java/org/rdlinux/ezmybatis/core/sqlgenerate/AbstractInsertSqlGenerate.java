@@ -18,8 +18,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
     @Override
     public String getInsertSql(Configuration configuration, Object entity) {
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(entity.getClass(),
-                configuration.isMapUnderscoreToCamelCase());
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableName();
         String keywordQM = this.getKeywordQM();
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
