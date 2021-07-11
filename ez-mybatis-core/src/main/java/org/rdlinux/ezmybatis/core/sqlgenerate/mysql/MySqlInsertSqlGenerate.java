@@ -30,13 +30,16 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, List<Object> entitys) {
-        String insertSql = this.getInsertSql(configuration, entitys.get(0));
-        String flag = "VALUES ";
-        int vIndex = insertSql.indexOf(flag);
-        String valve = insertSql.substring(vIndex + flag.length());
-        String prefix = insertSql.substring(0, vIndex + flag.length());
-        StringBuilder sqlBuilder = new StringBuilder(prefix);
+        StringBuilder sqlBuilder = new StringBuilder("");
         for (int i = 0; i < entitys.size(); i++) {
+            String insertSql = this.getInsertSql(configuration, entitys.get(i));
+            String flag = "VALUES ";
+            int vIndex = insertSql.indexOf(flag);
+            String valve = insertSql.substring(vIndex + flag.length());
+            if (i == 0) {
+                String prefix = insertSql.substring(0, vIndex + flag.length());
+                sqlBuilder.append(prefix);
+            }
             sqlBuilder.append(valve.replaceAll(EzMybatisConstant.MAPPER_PARAM_ENTITY + ".",
                     EzMybatisConstant.MAPPER_PARAM_ENTITYS + "[" + i + "]" + "."));
             if (i + 1 < entitys.size()) {
