@@ -10,7 +10,7 @@ public class Assert {
     }
 
     public static void notNull(Object object) {
-        notNull(object, "object can not be null");
+        notNull(object, "object cannot be null");
     }
 
     public static void isTrue(boolean object, String message) {
@@ -24,8 +24,8 @@ public class Assert {
     }
 
     public static void notEmpty(Collection<?> collection) {
-        notNull(collection, "collection can not be null");
-        isTrue(!collection.isEmpty(), "collection can not be empty");
+        notNull(collection, "collection cannot be null");
+        isTrue(!collection.isEmpty(), "collection cannot be empty");
     }
 
 
