@@ -25,11 +25,15 @@ public class InsertTest extends BaseTest {
     @Test
     public void batchInsert() {
         List<User> users = new LinkedList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             User user = new User();
             user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setName("芳" + i + 1);
-            user.setFirstName("王");
+            if (i == 0) {
+                user.setFirstName(null);
+            } else {
+                user.setFirstName("王");
+            }
             user.setAge(27 + i);
             user.setSex(i % 2 == 0 ? "男" : "女");
             users.add(user);
