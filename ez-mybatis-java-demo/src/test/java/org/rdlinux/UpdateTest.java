@@ -28,9 +28,11 @@ public class UpdateTest extends BaseTest {
             User user = new User();
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
-            user.setFirstName("王");
-            user.setAge(27 + i);
-            user.setSex(i % 2 == 0 ? "男" : "女");
+            if (i == 0) {
+                user.setSex("女");
+            } else {
+                user.setAge(i);
+            }
             users.add(user);
         }
         int insert = BaseTest.sqlSession.getMapper(UserMapper.class).batchUpdate(users);
@@ -55,9 +57,14 @@ public class UpdateTest extends BaseTest {
             User user = new User();
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex("女");
+            } else {
+                user.setAge(i);
+            }
             users.add(user);
         }
-        int insert = BaseTest.sqlSession.getMapper(UserMapper.class).batchUpdate(users);
+        int insert = BaseTest.sqlSession.getMapper(UserMapper.class).batchReplace(users);
         BaseTest.sqlSession.commit();
         System.out.println(insert);
     }

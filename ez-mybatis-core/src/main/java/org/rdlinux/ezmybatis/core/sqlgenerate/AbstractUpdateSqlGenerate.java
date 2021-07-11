@@ -29,7 +29,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         Field idField = primaryKeyInfo.getField();
         String idColumn = primaryKeyInfo.getColumnName();
         Object idValue = ReflectionUtils.getFieldValue(entity, primaryKeyInfo.getField());
-        Assert.notNull(idValue, "id can not be null");
+        Assert.notNull(idValue, "id cannot be null");
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(keywordQM).append(tableName)
                 .append(keywordQM).append(" SET ");
         boolean invalidSql = true;
@@ -37,7 +37,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             EntityFieldInfo entityFieldInfo = columnMapFieldInfo.get(column);
             Field field = entityFieldInfo.getField();
             Object fieldValue = ReflectionUtils.getFieldValue(entity, field);
-            if ((isReplace && fieldValue == null) || column.equals(idColumn)) {
+            if ((!isReplace && fieldValue == null) || column.equals(idColumn)) {
                 continue;
             }
             sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ");
@@ -61,11 +61,11 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, List<Object> entitys, boolean isReplace) {
-        String sqlTmpl = this.getUpdateSql(configuration, entitys.get(0), isReplace);
         StringBuilder sqlBuilder = new StringBuilder();
         for (int i = 0; i < entitys.size(); i++) {
+            String sqlTmpl = this.getUpdateSql(configuration, entitys.get(i), isReplace);
             sqlBuilder.append(sqlTmpl.replaceAll(EzMybatisConstant.MAPPER_PARAM_ENTITY + ".",
-                    EzMybatisConstant.MAPPER_PARAM_ENTITYS + "[" + i + "]" + ".")).append(";\n");
+                    EzMybatisConstant.MAPPER_PARAM_ENTITYS + "[" + i + "]" + ".")).append(";");
         }
         return sqlBuilder.toString();
     }
