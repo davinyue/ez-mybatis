@@ -20,8 +20,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
     public String getUpdateSql(Configuration configuration, Object entity, boolean isReplace) {
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(entity.getClass(),
-                configuration.isMapUnderscoreToCamelCase());
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableName();
         String keywordQM = this.getKeywordQM();
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();

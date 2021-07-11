@@ -16,8 +16,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
     @Override
     public String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id) {
         Assert.notNull(id, "id cannot be null");
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass,
-                configuration.isMapUnderscoreToCamelCase());
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String escape = MybatisParamEscape.getEscapeChar(id);
@@ -28,8 +27,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
     @Override
     public String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
         Assert.notEmpty(ids, "ids cannot be null");
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(ntClass,
-                configuration.isMapUnderscoreToCamelCase());
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String kwQM = this.getKeywordQM();

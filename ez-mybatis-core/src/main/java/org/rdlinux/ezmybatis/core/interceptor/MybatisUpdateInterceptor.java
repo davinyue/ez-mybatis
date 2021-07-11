@@ -104,9 +104,9 @@ public class MybatisUpdateInterceptor implements Interceptor {
             } else if (mappedStatement.getId().endsWith("." + EzMybatisConstant.BATCH_DELETE_METHOD_NAME)) {
                 log.debug("on batch delete");
                 this.onBatchDelete((List<Object>) args[1]);
-            } else if (mappedStatement.getId().endsWith(".deleteByPrimaryKey")) {
+            } else if (mappedStatement.getId().endsWith(".deleteById")) {
                 log.debug("on delete by primary key");
-            } else if (mappedStatement.getId().endsWith(".deleteByPrimaryKeys")) {
+            } else if (mappedStatement.getId().endsWith(".batchDeleteById")) {
                 log.debug("on batch delete by primary key");
             }
         }

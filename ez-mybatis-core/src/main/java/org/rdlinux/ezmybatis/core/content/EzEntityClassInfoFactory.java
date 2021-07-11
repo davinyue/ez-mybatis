@@ -1,5 +1,7 @@
 package org.rdlinux.ezmybatis.core.content;
 
+import org.apache.ibatis.session.Configuration;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,24 +10,24 @@ public class EzEntityClassInfoFactory {
     private static Map<String, EntityClassInfo> infoMap = new HashMap<>();
 
     /**
-     * @param ntClass                    实体对象类型
-     * @param isMapUnderscoreToCamelCase 是否将下划线转换为驼峰
+     * @param ntClass       实体对象类型
+     * @param configuration mybatis配置
      */
-    public static EntityClassInfo forClass(Class<?> ntClass, boolean isMapUnderscoreToCamelCase) {
+    public static EntityClassInfo forClass(Configuration configuration, Class<?> ntClass) {
         EntityClassInfo result = infoMap.get(ntClass.getName());
         if (result == null) {
             synchronized (lockO) {
                 result = infoMap.get(ntClass.getName());
                 if (result == null) {
-                    result = buildInfo(ntClass, isMapUnderscoreToCamelCase);
+                    result = buildInfo(configuration, ntClass);
                 }
             }
         }
         return result;
     }
 
-    private static EntityClassInfo buildInfo(Class<?> ntClass, boolean isMapUnderscoreToCamelCase) {
-        EntityClassInfo entityClassInfo = new EntityClassInfo(ntClass, isMapUnderscoreToCamelCase);
+    private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass) {
+        EntityClassInfo entityClassInfo = new EntityClassInfo(ntClass, configuration.isMapUnderscoreToCamelCase());
         infoMap.put(ntClass.getName(), entityClassInfo);
         return entityClassInfo;
     }

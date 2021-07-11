@@ -52,4 +52,14 @@ public class MySqlSqlGenerate implements SqlGenerate {
     public String getBatchUpdateSql(Configuration configuration, List<Object> entitys, boolean isReplace) {
         return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, entitys, isReplace);
     }
+
+    @Override
+    public String getDeleteByIdSql(Configuration configuration, Class<?> ntClass, Object id) {
+        return MySqlDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, ntClass, id);
+    }
+
+    @Override
+    public String getBatchDeleteByIdSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
+        return MySqlDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, ntClass, ids);
+    }
 }

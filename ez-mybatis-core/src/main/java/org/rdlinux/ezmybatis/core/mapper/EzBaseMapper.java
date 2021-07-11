@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntitySelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityUpdateProvider;
@@ -55,26 +56,26 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     /**
      * 删除
      */
-    @DeleteProvider(type = EzEntityInsertProvider.class, method = "insert")
+    @DeleteProvider(type = EzEntityDeleteProvider.class, method = "delete")
     int delete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
 
     /**
      * 批量删除
      */
-    @DeleteProvider(type = EzEntityInsertProvider.class, method = "insert")
+    @DeleteProvider(type = EzEntityDeleteProvider.class, method = "batchDelete")
     int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<Nt> entitys);
 
     /**
      * 根据主键删除
      */
-    @DeleteProvider(type = EzEntityInsertProvider.class, method = "insert")
-    int deleteByPrimaryKey(@Param(EzMybatisConstant.MAPPER_PARAM_ID) Pt id);
+    @DeleteProvider(type = EzEntityDeleteProvider.class, method = "deleteById")
+    int deleteById(@Param(EzMybatisConstant.MAPPER_PARAM_ID) Pt id);
 
     /**
      * 根据主键批量删除
      */
-    @DeleteProvider(type = EzEntityInsertProvider.class, method = "insert")
-    int deleteByPrimaryKeys(@Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Pt> ids);
+    @DeleteProvider(type = EzEntityDeleteProvider.class, method = "batchDeleteById")
+    int batchDeleteById(@Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Pt> ids);
 
     /**
      * 根据主键查询
