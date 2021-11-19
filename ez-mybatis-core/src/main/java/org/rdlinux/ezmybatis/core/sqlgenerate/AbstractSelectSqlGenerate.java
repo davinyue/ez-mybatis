@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.utils.Assert;
@@ -21,7 +22,8 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String escape = MybatisParamEscape.getEscapeChar(id);
         String kwQM = this.getKeywordQM();
-        return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + escape + "{id}";
+        return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + escape
+                + "{" + EzMybatisConstant.MAPPER_PARAM_ID + "}";
     }
 
     @Override
@@ -35,9 +37,10 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         for (int i = 0; i < ids.size(); i++) {
             Object id = ids.get(i);
-            Assert.notNull(id, "id cannot be null");
+            Assert.notNull(id, String.format("ids[%d] can not be null", i));
             String escape = MybatisParamEscape.getEscapeChar(id);
-            sqlBuilder.append(escape).append("{ids[").append(i).append("]}");
+            sqlBuilder.append(escape).append("{").append(EzMybatisConstant.MAPPER_PARAM_IDS).append("[").append(i)
+                    .append("]}");
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }
