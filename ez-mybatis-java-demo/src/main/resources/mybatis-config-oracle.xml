@@ -41,10 +41,10 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <!-- 配置连接信息 -->
-                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="driver" value="oracle.jdbc.OracleDriver"/>
                 <property name="url"
-                          value="jdbc:mysql://192.168.163.3:3306/ez_mybatis?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;allowMultiQueries=true"/>
-                <property name="username" value="root"/>
+                          value="jdbc:oracle:thin:@192.168.1.110:1521/helowin"/>
+                <property name="username" value="EZMYBATIS"/>
                 <property name="password" value="123456"/>
             </dataSource>
         </environment>
