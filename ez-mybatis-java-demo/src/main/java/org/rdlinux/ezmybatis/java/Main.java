@@ -17,7 +17,7 @@ public class Main {
     private static SqlSession sqlSession;
 
     static {
-        String resource = "mybatis-config.xml";
+        String resource = "mybatis-config-oracle.xml";
         Reader reader = null;
         try {
             reader = Resources.getResourceAsReader(resource);

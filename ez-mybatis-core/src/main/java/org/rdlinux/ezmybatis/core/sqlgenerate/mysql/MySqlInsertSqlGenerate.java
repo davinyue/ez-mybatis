@@ -30,7 +30,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, List<Object> entitys) {
-        StringBuilder sqlBuilder = new StringBuilder("");
+        StringBuilder sqlBuilder = new StringBuilder();
         for (int i = 0; i < entitys.size(); i++) {
             String insertSql = this.getInsertSql(configuration, entitys.get(i));
             String flag = "VALUES ";

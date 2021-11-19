@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.content.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.utils.Assert;
 
 import java.util.List;

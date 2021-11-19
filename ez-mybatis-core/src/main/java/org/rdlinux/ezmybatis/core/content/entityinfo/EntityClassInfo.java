@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.content;
+package org.rdlinux.ezmybatis.core.content.entityinfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rdlinux.ezmybatis.core.utils.Assert;
@@ -19,7 +19,7 @@ public class EntityClassInfo {
     private Map<String, EntityFieldInfo> columnMapFieldInfo;
     private EntityFieldInfo primaryKeyInfo;
 
-    public EntityClassInfo(Class<?> entityClass, boolean isMapUnderscoreToCamelCase) {
+    public EntityClassInfo(Class<?> entityClass, EntityInfoBuildConfig buildConfig) {
         Assert.notNull(entityClass);
         this.tableName = HumpLineStringUtils.humpToLine(entityClass.getSimpleName());
         if (entityClass.isAnnotationPresent(Table.class)) {
@@ -34,7 +34,7 @@ public class EntityClassInfo {
         this.columnMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
         List<Field> fields = SqlReflectionUtils.getSupportFields(entityClass);
         fields.forEach(field -> {
-            EntityFieldInfo fieldInfo = new EntityFieldInfo(field, isMapUnderscoreToCamelCase);
+            EntityFieldInfo fieldInfo = new EntityFieldInfo(field, buildConfig);
             this.fieldInfos.add(fieldInfo);
             if (fieldInfo.isPrimaryKey()) {
                 this.primaryKeyInfo = fieldInfo;
@@ -57,6 +57,15 @@ public class EntityClassInfo {
 
     public Map<String, EntityFieldInfo> getColumnMapFieldInfo() {
         return this.columnMapFieldInfo;
+    }
+
+    public String getFieldNameByColumn(String column) {
+        EntityFieldInfo entityFieldInfo = this.columnMapFieldInfo.get(column);
+        if (entityFieldInfo == null) {
+            return null;
+        } else {
+            return entityFieldInfo.getFieldName();
+        }
     }
 
     public EntityFieldInfo getPrimaryKeyInfo() {
