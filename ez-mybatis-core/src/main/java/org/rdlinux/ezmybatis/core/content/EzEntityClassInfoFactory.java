@@ -15,11 +15,11 @@ public class EzEntityClassInfoFactory {
     /**
      * 实体信息映射
      */
-    public static final Map<Configuration, Map<String, EntityClassInfo>> ENTITY_INFO_MAP = new HashMap<>();
+    private static final Map<Configuration, Map<String, EntityClassInfo>> ENTITY_INFO_MAP = new HashMap<>();
     /**
      * 实体信息构建工厂
      */
-    public static final Map<DbType, EntityInfoBuild> ENTITY_INFO_BUILD_MAP = new HashMap<>();
+    private static final Map<DbType, EntityInfoBuild> ENTITY_INFO_BUILD_MAP = new HashMap<>();
 
     //初始化实体构建信息
     static {
@@ -35,6 +35,20 @@ public class EzEntityClassInfoFactory {
             return null;
         }
         return entityInfo.get(ntClass.getName());
+    }
+
+    private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass) {
+        DbType dbType = DbTypeUtils.getDbType(configuration);
+        EntityClassInfo entityClassInfo = ENTITY_INFO_BUILD_MAP.get(dbType).buildInfo(configuration, ntClass);
+        Map<String, EntityClassInfo> entityInfo;
+        if (ENTITY_INFO_MAP.get(configuration) == null) {
+            entityInfo = new HashMap<>();
+            ENTITY_INFO_MAP.put(configuration, entityInfo);
+        } else {
+            entityInfo = ENTITY_INFO_MAP.get(configuration);
+        }
+        entityInfo.put(ntClass.getName(), entityClassInfo);
+        return entityClassInfo;
     }
 
     /**
@@ -54,17 +68,7 @@ public class EzEntityClassInfoFactory {
         return result;
     }
 
-    private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass) {
-        DbType dbType = DbTypeUtils.getDbType(configuration);
-        EntityClassInfo entityClassInfo = ENTITY_INFO_BUILD_MAP.get(dbType).buildInfo(configuration, ntClass);
-        Map<String, EntityClassInfo> entityInfo;
-        if (ENTITY_INFO_MAP.get(configuration) == null) {
-            entityInfo = new HashMap<>();
-            ENTITY_INFO_MAP.put(configuration, entityInfo);
-        } else {
-            entityInfo = ENTITY_INFO_MAP.get(configuration);
-        }
-        entityInfo.put(ntClass.getName(), entityClassInfo);
-        return entityClassInfo;
+    public static EntityInfoBuild getEntityInfoBuild(Configuration configuration) {
+        return ENTITY_INFO_BUILD_MAP.get(DbTypeUtils.getDbType(configuration));
     }
 }

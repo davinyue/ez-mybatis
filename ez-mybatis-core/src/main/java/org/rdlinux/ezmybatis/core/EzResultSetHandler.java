@@ -18,7 +18,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 
 import java.sql.ResultSet;
@@ -180,12 +179,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 //final String property = metaObject.findProperty(skipPfCN, this.configuration
                 //.isMapUnderscoreToCamelCase());
                 //改为调用自定义的查找逻辑
-                String property = null;
+                String property;
+                //如果是map, 则根据配置规则进行推算map属性
                 if (metaObject.getOriginalObject() instanceof Map) {
-                    property = EzEntityClassInfoFactory.ENTITY_INFO_BUILD_MAP.get(
-                            DbTypeUtils.getDbType(this.configuration)).computeFieldNameByColumn(
+                    property = EzEntityClassInfoFactory.getEntityInfoBuild(this.configuration).computeFieldNameByColumn(
                             this.configuration, skipPfCN);
-                } else {
+                }
+                //如果是实体,则根据实体信息来获取实体属性名称
+                else {
                     property = EzEntityClassInfoFactory.forClass(this.configuration, metaObject.getOriginalObject()
                             .getClass()).getFieldNameByColumn(skipPfCN);
                 }
