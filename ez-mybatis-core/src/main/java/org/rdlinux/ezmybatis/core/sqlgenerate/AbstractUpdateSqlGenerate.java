@@ -28,7 +28,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         Field idField = primaryKeyInfo.getField();
         String idColumn = primaryKeyInfo.getColumnName();
         Object idValue = ReflectionUtils.getFieldValue(entity, primaryKeyInfo.getField());
-        Assert.notNull(idValue, "id cannot be null");
+        Assert.notNull(idValue, primaryKeyInfo.getFieldName() + " cannot be null");
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(keywordQM).append(tableName)
                 .append(keywordQM).append(" SET ");
         boolean invalidSql = true;
