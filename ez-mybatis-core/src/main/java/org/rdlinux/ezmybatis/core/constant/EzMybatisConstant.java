@@ -31,29 +31,33 @@ public abstract class EzMybatisConstant {
     /**
      * mapper参数, mapper的class参数名称
      */
-    public static final String MAPPER_PARAM_MAPPER_CLASS = "mapperClass";
+    public static final String MAPPER_PARAM_MAPPER_CLASS = "mp_mapperClass";
     /**
      * mapper参数, 实体的class参数名称
      */
-    public static final String MAPPER_PARAM_ENTITY_CLASS = "ntClass";
+    public static final String MAPPER_PARAM_ENTITY_CLASS = "mp_ntClass";
     /**
      * mapper参数, mybatis配置参数名称
      */
-    public static final String MAPPER_PARAM_CONFIGURATION = "configuration";
+    public static final String MAPPER_PARAM_CONFIGURATION = "mp_configuration";
     /**
      * mapper参数, id
      */
-    public static final String MAPPER_PARAM_ID = "id";
+    public static final String MAPPER_PARAM_ID = "mp_id";
     /**
      * mapper参数, ids
      */
-    public static final String MAPPER_PARAM_IDS = "ids";
+    public static final String MAPPER_PARAM_IDS = "mp_ids";
     /**
      * mapper参数, entity
      */
-    public static final String MAPPER_PARAM_ENTITY = "entity";
+    public static final String MAPPER_PARAM_ENTITY = "mp_entity";
     /**
      * mapper参数, entitys
      */
-    public static final String MAPPER_PARAM_ENTITYS = "entitys";
+    public static final String MAPPER_PARAM_ENTITYS = "mp_entitys";
+    /**
+     * mapper参数, sql
+     */
+    public static final String MAPPER_PARAM_SQL = "mp_sql";
 }

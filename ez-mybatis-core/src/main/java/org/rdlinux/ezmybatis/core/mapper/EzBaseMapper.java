@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityUpdateProvider;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 基础mapper
@@ -88,4 +89,28 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectByIds")
     List<Nt> selectByIds(@Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Pt> ids);
+
+    /**
+     * 根据sql查询一条数据
+     */
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
+    Nt selectOneBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+
+    /**
+     * 根据sql查询多条数据
+     */
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
+    List<Nt> selectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+
+    /**
+     * 根据sql查询一条数据并返回map
+     */
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
+    Map<String, Object> selectOneMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+
+    /**
+     * 根据sql查询多条数据, 并返回list map
+     */
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
+    List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
 }

@@ -4,6 +4,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityInfoBuildConfig;
+import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
 
 public class MySqlEntityInfoBuild implements EntityInfoBuild {
     private static volatile MySqlEntityInfoBuild instance;
@@ -32,6 +33,14 @@ public class MySqlEntityInfoBuild implements EntityInfoBuild {
             buildConfig = new EntityInfoBuildConfig(EntityInfoBuildConfig.ColumnHandle.ORIGINAL);
         }
         return new EntityClassInfo(ntClass, buildConfig);
+    }
+
+    @Override
+    public String computeFieldNameByColumn(Configuration configuration, String column) {
+        if (configuration.isMapUnderscoreToCamelCase()) {
+            return HumpLineStringUtils.lineToHump(column, "_");
+        }
+        return column.toLowerCase();
     }
 
     @Override
