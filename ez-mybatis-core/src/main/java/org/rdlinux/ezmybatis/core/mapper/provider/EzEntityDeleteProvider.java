@@ -3,8 +3,8 @@ package org.rdlinux.ezmybatis.core.mapper.provider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.core.content.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 
