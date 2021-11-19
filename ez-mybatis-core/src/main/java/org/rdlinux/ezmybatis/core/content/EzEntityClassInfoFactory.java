@@ -15,11 +15,11 @@ public class EzEntityClassInfoFactory {
     /**
      * 实体信息映射
      */
-    private static final Map<Configuration, Map<String, EntityClassInfo>> ENTITY_INFO_MAP = new HashMap<>();
+    public static final Map<Configuration, Map<String, EntityClassInfo>> ENTITY_INFO_MAP = new HashMap<>();
     /**
      * 实体信息构建工厂
      */
-    private static final Map<DbType, EntityInfoBuild> ENTITY_INFO_BUILD_MAP = new HashMap<>();
+    public static final Map<DbType, EntityInfoBuild> ENTITY_INFO_BUILD_MAP = new HashMap<>();
 
     //初始化实体构建信息
     static {

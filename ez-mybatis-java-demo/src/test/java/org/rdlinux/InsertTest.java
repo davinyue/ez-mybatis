@@ -42,4 +42,25 @@ public class InsertTest extends BaseTest {
         BaseTest.sqlSession.commit();
         System.out.println(insert);
     }
+
+    @Test
+    public void batchInsertTUT() {
+        UserMapper userMapper = BaseTest.sqlSession.getMapper(UserMapper.class);
+        userMapper.selectById("1s");
+        long start = System.currentTimeMillis();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 5000; i++) {
+            User user = new User();
+            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            user.setName("芳" + i + 1);
+            user.setFirstName("王");
+            user.setAge(27 + i);
+            user.setSex(i % 2 == 0 ? "男" : "女");
+            users.add(user);
+        }
+        int insert = userMapper.batchInsert(users);
+        BaseTest.sqlSession.commit();
+        long end = System.currentTimeMillis();
+        System.out.println("耗时" + (end - start));
+    }
 }
