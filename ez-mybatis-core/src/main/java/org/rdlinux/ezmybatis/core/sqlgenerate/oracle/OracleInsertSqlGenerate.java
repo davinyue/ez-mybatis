@@ -24,7 +24,7 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
     }
 
     @Override
-    protected String getKeywordQM() {
+    public String getKeywordQM() {
         return "\"";
     }
 

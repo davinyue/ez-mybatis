@@ -21,7 +21,7 @@ public class OracleDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     }
 
     @Override
-    protected String getKeywordQM() {
+    public String getKeywordQM() {
         return "\"";
     }
 }
