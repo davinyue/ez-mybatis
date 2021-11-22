@@ -10,7 +10,7 @@ public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     public static MySqlUpdateSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized (MySqlUpdateSqlGenerate.class) {
+            synchronized ( MySqlUpdateSqlGenerate.class ) {
                 if (instance == null) {
                     instance = new MySqlUpdateSqlGenerate();
                 }
@@ -20,7 +20,7 @@ public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     }
 
     @Override
-    protected String getKeywordQM() {
+    public String getKeywordQM() {
         return "`";
     }
 }

@@ -14,7 +14,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     public static MySqlInsertSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized (MySqlInsertSqlGenerate.class) {
+            synchronized ( MySqlInsertSqlGenerate.class ) {
                 if (instance == null) {
                     instance = new MySqlInsertSqlGenerate();
                 }
@@ -24,7 +24,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
     }
 
     @Override
-    protected String getKeywordQM() {
+    public String getKeywordQM() {
         return "`";
     }
 

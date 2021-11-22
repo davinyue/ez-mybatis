@@ -25,19 +25,19 @@ public class OracleSelectSqlGenerate extends AbstractSelectSqlGenerate {
 
 
     @Override
-    protected String getKeywordQM() {
+    public String getKeywordQM() {
         return "\"";
     }
 
     @Override
     public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
                               Map<String, Object> mybatisParam) {
-        return new OracleQueryToSql().toSql(configuration, query, mybatisParam);
+        return OracleQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
     }
 
     @Override
     public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
                                    Map<String, Object> mybatisParam) {
-        return null;
+        return OracleQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
     }
 }
