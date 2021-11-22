@@ -99,7 +99,8 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
         return this.conditionsToSql(configuration, where.getConditions(), mybatisParamHolder);
     }
 
-    protected String joinsToSql(Configuration configuration, List<EzJoin> joins, MybatisParamHolder mybatisParamHolder) {
+    protected String joinsToSql(Configuration configuration, List<EzJoin> joins,
+                                MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = new StringBuilder();
         if (joins != null) {
             for (EzJoin join : joins) {
@@ -116,9 +117,14 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
         EzTable joinTable = join.getJoinTable();
         EntityClassInfo jEtInfo = EzEntityClassInfoFactory.forClass(configuration, joinTable.getEtType());
         EzJoin.JoinType joinType = join.getJoinType();
-        String sonSql = this.conditionsToSql(configuration, join.getOnConditions(), mybatisParamHolder);
-        if (sonSql == null || sonSql.isEmpty()) {
-            return "";
+        String sonSql;
+        if (joinType == EzJoin.JoinType.CrossJoin) {
+            sonSql = "";
+        } else {
+            sonSql = this.conditionsToSql(configuration, join.getOnConditions(), mybatisParamHolder);
+            if (sonSql == null || sonSql.isEmpty()) {
+                return "";
+            }
         }
         StringBuilder sql = new StringBuilder();
         if (joinType == EzJoin.JoinType.InnerJoin) {
@@ -136,9 +142,7 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
         } else if (joinType == EzJoin.JoinType.CrossJoin) {
             sql.append(", ").append(jEtInfo.getTableName()).append(" ").append(joinTable.getAlias());
         }
-        if (joinType != EzJoin.JoinType.CrossJoin) {
-            sql.append(sonSql);
-        }
+        sql.append(sonSql);
         return sql.toString();
     }
 
