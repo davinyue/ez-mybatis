@@ -49,7 +49,7 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, List<Object> entitys) {
-        StringBuilder sqlBuilder = new StringBuilder("BEGIN ");
+        StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
         for (int i = 0; i < entitys.size(); i++) {
             String insertSql = this.getInsertSql(configuration, entitys.get(i));
             sqlBuilder.append(insertSql.replaceAll(EzMybatisConstant.MAPPER_PARAM_ENTITY + ".",

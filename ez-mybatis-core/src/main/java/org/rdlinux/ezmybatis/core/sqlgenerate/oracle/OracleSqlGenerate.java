@@ -1,9 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
 import java.util.List;
+import java.util.Map;
 
 public class OracleSqlGenerate implements SqlGenerate {
     private static volatile OracleSqlGenerate instance;
@@ -13,7 +15,7 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     public static OracleSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized (OracleSqlGenerate.class) {
+            synchronized ( OracleSqlGenerate.class ) {
                 if (instance == null) {
                     instance = new OracleSqlGenerate();
                 }
@@ -40,6 +42,18 @@ public class OracleSqlGenerate implements SqlGenerate {
     @Override
     public String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
         return OracleSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, ntClass, ids);
+    }
+
+    @Override
+    public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
+                              Map<String, Object> mybatisParam) {
+        return OracleSelectSqlGenerate.getInstance().getQuerySql(configuration, ntClass, query, mybatisParam);
+    }
+
+    @Override
+    public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
+                                   Map<String, Object> mybatisParam) {
+        return OracleSelectSqlGenerate.getInstance().getQueryCountSql(configuration, ntClass, query, mybatisParam);
     }
 
     @Override

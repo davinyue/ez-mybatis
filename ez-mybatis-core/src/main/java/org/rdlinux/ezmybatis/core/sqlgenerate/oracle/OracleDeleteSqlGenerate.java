@@ -6,11 +6,12 @@ public class OracleDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     private static volatile OracleDeleteSqlGenerate instance;
 
     private OracleDeleteSqlGenerate() {
+        super(OracleSelectSqlGenerate.getInstance());
     }
 
     public static OracleDeleteSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized (OracleDeleteSqlGenerate.class) {
+            synchronized ( OracleDeleteSqlGenerate.class ) {
                 if (instance == null) {
                     instance = new OracleDeleteSqlGenerate();
                 }

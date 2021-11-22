@@ -2,6 +2,8 @@ package org.rdlinux;
 
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
+import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.sqlpart.EzTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
@@ -50,5 +52,15 @@ public class SelectTest extends BaseTest {
         List<Map<String, Object>> users = BaseTest.sqlSession.getMapper(UserMapper.class)
                 .selectMapBySql("select * from \"user\"");
         System.out.println(JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void queryTest() {
+        EzQuery query = EzQuery.builder().from(EzTable.of(User.class))
+                .join(EzTable.of(User.class))
+                .conditions().groupCondition().groupCondition().done().done().done()
+                .done().build();
+        BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        System.out.println(query);
     }
 }

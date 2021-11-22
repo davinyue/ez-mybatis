@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.*;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityInsertProvider;
@@ -113,4 +114,16 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+
+    /**
+     * 根据sql查询多条数据, 并返回list map
+     */
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
+    List<Nt> query(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery query);
+
+    /**
+     * 根据sql查询多条数据, 并返回list map
+     */
+    @SelectProvider(type = EzEntitySelectProvider.class, method = "queryCount")
+    int queryCount(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery query);
 }
