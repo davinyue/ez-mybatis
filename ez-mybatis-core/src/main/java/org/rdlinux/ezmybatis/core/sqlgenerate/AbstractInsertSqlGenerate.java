@@ -10,11 +10,7 @@ import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
-    /**
-     * 获取关键字引号
-     */
-    protected abstract String getKeywordQM();
+public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate, KeywordQM {
 
     @Override
     public String getInsertSql(Configuration configuration, Object entity) {

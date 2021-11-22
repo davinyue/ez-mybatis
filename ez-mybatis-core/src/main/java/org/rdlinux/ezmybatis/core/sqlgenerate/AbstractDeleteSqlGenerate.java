@@ -4,18 +4,12 @@ import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
-public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
+public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate, KeywordQM {
     private SelectSqlGenerate selectSqlGenerate;
 
     public AbstractDeleteSqlGenerate(SelectSqlGenerate selectSqlGenerate) {
         this.selectSqlGenerate = selectSqlGenerate;
     }
-
-    /**
-     * 获取关键字引号
-     */
-    protected abstract String getKeywordQM();
-
 
     @Override
     public String getDeleteByIdSql(Configuration configuration, Class<?> ntClass, Object id) {

@@ -12,7 +12,7 @@ public interface QueryToSql {
     String toSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam);
 
     /**
-     * 获取关键字引号
+     * @param mybatisParam mybatis参数
      */
-    abstract String getKeywordQM();
+    String toCountSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam);
 }
