@@ -8,11 +8,7 @@ import org.rdlinux.ezmybatis.core.utils.Assert;
 
 import java.util.List;
 
-public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
-    /**
-     * 获取关键字引号
-     */
-    protected abstract String getKeywordQM();
+public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate, KeywordQM {
 
     @Override
     public String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id) {

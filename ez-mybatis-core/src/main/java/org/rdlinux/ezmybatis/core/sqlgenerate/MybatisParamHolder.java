@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlpart;
+package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.utils.Assert;

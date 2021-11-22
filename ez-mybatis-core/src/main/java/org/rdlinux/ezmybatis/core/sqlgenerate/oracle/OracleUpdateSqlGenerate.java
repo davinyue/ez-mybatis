@@ -28,7 +28,7 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     }
 
     @Override
-    protected String getKeywordQM() {
+    public String getKeywordQM() {
         return "\"";
     }
 }

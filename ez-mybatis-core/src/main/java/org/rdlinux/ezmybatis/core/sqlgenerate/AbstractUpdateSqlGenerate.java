@@ -12,11 +12,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
-    /**
-     * 获取关键字引号
-     */
-    protected abstract String getKeywordQM();
+public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate, KeywordQM {
 
     @Override
     public String getUpdateSql(Configuration configuration, Object entity, boolean isReplace) {
