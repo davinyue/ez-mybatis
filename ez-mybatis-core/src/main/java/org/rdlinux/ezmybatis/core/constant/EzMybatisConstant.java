@@ -60,4 +60,8 @@ public abstract class EzMybatisConstant {
      * mapper参数, sql
      */
     public static final String MAPPER_PARAM_SQL = "mp_sql";
+    /**
+     * mapper参数, query
+     */
+    public static final String MAPPER_PARAM_QUERY = "mp_query";
 }

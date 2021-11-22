@@ -17,6 +17,7 @@ public class EntityClassInfo {
     private String tableName;
     private List<EntityFieldInfo> fieldInfos;
     private Map<String, EntityFieldInfo> columnMapFieldInfo;
+    private Map<String, EntityFieldInfo> filedNameMapFieldInfo;
     private EntityFieldInfo primaryKeyInfo;
 
     public EntityClassInfo(Class<?> entityClass, EntityInfoBuildConfig buildConfig) {
@@ -32,6 +33,7 @@ public class EntityClassInfo {
         this.entityClass = entityClass;
         this.fieldInfos = new LinkedList<>();
         this.columnMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
+        this.filedNameMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
         List<Field> fields = SqlReflectionUtils.getSupportFields(entityClass);
         fields.forEach(field -> {
             EntityFieldInfo fieldInfo = new EntityFieldInfo(field, buildConfig);
@@ -40,7 +42,10 @@ public class EntityClassInfo {
                 this.primaryKeyInfo = fieldInfo;
             }
         });
-        this.fieldInfos.forEach(fieldInfo -> this.columnMapFieldInfo.put(fieldInfo.getColumnName(), fieldInfo));
+        this.fieldInfos.forEach(fieldInfo -> {
+            this.columnMapFieldInfo.put(fieldInfo.getColumnName(), fieldInfo);
+            this.filedNameMapFieldInfo.put(fieldInfo.getFieldName(), fieldInfo);
+        });
     }
 
     public Class<?> getEntityClass() {
@@ -66,6 +71,10 @@ public class EntityClassInfo {
         } else {
             return entityFieldInfo.getFieldName();
         }
+    }
+
+    public EntityFieldInfo getFieldInfo(String field) {
+        return this.filedNameMapFieldInfo.get(field);
     }
 
     public EntityFieldInfo getPrimaryKeyInfo() {

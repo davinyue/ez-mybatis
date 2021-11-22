@@ -49,7 +49,7 @@ public class InsertTest extends BaseTest {
         userMapper.selectById("1s");
         long start = System.currentTimeMillis();
         List<User> users = new LinkedList<>();
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 500; i++) {
             User user = new User();
             user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setName("芳" + i + 1);
