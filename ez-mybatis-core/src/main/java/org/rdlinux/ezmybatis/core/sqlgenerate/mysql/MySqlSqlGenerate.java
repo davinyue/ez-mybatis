@@ -1,9 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
 import java.util.List;
+import java.util.Map;
 
 public class MySqlSqlGenerate implements SqlGenerate {
     private static volatile MySqlSqlGenerate instance;
@@ -13,7 +15,7 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     public static MySqlSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized (MySqlSqlGenerate.class) {
+            synchronized ( MySqlSqlGenerate.class ) {
                 if (instance == null) {
                     instance = new MySqlSqlGenerate();
                 }
@@ -41,6 +43,18 @@ public class MySqlSqlGenerate implements SqlGenerate {
     @Override
     public String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
         return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, ntClass, ids);
+    }
+
+    @Override
+    public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
+                              Map<String, Object> mybatisParam) {
+        return MySqlSelectSqlGenerate.getInstance().getQuerySql(configuration, ntClass, query, mybatisParam);
+    }
+
+    @Override
+    public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
+                                   Map<String, Object> mybatisParam) {
+        return MySqlSelectSqlGenerate.getInstance().getQueryCountSql(configuration, ntClass, query, mybatisParam);
     }
 
     @Override

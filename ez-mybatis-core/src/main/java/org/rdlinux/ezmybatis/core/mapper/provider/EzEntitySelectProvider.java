@@ -2,10 +2,12 @@ package org.rdlinux.ezmybatis.core.mapper.provider;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class EzEntitySelectProvider {
     public String selectById(@Param(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION) Configuration configuration,
@@ -24,5 +26,19 @@ public class EzEntitySelectProvider {
                               @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
                               @Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql) {
         return sql;
+    }
+
+    public String query(Map<String, Object> param) {
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        EzQuery query = (EzQuery) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getQuerySql(configuration, ntClass, query, param);
+    }
+
+    public String queryCount(Map<String, Object> param) {
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        EzQuery query = (EzQuery) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getQueryCountSql(configuration, ntClass, query, param);
     }
 }
