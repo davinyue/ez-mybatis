@@ -14,46 +14,64 @@ import java.util.Map;
 public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
     @Override
     public String toSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam) {
+        StringBuilder sqlBuilder = new StringBuilder();
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
-        EzFrom from = query.getFrom();
-        EzTable fromTable = from.getTable();
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, fromTable.getEtType());
-        StringBuilder sql = new StringBuilder("SELECT ").append(from.getTable().getAlias()).append(".* ")
-                .append(" FROM ").append(entityClassInfo.getTableName()).append(" ").append(from.getTable().getAlias())
-                .append(this.joinsToSql(configuration, query.getJoins(), mybatisParamHolder))
-                .append(this.whereToSql(configuration, query.getWhere(), mybatisParamHolder))
-                .append(this.groupByToSql(configuration, query.getGroupBy()))
-                .append(this.orderByToSql(configuration, query.getOrderBy()))
-                .append(this.whereToSql(configuration, query.getHaving(), mybatisParamHolder));
-        if (query.getLimit() != null) {
-            sql = this.limitToSql(sql, query.getLimit());
-        }
-        return sql.toString();
+        sqlBuilder = this.selectToSql(sqlBuilder, configuration, query, mybatisParamHolder);
+        sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, mybatisParamHolder);
+        sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query.getJoins(), mybatisParamHolder);
+        sqlBuilder = this.whereToSql(sqlBuilder, configuration, query.getWhere(), mybatisParamHolder);
+        sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query.getGroupBy());
+        sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query.getOrderBy());
+        sqlBuilder = this.whereToSql(sqlBuilder, configuration, query.getHaving(), mybatisParamHolder);
+        sqlBuilder = this.limitToSql(sqlBuilder, configuration, query.getLimit(), mybatisParamHolder);
+        return sqlBuilder.toString();
     }
 
     @Override
     public String toCountSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam) {
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
+        StringBuilder sqlBuilder = new StringBuilder();
+        sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, mybatisParamHolder);
+        sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, mybatisParamHolder);
+        sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query.getJoins(), mybatisParamHolder);
+        sqlBuilder = this.whereToSql(sqlBuilder, configuration, query.getWhere(), mybatisParamHolder);
+        sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query.getGroupBy());
+        sqlBuilder = this.whereToSql(sqlBuilder, configuration, query.getHaving(), mybatisParamHolder);
+        return sqlBuilder.toString();
+    }
+
+    protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+                                             MybatisParamHolder mybatisParamHolder) {
+        EzFrom from = query.getFrom();
+        sqlBuilder.append("SELECT COUNT(").append(from.getTable().getAlias()).append(".*) ");
+        return sqlBuilder;
+    }
+
+    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+                                        MybatisParamHolder mybatisParamHolder) {
+        EzFrom from = query.getFrom();
+        sqlBuilder.append("SELECT ").append(from.getTable().getAlias()).append(".* ");
+        return sqlBuilder;
+    }
+
+    protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+                                      MybatisParamHolder mybatisParamHolder) {
         EzFrom from = query.getFrom();
         EzTable fromTable = from.getTable();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, fromTable.getEtType());
-        return "SELECT COUNT(" + from.getTable().getAlias() + ".*) " +
-                " FROM " + entityClassInfo.getTableName() + " " + from.getTable().getAlias() +
-                this.joinsToSql(configuration, query.getJoins(), mybatisParamHolder) +
-                this.whereToSql(configuration, query.getWhere(), mybatisParamHolder) +
-                this.groupByToSql(configuration, query.getGroupBy()) +
-                this.whereToSql(configuration, query.getHaving(), mybatisParamHolder);
+        sqlBuilder.append(" FROM ").append(this.getKeywordQM()).append(entityClassInfo.getTableName())
+                .append(this.getKeywordQM()).append(" ").append(from.getTable().getAlias());
+        return sqlBuilder;
     }
 
-    protected StringBuilder limitToSql(StringBuilder sql, EzLimit limit) {
-        return new StringBuilder();
-    }
+    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzLimit limit,
+                                                MybatisParamHolder mybatisParamHolder);
 
-    protected String orderByToSql(Configuration configuration, EzOrder order) {
+    protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzOrder order) {
         if (order == null || order.getItems() == null) {
-            return "";
+            return sqlBuilder;
         } else {
-            StringBuilder sql = new StringBuilder(" GROUP BY ");
+            StringBuilder sql = new StringBuilder(" ORDER BY ");
             for (int i = 0; i < order.getItems().size(); i++) {
                 EzOrder.OrderItem orderItem = order.getItems().get(i);
                 EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration,
@@ -67,13 +85,13 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
                     sql.append(" ");
                 }
             }
-            return sql.toString();
+            return sqlBuilder.append(sql);
         }
     }
 
-    protected String groupByToSql(Configuration configuration, EzGroup group) {
+    protected StringBuilder groupByToSql(StringBuilder sqlBuilder, Configuration configuration, EzGroup group) {
         if (group == null || group.getItems() == null) {
-            return "";
+            return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" GROUP BY ");
             for (int i = 0; i < group.getItems().size(); i++) {
@@ -88,68 +106,73 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
                     sql.append(" ");
                 }
             }
-            return sql.toString();
+            return sqlBuilder.append(sql);
         }
     }
 
-    protected String whereToSql(Configuration configuration, EzWhere where, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzWhere where,
+                                       MybatisParamHolder mybatisParamHolder) {
         if (where == null) {
-            return "";
+            return sqlBuilder;
         }
-        return this.conditionsToSql(configuration, where.getConditions(), mybatisParamHolder);
+        sqlBuilder.append(" WHERE ").append(this.conditionsToSql(sqlBuilder, configuration, where.getConditions(),
+                mybatisParamHolder));
+        return sqlBuilder;
     }
 
-    protected String joinsToSql(Configuration configuration, List<EzJoin> joins,
-                                MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, List<EzJoin> joins,
+                                       MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = new StringBuilder();
         if (joins != null) {
             for (EzJoin join : joins) {
-                sql.append(this.joinToSql(configuration, join, mybatisParamHolder));
+                sql.append(this.joinToSql(sqlBuilder, configuration, join, mybatisParamHolder));
             }
         }
-        return sql.toString();
+        return sqlBuilder.append(sql);
     }
 
-    protected String joinToSql(Configuration configuration, EzJoin join, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder joinToSql(StringBuilder sqlBuilder, Configuration configuration, EzJoin join,
+                                      MybatisParamHolder mybatisParamHolder) {
         if (join == null) {
-            return "";
+            return new StringBuilder();
         }
         EzTable joinTable = join.getJoinTable();
         EntityClassInfo jEtInfo = EzEntityClassInfoFactory.forClass(configuration, joinTable.getEtType());
         EzJoin.JoinType joinType = join.getJoinType();
-        String sonSql;
+        StringBuilder sonSql;
         if (joinType == EzJoin.JoinType.CrossJoin) {
-            sonSql = "";
+            sonSql = new StringBuilder();
         } else {
-            sonSql = this.conditionsToSql(configuration, join.getOnConditions(), mybatisParamHolder);
-            if (sonSql == null || sonSql.isEmpty()) {
-                return "";
+            sonSql = this.conditionsToSql(sqlBuilder, configuration, join.getOnConditions(), mybatisParamHolder);
+            if (sonSql == null || sonSql.length() == 0) {
+                return new StringBuilder();
             }
         }
         StringBuilder sql = new StringBuilder();
         if (joinType == EzJoin.JoinType.InnerJoin) {
-            sql.append(" INNER JOIN ").append(jEtInfo.getTableName()).append(" ").append(joinTable.getAlias())
-                    .append(" ON ");
+            sql.append(" INNER JOIN ").append(this.getKeywordQM()).append(jEtInfo.getTableName())
+                    .append(this.getKeywordQM()).append(" ").append(joinTable.getAlias()).append(" ON ");
         } else if (joinType == EzJoin.JoinType.LeftJoin) {
-            sql.append(" LEFT JOIN ").append(jEtInfo.getTableName()).append(" ").append(joinTable.getAlias())
-                    .append(" ON ");
+            sql.append(" LEFT JOIN ").append(this.getKeywordQM()).append(jEtInfo.getTableName())
+                    .append(this.getKeywordQM()).append(" ").append(joinTable.getAlias()).append(" ON ");
         } else if (joinType == EzJoin.JoinType.RightJoin) {
-            sql.append(" RIGHT JOIN ").append(jEtInfo.getTableName()).append(" ").append(joinTable.getAlias())
-                    .append(" ON ");
+            sql.append(" RIGHT JOIN ").append(this.getKeywordQM()).append(jEtInfo.getTableName())
+                    .append(this.getKeywordQM()).append(" ").append(joinTable.getAlias()).append(" ON ");
         } else if (joinType == EzJoin.JoinType.FullJoin) {
-            sql.append(" FULL JOIN ").append(jEtInfo.getTableName()).append(" ").append(joinTable.getAlias())
-                    .append(" ON ");
+            sql.append(" FULL JOIN ").append(this.getKeywordQM()).append(jEtInfo.getTableName())
+                    .append(this.getKeywordQM()).append(" ").append(joinTable.getAlias()).append(" ON ");
         } else if (joinType == EzJoin.JoinType.CrossJoin) {
-            sql.append(", ").append(jEtInfo.getTableName()).append(" ").append(joinTable.getAlias());
+            sql.append(", ").append(this.getKeywordQM()).append(jEtInfo.getTableName())
+                    .append(this.getKeywordQM()).append(" ").append(joinTable.getAlias());
         }
         sql.append(sonSql);
-        return sql.toString();
+        return sql;
     }
 
-    protected String conditionsToSql(Configuration configuration, List<EzCondition> conditions,
-                                     MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder conditionsToSql(StringBuilder sqlBuilder, Configuration configuration,
+                                            List<EzCondition> conditions, MybatisParamHolder mybatisParamHolder) {
         if (conditions == null) {
-            return "";
+            return sqlBuilder;
         }
         StringBuilder sql = new StringBuilder();
         for (int i = 0; i < conditions.size(); i++) {
@@ -160,21 +183,21 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
             if (i != 0) {
                 sql.append(condition.getLoginSymbol().name()).append(" ");
             }
-            sql.append(this.conditionToSql(configuration, condition, mybatisParamHolder));
+            sql.append(this.conditionToSql(sqlBuilder, configuration, condition, mybatisParamHolder));
         }
-        return sql.toString();
+        return sql;
     }
 
-    protected String conditionToSql(Configuration configuration, EzCondition condition,
-                                    MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder conditionToSql(StringBuilder sqlBuilder, Configuration configuration, EzCondition condition,
+                                           MybatisParamHolder mybatisParamHolder) {
         if (condition == null) {
-            return "";
+            return new StringBuilder();
         }
         StringBuilder sql = new StringBuilder();
         if (condition instanceof EzGroupCondition) {
-            String sonSql = this.conditionsToSql(configuration, ((EzGroupCondition) condition)
+            StringBuilder sonSql = this.conditionsToSql(sqlBuilder, configuration, ((EzGroupCondition) condition)
                     .getConditions(), mybatisParamHolder);
-            if (sonSql != null && !sonSql.isEmpty()) {
+            if (sonSql != null && !(sonSql.length() == 0)) {
                 sql.append("( ").append(sonSql).append(" )");
             }
         } else if (condition instanceof EzNormalCondition) {
@@ -183,7 +206,9 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
             EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration,
                     oCondition.getTable().getEtType());
             sql.append(" ").append(oCondition.getTable().getAlias()).append(".")
+                    .append(this.getKeywordQM())
                     .append(etInfo.getFieldInfo(oCondition.getField()).getColumnName())
+                    .append(this.getKeywordQM())
                     .append(" ")
                     .append(oCondition.getOperator().getOperator())
                     .append(" ");
@@ -225,7 +250,9 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
             EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration,
                     oCondition.getTable().getEtType());
             sql.append(" ").append(oCondition.getTable().getAlias()).append(".")
+                    .append(this.getKeywordQM())
                     .append(etInfo.getFieldInfo(oCondition.getField()).getColumnName())
+                    .append(this.getKeywordQM())
                     .append(" ")
                     .append(oCondition.getOperator().getOperator())
                     .append(" ")
@@ -238,24 +265,30 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
             EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration,
                     oCondition.getTable().getEtType());
             sql.append(" ").append(oCondition.getTable().getAlias()).append(".")
+                    .append(this.getKeywordQM())
                     .append(etInfo.getFieldInfo(oCondition.getField()).getColumnName())
+                    .append(this.getKeywordQM())
                     .append(" ")
                     .append(oCondition.getOperator().getOperator()).append(" ");
         } else if (condition instanceof EzTableCondition) {
             EzTableCondition oCondition = (EzTableCondition) condition;
-            EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration,
-                    oCondition.getTable().getEtType());
+            EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, oCondition.getTable()
+                    .getEtType());
             EntityClassInfo oEtInfo = EzEntityClassInfoFactory.forClass(configuration,
                     oCondition.getOtherTable().getEtType());
             sql.append(" ").append(oCondition.getTable().getAlias()).append(".")
+                    .append(this.getKeywordQM())
                     .append(etInfo.getFieldInfo(oCondition.getField()).getColumnName())
+                    .append(this.getKeywordQM())
                     .append(" ")
                     .append(oCondition.getOperator().getOperator())
                     .append(" ")
                     .append(oCondition.getOtherTable().getAlias()).append(".")
+                    .append(this.getKeywordQM())
                     .append(oEtInfo.getFieldInfo(oCondition.getField()).getColumnName())
+                    .append(this.getKeywordQM())
                     .append(" ");
         }
-        return sql.toString();
+        return sql;
     }
 }
