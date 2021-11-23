@@ -57,7 +57,9 @@ public class SelectTest extends BaseTest {
     @Test
     public void queryTest() {
         EzQuery query = EzQuery.builder().from(EzTable.of(User.class)).orderBy().add("name").done().page(2, 5).build();
-        BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
-        System.out.println(query);
+        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
+        System.out.println("总数" + i);
     }
 }
