@@ -33,7 +33,7 @@ public class MySqlQueryToSql extends AbstractQueryToSql {
         if (limit == null) {
             return sqlBuilder;
         }
-        sqlBuilder.append(" ").append("LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize());
+        sqlBuilder.append(" LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize());
         return sqlBuilder;
     }
 }
