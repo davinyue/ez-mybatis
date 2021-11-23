@@ -209,8 +209,8 @@ public class EzQuery {
             if (this.join.getOnConditions() == null) {
                 this.join.setOnConditions(new LinkedList<>());
             }
-            return new JoinConditionBuilder<>(this, this.join.getOnConditions(), this.query.from.getTable(),
-                    this.join.getTable());
+            return new JoinConditionBuilder<>(this, this.join.getOnConditions(), this.join.getTable(),
+                    this.join.getJoinTable());
         }
 
         public JoinBuilder type(EzJoin.JoinType type) {
@@ -244,6 +244,11 @@ public class EzQuery {
             return this;
         }
 
+        public WhereConditionBuilder<Builder> addCondition(EzCondition.LoginSymbol loginSymbol, EzTable table,
+                                                           String field, Object value) {
+            return this.addCondition(loginSymbol, table, field, Operator.equal, value);
+        }
+
         public WhereConditionBuilder<Builder> addCondition(EzTable table, String field,
                                                            Operator operator, Object value) {
             this.conditions.add(new EzNormalCondition(EzCondition.LoginSymbol.AND, table, field, operator, value));
@@ -263,6 +268,14 @@ public class EzQuery {
                                                            Operator operator, Object value) {
             this.conditions.add(new EzNormalCondition(loginSymbol, this.table, field, operator, value));
             return this;
+        }
+
+        /**
+         * 添加联表条件, 使用被联表的字段
+         */
+        public WhereConditionBuilder<Builder> addCondition(EzCondition.LoginSymbol loginSymbol, String field,
+                                                           Object value) {
+            return this.addCondition(loginSymbol, field, Operator.equal, value);
         }
 
         /**

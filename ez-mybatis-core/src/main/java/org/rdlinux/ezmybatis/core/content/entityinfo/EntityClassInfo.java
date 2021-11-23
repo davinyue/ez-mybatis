@@ -74,7 +74,10 @@ public class EntityClassInfo {
     }
 
     public EntityFieldInfo getFieldInfo(String field) {
-        return this.filedNameMapFieldInfo.get(field);
+        EntityFieldInfo fieldInfo = this.filedNameMapFieldInfo.get(field);
+        Assert.notNull(fieldInfo, String.format("class %s not found '%s' field", this.getEntityClass()
+                .getName(), field));
+        return fieldInfo;
     }
 
     public EntityFieldInfo getPrimaryKeyInfo() {
