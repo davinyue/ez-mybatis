@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlpart.Alias;
@@ -27,6 +28,13 @@ public class OracleQueryToSql extends AbstractQueryToSql {
     @Override
     public String getKeywordQM() {
         return "\"";
+    }
+
+    @Override
+    protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+                                             MybatisParamHolder mybatisParamHolder) {
+        sqlBuilder.append("SELECT COUNT( 1 ) ");
+        return sqlBuilder;
     }
 
     @Override
