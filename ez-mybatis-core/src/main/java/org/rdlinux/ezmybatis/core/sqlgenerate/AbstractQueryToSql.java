@@ -23,7 +23,7 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query.getGroupBy());
         sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query.getOrderBy());
         sqlBuilder = this.whereToSql(sqlBuilder, configuration, query.getHaving(), mybatisParamHolder);
-        sqlBuilder = this.limitToSql(sqlBuilder, configuration, query.getLimit(), mybatisParamHolder);
+        sqlBuilder = this.limitToSql(sqlBuilder, configuration, query, mybatisParamHolder);
         return sqlBuilder.toString();
     }
 
@@ -42,8 +42,7 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
 
     protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
                                              MybatisParamHolder mybatisParamHolder) {
-        EzFrom from = query.getFrom();
-        sqlBuilder.append("SELECT COUNT(").append(from.getTable().getAlias()).append(".*) ");
+        sqlBuilder.append("SELECT COUNT(1) ");
         return sqlBuilder;
     }
 
@@ -64,7 +63,7 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
         return sqlBuilder;
     }
 
-    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzLimit limit,
+    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
                                                 MybatisParamHolder mybatisParamHolder);
 
     protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzOrder order) {
