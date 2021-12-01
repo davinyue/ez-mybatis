@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlpart.*;
 import org.rdlinux.ezmybatis.core.sqlpart.condition.*;
+import org.rdlinux.ezmybatis.core.sqlpart.selectfield.EzSelectField;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,7 +50,19 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
     protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
                                         MybatisParamHolder mybatisParamHolder) {
         EzFrom from = query.getFrom();
-        sqlBuilder.append("SELECT ").append(from.getTable().getAlias()).append(".* ");
+        EzSelect select = query.getSelect();
+        if (select == null || select.getSelectFields() == null || select.getSelectFields().isEmpty()) {
+            sqlBuilder.append("SELECT ").append(from.getTable().getAlias()).append(".* ");
+        } else {
+            List<EzSelectField> selectFields = select.getSelectFields();
+            sqlBuilder.append("SELECT ");
+            for (int i = 0; i < selectFields.size(); i++) {
+                sqlBuilder.append(selectFields.get(i).toSqlPart(configuration));
+                if (i + 1 < selectFields.size()) {
+                    sqlBuilder.append(", ");
+                }
+            }
+        }
         return sqlBuilder;
     }
 
@@ -76,7 +89,9 @@ public abstract class AbstractQueryToSql implements QueryToSql, KeywordQM {
                 EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration,
                         orderItem.getTable().getEtType());
                 sql.append(orderItem.getTable().getAlias()).append(".")
+                        .append(this.getKeywordQM())
                         .append(entityClassInfo.getFieldInfo(orderItem.getField()).getColumnName())
+                        .append(this.getKeywordQM())
                         .append(" ").append(orderItem.getType().name());
                 if (i + 1 < order.getItems().size()) {
                     sql.append(", ");
