@@ -2,11 +2,16 @@ package org.rdlinux.ezmybatis.core;
 
 import org.rdlinux.ezmybatis.core.sqlpart.*;
 import org.rdlinux.ezmybatis.core.sqlpart.condition.*;
+import org.rdlinux.ezmybatis.core.sqlpart.selectfield.EzCountSelectField;
+import org.rdlinux.ezmybatis.core.sqlpart.selectfield.EzMaxSelectField;
+import org.rdlinux.ezmybatis.core.sqlpart.selectfield.EzNormalSelectField;
+import org.rdlinux.ezmybatis.core.sqlpart.selectfield.EzSelectField;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class EzQuery {
+    private EzSelect select;
     private EzFrom from;
     private List<EzJoin> joins;
     private EzWhere where;
@@ -18,8 +23,12 @@ public class EzQuery {
     private EzQuery() {
     }
 
-    public static EzQueryBuilder builder() {
-        return new EzQueryBuilder();
+    public static EzQueryBuilder from(EzTable table) {
+        return new EzQueryBuilder(table);
+    }
+
+    public EzSelect getSelect() {
+        return this.select;
     }
 
     public EzFrom getFrom() {
@@ -53,13 +62,13 @@ public class EzQuery {
     public static class EzQueryBuilder {
         private final EzQuery query;
 
-        private EzQueryBuilder() {
+        private EzQueryBuilder(EzTable table) {
             this.query = new EzQuery();
+            this.query.from = new EzFrom(table);
         }
 
-        public EzQueryBuilder from(EzTable table) {
-            this.query.from = new EzFrom(table);
-            return this;
+        public EzSelectBuilder select() {
+            return new EzSelectBuilder(this);
         }
 
         public JoinBuilder join(EzTable table) {
@@ -95,6 +104,57 @@ public class EzQuery {
 
         public EzQuery build() {
             return this.query;
+        }
+    }
+
+    public static class EzSelectBuilder {
+        private EzQueryBuilder queryBuilder;
+        private List<EzSelectField> selectFields = new LinkedList<>();
+        private EzTable table;
+
+        public EzSelectBuilder(EzQueryBuilder queryBuilder) {
+            this.queryBuilder = queryBuilder;
+            this.queryBuilder.query.select = new EzSelect(this.selectFields);
+            this.table = queryBuilder.query.from.getTable();
+        }
+
+        public EzSelectBuilder add(String field) {
+            this.selectFields.add(new EzNormalSelectField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder addMax(String field) {
+            this.selectFields.add(new EzMaxSelectField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder addCount(String field) {
+            this.selectFields.add(new EzCountSelectField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder addMin(String field) {
+            this.selectFields.add(new EzMaxSelectField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder addMax(String field, String alias) {
+            this.selectFields.add(new EzMaxSelectField(this.table, field, alias));
+            return this;
+        }
+
+        public EzSelectBuilder addCount(String field, String alias) {
+            this.selectFields.add(new EzCountSelectField(this.table, field, alias));
+            return this;
+        }
+
+        public EzSelectBuilder addMin(String field, String alias) {
+            this.selectFields.add(new EzMaxSelectField(this.table, field, alias));
+            return this;
+        }
+
+        public EzQueryBuilder done() {
+            return this.queryBuilder;
         }
     }
 
