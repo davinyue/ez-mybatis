@@ -31,22 +31,15 @@ public class OracleQueryToSql extends AbstractQueryToSql {
     }
 
     @Override
-    protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
-                                             MybatisParamHolder mybatisParamHolder) {
-        sqlBuilder.append("SELECT COUNT( 1 ) ");
-        return sqlBuilder;
-    }
-
-    @Override
-    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzLimit limit,
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
                                        MybatisParamHolder mybatisParamHolder) {
+        EzLimit limit = query.getLimit();
         if (limit == null) {
             return sqlBuilder;
         }
         String bodyAlias = Alias.getAlias();
         String outSqlBody = "SELECT " + bodyAlias + ".*, ROWNUM " + ROW_NUM_ALIAS +
                 " FROM (" + sqlBuilder + ") " + bodyAlias;
-
         String outAlias = Alias.getAlias();
         String outSqlHead = "SELECT " + outAlias + ".* FROM ( ";
         String outSqlTail = " ) " + outAlias + " WHERE " + outAlias + "." + ROW_NUM_ALIAS + " > " + limit.getSkip()

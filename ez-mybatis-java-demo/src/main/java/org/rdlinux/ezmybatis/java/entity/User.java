@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 @Getter
 @Setter
 public class User extends BaseEntity {
-    @Column(name = "LAST_NAME")
+    @Column(name = "last_name")
     private String name;
     private Integer age;
     @Transient
