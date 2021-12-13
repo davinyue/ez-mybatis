@@ -9,17 +9,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "user")
+@Table(name = "ez_user")
 @Getter
 @Setter
 public class User extends BaseEntity {
-    @Column(name = "last_name")
     private String name;
-    private Integer age;
+    private String sex;
+    @Column(name = "age")
+    private Integer userAge;
     @Transient
     private String ignore;
-
-    private String firstName;
-
-    private String sex;
 }

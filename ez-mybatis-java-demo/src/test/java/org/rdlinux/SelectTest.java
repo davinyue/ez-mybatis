@@ -3,8 +3,11 @@ package org.rdlinux;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlpart.EzTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.Join;
+import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.java.entity.User;
+import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.util.LinkedList;
@@ -56,8 +59,29 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void queryTest() {
-        EzQuery query = EzQuery.from(EzTable.of(User.class)).select().addCount("id", "age").done()
-                .orderBy().add("name").done().build();
+        EzQuery query = EzQuery.from(Table.of(User.class))
+                .select().add("*").done()
+                .join(Table.of(UserOrg.class))
+                .type(Join.JoinType.CrossJoin)
+                .conditions().add("id", "userId")
+                .add("orgId", 2)
+                .done().done()
+                .where().conditions().add("userAge", Operator.more, 20).done().done()
+                .orderBy().add("name").done()
+                .build();
+        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
+        System.out.println("总数" + i);
+    }
+
+    @Test
+    public void groupTest() {
+        EzQuery query = EzQuery.from(Table.of(User.class))
+                .select().add("name").done()
+                //.groupBy().add("name").done()
+                //.having().conditions().add("name", Operator.more, 1).done().done()
+                .build();
         List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
         int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
