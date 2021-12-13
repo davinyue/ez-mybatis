@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Having extends Where {
-    private static final Map<DbType, SqlPart> CONVERT = new HashMap<>();
+    private static final Map<DbType, SqlStruct> CONVERT = new HashMap<>();
 
     static {
-        SqlPart defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
+        SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
                 Having.defaultWhereToSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);

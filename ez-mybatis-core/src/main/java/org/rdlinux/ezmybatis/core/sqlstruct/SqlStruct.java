@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
-public interface SqlPart {
+public interface SqlStruct {
     /**
      * 转换为sql组成部分
      *
