@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.selectfield;
+package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
@@ -7,12 +7,12 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Table;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
-public class SelectMinField extends SelectField {
-    public SelectMinField(Table table, String field) {
+public class SelectMaxField extends SelectField {
+    public SelectMaxField(Table table, String field) {
         super(table, field);
     }
 
-    public SelectMinField(Table table, String field, String alias) {
+    public SelectMaxField(Table table, String field, String alias) {
         super(table, field, alias);
     }
 
@@ -20,7 +20,7 @@ public class SelectMinField extends SelectField {
     public String toSqlPart(Configuration configuration) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, this.getTable().getEtType());
         String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        String sql = " MIN(" + this.getTable().getAlias() + "." + keywordQM + entityClassInfo
+        String sql = " MAX(" + this.getTable().getAlias() + "." + keywordQM + entityClassInfo
                 .getFieldInfo(this.getField()).getColumnName() + keywordQM + ") ";
         String alias = this.getAlias();
         if (alias != null && !alias.isEmpty()) {
