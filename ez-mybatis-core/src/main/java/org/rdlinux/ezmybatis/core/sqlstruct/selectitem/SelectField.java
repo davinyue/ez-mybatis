@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.selectfield;
+package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;

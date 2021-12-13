@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.selectfield;
+package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 public abstract class AbstractSelectItem implements SelectItem {
     private String alias;
