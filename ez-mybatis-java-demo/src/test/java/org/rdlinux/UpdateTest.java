@@ -13,8 +13,8 @@ public class UpdateTest extends BaseTest {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
-        user.setFirstName("王");
-        user.setAge(27);
+        user.setName("王");
+        user.setUserAge(27);
         user.setSex("女");
         int insert = BaseTest.sqlSession.getMapper(UserMapper.class).update(user);
         BaseTest.sqlSession.commit();
@@ -31,7 +31,7 @@ public class UpdateTest extends BaseTest {
             if (i == 0) {
                 user.setSex("女");
             } else {
-                user.setAge(i);
+                user.setUserAge(i);
             }
             users.add(user);
         }
@@ -60,7 +60,7 @@ public class UpdateTest extends BaseTest {
             if (i == 0) {
                 user.setSex("女");
             } else {
-                user.setAge(i);
+                user.setUserAge(i);
             }
             users.add(user);
         }

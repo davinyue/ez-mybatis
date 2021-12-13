@@ -32,12 +32,12 @@ public class OracleSelectSqlGenerate extends AbstractSelectSqlGenerate {
     @Override
     public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
                               Map<String, Object> mybatisParam) {
-        return OracleQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
+        return OracleEzQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
     }
 
     @Override
     public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
                                    Map<String, Object> mybatisParam) {
-        return OracleQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
+        return OracleEzQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
     }
 }
