@@ -32,12 +32,12 @@ public class MySqlSelectSqlGenerate extends AbstractSelectSqlGenerate {
     @Override
     public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
                               Map<String, Object> mybatisParam) {
-        return MySqlQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
+        return MySqlEzQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
     }
 
     @Override
     public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
                                    Map<String, Object> mybatisParam) {
-        return MySqlQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
+        return MySqlEzQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
     }
 }
