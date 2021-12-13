@@ -28,11 +28,11 @@ import java.util.Map;
  */
 @Getter
 @Setter
-public class Where implements SqlPart {
-    private static final Map<DbType, SqlPart> CONVERT = new HashMap<>();
+public class Where implements SqlStruct {
+    private static final Map<DbType, SqlStruct> CONVERT = new HashMap<>();
 
     static {
-        SqlPart defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
+        SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
                 Where.defaultWhereToSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
