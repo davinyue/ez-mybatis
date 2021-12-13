@@ -15,7 +15,7 @@ public class InsertTest extends BaseTest {
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
         //user.setFirstName("王");
-        user.setAge(27);
+        user.setUserAge(27);
         user.setSex("女");
         int insert = BaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
         BaseTest.sqlSession.commit();
@@ -30,11 +30,11 @@ public class InsertTest extends BaseTest {
             user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setName("芳" + i + 1);
             if (i == 0) {
-                user.setFirstName(null);
+                user.setName(null);
             } else {
-                user.setFirstName("王");
+                user.setName("王");
             }
-            user.setAge(27 + i);
+            user.setUserAge(27 + i);
             user.setSex(i % 2 == 0 ? "男" : "女");
             users.add(user);
         }
@@ -53,8 +53,8 @@ public class InsertTest extends BaseTest {
             User user = new User();
             user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
             user.setName("芳" + i + 1);
-            user.setFirstName("王");
-            user.setAge(27 + i);
+            user.setName("王");
+            user.setUserAge(27 + i);
             user.setSex(i % 2 == 0 ? "男" : "女");
             users.add(user);
         }
