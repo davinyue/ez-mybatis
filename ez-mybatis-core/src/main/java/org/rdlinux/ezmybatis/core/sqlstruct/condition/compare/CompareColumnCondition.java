@@ -4,9 +4,9 @@ import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -15,14 +15,14 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 @Getter
 public class CompareColumnCondition implements Condition {
     private LoginSymbol loginSymbol;
-    private Table table;
+    private EntityTable table;
     private String column;
     private Operator operator;
-    private Table otherTable;
+    private EntityTable otherTable;
     private String otherColumn;
 
-    public CompareColumnCondition(Table table, String column, Operator operator,
-                                  Table otherTable, String otherColumn) {
+    public CompareColumnCondition(EntityTable table, String column, Operator operator,
+                                  EntityTable otherTable, String otherColumn) {
         this.loginSymbol = LoginSymbol.AND;
         this.table = table;
         this.column = column;
@@ -31,8 +31,8 @@ public class CompareColumnCondition implements Condition {
         this.otherColumn = otherColumn;
     }
 
-    public CompareColumnCondition(LoginSymbol loginSymbol, Table table, String column, Operator operator,
-                                  Table otherTable, String otherColumn) {
+    public CompareColumnCondition(LoginSymbol loginSymbol, EntityTable table, String column, Operator operator,
+                                  EntityTable otherTable, String otherColumn) {
         this.loginSymbol = loginSymbol;
         this.table = table;
         this.column = column;

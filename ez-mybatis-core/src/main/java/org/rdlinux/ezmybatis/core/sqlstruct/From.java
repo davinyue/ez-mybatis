@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 import java.util.HashMap;
@@ -29,9 +30,9 @@ public class From implements SqlStruct {
         CONVERT.put(DbType.ORACLE, defaultConvert);
     }
 
-    private Table table;
+    private EntityTable table;
 
-    public From(Table table) {
+    public From(EntityTable table) {
         this.table = table;
     }
 
@@ -39,7 +40,7 @@ public class From implements SqlStruct {
                                          MybatisParamHolder mybatisParamHolder) {
         String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         From from = param.getFrom();
-        Table fromTable = from.getTable();
+        EntityTable fromTable = from.getTable();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, fromTable.getEtType());
         sqlBuilder.append(" FROM ").append(keywordQM).append(entityClassInfo.getTableName())
                 .append(keywordQM).append(" ").append(from.getTable().getAlias());

@@ -6,7 +6,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -15,10 +15,10 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 @Getter
 @Setter
 public class IsNullFieldCondition extends IsNullCondition {
-    protected Table table;
+    protected EntityTable table;
     protected String field;
 
-    public IsNullFieldCondition(LoginSymbol loginSymbol, Table table, String field) {
+    public IsNullFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field) {
         this.table = table;
         this.field = field;
         this.loginSymbol = loginSymbol;

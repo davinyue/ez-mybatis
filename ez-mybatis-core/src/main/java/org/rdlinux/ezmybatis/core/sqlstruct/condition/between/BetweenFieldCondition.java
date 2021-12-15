@@ -6,7 +6,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -15,12 +15,12 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 public class BetweenFieldCondition extends BetweenCondition {
     @Getter
     @Setter
-    protected Table table;
+    protected EntityTable table;
     @Getter
     @Setter
     protected String field;
 
-    public BetweenFieldCondition(LoginSymbol loginSymbol, Table table, String field,
+    public BetweenFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field,
                                  Object minValue, Object maxValue) {
         super(loginSymbol, minValue, maxValue);
         this.table = table;

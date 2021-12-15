@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 import java.util.HashMap;
@@ -65,15 +66,15 @@ public class GroupBy implements SqlStruct {
 
 
     public static class GroupItem {
-        private Table table;
+        private EntityTable table;
         private String field;
 
-        public GroupItem(Table table, String field) {
+        public GroupItem(EntityTable table, String field) {
             this.table = table;
             this.field = field;
         }
 
-        public Table getTable() {
+        public EntityTable getTable() {
             return this.table;
         }
 
@@ -84,10 +85,10 @@ public class GroupBy implements SqlStruct {
 
     public static class GroupBuilder<T> {
         private T target;
-        private Table table;
+        private EntityTable table;
         private GroupBy groupBy;
 
-        public GroupBuilder(T target, GroupBy groupBy, Table table) {
+        public GroupBuilder(T target, GroupBy groupBy, EntityTable table) {
             this.target = target;
             this.groupBy = groupBy;
             this.table = table;
@@ -98,7 +99,7 @@ public class GroupBy implements SqlStruct {
             return this;
         }
 
-        public GroupBuilder<T> add(Table table, String field) {
+        public GroupBuilder<T> add(EntityTable table, String field) {
             this.groupBy.getItems().add(new GroupBy.GroupItem(table, field));
             return this;
         }

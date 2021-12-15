@@ -1,7 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.utils.Assert;
 
 public class SelectAllItem implements SelectItem {
@@ -16,7 +17,7 @@ public class SelectAllItem implements SelectItem {
         return this.table;
     }
 
-    public void setTable(Table table) {
+    public void setTable(EntityTable table) {
         Assert.notNull(table, "table can not be null");
         this.table = table;
     }
