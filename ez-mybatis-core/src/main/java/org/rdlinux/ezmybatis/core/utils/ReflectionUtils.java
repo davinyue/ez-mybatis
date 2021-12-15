@@ -221,15 +221,15 @@ public class ReflectionUtils {
         if (obj == null || field == null) {
             return;
         }
-        Class<?> objClass = getRealClassOfProxyClass(obj.getClass());
         if (!useSetter) {
             field.setAccessible(true);
             try {
-                field.set(objClass, value);
+                field.set(obj, value);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new IllegalArgumentException(e);
             }
         } else {
+            Class<?> objClass = getRealClassOfProxyClass(obj.getClass());
             Method methodOfSet = getMethodOfFieldSet(objClass, field);
             methodOfSet.setAccessible(true);
             try {
