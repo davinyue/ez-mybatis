@@ -9,6 +9,7 @@ import java.util.List;
 
 @Getter
 public class EzQuery extends EzParam {
+
     private Select select;
     private List<Join> joins;
     private GroupBy groupBy;
@@ -28,13 +29,14 @@ public class EzQuery extends EzParam {
 
         private EzQueryBuilder(EntityTable table) {
             this.query = new EzQuery();
+            this.query.table = table;
             this.query.from = new From(table);
         }
 
         public Select.EzSelectBuilder<EzQueryBuilder> select() {
             Select select = new Select(new LinkedList<>());
             this.query.select = select;
-            return new Select.EzSelectBuilder<>(this, select, this.query.from.getTable());
+            return new Select.EzSelectBuilder<>(this, select, this.query.table);
         }
 
         public Join.JoinBuilder<EzQueryBuilder> join(EntityTable joinTable) {
@@ -43,31 +45,31 @@ public class EzQuery extends EzParam {
             }
             Join join = new Join();
             this.query.joins.add(join);
-            return new Join.JoinBuilder<>(this, join, this.query.from.getTable(), joinTable);
+            return new Join.JoinBuilder<>(this, join, this.query.table, joinTable);
         }
 
         public Where.WhereBuilder<EzQueryBuilder> where() {
             Where where = new Where(new LinkedList<>());
             this.query.where = where;
-            return new Where.WhereBuilder<>(this, where, this.query.from.getTable());
+            return new Where.WhereBuilder<>(this, where, this.query.table);
         }
 
         public GroupBy.GroupBuilder<EzQueryBuilder> groupBy() {
             GroupBy group = new GroupBy(new LinkedList<>());
             this.query.groupBy = group;
-            return new GroupBy.GroupBuilder<>(this, group, this.query.from.getTable());
+            return new GroupBy.GroupBuilder<>(this, group, this.query.table);
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder> orderBy() {
             OrderBy orderBy = new OrderBy(new LinkedList<>());
             this.query.orderBy = orderBy;
-            return new OrderBy.OrderBuilder<>(this, orderBy, this.query.from.getTable());
+            return new OrderBy.OrderBuilder<>(this, orderBy, this.query.table);
         }
 
         public Where.WhereBuilder<EzQueryBuilder> having() {
             Having where = new Having(new LinkedList<>());
             this.query.having = where;
-            return new Where.WhereBuilder<>(this, where, this.query.from.getTable());
+            return new Where.WhereBuilder<>(this, where, this.query.table);
         }
 
         /**
