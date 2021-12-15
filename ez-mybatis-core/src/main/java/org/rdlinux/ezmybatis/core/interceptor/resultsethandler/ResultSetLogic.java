@@ -22,7 +22,7 @@ public class ResultSetLogic implements InterceptorLogic {
         DefaultResultSetHandler resultSetHandler = (DefaultResultSetHandler) invocation.getTarget();
         if (invocation.getTarget() instanceof DefaultResultSetHandler) {
             Executor executor = ReflectionUtils.getFieldValue(resultSetHandler, "executor");
-            MappedStatement mappedStatement = ReflectionUtils.getFieldValue(resultSetHandler,
+            MappedStatement ms = ReflectionUtils.getFieldValue(resultSetHandler,
                     "mappedStatement");
             ParameterHandler parameterHandler = ReflectionUtils.getFieldValue(resultSetHandler,
                     "parameterHandler");
@@ -30,7 +30,7 @@ public class ResultSetLogic implements InterceptorLogic {
                     "resultHandler");
             BoundSql boundSql = ReflectionUtils.getFieldValue(resultSetHandler, "boundSql");
             RowBounds rowBounds = ReflectionUtils.getFieldValue(resultSetHandler, "rowBounds");
-            EzResultSetHandler ezResultSetHandler = new EzResultSetHandler(executor, mappedStatement, parameterHandler,
+            EzResultSetHandler ezResultSetHandler = new EzResultSetHandler(executor, ms, parameterHandler,
                     resultHandler, boundSql, rowBounds);
             return new InterceptorLogicResult(false, ezResultSetHandler.handleResultSets(statement));
         }
