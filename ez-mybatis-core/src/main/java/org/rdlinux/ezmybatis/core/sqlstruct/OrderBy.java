@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 import java.util.HashMap;
@@ -78,17 +79,17 @@ public class OrderBy implements SqlStruct {
 
     @Getter
     public static class OrderItem {
-        private Table table;
+        private EntityTable table;
         private String field;
         private OrderType type;
 
-        public OrderItem(Table table, String field, OrderType type) {
+        public OrderItem(EntityTable table, String field, OrderType type) {
             this.table = table;
             this.field = field;
             this.type = type;
         }
 
-        public OrderItem(Table table, String field) {
+        public OrderItem(EntityTable table, String field) {
             this.table = table;
             this.field = field;
             this.type = OrderType.ASC;
@@ -97,10 +98,10 @@ public class OrderBy implements SqlStruct {
 
     public static class OrderBuilder<T> {
         private T target;
-        private Table table;
+        private EntityTable table;
         private OrderBy orderBy;
 
-        public OrderBuilder(T target, OrderBy orderBy, Table table) {
+        public OrderBuilder(T target, OrderBy orderBy, EntityTable table) {
             this.target = target;
             this.orderBy = orderBy;
             this.table = table;
@@ -116,12 +117,12 @@ public class OrderBy implements SqlStruct {
             return this;
         }
 
-        public OrderBuilder<T> add(Table table, String field) {
+        public OrderBuilder<T> add(EntityTable table, String field) {
             this.orderBy.getItems().add(new OrderBy.OrderItem(table, field));
             return this;
         }
 
-        public OrderBuilder<T> add(Table table, String field, OrderBy.OrderType type) {
+        public OrderBuilder<T> add(EntityTable table, String field, OrderBy.OrderType type) {
             this.orderBy.getItems().add(new OrderBy.OrderItem(table, field, type));
             return this;
         }

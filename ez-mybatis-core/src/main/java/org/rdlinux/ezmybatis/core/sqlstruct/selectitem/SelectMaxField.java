@@ -4,15 +4,15 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 public class SelectMaxField extends SelectField {
-    public SelectMaxField(Table table, String field) {
+    public SelectMaxField(EntityTable table, String field) {
         super(table, field);
     }
 
-    public SelectMaxField(Table table, String field, String alias) {
+    public SelectMaxField(EntityTable table, String field, String alias) {
         super(table, field, alias);
     }
 

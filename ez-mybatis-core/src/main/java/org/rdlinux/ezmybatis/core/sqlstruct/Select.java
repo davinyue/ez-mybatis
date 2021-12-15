@@ -8,6 +8,8 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 import java.util.HashMap;
@@ -62,9 +64,9 @@ public class Select implements SqlStruct {
     public static class EzSelectBuilder<T> {
         private List<SelectItem> selectFields;
         private T target;
-        private Table table;
+        private EntityTable table;
 
-        public EzSelectBuilder(T target, Select select, Table table) {
+        public EzSelectBuilder(T target, Select select, EntityTable table) {
             if (select.getSelectFields() == null) {
                 select.setSelectFields(new LinkedList<>());
             }
@@ -77,13 +79,23 @@ public class Select implements SqlStruct {
             return this.target;
         }
 
-        public EzSelectBuilder<T> addAll() {
-            this.selectFields.add(new SelectAllItem(this.table));
+        public EzSelectBuilder<T> addAll(Table table) {
+            this.selectFields.add(new SelectAllItem(table));
             return this;
         }
 
+        public EzSelectBuilder<T> addAll() {
+            return this.addAll(this.table);
+        }
+
+
         public EzSelectBuilder<T> add(String field) {
             this.selectFields.add(new SelectField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> add(EntityTable table, String field) {
+            this.selectFields.add(new SelectField(table, field));
             return this;
         }
 
@@ -92,8 +104,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> add(EntityTable table, String field, String alias) {
+            this.selectFields.add(new SelectField(table, field, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addColumn(String column) {
             this.selectFields.add(new SelectColumn(this.table, column));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumn(Table table, String column) {
+            this.selectFields.add(new SelectColumn(table, column));
             return this;
         }
 
@@ -102,8 +124,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addColumn(Table table, String column, String alias) {
+            this.selectFields.add(new SelectColumn(table, column, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addMax(String field) {
             this.selectFields.add(new SelectMaxField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addMax(EntityTable table, String field) {
+            this.selectFields.add(new SelectMaxField(table, field));
             return this;
         }
 
@@ -112,8 +144,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addMax(EntityTable table, String field, String alias) {
+            this.selectFields.add(new SelectMaxField(table, field, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addColumnMax(String column) {
             this.selectFields.add(new SelectMaxColumn(this.table, column));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnMax(Table table, String column) {
+            this.selectFields.add(new SelectMaxColumn(table, column));
             return this;
         }
 
@@ -122,8 +164,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addColumnMax(Table table, String column, String alias) {
+            this.selectFields.add(new SelectMaxColumn(table, column, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addCount(String field) {
             this.selectFields.add(new SelectCountField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addCount(EntityTable table, String field) {
+            this.selectFields.add(new SelectCountField(table, field));
             return this;
         }
 
@@ -132,8 +184,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addCount(EntityTable table, String field, String alias) {
+            this.selectFields.add(new SelectCountField(table, field, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addColumnCount(String column) {
             this.selectFields.add(new SelectCountColumn(this.table, column));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnCount(Table table, String column) {
+            this.selectFields.add(new SelectCountColumn(table, column));
             return this;
         }
 
@@ -142,8 +204,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addColumnCount(Table table, String column, String alias) {
+            this.selectFields.add(new SelectCountColumn(table, column, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addMin(String field) {
             this.selectFields.add(new SelectMaxField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addMin(EntityTable table, String field) {
+            this.selectFields.add(new SelectMaxField(table, field));
             return this;
         }
 
@@ -152,8 +224,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addMin(EntityTable table, String field, String alias) {
+            this.selectFields.add(new SelectMaxField(table, field, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addColumnMin(String column) {
             this.selectFields.add(new SelectMinColumn(this.table, column));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnMin(Table table, String column) {
+            this.selectFields.add(new SelectMinColumn(table, column));
             return this;
         }
 
@@ -162,8 +244,18 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addColumnMin(Table table, String column, String alias) {
+            this.selectFields.add(new SelectMinColumn(table, column, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addAvg(String field) {
             this.selectFields.add(new SelectAvgField(this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addAvg(EntityTable table, String field) {
+            this.selectFields.add(new SelectAvgField(table, field));
             return this;
         }
 
@@ -172,13 +264,28 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        public EzSelectBuilder<T> addAvg(EntityTable table, String field, String alias) {
+            this.selectFields.add(new SelectAvgField(table, field, alias));
+            return this;
+        }
+
         public EzSelectBuilder<T> addColumnAvg(String column) {
             this.selectFields.add(new SelectAvgColumn(this.table, column));
             return this;
         }
 
+        public EzSelectBuilder<T> addColumnAvg(Table table, String column) {
+            this.selectFields.add(new SelectAvgColumn(table, column));
+            return this;
+        }
+
         public EzSelectBuilder<T> addColumnAvg(String column, String alias) {
             this.selectFields.add(new SelectAvgColumn(this.table, column, alias));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnAvg(Table table, String column, String alias) {
+            this.selectFields.add(new SelectAvgColumn(table, column, alias));
             return this;
         }
     }

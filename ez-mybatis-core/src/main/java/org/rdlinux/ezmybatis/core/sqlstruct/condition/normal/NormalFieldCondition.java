@@ -5,8 +5,8 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -14,16 +14,14 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
  */
 @Getter
 public class NormalFieldCondition extends NormalCondition {
-    private Table table;
+    private EntityTable table;
     private String field;
 
-    public NormalFieldCondition(LoginSymbol loginSymbol, Table table, String field, Operator operator,
+    public NormalFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field, Operator operator,
                                 Object value) {
-        this.loginSymbol = loginSymbol;
+        super(loginSymbol, operator, value);
         this.table = table;
         this.field = field;
-        this.operator = operator;
-        this.value = value;
     }
 
     @Override

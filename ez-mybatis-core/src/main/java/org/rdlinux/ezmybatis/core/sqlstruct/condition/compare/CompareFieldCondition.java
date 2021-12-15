@@ -6,9 +6,9 @@ import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -17,14 +17,14 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 @Getter
 public class CompareFieldCondition implements Condition {
     private LoginSymbol loginSymbol;
-    private Table table;
+    private EntityTable table;
     private String field;
     private Operator operator;
-    private Table otherTable;
+    private EntityTable otherTable;
     private String otherField;
 
-    public CompareFieldCondition(Table table, String field, Operator operator,
-                                 Table otherTable, String otherField) {
+    public CompareFieldCondition(EntityTable table, String field, Operator operator,
+                                 EntityTable otherTable, String otherField) {
         this.loginSymbol = LoginSymbol.AND;
         this.table = table;
         this.field = field;
@@ -33,8 +33,8 @@ public class CompareFieldCondition implements Condition {
         this.otherField = otherField;
     }
 
-    public CompareFieldCondition(LoginSymbol loginSymbol, Table table, String field, Operator operator,
-                                 Table otherTable, String otherField) {
+    public CompareFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field, Operator operator,
+                                 EntityTable otherTable, String otherField) {
         this.loginSymbol = loginSymbol;
         this.table = table;
         this.field = field;

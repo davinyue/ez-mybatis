@@ -1,11 +1,12 @@
 package org.rdlinux;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
@@ -59,15 +60,19 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void queryTest() {
-        EzQuery query = EzQuery.from(Table.of(User.class))
-                .select().add("*").done()
-                .join(Table.of(UserOrg.class))
-                .type(Join.JoinType.CrossJoin)
+        Criteria s;
+        Restrictions sdf;
+        EntityTable userTable = EntityTable.of(User.class);
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
+        EzQuery query = EzQuery.from(userTable)
+                .select().addAll(userOrgTable).addAll(userTable).add(userOrgTable, "id", "id2").done()
+                .join(userOrgTable)
                 .conditions().add("id", "userId")
-                .add("orgId", 2)
+                .add(userOrgTable, "orgId", 2)
                 .done().done()
-                .where().conditions().add("userAge", Operator.more, 20).done().done()
+                .where().conditions().add(userTable, "userAge", Operator.gt, 20).done().done()
                 .orderBy().add("name").done()
+                .page(1, 2)
                 .build();
         List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
@@ -77,10 +82,13 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void groupTest() {
-        EzQuery query = EzQuery.from(Table.of(User.class))
+        EzQuery query = EzQuery.from(EntityTable.of(User.class))
                 .select().add("name").done()
+                .where().conditions().addColumn("name", Operator.gt, 1).done().done()
                 //.groupBy().add("name").done()
                 //.having().conditions().add("name", Operator.more, 1).done().done()
+                //.orderBy().add("name").done()
+                .page(2, 5)
                 .build();
         List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));

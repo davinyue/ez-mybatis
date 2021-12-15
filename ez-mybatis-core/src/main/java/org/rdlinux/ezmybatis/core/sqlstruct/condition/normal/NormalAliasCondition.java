@@ -14,10 +14,8 @@ public class NormalAliasCondition extends NormalCondition {
     private String alias;
 
     public NormalAliasCondition(LoginSymbol loginSymbol, String alias, Operator operator, Object value) {
-        this.loginSymbol = loginSymbol;
+        super(loginSymbol, operator, value);
         this.alias = alias;
-        this.operator = operator;
-        this.value = value;
     }
 
     @Override
