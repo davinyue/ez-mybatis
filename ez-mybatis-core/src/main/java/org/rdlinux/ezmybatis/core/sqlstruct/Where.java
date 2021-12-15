@@ -16,6 +16,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 import java.util.HashMap;
@@ -80,10 +81,10 @@ public class Where implements SqlStruct {
 
     public static class WhereBuilder<T> {
         private T target;
-        private Table table;
+        private EntityTable table;
         private Where where;
 
-        public WhereBuilder(T target, Where where, Table table) {
+        public WhereBuilder(T target, Where where, EntityTable table) {
             this.target = target;
             this.where = where;
             this.table = table;
@@ -101,9 +102,9 @@ public class Where implements SqlStruct {
     public static class WhereConditionBuilder<Builder> {
         private Builder builder;
         private List<Condition> conditions;
-        private Table table;
+        private EntityTable table;
 
-        public WhereConditionBuilder(Builder builder, List<Condition> conditions, Table table) {
+        public WhereConditionBuilder(Builder builder, List<Condition> conditions, EntityTable table) {
             this.builder = builder;
             this.conditions = conditions;
             this.table = table;
@@ -113,13 +114,13 @@ public class Where implements SqlStruct {
             return this.builder;
         }
 
-        public WhereConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, Table table,
+        public WhereConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, EntityTable table,
                                                   String field, Operator operator, Object value) {
             this.conditions.add(new NormalFieldCondition(loginSymbol, table, field, operator, value));
             return this;
         }
 
-        public WhereConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, Table table,
+        public WhereConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, EntityTable table,
                                                         String column, Operator operator, Object value) {
             this.conditions.add(new NormalColumnCondition(loginSymbol, table, column, operator, value));
             return this;
@@ -131,41 +132,41 @@ public class Where implements SqlStruct {
             return this;
         }
 
-        public WhereConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, Table table,
+        public WhereConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, EntityTable table,
                                                   String field, Object value) {
-            return this.add(loginSymbol, table, field, Operator.equal, value);
+            return this.add(loginSymbol, table, field, Operator.eq, value);
         }
 
-        public WhereConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, Table table,
+        public WhereConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, EntityTable table,
                                                         String column, Object value) {
-            return this.addColumn(loginSymbol, table, column, Operator.equal, value);
+            return this.addColumn(loginSymbol, table, column, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> addAlias(Condition.LoginSymbol loginSymbol, String alias,
                                                        Object value) {
-            return this.addAlias(loginSymbol, alias, Operator.equal, value);
+            return this.addAlias(loginSymbol, alias, Operator.eq, value);
         }
 
-        public WhereConditionBuilder<Builder> add(Table table, String field,
+        public WhereConditionBuilder<Builder> add(EntityTable table, String field,
                                                   Operator operator, Object value) {
             return this.add(Condition.LoginSymbol.AND, table, field, operator, value);
         }
 
-        public WhereConditionBuilder<Builder> addColumn(Table table, String column,
+        public WhereConditionBuilder<Builder> addColumn(EntityTable table, String column,
                                                         Operator operator, Object value) {
             return this.addColumn(Condition.LoginSymbol.AND, table, column, operator, value);
         }
 
-        public WhereConditionBuilder<Builder> add(Table table, String field, Object value) {
-            return this.add(Condition.LoginSymbol.AND, table, field, Operator.equal, value);
+        public WhereConditionBuilder<Builder> add(EntityTable table, String field, Object value) {
+            return this.add(Condition.LoginSymbol.AND, table, field, Operator.eq, value);
         }
 
-        public WhereConditionBuilder<Builder> addColumn(Table table, String column, Object value) {
-            return this.addColumn(Condition.LoginSymbol.AND, table, column, Operator.equal, value);
+        public WhereConditionBuilder<Builder> addColumn(EntityTable table, String column, Object value) {
+            return this.addColumn(Condition.LoginSymbol.AND, table, column, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> addAlias(String alias, Object value) {
-            return this.addAlias(Condition.LoginSymbol.AND, alias, Operator.equal, value);
+            return this.addAlias(Condition.LoginSymbol.AND, alias, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, String field,
@@ -180,12 +181,12 @@ public class Where implements SqlStruct {
 
         public WhereConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, String field,
                                                   Object value) {
-            return this.add(loginSymbol, field, Operator.equal, value);
+            return this.add(loginSymbol, field, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, String column,
                                                         Object value) {
-            return this.addColumn(loginSymbol, column, Operator.equal, value);
+            return this.addColumn(loginSymbol, column, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> add(String field, Operator operator, Object value) {
@@ -201,11 +202,11 @@ public class Where implements SqlStruct {
         }
 
         public WhereConditionBuilder<Builder> add(String field, Object value) {
-            return this.add(Condition.LoginSymbol.AND, field, Operator.equal, value);
+            return this.add(Condition.LoginSymbol.AND, field, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> addColumn(String column, Object value) {
-            return this.addColumn(Condition.LoginSymbol.AND, column, Operator.equal, value);
+            return this.addColumn(Condition.LoginSymbol.AND, column, Operator.eq, value);
         }
 
         public WhereConditionBuilder<Builder> addAlias(Condition.LoginSymbol loginSymbol, String alias,
@@ -220,7 +221,7 @@ public class Where implements SqlStruct {
         }
 
         public WhereConditionBuilder<Builder> addAlias(String alias, String otherAlias) {
-            this.conditions.add(new CompareAliasCondition(Condition.LoginSymbol.AND, alias, Operator.equal,
+            this.conditions.add(new CompareAliasCondition(Condition.LoginSymbol.AND, alias, Operator.eq,
                     otherAlias));
             return this;
         }

@@ -3,8 +3,8 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -12,16 +12,14 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
  */
 @Getter
 public class NormalColumnCondition extends NormalCondition {
-    private Table table;
+    private EntityTable table;
     private String column;
 
-    public NormalColumnCondition(LoginSymbol loginSymbol, Table table, String column, Operator operator,
+    public NormalColumnCondition(LoginSymbol loginSymbol, EntityTable table, String column, Operator operator,
                                  Object value) {
-        this.loginSymbol = loginSymbol;
+        super(loginSymbol, operator, value);
         this.table = table;
         this.column = column;
-        this.operator = operator;
-        this.value = value;
     }
 
     @Override

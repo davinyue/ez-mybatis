@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -13,12 +13,12 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 public class BetweenColumnCondition extends BetweenCondition {
     @Getter
     @Setter
-    protected Table table;
+    protected EntityTable table;
     @Getter
     @Setter
     protected String column;
 
-    public BetweenColumnCondition(LoginSymbol loginSymbol, Table table, String column,
+    public BetweenColumnCondition(LoginSymbol loginSymbol, EntityTable table, String column,
                                   Object minValue, Object maxValue) {
         super(loginSymbol, minValue, maxValue);
         this.table = table;

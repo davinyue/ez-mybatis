@@ -13,6 +13,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.CompareColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.CompareFieldCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 import java.util.LinkedList;
@@ -25,7 +26,7 @@ public class Join implements SqlStruct {
     /**
      * 主表
      */
-    private Table table;
+    private EntityTable table;
     /**
      * 关联类型
      */
@@ -33,7 +34,7 @@ public class Join implements SqlStruct {
     /**
      * 被join表
      */
-    private Table joinTable;
+    private EntityTable joinTable;
     /**
      * 链表条件
      */
@@ -99,7 +100,7 @@ public class Join implements SqlStruct {
         private T target;
         private Join join;
 
-        public JoinBuilder(T target, Join join, Table table, Table joinTable) {
+        public JoinBuilder(T target, Join join, EntityTable table, EntityTable joinTable) {
             this.target = target;
             this.join = join;
             if (join.getOnConditions() == null) {
@@ -127,11 +128,11 @@ public class Join implements SqlStruct {
 
     public static class JoinConditionBuilder<Builder> extends Where.WhereConditionBuilder<Builder> {
         private List<Condition> conditions;
-        private Table masterTable;
-        private Table joinTable;
+        private EntityTable masterTable;
+        private EntityTable joinTable;
 
-        public JoinConditionBuilder(Builder builder, List<Condition> conditions, Table masterTable,
-                                    Table joinTable) {
+        public JoinConditionBuilder(Builder builder, List<Condition> conditions, EntityTable masterTable,
+                                    EntityTable joinTable) {
             super(builder, conditions, masterTable);
             this.conditions = conditions;
             this.masterTable = masterTable;
@@ -142,7 +143,7 @@ public class Join implements SqlStruct {
          * 添加联表条件, 使用主表和被联表的实体属性
          */
         public JoinConditionBuilder<Builder> add(String masterField, String joinField) {
-            return this.add(masterField, Operator.equal, joinField);
+            return this.add(masterField, Operator.eq, joinField);
         }
 
         /**
@@ -150,7 +151,7 @@ public class Join implements SqlStruct {
          */
         public JoinConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, String masterField,
                                                  String joinField) {
-            return this.add(loginSymbol, masterField, Operator.equal, joinField);
+            return this.add(loginSymbol, masterField, Operator.eq, joinField);
         }
 
         /**
@@ -175,7 +176,7 @@ public class Join implements SqlStruct {
          * 添加联表条件, 使用主表和被联表的实体属性
          */
         public JoinConditionBuilder<Builder> addColumn(String masterColumn, String joinColumn) {
-            return this.add(masterColumn, Operator.equal, joinColumn);
+            return this.add(masterColumn, Operator.eq, joinColumn);
         }
 
         /**
@@ -183,7 +184,7 @@ public class Join implements SqlStruct {
          */
         public JoinConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, String masterColumn,
                                                        String joinColumn) {
-            return this.add(loginSymbol, masterColumn, Operator.equal, joinColumn);
+            return this.add(loginSymbol, masterColumn, Operator.eq, joinColumn);
         }
 
         /**
