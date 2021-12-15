@@ -2,10 +2,12 @@ package org.rdlinux.ezmybatis.core.interceptor.executor;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
+import org.rdlinux.ezmybatis.core.EzParam;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.interceptor.InterceptorLogic;
 import org.rdlinux.ezmybatis.core.interceptor.InterceptorLogicResult;
 import org.rdlinux.ezmybatis.core.mapper.EzBaseMapper;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
@@ -40,6 +42,12 @@ public class MapperParamInitLogic implements InterceptorLogic {
             Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
             param.put(EzMybatisConstant.MAPPER_PARAM_MAPPER_CLASS, mapperClass);
             param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, etClass);
+            param.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, mappedStatement.getConfiguration());
+        } else if (EzMapper.class.isAssignableFrom(mapperClass)) {
+            Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
+            EzParam ezParam = (EzParam) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+            param.put(EzMybatisConstant.MAPPER_PARAM_MAPPER_CLASS, mapperClass);
+            param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, ezParam.getTable().getEtType());
             param.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, mappedStatement.getConfiguration());
         }
         return new InterceptorLogicResult(true, false);

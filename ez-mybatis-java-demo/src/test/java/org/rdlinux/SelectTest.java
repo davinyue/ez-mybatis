@@ -1,10 +1,9 @@
 package org.rdlinux;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
@@ -60,12 +59,10 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void queryTest() {
-        Criteria s;
-        Restrictions sdf;
         EntityTable userTable = EntityTable.of(User.class);
         EntityTable userOrgTable = EntityTable.of(UserOrg.class);
         EzQuery query = EzQuery.from(userTable)
-                .select().addAll(userOrgTable).addAll(userTable).add(userOrgTable, "id", "id2").done()
+                .select().addAll().done()
                 .join(userOrgTable)
                 .conditions().add("id", "userId")
                 .add(userOrgTable, "orgId", 2)
@@ -94,5 +91,14 @@ public class SelectTest extends BaseTest {
         System.out.println(JacksonUtils.toJsonString(users));
         int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
         System.out.println("总数" + i);
+    }
+
+    @Test
+    public void normal() {
+        EzQuery query = EzQuery.from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .build();
+        List<User> users = BaseTest.sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
     }
 }
