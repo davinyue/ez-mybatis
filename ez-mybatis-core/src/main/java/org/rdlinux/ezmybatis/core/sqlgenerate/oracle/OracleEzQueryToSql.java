@@ -28,7 +28,8 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+                                        MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = super.selectToSql(sqlBuilder, configuration, query, mybatisParamHolder);
         Limit limit = query.getLimit();
         GroupBy groupBy = query.getGroupBy();

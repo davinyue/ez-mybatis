@@ -2,7 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 public class SelectAvgColumn extends SelectColumn {

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 
 /**
@@ -13,10 +13,10 @@ import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 @Getter
 @Setter
 public class IsNullColumnCondition extends IsNullCondition {
-    protected Table table;
+    protected EntityTable table;
     protected String column;
 
-    public IsNullColumnCondition(LoginSymbol loginSymbol, Table table, String column) {
+    public IsNullColumnCondition(LoginSymbol loginSymbol, EntityTable table, String column) {
         this.table = table;
         this.column = column;
         this.loginSymbol = loginSymbol;

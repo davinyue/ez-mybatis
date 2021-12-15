@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core;
 
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,14 +19,14 @@ public class EzQuery extends EzParam {
     private EzQuery() {
     }
 
-    public static EzQueryBuilder from(Table table) {
+    public static EzQueryBuilder from(EntityTable table) {
         return new EzQueryBuilder(table);
     }
 
     public static class EzQueryBuilder {
         private final EzQuery query;
 
-        private EzQueryBuilder(Table table) {
+        private EzQueryBuilder(EntityTable table) {
             this.query = new EzQuery();
             this.query.from = new From(table);
         }
@@ -36,12 +37,7 @@ public class EzQuery extends EzParam {
             return new Select.EzSelectBuilder<>(this, select, this.query.from.getTable());
         }
 
-        public EzQueryBuilder selectAll() {
-            this.select().addAll();
-            return this;
-        }
-
-        public Join.JoinBuilder<EzQueryBuilder> join(Table joinTable) {
+        public Join.JoinBuilder<EzQueryBuilder> join(EntityTable joinTable) {
             if (this.query.getJoins() == null) {
                 this.query.joins = new LinkedList<>();
             }
