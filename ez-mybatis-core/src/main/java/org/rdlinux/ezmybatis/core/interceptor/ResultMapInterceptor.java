@@ -37,16 +37,20 @@ public class ResultMapInterceptor implements Interceptor {
             return invocation.proceed();
         }
         MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
-        ResultMap resultMap = ms.getResultMaps().get(0);
-        if (resultMap.getResultMappings() != null && !resultMap.getResultMappings().isEmpty()) {
+        if (ms.getResultMaps() == null) {
             return invocation.proceed();
         }
-        if (resultMap.getId().startsWith(EzMapper.class.getName())) {
-            Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
-            EzParam ezParam = (EzParam) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
-            ResultMap newRm = new ResultMap.Builder(ms.getConfiguration(), resultMap.getId(),
-                    ezParam.getTable().getEtType(), resultMap.getResultMappings()).build();
-            ReflectionUtils.setFieldValue(ms, resultMapsField, Collections.singletonList(newRm), false);
+        for (ResultMap resultMap : ms.getResultMaps()) {
+            if (resultMap.getResultMappings() != null && !resultMap.getResultMappings().isEmpty()) {
+                continue;
+            }
+            if (resultMap.getId().startsWith(EzMapper.class.getName())) {
+                Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
+                EzParam ezParam = (EzParam) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+                ResultMap newRm = new ResultMap.Builder(ms.getConfiguration(), resultMap.getId(),
+                        ezParam.getTable().getEtType(), resultMap.getResultMappings()).build();
+                ReflectionUtils.setFieldValue(ms, resultMapsField, Collections.singletonList(newRm), false);
+            }
         }
         return invocation.proceed();
     }
