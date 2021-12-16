@@ -14,7 +14,7 @@ public class MySqlSelectSqlGenerate extends AbstractSelectSqlGenerate {
 
     public static MySqlSelectSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized ( MySqlInsertSqlGenerate.class ) {
+            synchronized (MySqlInsertSqlGenerate.class) {
                 if (instance == null) {
                     instance = new MySqlSelectSqlGenerate();
                 }
@@ -30,14 +30,12 @@ public class MySqlSelectSqlGenerate extends AbstractSelectSqlGenerate {
     }
 
     @Override
-    public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
-                              Map<String, Object> mybatisParam) {
+    public String getQuerySql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
         return MySqlEzQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
     }
 
     @Override
-    public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
-                                   Map<String, Object> mybatisParam) {
+    public String getQueryCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
         return MySqlEzQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
     }
 }

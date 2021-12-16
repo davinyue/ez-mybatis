@@ -14,7 +14,7 @@ public class OracleSelectSqlGenerate extends AbstractSelectSqlGenerate {
 
     public static OracleSelectSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized ( OracleSelectSqlGenerate.class ) {
+            synchronized (OracleSelectSqlGenerate.class) {
                 if (instance == null) {
                     instance = new OracleSelectSqlGenerate();
                 }
@@ -30,14 +30,12 @@ public class OracleSelectSqlGenerate extends AbstractSelectSqlGenerate {
     }
 
     @Override
-    public String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query,
-                              Map<String, Object> mybatisParam) {
+    public String getQuerySql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
         return OracleEzQueryToSql.getInstance().toSql(configuration, query, mybatisParam);
     }
 
     @Override
-    public String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
-                                   Map<String, Object> mybatisParam) {
+    public String getQueryCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
         return OracleEzQueryToSql.getInstance().toCountSql(configuration, query, mybatisParam);
     }
 }

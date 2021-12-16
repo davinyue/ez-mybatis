@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class EzQuery extends EzParam {
+public class EzQuery<Rt> extends EzParam<Rt> {
 
     private Select select;
     private List<Join> joins;
@@ -17,29 +17,34 @@ public class EzQuery extends EzParam {
     private Having having;
     private Limit limit;
 
-    private EzQuery() {
+    private EzQuery(Class<Rt> retType) {
+        super(retType);
     }
 
-    public static EzQueryBuilder from(EntityTable table) {
-        return new EzQueryBuilder(table);
+    public static <Rt> EzQueryBuilder<Rt> builder(Class<Rt> retType) {
+        return new EzQueryBuilder<>(retType);
     }
 
-    public static class EzQueryBuilder {
-        private final EzQuery query;
+    public static class EzQueryBuilder<Rt> {
+        private final EzQuery<Rt> query;
 
-        private EzQueryBuilder(EntityTable table) {
-            this.query = new EzQuery();
-            this.query.table = table;
-            this.query.from = new From(table);
+        private EzQueryBuilder(Class<Rt> retType) {
+            this.query = new EzQuery<>(retType);
         }
 
-        public Select.EzSelectBuilder<EzQueryBuilder> select() {
+        public EzQueryBuilder<Rt> from(EntityTable table) {
+            this.query.table = table;
+            this.query.from = new From(table);
+            return this;
+        }
+
+        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select() {
             Select select = new Select(new LinkedList<>());
             this.query.select = select;
             return new Select.EzSelectBuilder<>(this, select, this.query.table);
         }
 
-        public Join.JoinBuilder<EzQueryBuilder> join(EntityTable joinTable) {
+        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(EntityTable joinTable) {
             if (this.query.getJoins() == null) {
                 this.query.joins = new LinkedList<>();
             }
@@ -48,25 +53,25 @@ public class EzQuery extends EzParam {
             return new Join.JoinBuilder<>(this, join, this.query.table, joinTable);
         }
 
-        public Where.WhereBuilder<EzQueryBuilder> where() {
+        public Where.WhereBuilder<EzQueryBuilder<Rt>> where() {
             Where where = new Where(new LinkedList<>());
             this.query.where = where;
             return new Where.WhereBuilder<>(this, where, this.query.table);
         }
 
-        public GroupBy.GroupBuilder<EzQueryBuilder> groupBy() {
+        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy() {
             GroupBy group = new GroupBy(new LinkedList<>());
             this.query.groupBy = group;
             return new GroupBy.GroupBuilder<>(this, group, this.query.table);
         }
 
-        public OrderBy.OrderBuilder<EzQueryBuilder> orderBy() {
+        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy() {
             OrderBy orderBy = new OrderBy(new LinkedList<>());
             this.query.orderBy = orderBy;
             return new OrderBy.OrderBuilder<>(this, orderBy, this.query.table);
         }
 
-        public Where.WhereBuilder<EzQueryBuilder> having() {
+        public Where.WhereBuilder<EzQueryBuilder<Rt>> having() {
             Having where = new Having(new LinkedList<>());
             this.query.having = where;
             return new Where.WhereBuilder<>(this, where, this.query.table);
@@ -78,12 +83,12 @@ public class EzQuery extends EzParam {
          * @param currentPage 当前页, 最小为1
          * @param pageSize    页大小
          */
-        public EzQueryBuilder page(int currentPage, int pageSize) {
+        public EzQueryBuilder<Rt> page(int currentPage, int pageSize) {
             this.query.limit = new Limit((currentPage - 1) * pageSize, pageSize);
             return this;
         }
 
-        public EzQuery build() {
+        public EzQuery<Rt> build() {
             return this.query;
         }
     }
