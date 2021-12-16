@@ -11,8 +11,7 @@ public interface SelectSqlGenerate {
 
     String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids);
 
-    String getQuerySql(Configuration configuration, Class<?> ntClass, EzQuery query, Map<String, Object> mybatisParam);
+    String getQuerySql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam);
 
-    String getQueryCountSql(Configuration configuration, Class<?> ntClass, EzQuery query,
-                            Map<String, Object> mybatisParam);
+    String getQueryCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam);
 }

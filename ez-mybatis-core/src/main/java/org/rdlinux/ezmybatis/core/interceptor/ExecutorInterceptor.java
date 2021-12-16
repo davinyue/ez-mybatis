@@ -9,6 +9,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.rdlinux.ezmybatis.core.interceptor.executor.MapperParamInitLogic;
+import org.rdlinux.ezmybatis.core.interceptor.executor.ResultMapInitLogic;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,11 +41,12 @@ import java.util.List;
         )
 })
 public class ExecutorInterceptor extends AbstractInterceptor {
-    private static List<InterceptorLogic> logics;
+    private static List<InterceptorLogic> logics = new LinkedList<>();
 
     static {
-        logics = new LinkedList<>();
+        //添加参数处理, 然后添加结果类型处理, 二者顺序不能颠倒
         logics.add(new MapperParamInitLogic());
+        logics.add(new ResultMapInitLogic());
     }
 
     @Override
