@@ -9,7 +9,7 @@ import java.util.Map;
 
 public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     @Override
-    public String toSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam) {
+    public String toSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
         StringBuilder sqlBuilder = new StringBuilder();
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
         sqlBuilder = this.selectToSql(sqlBuilder, configuration, query, mybatisParamHolder);
@@ -24,7 +24,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     }
 
     @Override
-    public String toCountSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam) {
+    public String toCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, mybatisParamHolder);
@@ -36,29 +36,29 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         return sqlBuilder.toString();
     }
 
-    protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                              MybatisParamHolder mybatisParamHolder) {
         sqlBuilder.append("SELECT COUNT(1) ");
         return sqlBuilder;
     }
 
-    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                         MybatisParamHolder mybatisParamHolder) {
         Select select = query.getSelect();
         Assert.notNull(select, "select can not be null");
         return select.queryToSqlPart(sqlBuilder, configuration, query, mybatisParamHolder);
     }
 
-    protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                       MybatisParamHolder mybatisParamHolder) {
         From from = query.getFrom();
         return from.toSqlPart(sqlBuilder, configuration, query, mybatisParamHolder);
     }
 
-    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                                 MybatisParamHolder mybatisParamHolder);
 
-    protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder mybatisParamHolder) {
         OrderBy order = query.getOrderBy();
         if (order == null || order.getItems() == null) {
@@ -68,7 +68,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         }
     }
 
-    protected StringBuilder groupByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder groupByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder mybatisParamHolder) {
         GroupBy group = query.getGroupBy();
         if (group == null || group.getItems() == null) {
@@ -78,7 +78,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         }
     }
 
-    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder mybatisParamHolder) {
         Where where = query.getWhere();
         if (where == null || where.getConditions() == null) {
@@ -88,7 +88,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         }
     }
 
-    protected StringBuilder havingToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder havingToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                         MybatisParamHolder mybatisParamHolder) {
         Where where = query.getHaving();
         if (where == null || where.getConditions() == null) {
@@ -98,7 +98,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         }
     }
 
-    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder mybatisParamHolder) {
         if (query.getJoins() != null) {
             for (Join join : query.getJoins()) {

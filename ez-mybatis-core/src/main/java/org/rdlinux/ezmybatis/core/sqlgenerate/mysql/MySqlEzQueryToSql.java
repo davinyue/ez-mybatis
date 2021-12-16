@@ -26,7 +26,7 @@ public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder mybatisParamHolder) {
         Limit limit = query.getLimit();
         if (limit == null) {

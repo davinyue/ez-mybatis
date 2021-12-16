@@ -9,10 +9,10 @@ public interface EzQueryToSql {
     /**
      * @param mybatisParam mybatis参数
      */
-    String toSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam);
+    String toSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam);
 
     /**
      * @param mybatisParam mybatis参数
      */
-    String toCountSql(Configuration configuration, EzQuery query, Map<String, Object> mybatisParam);
+    String toCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam);
 }
