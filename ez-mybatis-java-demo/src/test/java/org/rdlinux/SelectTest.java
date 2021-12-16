@@ -61,7 +61,7 @@ public class SelectTest extends BaseTest {
     public void queryTest() {
         EntityTable userTable = EntityTable.of(User.class);
         EntityTable userOrgTable = EntityTable.of(UserOrg.class);
-        EzQuery query = EzQuery.from(userTable)
+        EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
                 .join(userOrgTable)
                 .conditions().add("id", "userId")
@@ -79,7 +79,7 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void groupTest() {
-        EzQuery query = EzQuery.from(EntityTable.of(User.class))
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().add("name").done()
                 .where().conditions().addColumn("name", Operator.gt, 1).done().done()
                 //.groupBy().add("name").done()
@@ -94,11 +94,29 @@ public class SelectTest extends BaseTest {
     }
 
     @Test
-    public void normal() {
-        EzQuery query = EzQuery.from(EntityTable.of(User.class))
+    public void normalQuery() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
                 .build();
         List<User> users = BaseTest.sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void normalQueryOne() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done().page(1, 1)
+                .build();
+        User user = BaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        System.out.println(JacksonUtils.toJsonString(user));
+    }
+
+    @Test
+    public void normalQueryCount() {
+        EzQuery<Integer> query = EzQuery.builder(Integer.class).from(EntityTable.of(User.class))
+                .select().addCount("id").done().page(1, 1)
+                .build();
+        int count = BaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        System.out.println(JacksonUtils.toJsonString(count));
     }
 }

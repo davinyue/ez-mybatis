@@ -13,8 +13,8 @@ import java.util.List;
  */
 public interface EzMapper {
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
-    <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery query);
+    <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery<Rt> query);
 
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
-    <Rt> Rt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery query);
+    <Rt> Rt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery<Rt> query);
 }

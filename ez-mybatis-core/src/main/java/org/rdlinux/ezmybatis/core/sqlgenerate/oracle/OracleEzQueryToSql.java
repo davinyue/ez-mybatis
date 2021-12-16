@@ -28,7 +28,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                         MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = super.selectToSql(sqlBuilder, configuration, query, mybatisParamHolder);
         Limit limit = query.getLimit();
@@ -42,7 +42,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = super.whereToSql(sqlBuilder, configuration, query, mybatisParamHolder);
         Limit limit = query.getLimit();
@@ -61,7 +61,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery query,
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder mybatisParamHolder) {
         Limit limit = query.getLimit();
         if (limit == null) {
