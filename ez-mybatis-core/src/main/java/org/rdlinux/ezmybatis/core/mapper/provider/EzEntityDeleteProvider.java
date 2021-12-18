@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.mapper.provider;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
@@ -51,5 +52,18 @@ public class EzEntityDeleteProvider {
                                   @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
                                   @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Object> ids) {
         return SqlGenerateFactory.getSqlGenerate(configuration).getBatchDeleteByIdSql(configuration, ntClass, ids);
+    }
+
+    public String deleteByEzDelete(Map<String, Object> param) {
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        EzDelete delete = (EzDelete) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteSql(configuration, delete, param);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String batchDeleteByEzDelete(Map<String, Object> param) {
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        List<EzDelete> deletes = (List<EzDelete>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteSql(configuration, deletes, param);
     }
 }
