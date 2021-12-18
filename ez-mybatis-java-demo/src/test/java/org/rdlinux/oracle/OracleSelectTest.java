@@ -16,6 +16,7 @@ import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,14 +55,14 @@ public class OracleSelectTest {
 
     @Test
     public void selectBySql() {
-        List<User> users = sqlSession.getMapper(UserMapper.class).selectBySql("select * from \"user\"");
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectBySql("select * from \"user\"", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
     @Test
     public void selectMapBySql() {
         List<Map<String, Object>> users = sqlSession.getMapper(EzMapper.class)
-                .selectMapBySql("select * from \"user\"");
+                .selectMapBySql("select * from \"user\"", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
@@ -126,7 +127,7 @@ public class OracleSelectTest {
     @Test
     public void selectOneBySql() {
         User user = sqlSession.getMapper(UserMapper.class).selectOneBySql("select * from \"user\" " +
-                "where id = '2c50ee58773f468c82013f73c08e7bc8'");
+                "where id = '2c50ee58773f468c82013f73c08e7bc8'", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
@@ -134,7 +135,7 @@ public class OracleSelectTest {
     public void selectOneMapBySql() {
         Map<String, Object> user = sqlSession.getMapper(EzMapper.class).selectOneMapBySql(
                 "select * from \"user\" " +
-                        "where id = '1s'");
+                        "where id = '1s'", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
     }
 }

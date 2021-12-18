@@ -23,13 +23,15 @@ public interface EzMapper {
      * 根据sql查询一条数据并返回map
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
-    Map<String, Object> selectOneMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+    Map<String, Object> selectOneMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                                          @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
 
     /**
      * 根据sql查询多条数据, 并返回list map
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
-    List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+    List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                                             @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
 
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
     <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
