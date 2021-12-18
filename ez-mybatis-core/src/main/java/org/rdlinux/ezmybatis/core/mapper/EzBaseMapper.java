@@ -106,11 +106,11 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
      * 根据sql查询多条数据, 并返回list map
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
-    List<Nt> query(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery<Nt> query);
+    List<Nt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Nt> query);
 
     /**
      * 根据sql查询多条数据, 并返回list map
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "queryCount")
-    int queryCount(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery<Nt> query);
+    int queryCount(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Nt> query);
 }

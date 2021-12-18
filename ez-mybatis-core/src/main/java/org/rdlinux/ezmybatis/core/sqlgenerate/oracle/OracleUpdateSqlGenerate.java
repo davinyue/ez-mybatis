@@ -1,9 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
 
 import java.util.List;
+import java.util.Map;
 
 public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     private static volatile OracleUpdateSqlGenerate instance;
@@ -13,7 +15,7 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     public static OracleUpdateSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized ( OracleUpdateSqlGenerate.class ) {
+            synchronized (OracleUpdateSqlGenerate.class) {
                 if (instance == null) {
                     instance = new OracleUpdateSqlGenerate();
                 }
@@ -24,7 +26,17 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, List<Object> entitys, boolean isReplace) {
-        return "BEGIN " + super.getBatchUpdateSql(configuration, entitys, isReplace) + " END;";
+        return "BEGIN \n" + super.getBatchUpdateSql(configuration, entitys, isReplace) + " END;";
+    }
+
+    @Override
+    public String getUpdateSql(Configuration configuration, EzUpdate update, Map<String, Object> mybatisParam) {
+        return OracleEzUpdateToSql.getInstance().toSql(configuration, update, mybatisParam);
+    }
+
+    @Override
+    public String getUpdateSql(Configuration configuration, List<EzUpdate> updates, Map<String, Object> mybatisParam) {
+        return OracleEzUpdateToSql.getInstance().toSql(configuration, updates, mybatisParam);
     }
 
     @Override

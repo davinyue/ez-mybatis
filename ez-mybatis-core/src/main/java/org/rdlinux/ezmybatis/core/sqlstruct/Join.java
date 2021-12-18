@@ -45,7 +45,7 @@ public class Join implements SqlStruct {
     private List<Join> joins;
 
     @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                                    MybatisParamHolder mybatisParamHolder) {
         return this.joinToSql(sqlBuilder, configuration, mybatisParamHolder);
     }

@@ -2,9 +2,12 @@ package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.UpdateProvider;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntitySelectProvider;
+import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityUpdateProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,20 @@ public interface EzMapper {
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
 
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
-    <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery<Rt> query);
+    <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
 
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
-    <Rt> Rt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_QUERY) EzQuery<Rt> query);
+    <Rt> Rt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
+
+    /**
+     * 根据更新参数更新
+     */
+    @UpdateProvider(type = EzEntityUpdateProvider.class, method = "updateByEzUpdate")
+    int update(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzUpdate update);
+
+    /**
+     * 根据更新参数更新
+     */
+    @UpdateProvider(type = EzEntityUpdateProvider.class, method = "batchUpdateByEzUpdate")
+    void batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzUpdate> updates);
 }
