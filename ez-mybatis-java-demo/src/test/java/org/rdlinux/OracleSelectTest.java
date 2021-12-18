@@ -1,5 +1,10 @@
 package org.rdlinux;
 
+import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
@@ -7,17 +12,38 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
-import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SelectTest extends BaseTest {
+@Log4j2
+public class OracleSelectTest {
+    public static SqlSession sqlSession;
+
+    static {
+        //System.setProperty("log4j2.configurationFile", "classpath:/log4j2.yml");
+    }
+
+    static {
+        String resource = "mybatis-config-oracle.xml";
+        Reader reader = null;
+        try {
+            reader = Resources.getResourceAsReader(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(reader);
+        sqlSession = sqlSessionFactory.openSession();
+    }
+
     @Test
     public void selectById() {
-        User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectById("980e1f193035494198f90d24e01d6706");
+        User user = sqlSession.getMapper(UserMapper.class).selectById("1");
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
@@ -26,19 +52,19 @@ public class SelectTest extends BaseTest {
         List<String> ids = new LinkedList<>();
         ids.add("980e1f193035494198f90d24e01d6706");
         ids.add("1s");
-        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).selectByIds(ids);
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
     @Test
     public void selectBySql() {
-        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).selectBySql("select * from \"user\"");
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectBySql("select * from \"user\"");
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
     @Test
     public void selectMapBySql() {
-        List<Map<String, Object>> users = BaseTest.sqlSession.getMapper(EzMapper.class)
+        List<Map<String, Object>> users = sqlSession.getMapper(EzMapper.class)
                 .selectMapBySql("select * from \"user\"");
         System.out.println(JacksonUtils.toJsonString(users));
     }
@@ -46,21 +72,16 @@ public class SelectTest extends BaseTest {
     @Test
     public void queryTest() {
         EntityTable userTable = EntityTable.of(User.class);
-        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
-                .select().addAll().done()
-                .join(userOrgTable)
-                .conditions().add("id", "userId")
-                .add(userOrgTable, "orgId", 2)
-                .done().done()
-                .where().conditions().add(userTable, "userAge", Operator.gt, 20).done().done()
-                .orderBy().add("name").done()
+                .select().add("name").done()
+                .groupBy().add("name").done()
                 .page(1, 2)
                 .build();
-        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
-        System.out.println(JacksonUtils.toJsonString(users));
-        int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
-        System.out.println("总数" + i);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        List<User> users = userMapper.query(query);
+        log.info(JacksonUtils.toJsonString(users));
+        int i = userMapper.queryCount(query);
+        log.info("总数" + i);
     }
 
     @Test
@@ -73,9 +94,9 @@ public class SelectTest extends BaseTest {
                 //.orderBy().add("name").done()
                 .page(2, 5)
                 .build();
-        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        List<User> users = sqlSession.getMapper(UserMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
-        int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
+        int i = sqlSession.getMapper(UserMapper.class).queryCount(query);
         System.out.println("总数" + i);
     }
 
@@ -84,7 +105,7 @@ public class SelectTest extends BaseTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
                 .build();
-        List<User> users = BaseTest.sqlSession.getMapper(EzMapper.class).query(query);
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
@@ -93,7 +114,7 @@ public class SelectTest extends BaseTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done().page(1, 1)
                 .build();
-        User user = BaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        User user = sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
@@ -102,20 +123,20 @@ public class SelectTest extends BaseTest {
         EzQuery<Integer> query = EzQuery.builder(Integer.class).from(EntityTable.of(User.class))
                 .select().addCount("id").done().page(1, 1)
                 .build();
-        int count = BaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        int count = sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(count));
     }
 
     @Test
     public void selectOneBySql() {
-        User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectOneBySql("select * from \"user\" " +
+        User user = sqlSession.getMapper(UserMapper.class).selectOneBySql("select * from \"user\" " +
                 "where id = '2c50ee58773f468c82013f73c08e7bc8'");
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
     @Test
     public void selectOneMapBySql() {
-        Map<String, Object> user = BaseTest.sqlSession.getMapper(EzMapper.class).selectOneMapBySql(
+        Map<String, Object> user = sqlSession.getMapper(EzMapper.class).selectOneMapBySql(
                 "select * from \"user\" " +
                         "where id = '1s'");
         System.out.println(JacksonUtils.toJsonString(user));

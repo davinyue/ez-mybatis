@@ -23,11 +23,11 @@ public class ResultMapInitLogic implements InterceptorLogic {
     @SuppressWarnings(value = {"rawtype", "unchecked"})
     public InterceptorLogicResult invokeBefore(Invocation invocation) throws Throwable {
         if (!(invocation.getTarget() instanceof Executor)) {
-            return new InterceptorLogicResult(true, invocation.proceed());
+            return new InterceptorLogicResult(true, null);
         }
         MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
         if (ms.getResultMaps() == null) {
-            return new InterceptorLogicResult(true, invocation.proceed());
+            return new InterceptorLogicResult(true, null);
         }
         for (ResultMap resultMap : ms.getResultMaps()) {
             if (resultMap.getResultMappings() != null && !resultMap.getResultMappings().isEmpty()) {
@@ -44,6 +44,6 @@ public class ResultMapInitLogic implements InterceptorLogic {
                 ReflectionUtils.setFieldValue(ms, resultMapsField, Collections.singletonList(newRm), false);
             }
         }
-        return new InterceptorLogicResult(true, invocation.proceed());
+        return new InterceptorLogicResult(true, null);
     }
 }
