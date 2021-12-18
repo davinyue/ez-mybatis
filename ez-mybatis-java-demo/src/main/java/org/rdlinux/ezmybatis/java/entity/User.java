@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "ez_user")
+@Table(name = "EZ_USER")
 @Getter
 @Setter
 public class User extends BaseEntity {
