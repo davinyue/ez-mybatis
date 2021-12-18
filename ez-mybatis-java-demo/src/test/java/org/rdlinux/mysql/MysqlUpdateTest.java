@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
-import org.rdlinux.BaseTest;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -19,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
-public class MysqlUpdateTest extends BaseTest {
+public class MysqlUpdateTest {
     public static SqlSession sqlSession;
 
     static {
@@ -42,7 +41,7 @@ public class MysqlUpdateTest extends BaseTest {
         user.setName("王二");
         user.setName("王");
         user.setUserAge(27);
-        user.setSex("女");
+        user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).update(user);
         sqlSession.commit();
         System.out.println(insert);
@@ -56,7 +55,7 @@ public class MysqlUpdateTest extends BaseTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
             if (i == 0) {
-                user.setSex("女");
+                user.setSex(User.Sex.MAN);
             } else {
                 user.setUserAge(i);
             }
@@ -85,7 +84,7 @@ public class MysqlUpdateTest extends BaseTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
             if (i == 0) {
-                user.setSex("女");
+                user.setSex(User.Sex.MAN);
             } else {
                 user.setUserAge(i);
             }
