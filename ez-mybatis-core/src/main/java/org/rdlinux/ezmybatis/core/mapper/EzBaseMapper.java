@@ -39,7 +39,7 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     /**
      * 批量更新, 只更新非空字段
      */
-    @DeleteProvider(type = EzEntityUpdateProvider.class, method = "batchUpdate")
+    @UpdateProvider(type = EzEntityUpdateProvider.class, method = "batchUpdate")
     int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<Nt> entitys);
 
     /**
@@ -51,7 +51,7 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     /**
      * 批量更新, 更新所有字段
      */
-    @DeleteProvider(type = EzEntityUpdateProvider.class, method = "batchReplace")
+    @UpdateProvider(type = EzEntityUpdateProvider.class, method = "batchReplace")
     int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<Nt> entitys);
 
     /**

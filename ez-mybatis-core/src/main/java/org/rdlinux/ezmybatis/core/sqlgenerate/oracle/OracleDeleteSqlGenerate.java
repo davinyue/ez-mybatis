@@ -1,6 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
+import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractDeleteSqlGenerate;
+
+import java.util.List;
+import java.util.Map;
 
 public class OracleDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     private static volatile OracleDeleteSqlGenerate instance;
@@ -11,7 +16,7 @@ public class OracleDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
 
     public static OracleDeleteSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized ( OracleDeleteSqlGenerate.class ) {
+            synchronized (OracleDeleteSqlGenerate.class) {
                 if (instance == null) {
                     instance = new OracleDeleteSqlGenerate();
                 }
@@ -23,5 +28,15 @@ public class OracleDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     @Override
     public String getKeywordQM() {
         return "\"";
+    }
+
+    @Override
+    public String getDeleteSql(Configuration configuration, EzDelete delete, Map<String, Object> mybatisParam) {
+        return OracleEzDeleteToSql.getInstance().toSql(configuration, delete, mybatisParam);
+    }
+
+    @Override
+    public String getDeleteSql(Configuration configuration, List<EzDelete> deletes, Map<String, Object> mybatisParam) {
+        return OracleEzDeleteToSql.getInstance().toSql(configuration, deletes, mybatisParam);
     }
 }

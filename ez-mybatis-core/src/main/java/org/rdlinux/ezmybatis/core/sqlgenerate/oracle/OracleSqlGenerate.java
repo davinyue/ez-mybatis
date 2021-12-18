@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
@@ -83,5 +84,15 @@ public class OracleSqlGenerate implements SqlGenerate {
     @Override
     public String getBatchDeleteByIdSql(Configuration configuration, Class<?> ntClass, List<?> ids) {
         return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, ntClass, ids);
+    }
+
+    @Override
+    public String getDeleteSql(Configuration configuration, EzDelete delete, Map<String, Object> mybatisParam) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, delete, mybatisParam);
+    }
+
+    @Override
+    public String getDeleteSql(Configuration configuration, List<EzDelete> deletes, Map<String, Object> mybatisParam) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, deletes, mybatisParam);
     }
 }
