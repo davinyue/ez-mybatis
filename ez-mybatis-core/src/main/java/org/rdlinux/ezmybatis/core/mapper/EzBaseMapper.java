@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityUpdateProvider;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 基础mapper
@@ -94,13 +95,15 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
      * 根据sql查询一条数据
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
-    Nt selectOneBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+    Nt selectOneBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                      @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
 
     /**
      * 根据sql查询多条数据
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
-    List<Nt> selectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql);
+    List<Nt> selectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                         @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
 
     /**
      * 根据sql查询多条数据, 并返回list map
