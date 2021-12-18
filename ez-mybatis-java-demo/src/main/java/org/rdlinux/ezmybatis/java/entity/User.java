@@ -14,9 +14,14 @@ import javax.persistence.Transient;
 @Setter
 public class User extends BaseEntity {
     private String name;
-    private String sex;
+    private Sex sex;
     @Column(name = "age")
     private Integer userAge;
     @Transient
     private String ignore;
+
+    public static enum Sex {
+        WOMAN,
+        MAN
+    }
 }

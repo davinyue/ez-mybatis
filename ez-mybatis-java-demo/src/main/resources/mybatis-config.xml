@@ -14,6 +14,7 @@
         <!--开启二级缓存 -->
         <setting name="cacheEnabled" value="true"/>
         <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
     </settings>
@@ -24,6 +25,9 @@
         <!-- <typeAlias type="com.wj.mybatis.bean.Employee" alias="emp"></typeAlias>
             <package name="com.wj.mybatis.bean"></package> -->
     </typeAliases>
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="java.math.RoundingMode"/>
+    </typeHandlers>
     <plugins>
         <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.MybatisUpdateInterceptor">-->
         <!--            <property name="dialect" value="mysql"/>-->
