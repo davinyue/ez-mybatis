@@ -16,7 +16,7 @@ public interface SqlStruct {
      * @param ezParam            构造参数
      * @param mybatisParamHolder mybatis参数持有
      */
-    StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                             MybatisParamHolder mybatisParamHolder);
 
     /**
@@ -27,7 +27,7 @@ public interface SqlStruct {
      * @param ezParam            构造参数
      * @param mybatisParamHolder mybatis参数持有
      */
-    default StringBuilder queryToSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzQuery ezParam,
+    default StringBuilder queryToSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> ezParam,
                                          MybatisParamHolder mybatisParamHolder) {
         return this.toSqlPart(sqlBuilder, configuration, ezParam, mybatisParamHolder);
     }

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
@@ -34,7 +33,7 @@ public class Where implements SqlStruct {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                Where.defaultWhereToSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
+                Where.defaultWhereToSql(sqlBuilder, configuration, (EzParam<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
     }
@@ -62,7 +61,7 @@ public class Where implements SqlStruct {
     }
 
     private static StringBuilder defaultWhereToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                   EzQuery ezParam, MybatisParamHolder mybatisParamHolder) {
+                                                   EzParam<?> ezParam, MybatisParamHolder mybatisParamHolder) {
         if (ezParam.getWhere() == null || ezParam.getWhere().getConditions() == null ||
                 ezParam.getWhere().getConditions().isEmpty()) {
             return sqlBuilder;
@@ -73,7 +72,7 @@ public class Where implements SqlStruct {
     }
 
     @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);

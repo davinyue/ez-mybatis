@@ -28,13 +28,13 @@ public class EzEntitySelectProvider {
 
     public String query(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        EzQuery<?> query = (EzQuery<?>) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+        EzQuery<?> query = (EzQuery<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(configuration).getQuerySql(configuration, query, param);
     }
 
     public String queryCount(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        EzQuery<?> query = (EzQuery<?>) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+        EzQuery<?> query = (EzQuery<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(configuration).getQueryCountSql(configuration, query, param);
     }
 }
