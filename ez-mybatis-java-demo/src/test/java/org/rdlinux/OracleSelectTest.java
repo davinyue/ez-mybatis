@@ -25,10 +25,6 @@ public class OracleSelectTest {
     public static SqlSession sqlSession;
 
     static {
-        //System.setProperty("log4j2.configurationFile", "classpath:/log4j2.yml");
-    }
-
-    static {
         String resource = "mybatis-config-oracle.xml";
         Reader reader = null;
         try {
