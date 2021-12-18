@@ -24,7 +24,7 @@ public class OrderBy implements SqlStruct {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                OrderBy.defaultOrderByToSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
+                OrderBy.defaultOrderByToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
     }
@@ -36,7 +36,7 @@ public class OrderBy implements SqlStruct {
     }
 
     private static StringBuilder defaultOrderByToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                     EzQuery ezParam, MybatisParamHolder mybatisParamHolder) {
+                                                     EzQuery<?> ezParam, MybatisParamHolder mybatisParamHolder) {
         OrderBy order = ezParam.getOrderBy();
         if (order == null || order.getItems() == null) {
             return sqlBuilder;
@@ -63,7 +63,7 @@ public class OrderBy implements SqlStruct {
     }
 
     @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);

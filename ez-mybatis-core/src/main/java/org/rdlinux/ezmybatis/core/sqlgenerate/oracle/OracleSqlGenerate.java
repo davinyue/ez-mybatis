@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
 import java.util.List;
@@ -62,6 +63,16 @@ public class OracleSqlGenerate implements SqlGenerate {
     @Override
     public String getBatchUpdateSql(Configuration configuration, List<Object> entitys, boolean isReplace) {
         return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, entitys, isReplace);
+    }
+
+    @Override
+    public String getUpdateSql(Configuration configuration, EzUpdate update, Map<String, Object> mybatisParam) {
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, update, mybatisParam);
+    }
+
+    @Override
+    public String getUpdateSql(Configuration configuration, List<EzUpdate> updates, Map<String, Object> mybatisParam) {
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, updates, mybatisParam);
     }
 
     @Override

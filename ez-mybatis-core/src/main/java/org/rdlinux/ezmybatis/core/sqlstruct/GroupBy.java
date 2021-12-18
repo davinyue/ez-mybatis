@@ -23,7 +23,7 @@ public class GroupBy implements SqlStruct {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                GroupBy.defaultGroupByToSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
+                GroupBy.defaultGroupByToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
     }
@@ -35,7 +35,7 @@ public class GroupBy implements SqlStruct {
     }
 
     private static StringBuilder defaultGroupByToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                     EzQuery query, MybatisParamHolder mybatisParamHolder) {
+                                                     EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
         GroupBy group = query.getGroupBy();
         if (group == null || group.getItems() == null) {
             return sqlBuilder;
@@ -58,7 +58,7 @@ public class GroupBy implements SqlStruct {
     }
 
     @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);
