@@ -17,6 +17,7 @@ import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,10 @@ public class MysqlSelectTest {
 
     @Test
     public void selectBySql() {
-        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).selectBySql("select * from \"user\"");
+        HashMap<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("id", "1");
+        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).selectBySql("select name from ez_user" +
+                " WHERE id = #{id}", sqlParam);
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
@@ -131,21 +135,21 @@ public class MysqlSelectTest {
     @Test
     public void selectOneBySql() {
         User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectOneBySql("select * from ez_user " +
-                "where id = '2c50ee58773f468c82013f73c08e7bc8'");
+                "where id = '2c50ee58773f468c82013f73c08e7bc8'", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
     @Test
     public void selectOneMapBySql() {
         Map<String, Object> user = BaseTest.sqlSession.getMapper(EzMapper.class).selectOneMapBySql(
-                "select * from ez_user where id = '1s'");
+                "select * from ez_user where id = '1s'", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
     @Test
     public void selectMapBySql() {
         List<Map<String, Object>> users = BaseTest.sqlSession.getMapper(EzMapper.class)
-                .selectMapBySql("select * from ez_user");
+                .selectMapBySql("select * from ez_user", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(users));
     }
 }
