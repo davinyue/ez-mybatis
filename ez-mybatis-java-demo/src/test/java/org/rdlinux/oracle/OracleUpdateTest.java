@@ -42,7 +42,7 @@ public class OracleUpdateTest extends BaseTest {
         user.setName("王二");
         user.setName("王");
         user.setUserAge(27);
-        user.setSex("女");
+        user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).update(user);
         sqlSession.commit();
         System.out.println(insert);
@@ -56,7 +56,7 @@ public class OracleUpdateTest extends BaseTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
             if (i == 0) {
-                user.setSex("女");
+                user.setSex(User.Sex.MAN);
             } else {
                 user.setUserAge(i);
             }
@@ -85,7 +85,7 @@ public class OracleUpdateTest extends BaseTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
             if (i == 0) {
-                user.setSex("女");
+                user.setSex(User.Sex.MAN);
             } else {
                 user.setUserAge(i);
             }
