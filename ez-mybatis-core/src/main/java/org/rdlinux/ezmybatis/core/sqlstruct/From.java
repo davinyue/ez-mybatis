@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
@@ -25,7 +24,7 @@ public class From implements SqlStruct {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                From.fromSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
+                From.fromSql(sqlBuilder, configuration, (EzParam<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
     }
@@ -36,7 +35,7 @@ public class From implements SqlStruct {
         this.table = table;
     }
 
-    private static StringBuilder fromSql(StringBuilder sqlBuilder, Configuration configuration, EzParam param,
+    private static StringBuilder fromSql(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> param,
                                          MybatisParamHolder mybatisParamHolder) {
         String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         From from = param.getFrom();
@@ -48,7 +47,7 @@ public class From implements SqlStruct {
     }
 
     @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);

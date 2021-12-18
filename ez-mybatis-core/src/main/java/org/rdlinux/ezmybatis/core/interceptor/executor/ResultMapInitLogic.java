@@ -38,7 +38,7 @@ public class ResultMapInitLogic implements InterceptorLogic {
             }
             if (resultMap.getId().startsWith(EzMapper.class.getName())) {
                 Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
-                EzParam<?> ezParam = (EzParam<?>) param.get(EzMybatisConstant.MAPPER_PARAM_QUERY);
+                EzParam<?> ezParam = (EzParam<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
                 ResultMap newRm = new ResultMap.Builder(ms.getConfiguration(), resultMap.getId(),
                         ezParam.getRetType(), resultMap.getResultMappings()).build();
                 ReflectionUtils.setFieldValue(ms, resultMapsField, Collections.singletonList(newRm), false);

@@ -17,7 +17,7 @@ public class Having extends Where {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                Having.defaultWhereToSql(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
+                Having.defaultWhereToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
     }
@@ -27,7 +27,7 @@ public class Having extends Where {
     }
 
     private static StringBuilder defaultWhereToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                   EzQuery ezParam, MybatisParamHolder mybatisParamHolder) {
+                                                   EzQuery<?> ezParam, MybatisParamHolder mybatisParamHolder) {
         if (ezParam.getHaving() == null || ezParam.getHaving().getConditions() == null ||
                 ezParam.getHaving().getConditions().isEmpty()) {
             return sqlBuilder;
@@ -38,7 +38,7 @@ public class Having extends Where {
     }
 
     @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam ezParam,
+    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);
