@@ -1,11 +1,14 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
+import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntitySelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzEntityUpdateProvider;
 
@@ -45,4 +48,16 @@ public interface EzMapper {
      */
     @UpdateProvider(type = EzEntityUpdateProvider.class, method = "batchUpdateByEzUpdate")
     void batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzUpdate> updates);
+
+    /**
+     * 批量删除
+     */
+    @DeleteProvider(type = EzEntityDeleteProvider.class, method = "deleteByEzDelete")
+    int delete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzDelete delete);
+
+    /**
+     * 批量删除
+     */
+    @DeleteProvider(type = EzEntityDeleteProvider.class, method = "batchDeleteByEzDelete")
+    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
 }
