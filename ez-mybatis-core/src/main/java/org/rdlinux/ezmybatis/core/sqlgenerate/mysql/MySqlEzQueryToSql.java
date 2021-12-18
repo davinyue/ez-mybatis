@@ -5,8 +5,11 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.KeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
+
+import java.util.Map;
 
 public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
     private static volatile MySqlEzQueryToSql instance;
@@ -23,6 +26,16 @@ public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
             }
         }
         return instance;
+    }
+
+    @Override
+    public String toCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
+        String sql = super.toCountSql(configuration, query, mybatisParam);
+        if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
+            return "SELECT COUNT(1) FROM ( " + sql + " ) " + Alias.getAlias();
+        } else {
+            return sql;
+        }
     }
 
     @Override

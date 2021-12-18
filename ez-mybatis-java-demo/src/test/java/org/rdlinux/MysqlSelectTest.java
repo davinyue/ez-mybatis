@@ -1,5 +1,6 @@
 package org.rdlinux;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -11,7 +12,6 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
-import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 public class MysqlSelectTest {
     public static SqlSession sqlSession;
 
@@ -60,21 +61,16 @@ public class MysqlSelectTest {
     @Test
     public void queryTest() {
         EntityTable userTable = EntityTable.of(User.class);
-        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
-                .select().addAll().done()
-                .join(userOrgTable)
-                .conditions().add("id", "userId")
-                .add(userOrgTable, "orgId", 2)
-                .done().done()
-                .where().conditions().add(userTable, "userAge", Operator.gt, 20).done().done()
-                .orderBy().add("name").done()
+                .select().add("name").done()
+                .groupBy().add("name").done()
                 .page(1, 2)
                 .build();
-        List<User> users = sqlSession.getMapper(UserMapper.class).query(query);
-        System.out.println(JacksonUtils.toJsonString(users));
-        int i = sqlSession.getMapper(UserMapper.class).queryCount(query);
-        System.out.println("总数" + i);
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        List<User> users = userMapper.query(query);
+        log.info(JacksonUtils.toJsonString(users));
+        int i = userMapper.queryCount(query);
+        log.info("总数" + i);
     }
 
     @Test
