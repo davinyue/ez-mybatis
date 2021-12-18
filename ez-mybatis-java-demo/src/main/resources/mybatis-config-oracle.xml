@@ -13,7 +13,7 @@
         <setting name="aggressiveLazyLoading" value="false"/>
         <!--开启二级缓存 -->
         <setting name="cacheEnabled" value="true"/>
-        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="logImpl" value="LOG4j2"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
     </settings>

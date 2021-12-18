@@ -1,5 +1,9 @@
 package org.rdlinux;
 
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
@@ -10,11 +14,28 @@ import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class MysqlSelectTest extends BaseTest {
+public class MysqlSelectTest {
+    public static SqlSession sqlSession;
+
+    static {
+        String resource = "mybatis-config.xml";
+        Reader reader = null;
+        try {
+            reader = Resources.getResourceAsReader(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(reader);
+        sqlSession = sqlSessionFactory.openSession();
+    }
+
     @Test
     public void selectById() {
         User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectById("980e1f193035494198f90d24e01d6706");
@@ -50,9 +71,9 @@ public class MysqlSelectTest extends BaseTest {
                 .orderBy().add("name").done()
                 .page(1, 2)
                 .build();
-        List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        List<User> users = sqlSession.getMapper(UserMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
-        int i = BaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
+        int i = sqlSession.getMapper(UserMapper.class).queryCount(query);
         System.out.println("总数" + i);
     }
 
@@ -82,6 +103,16 @@ public class MysqlSelectTest extends BaseTest {
     }
 
     @Test
+    public void normalQueryMap() {
+        EzQuery<?> query = EzQuery.builder(Map.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .build();
+        EzMapper ezMapper = BaseTest.sqlSession.getMapper(EzMapper.class);
+        List<Map<String, Object>> users = (List<Map<String, Object>>) ezMapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+    }
+
+    @Test
     public void normalQueryOne() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done().page(1, 1)
@@ -98,6 +129,7 @@ public class MysqlSelectTest extends BaseTest {
         int count = BaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(count));
     }
+
 
     @Test
     public void selectOneBySql() {
