@@ -22,9 +22,7 @@ public class EzEntitySelectProvider {
         return SqlGenerateFactory.getSqlGenerate(configuration).getSelectByIdsSql(configuration, ntClass, ids);
     }
 
-    public String selectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION) Configuration configuration,
-                              @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
-                              @Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql) {
+    public String selectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql) {
         return sql;
     }
 

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SelectTest extends BaseTest {
+public class MysqlSelectTest extends BaseTest {
     @Test
     public void selectById() {
         User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectById("980e1f193035494198f90d24e01d6706");
@@ -33,13 +33,6 @@ public class SelectTest extends BaseTest {
     @Test
     public void selectBySql() {
         List<User> users = BaseTest.sqlSession.getMapper(UserMapper.class).selectBySql("select * from \"user\"");
-        System.out.println(JacksonUtils.toJsonString(users));
-    }
-
-    @Test
-    public void selectMapBySql() {
-        List<Map<String, Object>> users = BaseTest.sqlSession.getMapper(EzMapper.class)
-                .selectMapBySql("select * from \"user\"");
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
@@ -108,7 +101,7 @@ public class SelectTest extends BaseTest {
 
     @Test
     public void selectOneBySql() {
-        User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectOneBySql("select * from \"user\" " +
+        User user = BaseTest.sqlSession.getMapper(UserMapper.class).selectOneBySql("select * from ez_user " +
                 "where id = '2c50ee58773f468c82013f73c08e7bc8'");
         System.out.println(JacksonUtils.toJsonString(user));
     }
@@ -116,8 +109,14 @@ public class SelectTest extends BaseTest {
     @Test
     public void selectOneMapBySql() {
         Map<String, Object> user = BaseTest.sqlSession.getMapper(EzMapper.class).selectOneMapBySql(
-                "select * from \"user\" " +
-                        "where id = '1s'");
+                "select * from ez_user where id = '1s'");
         System.out.println(JacksonUtils.toJsonString(user));
+    }
+
+    @Test
+    public void selectMapBySql() {
+        List<Map<String, Object>> users = BaseTest.sqlSession.getMapper(EzMapper.class)
+                .selectMapBySql("select * from ez_user");
+        System.out.println(JacksonUtils.toJsonString(users));
     }
 }
