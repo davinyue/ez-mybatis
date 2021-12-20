@@ -24,14 +24,14 @@ public interface EzMapper {
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
     Map<String, Object> selectOneMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
-                                          @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
+                                          @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
      * 根据sql查询多条数据, 并返回list map
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
-                                             @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
+                                             @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     @SelectProvider(type = EzEntitySelectProvider.class, method = "query")
     <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
@@ -52,6 +52,13 @@ public interface EzMapper {
     void batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzUpdate> updates);
 
     /**
+     * 根据sql更新
+     */
+    @SelectProvider(type = EzEntityUpdateProvider.class, method = "updateBySql")
+    int updateBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                    @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+
+    /**
      * 批量删除
      */
     @DeleteProvider(type = EzEntityDeleteProvider.class, method = "deleteByEzDelete")
@@ -61,5 +68,12 @@ public interface EzMapper {
      * 批量删除
      */
     @DeleteProvider(type = EzEntityDeleteProvider.class, method = "batchDeleteByEzDelete")
-    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
+    void batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
+
+    /**
+     * 根据sql删除
+     */
+    @SelectProvider(type = EzEntityDeleteProvider.class, method = "deleteBySql")
+    int deleteBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                    @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 }
