@@ -96,14 +96,14 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
     Nt selectOneBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
-                      @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
+                      @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
      * 根据sql查询多条数据
      */
     @SelectProvider(type = EzEntitySelectProvider.class, method = "selectBySql")
     List<Nt> selectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
-                         @Param(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM) Map<String, Object> param);
+                         @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
      * 根据sql查询多条数据, 并返回list map

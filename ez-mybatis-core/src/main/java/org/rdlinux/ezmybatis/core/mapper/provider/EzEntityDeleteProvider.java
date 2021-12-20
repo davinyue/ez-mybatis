@@ -66,4 +66,12 @@ public class EzEntityDeleteProvider {
         List<EzDelete> deletes = (List<EzDelete>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteSql(configuration, deletes, param);
     }
+
+    @SuppressWarnings("unchecked")
+    public String deleteBySql(Map<String, Object> param) {
+        String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
+        Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
+        param.putAll(sqlParam);
+        return sql;
+    }
 }
