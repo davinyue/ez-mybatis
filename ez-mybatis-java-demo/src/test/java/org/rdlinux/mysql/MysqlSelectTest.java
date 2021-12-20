@@ -17,10 +17,7 @@ import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j2
 public class MysqlSelectTest {
@@ -65,17 +62,19 @@ public class MysqlSelectTest {
 
     @Test
     public void queryTest() {
+        Set<String> ids = new HashSet<>();
+        ids.add("1");
+        ids.add("2");
+
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
-                .select().add("name").done()
-                .groupBy().add("name").done()
+                .select().addAll().done()
+                .where().conditions().add("id", Operator.in, ids).done().done()
                 .page(1, 2)
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);
         log.info(JacksonUtils.toJsonString(users));
-        int i = userMapper.queryCount(query);
-        log.info("总数" + i);
     }
 
     @Test
