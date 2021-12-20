@@ -63,7 +63,7 @@ public abstract class EzMybatisConstant {
     /**
      * mapper参数, sql
      */
-    public static final String MAPPER_PARAM_SQL_PARAM = "mp_sql_param";
+    public static final String MAPPER_PARAM_SQLPARAM = "mp_sql_param";
     /**
      * mapper参数, ezParam
      */
