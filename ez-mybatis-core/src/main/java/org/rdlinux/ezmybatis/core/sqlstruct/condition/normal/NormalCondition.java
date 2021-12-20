@@ -46,8 +46,8 @@ public abstract class NormalCondition implements Condition {
             if (this.getValue() instanceof Collection) {
                 int i = 0;
                 for (Object value : (Collection<?>) this.getValue()) {
-                    sql.append(MybatisParamEscape.getEscapeChar(value)).append("{").append(param)
-                            .append("[").append(i).append("]").append("}");
+                    String inValueParam = mybatisParamHolder.getParamName(value);
+                    sql.append(MybatisParamEscape.getEscapeChar(value)).append("{").append(inValueParam).append("}");
                     if (i + 1 < ((Collection<?>) this.getValue()).size()) {
                         sql.append(", ");
                     }
@@ -56,8 +56,8 @@ public abstract class NormalCondition implements Condition {
             } else if (this.getValue().getClass().isArray()) {
                 int i = 0;
                 for (Object value : (Object[]) this.getValue()) {
-                    sql.append(MybatisParamEscape.getEscapeChar(value)).append("{").append(param)
-                            .append("[").append(i).append("]").append("}");
+                    String inValueParam = mybatisParamHolder.getParamName(value);
+                    sql.append(MybatisParamEscape.getEscapeChar(value)).append("{").append(inValueParam).append("}");
                     if (i + 1 < ((Object[]) this.getValue()).length) {
                         sql.append(", ");
                     }
