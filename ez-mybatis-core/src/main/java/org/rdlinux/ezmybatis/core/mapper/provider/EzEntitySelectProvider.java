@@ -25,7 +25,7 @@ public class EzEntitySelectProvider {
     @SuppressWarnings("unchecked")
     public String selectBySql(Map<String, Object> param) {
         String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
-        Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQL_PARAM);
+        Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
         param.putAll(sqlParam);
         return sql;
     }

@@ -44,4 +44,12 @@ public class EzEntityUpdateProvider {
         List<EzUpdate> updates = (List<EzUpdate>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(configuration).getUpdateSql(configuration, updates, param);
     }
+
+    @SuppressWarnings("unchecked")
+    public String updateBySql(Map<String, Object> param) {
+        String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
+        Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
+        param.putAll(sqlParam);
+        return sql;
+    }
 }
