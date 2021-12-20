@@ -1,9 +1,6 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -18,6 +15,7 @@ import java.util.Map;
 /**
  * 通用mapper
  */
+@Mapper
 public interface EzMapper {
     /**
      * 根据sql查询一条数据并返回map
