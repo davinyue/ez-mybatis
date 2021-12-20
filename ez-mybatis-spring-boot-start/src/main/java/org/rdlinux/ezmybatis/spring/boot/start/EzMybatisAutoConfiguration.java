@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 @ConditionalOnClass({EzMapper.class})
 @AutoConfigureBefore({MybatisAutoConfiguration.class})
 public class EzMybatisAutoConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(EzMybatisAutoConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(EzMybatisAutoConfiguration.class);
 
     @Bean
     public EzConfigurationCustomizer ezConfigurationCustomizer() {
@@ -47,11 +47,13 @@ public class EzMybatisAutoConfiguration {
         private BeanFactory beanFactory;
 
         @Override
-        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
+                                            BeanDefinitionRegistry registry) {
             List<String> packages = new LinkedList<>(AutoConfigurationPackages.get(this.beanFactory));
             packages.add(EzMapper.class.getPackage().getName());
-            if (EzMybatisAutoConfiguration.logger.isDebugEnabled()) {
-                packages.forEach(pkg -> EzMybatisAutoConfiguration.logger.debug("Using auto-configuration base package '{}'", pkg));
+            if (EzMybatisAutoConfiguration.log.isDebugEnabled()) {
+                packages.forEach(pkg -> EzMybatisAutoConfiguration.log
+                        .debug("Using auto-configuration base package '{}'", pkg));
             }
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
             builder.addPropertyValue("processPropertyPlaceHolders", true);
