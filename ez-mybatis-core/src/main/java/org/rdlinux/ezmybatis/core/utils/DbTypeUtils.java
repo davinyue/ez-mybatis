@@ -17,7 +17,7 @@ public class DbTypeUtils {
     public static DbType getDbType(Configuration configuration) {
         DbType dbType = DB_TYPE_MAP.get(configuration);
         if (dbType == null) {
-            synchronized ( configuration ) {
+            synchronized (configuration) {
                 dbType = DB_TYPE_MAP.get(configuration);
                 if (dbType == null) {
                     DataSource dataSource = configuration.getEnvironment().getDataSource();
@@ -25,7 +25,11 @@ public class DbTypeUtils {
                     if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
                         driver = ((PooledDataSource) dataSource).getDriver();
                     } else {
-                        driver = "";
+                        if (dataSource.getClass().getName().contains("druid")) {
+                            driver = ReflectionUtils.getFieldValue(dataSource, "driverClass");
+                        } else {
+                            driver = ReflectionUtils.getFieldValue(dataSource, "driverClassName");
+                        }
                     }
                     if (driver.contains("mysql")) {
                         dbType = DbType.MYSQL;
