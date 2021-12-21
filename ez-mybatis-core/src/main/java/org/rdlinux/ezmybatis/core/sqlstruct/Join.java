@@ -149,9 +149,30 @@ public class Join implements SqlStruct {
         /**
          * 添加联表条件, 使用主表和被联表的实体属性
          */
+        public JoinConditionBuilder<Builder> add(boolean sure, String masterField, String joinField) {
+            if (sure) {
+                this.add(masterField, joinField);
+            }
+            return this;
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
         public JoinConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, String masterField,
                                                  String joinField) {
             return this.add(loginSymbol, masterField, Operator.eq, joinField);
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
+        public JoinConditionBuilder<Builder> add(boolean sure, Condition.LoginSymbol loginSymbol, String masterField,
+                                                 String joinField) {
+            if (sure) {
+                this.add(loginSymbol, masterField, joinField);
+            }
+            return this;
         }
 
         /**
@@ -164,19 +185,49 @@ public class Join implements SqlStruct {
         /**
          * 添加联表条件, 使用主表和被联表的实体属性
          */
+        public JoinConditionBuilder<Builder> add(boolean sure, String masterField, Operator operator, String joinField) {
+            if (sure) {
+                this.add(masterField, operator, joinField);
+            }
+            return this;
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
         public JoinConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, String masterField,
                                                  Operator operator, String joinField) {
             this.conditions.add(new CompareFieldCondition(loginSymbol, this.masterTable, masterField, operator,
                     this.joinTable, joinField));
             return this;
         }
-        ////
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
+        public JoinConditionBuilder<Builder> add(boolean sure, Condition.LoginSymbol loginSymbol, String masterField,
+                                                 Operator operator, String joinField) {
+            if (sure) {
+                this.add(loginSymbol, masterField, operator, joinField);
+            }
+            return this;
+        }
 
         /**
          * 添加联表条件, 使用主表和被联表的实体属性
          */
         public JoinConditionBuilder<Builder> addColumn(String masterColumn, String joinColumn) {
             return this.add(masterColumn, Operator.eq, joinColumn);
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
+        public JoinConditionBuilder<Builder> addColumn(boolean sure, String masterColumn, String joinColumn) {
+            if (sure) {
+                this.addColumn(masterColumn, joinColumn);
+            }
+            return this;
         }
 
         /**
@@ -190,8 +241,30 @@ public class Join implements SqlStruct {
         /**
          * 添加联表条件, 使用主表和被联表的实体属性
          */
+        public JoinConditionBuilder<Builder> addColumn(boolean sure, Condition.LoginSymbol loginSymbol,
+                                                       String masterColumn, String joinColumn) {
+            if (sure) {
+                this.addColumn(loginSymbol, masterColumn, joinColumn);
+            }
+            return this;
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
         public JoinConditionBuilder<Builder> addColumn(String masterColumn, Operator operator, String joinColumn) {
             return this.add(Condition.LoginSymbol.AND, masterColumn, operator, joinColumn);
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
+        public JoinConditionBuilder<Builder> addColumn(boolean sure, String masterColumn, Operator operator,
+                                                       String joinColumn) {
+            if (sure) {
+                this.addColumn(masterColumn, operator, joinColumn);
+            }
+            return this;
         }
 
         /**
@@ -201,6 +274,17 @@ public class Join implements SqlStruct {
                                                        Operator operator, String joinColumn) {
             this.conditions.add(new CompareColumnCondition(loginSymbol, this.masterTable, masterColumn, operator,
                     this.joinTable, joinColumn));
+            return this;
+        }
+
+        /**
+         * 添加联表条件, 使用主表和被联表的实体属性
+         */
+        public JoinConditionBuilder<Builder> addColumn(boolean sure, Condition.LoginSymbol loginSymbol,
+                                                       String masterColumn, Operator operator, String joinColumn) {
+            if (sure) {
+                this.addColumn(loginSymbol, masterColumn, operator, joinColumn);
+            }
             return this;
         }
     }

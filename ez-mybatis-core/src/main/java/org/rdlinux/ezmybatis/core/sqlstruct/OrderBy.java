@@ -112,8 +112,22 @@ public class OrderBy implements SqlStruct {
             return this;
         }
 
+        public OrderBuilder<T> add(boolean sure, String field) {
+            if (sure) {
+                this.add(field);
+            }
+            return this;
+        }
+
         public OrderBuilder<T> add(String field, OrderBy.OrderType type) {
             this.orderBy.getItems().add(new OrderBy.OrderItem(this.table, field, type));
+            return this;
+        }
+
+        public OrderBuilder<T> add(boolean sure, String field, OrderBy.OrderType type) {
+            if (sure) {
+                this.add(field, type);
+            }
             return this;
         }
 
@@ -122,8 +136,22 @@ public class OrderBy implements SqlStruct {
             return this;
         }
 
+        public OrderBuilder<T> add(boolean sure, EntityTable table, String field) {
+            if (sure) {
+                this.add(table, field);
+            }
+            return this;
+        }
+
         public OrderBuilder<T> add(EntityTable table, String field, OrderBy.OrderType type) {
             this.orderBy.getItems().add(new OrderBy.OrderItem(table, field, type));
+            return this;
+        }
+
+        public OrderBuilder<T> add(boolean sure, EntityTable table, String field, OrderBy.OrderType type) {
+            if (sure) {
+                this.add(table, field, type);
+            }
             return this;
         }
 
