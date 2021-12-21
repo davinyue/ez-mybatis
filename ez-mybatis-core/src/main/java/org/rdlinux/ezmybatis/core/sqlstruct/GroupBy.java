@@ -99,8 +99,22 @@ public class GroupBy implements SqlStruct {
             return this;
         }
 
+        public GroupBuilder<T> add(boolean sure, String field) {
+            if (sure) {
+                this.add(field);
+            }
+            return this;
+        }
+
         public GroupBuilder<T> add(EntityTable table, String field) {
             this.groupBy.getItems().add(new GroupBy.GroupItem(table, field));
+            return this;
+        }
+
+        public GroupBuilder<T> add(boolean sure, EntityTable table, String field) {
+            if (sure) {
+                this.add(table, field);
+            }
             return this;
         }
 
