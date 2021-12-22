@@ -20,6 +20,16 @@ public abstract class EzMybatisConstant {
      * 批量更新实体方法名
      */
     public static final String BATCH_UPDATE_METHOD_NAME = "batchUpdate";
+
+    /**
+     * 替换实体方法名
+     */
+    public static final String REPLACE_METHOD_NAME = "replace";
+    /**
+     * 批量替换实体方法名
+     */
+    public static final String BATCH_REPLACE_METHOD_NAME = "batchReplace";
+
     /**
      * 删除实体方法名
      */
@@ -28,6 +38,14 @@ public abstract class EzMybatisConstant {
      * 批量删除实体方法名
      */
     public static final String BATCH_DELETE_METHOD_NAME = "batchDelete";
+    /**
+     * 根据id删除实体方法名
+     */
+    public static final String DELETE_BY_ID_METHOD_NAME = "deleteById";
+    /**
+     * 根据id批量删除实体方法名
+     */
+    public static final String BATCH_DELETE_BY_ID_METHOD_NAME = "batchDeleteById";
     /**
      * mapper参数, mapper的class参数名称
      */
