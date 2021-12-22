@@ -27,6 +27,7 @@ public class Select implements SqlStruct {
                 Select.defaultQueryToSqlPart(sqlBuilder, configuration, (EzQuery) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
+        CONVERT.put(DbType.DM, defaultConvert);
     }
 
     private List<SelectItem> selectFields;

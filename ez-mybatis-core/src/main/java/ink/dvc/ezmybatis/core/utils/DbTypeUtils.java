@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.utils;
 
+import ink.dvc.ezmybatis.core.constant.DbType;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.constant.DbType;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +35,8 @@ public class DbTypeUtils {
                         dbType = DbType.MYSQL;
                     } else if (driver.contains("oracle")) {
                         dbType = DbType.ORACLE;
+                    } else if (driver.toLowerCase().contains("dmdriver")) {
+                        dbType = DbType.DM;
                     } else {
                         throw new RuntimeException("Unsupported db type");
                     }
