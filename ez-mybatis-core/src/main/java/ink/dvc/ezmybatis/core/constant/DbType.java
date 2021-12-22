@@ -5,5 +5,9 @@ package ink.dvc.ezmybatis.core.constant;
  */
 public enum DbType {
     MYSQL,
-    ORACLE;
+    ORACLE,
+    /**
+     * 达梦数据库
+     */
+    DM;
 }

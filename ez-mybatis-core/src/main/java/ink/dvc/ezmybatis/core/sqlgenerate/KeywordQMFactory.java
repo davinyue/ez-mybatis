@@ -11,6 +11,7 @@ public class KeywordQMFactory {
     static {
         DB_TYPE_MAP_KEYWORD_QM.put(DbType.MYSQL, () -> "`");
         DB_TYPE_MAP_KEYWORD_QM.put(DbType.ORACLE, () -> "\"");
+        DB_TYPE_MAP_KEYWORD_QM.put(DbType.DM, () -> "\"");
     }
 
     public static String getKeywordQM(DbType dbType) {

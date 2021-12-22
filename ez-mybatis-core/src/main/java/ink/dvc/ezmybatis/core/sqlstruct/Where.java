@@ -36,6 +36,7 @@ public class Where implements SqlStruct {
                 Where.defaultWhereToSql(sqlBuilder, configuration, (EzParam<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
+        CONVERT.put(DbType.DM, defaultConvert);
     }
 
     /**
