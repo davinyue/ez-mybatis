@@ -4,7 +4,7 @@ import ink.dvc.ezmybatis.core.EzParam;
 import ink.dvc.ezmybatis.core.constant.DbType;
 import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
@@ -38,7 +38,7 @@ public class From implements SqlStruct {
 
     private static StringBuilder fromSql(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> param,
                                          MybatisParamHolder mybatisParamHolder) {
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         From from = param.getFrom();
         EntityTable fromTable = from.getTable();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, fromTable.getEtType());

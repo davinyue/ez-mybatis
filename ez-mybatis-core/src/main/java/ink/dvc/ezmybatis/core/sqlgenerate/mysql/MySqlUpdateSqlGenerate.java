@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzUpdate;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -22,11 +22,6 @@ public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
             }
         }
         return instance;
-    }
-
-    @Override
-    public String getKeywordQM() {
-        return "`";
     }
 
     @Override

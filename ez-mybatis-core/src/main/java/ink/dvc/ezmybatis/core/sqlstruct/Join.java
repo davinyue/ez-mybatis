@@ -3,7 +3,7 @@ package ink.dvc.ezmybatis.core.sqlstruct;
 import ink.dvc.ezmybatis.core.EzParam;
 import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
@@ -52,7 +52,7 @@ public class Join implements SqlStruct {
 
     protected StringBuilder joinToSql(StringBuilder sqlBuilder, Configuration configuration,
                                       MybatisParamHolder mybatisParamHolder) {
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         EntityClassInfo jEtInfo = EzEntityClassInfoFactory.forClass(configuration, this.joinTable.getEtType());
         StringBuilder sonSql;
         if (this.joinType == Join.JoinType.CrossJoin) {
