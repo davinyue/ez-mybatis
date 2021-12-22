@@ -1,12 +1,12 @@
 package ink.dvc.ezmybatis.core.sqlstruct.update;
 
-import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamEscape;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
+import lombok.Getter;
+import org.apache.ibatis.session.Configuration;
 
 @Getter
 public class UpdateColumnItem extends UpdateItem {
@@ -22,7 +22,7 @@ public class UpdateColumnItem extends UpdateItem {
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
         String paramName = mybatisParamHolder.getParamName(this.value);
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         return this.table.getAlias() + "." + keywordQM + this.column + keywordQM + " = " +
                 MybatisParamEscape.getEscapeChar(this.value) + "{" + paramName + "}";
     }

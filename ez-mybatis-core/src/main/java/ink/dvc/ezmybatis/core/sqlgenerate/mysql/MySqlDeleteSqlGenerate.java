@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzDelete;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractDeleteSqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -23,11 +23,6 @@ public class MySqlDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
             }
         }
         return instance;
-    }
-
-    @Override
-    public String getKeywordQM() {
-        return "`";
     }
 
     @Override

@@ -1,14 +1,14 @@
 package ink.dvc.ezmybatis.core.sqlstruct.condition.between;
 
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamEscape;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 
 /**
  * between 条件
@@ -41,7 +41,7 @@ public abstract class BetweenCondition implements Condition {
         }
         String minParam = mybatisParamHolder.getParamName(this.minValue);
         String maxParam = mybatisParamHolder.getParamName(this.maxValue);
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         return " " + keywordQM + this.getSqlField(configuration) + keywordQM +
                 " " + this.getOperator().getOperator() + " " +
                 MybatisParamEscape.getEscapeChar(this.minValue) + "{" + minParam +
