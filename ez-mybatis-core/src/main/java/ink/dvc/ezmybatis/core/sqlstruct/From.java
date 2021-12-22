@@ -2,11 +2,9 @@ package ink.dvc.ezmybatis.core.sqlstruct;
 
 import ink.dvc.ezmybatis.core.EzParam;
 import ink.dvc.ezmybatis.core.constant.DbType;
-import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
-import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,9 +28,9 @@ public class From implements SqlStruct {
         CONVERT.put(DbType.DM, defaultConvert);
     }
 
-    private EntityTable table;
+    private Table table;
 
-    public From(EntityTable table) {
+    public From(Table table) {
         this.table = table;
     }
 
@@ -40,10 +38,12 @@ public class From implements SqlStruct {
                                          MybatisParamHolder mybatisParamHolder) {
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         From from = param.getFrom();
-        EntityTable fromTable = from.getTable();
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, fromTable.getEtType());
-        sqlBuilder.append(" FROM ").append(keywordQM).append(entityClassInfo.getTableName())
-                .append(keywordQM).append(" ").append(from.getTable().getAlias());
+        Table fromTable = from.getTable();
+        sqlBuilder.append(" FROM ").append(keywordQM).append(fromTable.getTableName(configuration)).append(keywordQM);
+        if (fromTable.getPartition() != null && !fromTable.getPartition().isEmpty()) {
+            sqlBuilder.append(" ").append("PARTITION( ").append(fromTable.getPartition()).append(" ) ");
+        }
+        sqlBuilder.append(" ").append(from.getTable().getAlias()).append(" ");
         return sqlBuilder;
     }
 
