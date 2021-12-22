@@ -1,11 +1,11 @@
 package ink.dvc.ezmybatis.core.sqlstruct.condition.normal;
 
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
+import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 
 /**
  * 普通列条件
@@ -24,7 +24,7 @@ public class NormalColumnCondition extends NormalCondition {
 
     @Override
     protected String getSqlField(Configuration configuration) {
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         return this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM;
     }
 }

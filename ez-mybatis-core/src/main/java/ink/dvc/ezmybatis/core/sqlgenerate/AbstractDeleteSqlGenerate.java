@@ -4,7 +4,7 @@ import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
-public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate, KeywordQM {
+public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
     private SelectSqlGenerate selectSqlGenerate;
 
     public AbstractDeleteSqlGenerate(SelectSqlGenerate selectSqlGenerate) {

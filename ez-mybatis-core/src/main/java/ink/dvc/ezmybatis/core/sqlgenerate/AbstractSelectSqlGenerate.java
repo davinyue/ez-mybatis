@@ -1,14 +1,15 @@
 package ink.dvc.ezmybatis.core.sqlgenerate;
 
+import ink.dvc.ezmybatis.core.constant.EzMybatisConstant;
 import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.constant.EzMybatisConstant;
 import ink.dvc.ezmybatis.core.utils.Assert;
+import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
-public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate, KeywordQM {
+public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
 
     @Override
     public String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id) {
@@ -17,7 +18,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate, Ke
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String escape = MybatisParamEscape.getEscapeChar(id);
-        String kwQM = this.getKeywordQM();
+        String kwQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + escape
                 + "{" + EzMybatisConstant.MAPPER_PARAM_ID + "}";
     }
@@ -28,7 +29,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate, Ke
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        String kwQM = this.getKeywordQM();
+        String kwQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM +
                 idColumn + kwQM + " IN ( ");
         for (int i = 0; i < ids.size(); i++) {

@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.constant.EzMybatisConstant;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
@@ -14,18 +14,13 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     public static OracleInsertSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized ( OracleInsertSqlGenerate.class ) {
+            synchronized (OracleInsertSqlGenerate.class) {
                 if (instance == null) {
                     instance = new OracleInsertSqlGenerate();
                 }
             }
         }
         return instance;
-    }
-
-    @Override
-    public String getKeywordQM() {
-        return "\"";
     }
 
 //    @Override
