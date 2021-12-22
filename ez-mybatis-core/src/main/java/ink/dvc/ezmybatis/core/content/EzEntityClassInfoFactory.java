@@ -1,12 +1,13 @@
 package ink.dvc.ezmybatis.core.content;
 
-import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.constant.DbType;
+import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
+import ink.dvc.ezmybatis.core.content.entityinfo.build.DmEntityInfoBuild;
 import ink.dvc.ezmybatis.core.content.entityinfo.build.EntityInfoBuild;
 import ink.dvc.ezmybatis.core.content.entityinfo.build.MySqlEntityInfoBuild;
 import ink.dvc.ezmybatis.core.content.entityinfo.build.OracleEntityInfoBuild;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class EzEntityClassInfoFactory {
         ENTITY_INFO_BUILD_MAP.put(mySqlEntityInfoBuild.getSupportedDbType(), mySqlEntityInfoBuild);
         OracleEntityInfoBuild oracleEntityInfoBuild = OracleEntityInfoBuild.getInstance();
         ENTITY_INFO_BUILD_MAP.put(oracleEntityInfoBuild.getSupportedDbType(), oracleEntityInfoBuild);
+        DmEntityInfoBuild dmEntityInfoBuild = DmEntityInfoBuild.getInstance();
+        ENTITY_INFO_BUILD_MAP.put(dmEntityInfoBuild.getSupportedDbType(), dmEntityInfoBuild);
     }
 
     private static EntityClassInfo get(Configuration configuration, Class<?> ntClass) {
@@ -58,7 +61,7 @@ public class EzEntityClassInfoFactory {
     public static EntityClassInfo forClass(Configuration configuration, Class<?> ntClass) {
         EntityClassInfo result = get(configuration, ntClass);
         if (result == null) {
-            synchronized ( configuration ) {
+            synchronized (configuration) {
                 result = get(configuration, ntClass);
                 if (result == null) {
                     result = buildInfo(configuration, ntClass);

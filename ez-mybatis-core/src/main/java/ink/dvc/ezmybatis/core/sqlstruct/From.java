@@ -1,6 +1,7 @@
 package ink.dvc.ezmybatis.core.sqlstruct;
 
 import ink.dvc.ezmybatis.core.EzParam;
+import ink.dvc.ezmybatis.core.constant.DbType;
 import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
@@ -11,7 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.constant.DbType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,7 @@ public class From implements SqlStruct {
                 From.fromSql(sqlBuilder, configuration, (EzParam<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
+        CONVERT.put(DbType.DM, defaultConvert);
     }
 
     private EntityTable table;

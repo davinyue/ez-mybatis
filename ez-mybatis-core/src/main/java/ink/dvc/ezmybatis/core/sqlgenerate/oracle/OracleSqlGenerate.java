@@ -1,10 +1,10 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzDelete;
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.EzUpdate;
 import ink.dvc.ezmybatis.core.sqlgenerate.SqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
 public class OracleSqlGenerate implements SqlGenerate {
     private static volatile OracleSqlGenerate instance;
 
-    private OracleSqlGenerate() {
+    protected OracleSqlGenerate() {
     }
 
     public static OracleSqlGenerate getInstance() {
