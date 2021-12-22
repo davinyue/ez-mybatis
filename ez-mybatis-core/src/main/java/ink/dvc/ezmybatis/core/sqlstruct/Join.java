@@ -1,16 +1,12 @@
 package ink.dvc.ezmybatis.core.sqlstruct;
 
 import ink.dvc.ezmybatis.core.EzParam;
-import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
-import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.CompareColumnCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.CompareFieldCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
-import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -52,8 +48,6 @@ public class Join implements SqlStruct {
 
     protected StringBuilder joinToSql(StringBuilder sqlBuilder, Configuration configuration,
                                       MybatisParamHolder mybatisParamHolder) {
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        EntityClassInfo jEtInfo = EzEntityClassInfoFactory.forClass(configuration, this.joinTable.getEtType());
         StringBuilder sonSql;
         if (this.joinType == Join.JoinType.CrossJoin) {
             sonSql = new StringBuilder();
@@ -65,20 +59,15 @@ public class Join implements SqlStruct {
             }
         }
         if (this.joinType == Join.JoinType.InnerJoin) {
-            sqlBuilder.append(" INNER JOIN ").append(keywordQM).append(jEtInfo.getTableName())
-                    .append(keywordQM).append(" ").append(this.joinTable.getAlias()).append(" ON ");
+            sqlBuilder.append(" INNER JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
         } else if (this.joinType == Join.JoinType.LeftJoin) {
-            sqlBuilder.append(" LEFT JOIN ").append(keywordQM).append(jEtInfo.getTableName())
-                    .append(keywordQM).append(" ").append(this.joinTable.getAlias()).append(" ON ");
+            sqlBuilder.append(" LEFT JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
         } else if (this.joinType == Join.JoinType.RightJoin) {
-            sqlBuilder.append(" RIGHT JOIN ").append(keywordQM).append(jEtInfo.getTableName())
-                    .append(keywordQM).append(" ").append(this.joinTable.getAlias()).append(" ON ");
+            sqlBuilder.append(" RIGHT JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
         } else if (this.joinType == Join.JoinType.FullJoin) {
-            sqlBuilder.append(" FULL JOIN ").append(keywordQM).append(jEtInfo.getTableName())
-                    .append(keywordQM).append(" ").append(this.joinTable.getAlias()).append(" ON ");
+            sqlBuilder.append(" FULL JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
         } else if (this.joinType == Join.JoinType.CrossJoin) {
-            sqlBuilder.append(", ").append(keywordQM).append(jEtInfo.getTableName())
-                    .append(keywordQM).append(" ").append(this.joinTable.getAlias());
+            sqlBuilder.append(", ").append(this.joinTable.toSqlStruct(configuration));
         }
         if (this.getJoins() != null && !this.getJoins().isEmpty()) {
             for (Join join : this.joins) {
