@@ -41,16 +41,16 @@ import java.util.List;
         )
 })
 public class ExecutorInterceptor extends AbstractInterceptor {
-    private static List<InterceptorLogic> logics = new LinkedList<>();
+    protected List<InterceptorLogic> logics = new LinkedList<>();
 
-    static {
+    public ExecutorInterceptor() {
         //添加参数处理, 然后添加结果类型处理, 二者顺序不能颠倒
-        logics.add(new MapperParamInitLogic());
-        logics.add(new ResultMapInitLogic());
+        this.logics.add(new MapperParamInitLogic());
+        this.logics.add(new ResultMapInitLogic());
     }
 
     @Override
     public List<InterceptorLogic> getLogics() {
-        return logics;
+        return this.logics;
     }
 }

@@ -2,6 +2,7 @@ package ink.dvc.ezmybatis.spring.boot.start;
 
 import ink.dvc.ezmybatis.core.mapper.EzMapper;
 import ink.dvc.ezmybatis.spring.boot.EzConfigurationCustomizer;
+import ink.dvc.ezmybatis.spring.interceptor.EzMybatisSpringUpdateInterceptor;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -40,7 +41,13 @@ public class EzMybatisAutoConfiguration {
 
     @Bean
     public EzConfigurationCustomizer ezConfigurationCustomizer() {
-        return new EzConfigurationCustomizer();
+        return new EzConfigurationCustomizer(null, null,
+                this.ezMybatisSpringUpdateInterceptor());
+    }
+
+    @Bean
+    public EzMybatisSpringUpdateInterceptor ezMybatisSpringUpdateInterceptor() {
+        return new EzMybatisSpringUpdateInterceptor();
     }
 
     public static class EzMapperRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar {
