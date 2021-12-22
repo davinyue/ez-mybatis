@@ -1,11 +1,11 @@
 package ink.dvc.ezmybatis.spring.boot.start;
 
 import ink.dvc.ezmybatis.core.mapper.EzMapper;
+import ink.dvc.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
 import ink.dvc.ezmybatis.spring.boot.EzConfigurationCustomizer;
 import ink.dvc.ezmybatis.spring.interceptor.EzMybatisSpringUpdateInterceptor;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -57,16 +57,16 @@ public class EzMybatisAutoConfiguration {
         public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
                                             BeanDefinitionRegistry registry) {
             List<String> packages = new LinkedList<>(AutoConfigurationPackages.get(this.beanFactory));
-            packages.add(EzMapper.class.getPackage().getName());
             if (EzMybatisAutoConfiguration.log.isDebugEnabled()) {
                 packages.forEach(pkg -> EzMybatisAutoConfiguration.log
                         .debug("Using auto-configuration base package '{}'", pkg));
             }
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
+            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
+                    EzMybatisMapperScannerConfigurer.class);
             builder.addPropertyValue("processPropertyPlaceHolders", true);
             builder.addPropertyValue("annotationClass", Mapper.class);
             builder.addPropertyValue("basePackage", StringUtils.collectionToCommaDelimitedString(packages));
-            BeanWrapper beanWrapper = new BeanWrapperImpl(MapperScannerConfigurer.class);
+            BeanWrapper beanWrapper = new BeanWrapperImpl(EzMybatisMapperScannerConfigurer.class);
             Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors()).map(PropertyDescriptor::getName)
                     .collect(Collectors.toSet());
             if (propertyNames.contains("lazyInitialization")) {
@@ -77,7 +77,8 @@ public class EzMybatisAutoConfiguration {
                 // Need to mybatis-spring 2.0.6+
                 builder.addPropertyValue("defaultScope", "${mybatis.mapper-default-scope:}");
             }
-            registry.registerBeanDefinition("ezMapperScannerConfigurer", builder.getBeanDefinition());
+            registry.registerBeanDefinition(EzMybatisMapperScannerConfigurer.class.getName(),
+                    builder.getBeanDefinition());
         }
 
         @Override
