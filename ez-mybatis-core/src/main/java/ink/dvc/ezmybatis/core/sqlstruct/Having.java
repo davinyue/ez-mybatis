@@ -2,11 +2,11 @@ package ink.dvc.ezmybatis.core.sqlstruct;
 
 import ink.dvc.ezmybatis.core.EzParam;
 import ink.dvc.ezmybatis.core.EzQuery;
+import ink.dvc.ezmybatis.core.constant.DbType;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.constant.DbType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +20,7 @@ public class Having extends Where {
                 Having.defaultWhereToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
+        CONVERT.put(DbType.DM, defaultConvert);
     }
 
     public Having(List<Condition> conditions) {

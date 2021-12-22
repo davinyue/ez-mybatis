@@ -9,12 +9,12 @@ import org.apache.ibatis.session.Configuration;
 public class OracleEntityInfoBuild implements EntityInfoBuild {
     private static volatile OracleEntityInfoBuild instance;
 
-    private OracleEntityInfoBuild() {
+    protected OracleEntityInfoBuild() {
     }
 
     public static OracleEntityInfoBuild getInstance() {
         if (instance == null) {
-            synchronized ( OracleEntityInfoBuild.class ) {
+            synchronized (OracleEntityInfoBuild.class) {
                 if (instance == null) {
                     instance = new OracleEntityInfoBuild();
                 }
