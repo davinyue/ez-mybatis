@@ -5,6 +5,7 @@ import ink.dvc.ezmybatis.core.mapper.EzMapper;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.java.entity.User;
+import ink.dvc.ezmybatis.java.entity.UserOrg;
 import ink.dvc.ezmybatis.java.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.io.Resources;
@@ -68,6 +69,7 @@ public class MysqlSelectTest {
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
+                .join(EntityTable.of(UserOrg.class)).conditions().add("id", "userId").done().done()
                 .where().conditions().add("id", Operator.in, ids).done().done()
                 .page(1, 2)
                 .build();

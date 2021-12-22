@@ -10,4 +10,6 @@ public interface Table {
     String getAlias();
 
     String getTableName(Configuration configuration);
+
+    String toSqlStruct(Configuration configuration);
 }
