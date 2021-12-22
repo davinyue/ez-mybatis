@@ -8,7 +8,7 @@ import java.util.List;
 public interface EzMybatisDeleteListener {
     void onDelete(Object entity);
 
-    void onBatchDelete(List<Object> entity);
+    void onBatchDelete(List<Object> entitys);
 
     void onDeleteById(Object id, Class<?> ntClass);
 
