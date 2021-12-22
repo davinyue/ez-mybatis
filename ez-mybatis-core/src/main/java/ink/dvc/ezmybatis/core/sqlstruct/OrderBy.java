@@ -5,7 +5,7 @@ import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.constant.DbType;
 import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
@@ -42,7 +42,7 @@ public class OrderBy implements SqlStruct {
         if (order == null || order.getItems() == null) {
             return sqlBuilder;
         } else {
-            String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+            String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
             StringBuilder sql = new StringBuilder(" ORDER BY ");
             for (int i = 0; i < order.getItems().size(); i++) {
                 OrderBy.OrderItem orderItem = order.getItems().get(i);

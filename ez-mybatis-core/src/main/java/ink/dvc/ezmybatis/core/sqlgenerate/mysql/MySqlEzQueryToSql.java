@@ -1,13 +1,13 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.Alias;
 import ink.dvc.ezmybatis.core.sqlstruct.Limit;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
         if (limit == null) {
             return sqlBuilder;
         }
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         sqlBuilder.append(" LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize());
 //        EzFrom from = query.getFrom();
 //        EzTable table = from.getTable();

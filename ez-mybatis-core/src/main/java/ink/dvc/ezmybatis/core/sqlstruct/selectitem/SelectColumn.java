@@ -1,12 +1,12 @@
 package ink.dvc.ezmybatis.core.sqlstruct.selectitem;
 
-import ink.dvc.ezmybatis.core.sqlgenerate.KeywordQMFactory;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
+import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.Assert;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.ibatis.session.Configuration;
 
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class SelectColumn extends AbstractSelectItem {
 
     @Override
     public String toSqlPart(Configuration configuration) {
-        String keywordQM = KeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         String sql = " " + this.table.getAlias() + "." + this.column + " ";
         String alias = this.getAlias();
         if (alias != null && !alias.isEmpty()) {

@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.constant.EzMybatisConstant;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
@@ -14,18 +14,13 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     public static MySqlInsertSqlGenerate getInstance() {
         if (instance == null) {
-            synchronized ( MySqlInsertSqlGenerate.class ) {
+            synchronized (MySqlInsertSqlGenerate.class) {
                 if (instance == null) {
                     instance = new MySqlInsertSqlGenerate();
                 }
             }
         }
         return instance;
-    }
-
-    @Override
-    public String getKeywordQM() {
-        return "`";
     }
 
     @Override

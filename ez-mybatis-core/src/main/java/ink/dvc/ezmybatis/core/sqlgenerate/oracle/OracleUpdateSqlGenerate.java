@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzUpdate;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -37,10 +37,5 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     @Override
     public String getUpdateSql(Configuration configuration, List<EzUpdate> updates, Map<String, Object> mybatisParam) {
         return OracleEzUpdateToSql.getInstance().toSql(configuration, updates, mybatisParam);
-    }
-
-    @Override
-    public String getKeywordQM() {
-        return "\"";
     }
 }

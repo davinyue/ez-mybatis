@@ -1,8 +1,8 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.sqlgenerate.AbstractSelectSqlGenerate;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.Map;
 
@@ -21,12 +21,6 @@ public class MySqlSelectSqlGenerate extends AbstractSelectSqlGenerate {
             }
         }
         return instance;
-    }
-
-
-    @Override
-    public String getKeywordQM() {
-        return "`";
     }
 
     @Override

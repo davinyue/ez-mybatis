@@ -1,22 +1,23 @@
 package ink.dvc.ezmybatis.core.sqlgenerate;
 
+import ink.dvc.ezmybatis.core.constant.EzMybatisConstant;
 import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import ink.dvc.ezmybatis.core.content.entityinfo.EntityFieldInfo;
-import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.constant.EzMybatisConstant;
+import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import ink.dvc.ezmybatis.core.utils.ReflectionUtils;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 
-public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate, KeywordQM {
+public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
     @Override
     public String getInsertSql(Configuration configuration, Object entity) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableName();
-        String keywordQM = this.getKeywordQM();
+        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(keywordQM).append(tableName)
                 .append(keywordQM).append(" ");
