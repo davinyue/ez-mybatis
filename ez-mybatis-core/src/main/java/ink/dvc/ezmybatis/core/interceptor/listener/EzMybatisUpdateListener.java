@@ -9,4 +9,8 @@ public interface EzMybatisUpdateListener {
     void onUpdate(Object entity);
 
     void onBatchUpdate(List<Object> entity);
+
+    default int order() {
+        return 1;
+    }
 }

@@ -20,15 +20,14 @@ import java.util.List;
         )
 })
 public class ResultSetHandlerInterceptor extends AbstractInterceptor {
-    private static List<InterceptorLogic> logics;
+    protected List<InterceptorLogic> logics = new LinkedList<>();
 
-    static {
-        logics = new LinkedList<>();
-        logics.add(new ResultSetLogic());
+    public ResultSetHandlerInterceptor() {
+        this.logics.add(new ResultSetLogic());
     }
 
     @Override
     public List<InterceptorLogic> getLogics() {
-        return logics;
+        return this.logics;
     }
 }
