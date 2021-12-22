@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 删除事件监听器
  */
-public interface DeleteListener {
+public interface EzMybatisDeleteListener {
     void onDelete(Object entity);
 
     void onBatchDelete(List<Object> entity);

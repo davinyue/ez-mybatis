@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 插入事件监听器
  */
-public interface InsertListener {
+public interface EzMybatisInsertListener {
     void onInsert(Object entity);
 
     void onBatchInsert(List<Object> entity);

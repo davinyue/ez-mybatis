@@ -1,5 +1,7 @@
 package ink.dvc.ezmybatis.core.utils;
 
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -43,6 +45,19 @@ public class ReflectionUtils {
         Type genType = objClass.getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         return (Class<?>) params[order];
+    }
+
+    /**
+     * 获取类的父接口泛型类型参数
+     *
+     * @param objClass       要获取的类类型
+     * @param interfaceOrder 获取第几个接口
+     * @param paramOrder     接口的第几个泛型参数
+     */
+    public static Class<?> getGenericSuperinterface(Class<?> objClass, int interfaceOrder, int paramOrder) {
+        Type[] interfaces = objClass.getGenericInterfaces();
+        Type[] actualTypeArguments = ((ParameterizedTypeImpl) interfaces[interfaceOrder]).getActualTypeArguments();
+        return (Class<?>) actualTypeArguments[paramOrder];
     }
 
     public static boolean isFinal(Field field) {
