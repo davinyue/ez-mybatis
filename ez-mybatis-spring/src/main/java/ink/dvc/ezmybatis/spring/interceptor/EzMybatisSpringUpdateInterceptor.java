@@ -4,6 +4,10 @@ import ink.dvc.ezmybatis.core.interceptor.UpdateInterceptor;
 import ink.dvc.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import ink.dvc.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import ink.dvc.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Signature;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -11,6 +15,13 @@ import org.springframework.context.ApplicationContextAware;
 import java.util.Comparator;
 import java.util.Map;
 
+@Intercepts({
+        @Signature(
+                type = Executor.class,
+                method = "update",
+                args = {MappedStatement.class, Object.class}
+        )
+})
 public class EzMybatisSpringUpdateInterceptor extends UpdateInterceptor implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
