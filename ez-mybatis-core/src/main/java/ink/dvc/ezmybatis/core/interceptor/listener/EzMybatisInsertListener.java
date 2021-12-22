@@ -9,4 +9,8 @@ public interface EzMybatisInsertListener {
     void onInsert(Object entity);
 
     void onBatchInsert(List<Object> entity);
+
+    default int order() {
+        return 1;
+    }
 }
