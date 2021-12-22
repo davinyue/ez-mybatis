@@ -1,4 +1,4 @@
-package ink.dvc.oracle;
+package ink.dvc.dm;
 
 import ink.dvc.ezmybatis.core.EzUpdate;
 import ink.dvc.ezmybatis.core.mapper.EzMapper;
@@ -18,11 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
-public class OracleUpdateTest {
+public class DmUpdateTest {
     public static SqlSession sqlSession;
 
     static {
-        String resource = "mybatis-config-oracle.xml";
+        String resource = "mybatis-config-dm.xml";
         Reader reader = null;
         try {
             reader = Resources.getResourceAsReader(resource);
