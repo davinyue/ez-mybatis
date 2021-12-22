@@ -8,7 +8,7 @@ import java.util.List;
 public interface EzMybatisInsertListener {
     void onInsert(Object entity);
 
-    void onBatchInsert(List<Object> entity);
+    void onBatchInsert(List<Object> entitys);
 
     default int order() {
         return 1;

@@ -8,7 +8,7 @@ import java.util.List;
 public interface EzMybatisUpdateListener {
     void onUpdate(Object entity);
 
-    void onBatchUpdate(List<Object> entity);
+    void onBatchUpdate(List<Object> entitys);
 
     default int order() {
         return 1;
