@@ -3,10 +3,14 @@ package ink.dvc.ezmybatis.core.sqlstruct;
 import ink.dvc.ezmybatis.core.EzParam;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.CompareColumnCondition;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.CompareFieldCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.ColumnCompareCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.FieldCompareCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.join.JoinType;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +26,7 @@ public class Join implements SqlStruct {
     /**
      * 主表
      */
-    private EntityTable table;
+    private Table table;
     /**
      * 关联类型
      */
@@ -30,7 +34,7 @@ public class Join implements SqlStruct {
     /**
      * 被join表
      */
-    private EntityTable joinTable;
+    private Table joinTable;
     /**
      * 链表条件
      */
@@ -49,7 +53,7 @@ public class Join implements SqlStruct {
     protected StringBuilder joinToSql(StringBuilder sqlBuilder, Configuration configuration,
                                       MybatisParamHolder mybatisParamHolder) {
         StringBuilder sonSql;
-        if (this.joinType == Join.JoinType.CrossJoin) {
+        if (this.joinType == JoinType.CrossJoin) {
             sonSql = new StringBuilder();
         } else {
             sonSql = Where.conditionsToSqlPart(new StringBuilder(), configuration, mybatisParamHolder,
@@ -58,16 +62,9 @@ public class Join implements SqlStruct {
                 return sqlBuilder;
             }
         }
-        if (this.joinType == Join.JoinType.InnerJoin) {
-            sqlBuilder.append(" INNER JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
-        } else if (this.joinType == Join.JoinType.LeftJoin) {
-            sqlBuilder.append(" LEFT JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
-        } else if (this.joinType == Join.JoinType.RightJoin) {
-            sqlBuilder.append(" RIGHT JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
-        } else if (this.joinType == Join.JoinType.FullJoin) {
-            sqlBuilder.append(" FULL JOIN ").append(this.joinTable.toSqlStruct(configuration)).append(" ON ");
-        } else if (this.joinType == Join.JoinType.CrossJoin) {
-            sqlBuilder.append(", ").append(this.joinTable.toSqlStruct(configuration));
+        sqlBuilder.append(this.joinType.toSqlStruct()).append(this.joinTable.toSqlStruct(configuration));
+        if (this.joinType != JoinType.CrossJoin) {
+            sqlBuilder.append(" ON ");
         }
         if (this.getJoins() != null && !this.getJoins().isEmpty()) {
             for (Join join : this.joins) {
@@ -76,13 +73,6 @@ public class Join implements SqlStruct {
         }
         sqlBuilder.append(sonSql);
         return sqlBuilder;
-    }
-
-    /**
-     * join类型枚举
-     */
-    public static enum JoinType {
-        LeftJoin, RightJoin, FullJoin, InnerJoin, CrossJoin;
     }
 
     public static class JoinBuilder<T> {
@@ -96,11 +86,11 @@ public class Join implements SqlStruct {
                 this.join.setOnConditions(new LinkedList<>());
             }
             this.join.setTable(table);
-            this.join.setJoinType(Join.JoinType.InnerJoin);
+            this.join.setJoinType(JoinType.InnerJoin);
             this.join.setJoinTable(joinTable);
         }
 
-        public JoinBuilder<T> type(Join.JoinType type) {
+        public JoinBuilder<T> type(JoinType type) {
             this.join.setJoinType(type);
             return this;
         }
@@ -115,17 +105,34 @@ public class Join implements SqlStruct {
         }
     }
 
-    public static class JoinConditionBuilder<Builder> extends Where.WhereConditionBuilder<Builder> {
-        private List<Condition> conditions;
-        private EntityTable masterTable;
-        private EntityTable joinTable;
+    public static class JoinConditionBuilder<Builder> extends ConditionBuilder<Builder,
+            JoinConditionBuilder<Builder>> {
+        private Table masterTable;
+        private Table joinTable;
 
-        public JoinConditionBuilder(Builder builder, List<Condition> conditions, EntityTable masterTable,
-                                    EntityTable joinTable) {
+        public JoinConditionBuilder(Builder builder, List<Condition> conditions, Table masterTable,
+                                    Table joinTable) {
             super(builder, conditions, masterTable);
-            this.conditions = conditions;
             this.masterTable = masterTable;
             this.joinTable = joinTable;
+            this.sonBuilder = this;
+        }
+
+        private void checkAllEntityTable() {
+            this.checkLeftEntityTable();
+            this.checkRightEntityTable();
+        }
+
+        private void checkLeftEntityTable() {
+            if (!(this.masterTable instanceof EntityTable)) {
+                throw new IllegalArgumentException("Only EntityTable is supported");
+            }
+        }
+
+        private void checkRightEntityTable() {
+            if (!(this.joinTable instanceof EntityTable)) {
+                throw new IllegalArgumentException("Only EntityTable is supported");
+            }
         }
 
         /**
@@ -186,8 +193,9 @@ public class Join implements SqlStruct {
          */
         public JoinConditionBuilder<Builder> add(Condition.LoginSymbol loginSymbol, String masterField,
                                                  Operator operator, String joinField) {
-            this.conditions.add(new CompareFieldCondition(loginSymbol, this.masterTable, masterField, operator,
-                    this.joinTable, joinField));
+            this.checkAllEntityTable();
+            this.conditions.add(new FieldCompareCondition(loginSymbol, (EntityTable) this.masterTable, masterField,
+                    operator, (EntityTable) this.joinTable, joinField));
             return this;
         }
 
@@ -197,7 +205,7 @@ public class Join implements SqlStruct {
         public JoinConditionBuilder<Builder> add(boolean sure, Condition.LoginSymbol loginSymbol, String masterField,
                                                  Operator operator, String joinField) {
             if (sure) {
-                this.add(loginSymbol, masterField, operator, joinField);
+                return this.add(loginSymbol, masterField, operator, joinField);
             }
             return this;
         }
@@ -206,7 +214,9 @@ public class Join implements SqlStruct {
          * 添加联表条件, 使用主表和被联表的实体属性
          */
         public JoinConditionBuilder<Builder> addColumn(String masterColumn, String joinColumn) {
-            return this.add(masterColumn, Operator.eq, joinColumn);
+            this.conditions.add(new ColumnCompareCondition(this.masterTable, masterColumn, Operator.eq, this.joinTable,
+                    joinColumn));
+            return this;
         }
 
         /**
@@ -214,7 +224,7 @@ public class Join implements SqlStruct {
          */
         public JoinConditionBuilder<Builder> addColumn(boolean sure, String masterColumn, String joinColumn) {
             if (sure) {
-                this.addColumn(masterColumn, joinColumn);
+                return this.addColumn(masterColumn, joinColumn);
             }
             return this;
         }
@@ -233,7 +243,7 @@ public class Join implements SqlStruct {
         public JoinConditionBuilder<Builder> addColumn(boolean sure, Condition.LoginSymbol loginSymbol,
                                                        String masterColumn, String joinColumn) {
             if (sure) {
-                this.addColumn(loginSymbol, masterColumn, joinColumn);
+                return this.addColumn(loginSymbol, masterColumn, joinColumn);
             }
             return this;
         }
@@ -251,7 +261,7 @@ public class Join implements SqlStruct {
         public JoinConditionBuilder<Builder> addColumn(boolean sure, String masterColumn, Operator operator,
                                                        String joinColumn) {
             if (sure) {
-                this.addColumn(masterColumn, operator, joinColumn);
+                return this.addColumn(masterColumn, operator, joinColumn);
             }
             return this;
         }
@@ -261,7 +271,7 @@ public class Join implements SqlStruct {
          */
         public JoinConditionBuilder<Builder> addColumn(Condition.LoginSymbol loginSymbol, String masterColumn,
                                                        Operator operator, String joinColumn) {
-            this.conditions.add(new CompareColumnCondition(loginSymbol, this.masterTable, masterColumn, operator,
+            this.conditions.add(new ColumnCompareCondition(loginSymbol, this.masterTable, masterColumn, operator,
                     this.joinTable, joinColumn));
             return this;
         }
@@ -272,9 +282,20 @@ public class Join implements SqlStruct {
         public JoinConditionBuilder<Builder> addColumn(boolean sure, Condition.LoginSymbol loginSymbol,
                                                        String masterColumn, Operator operator, String joinColumn) {
             if (sure) {
-                this.addColumn(loginSymbol, masterColumn, operator, joinColumn);
+                return this.addColumn(loginSymbol, masterColumn, operator, joinColumn);
             }
             return this;
+        }
+
+        public JoinConditionBuilder<JoinConditionBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
+            LinkedList<Condition> conditions = new LinkedList<>();
+            GroupCondition condition = new GroupCondition(conditions, loginSymbol);
+            this.conditions.add(condition);
+            return new JoinConditionBuilder<>(this, conditions, this.masterTable, this.joinTable);
+        }
+
+        public JoinConditionBuilder<JoinConditionBuilder<Builder>> groupCondition() {
+            return this.groupCondition(Condition.LoginSymbol.AND);
         }
     }
 }

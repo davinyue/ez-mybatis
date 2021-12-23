@@ -41,7 +41,7 @@ public class EzQuery<Rt> extends EzParam<Rt> {
         public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select() {
             Select select = new Select(new LinkedList<>());
             this.query.select = select;
-            return new Select.EzSelectBuilder<>(this, select, this.query.table);
+            return new Select.EzSelectBuilder<>(this, select, (EntityTable) this.query.table);
         }
 
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(EntityTable joinTable) {
@@ -50,31 +50,31 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             }
             Join join = new Join();
             this.query.joins.add(join);
-            return new Join.JoinBuilder<>(this, join, this.query.table, joinTable);
+            return new Join.JoinBuilder<>(this, join, (EntityTable) this.query.table, joinTable);
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where() {
             Where where = new Where(new LinkedList<>());
             this.query.where = where;
-            return new Where.WhereBuilder<>(this, where, this.query.table);
+            return new Where.WhereBuilder<>(this, where, (EntityTable) this.query.table);
         }
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy() {
             GroupBy group = new GroupBy(new LinkedList<>());
             this.query.groupBy = group;
-            return new GroupBy.GroupBuilder<>(this, group, this.query.table);
+            return new GroupBy.GroupBuilder<>(this, group, (EntityTable) this.query.table);
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy() {
             OrderBy orderBy = new OrderBy(new LinkedList<>());
             this.query.orderBy = orderBy;
-            return new OrderBy.OrderBuilder<>(this, orderBy, this.query.table);
+            return new OrderBy.OrderBuilder<>(this, orderBy, (EntityTable) this.query.table);
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> having() {
             Having where = new Having(new LinkedList<>());
             this.query.having = where;
-            return new Where.WhereBuilder<>(this, where, this.query.table);
+            return new Where.WhereBuilder<>(this, where, (EntityTable) this.query.table);
         }
 
         /**

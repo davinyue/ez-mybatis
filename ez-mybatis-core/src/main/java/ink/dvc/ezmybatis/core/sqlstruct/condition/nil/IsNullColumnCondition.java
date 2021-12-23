@@ -1,7 +1,7 @@
 package ink.dvc.ezmybatis.core.sqlstruct.condition.nil;
 
 import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,10 +13,10 @@ import org.apache.ibatis.session.Configuration;
 @Getter
 @Setter
 public class IsNullColumnCondition extends IsNullCondition {
-    protected EntityTable table;
+    protected Table table;
     protected String column;
 
-    public IsNullColumnCondition(LoginSymbol loginSymbol, EntityTable table, String column) {
+    public IsNullColumnCondition(LoginSymbol loginSymbol, Table table, String column) {
         this.table = table;
         this.column = column;
         this.loginSymbol = loginSymbol;

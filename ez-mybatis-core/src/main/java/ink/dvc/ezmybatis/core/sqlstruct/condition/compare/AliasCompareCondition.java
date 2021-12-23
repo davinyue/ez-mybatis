@@ -12,24 +12,24 @@ import org.apache.ibatis.session.Configuration;
  * 别名对比条件
  */
 @Getter
-public class CompareAliasCondition implements Condition {
+public class AliasCompareCondition implements Condition {
     private LoginSymbol loginSymbol;
-    private String alias;
+    private String leftAlias;
     private Operator operator;
-    private String otherAlias;
+    private String rightAlias;
 
-    public CompareAliasCondition(String alias, Operator operator, String otherAlias) {
+    public AliasCompareCondition(String leftAlias, Operator operator, String rightAlias) {
         this.loginSymbol = LoginSymbol.AND;
-        this.alias = alias;
+        this.leftAlias = leftAlias;
         this.operator = operator;
-        this.otherAlias = otherAlias;
+        this.rightAlias = rightAlias;
     }
 
-    public CompareAliasCondition(LoginSymbol loginSymbol, String alias, Operator operator, String otherAlias) {
+    public AliasCompareCondition(LoginSymbol loginSymbol, String leftAlias, Operator operator, String rightAlias) {
         this.loginSymbol = loginSymbol;
-        this.alias = alias;
+        this.leftAlias = leftAlias;
         this.operator = operator;
-        this.otherAlias = otherAlias;
+        this.rightAlias = rightAlias;
     }
 
 
@@ -41,11 +41,11 @@ public class CompareAliasCondition implements Condition {
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        return " " + keywordQM + this.alias + keywordQM +
+        return " " + keywordQM + this.leftAlias + keywordQM +
                 " " +
                 this.getOperator().getOperator() +
                 " " +
-                keywordQM + this.otherAlias + keywordQM +
+                keywordQM + this.rightAlias + keywordQM +
                 " ";
     }
 }
