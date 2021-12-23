@@ -1,16 +1,16 @@
 package ink.dvc.ezmybatis.core;
 
+import ink.dvc.ezmybatis.core.sqlstruct.From;
+import ink.dvc.ezmybatis.core.sqlstruct.Join;
 import ink.dvc.ezmybatis.core.sqlstruct.UpdateSet;
+import ink.dvc.ezmybatis.core.sqlstruct.Where;
+import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.sqlstruct.update.SyntaxUpdateColumnItem;
 import ink.dvc.ezmybatis.core.sqlstruct.update.SyntaxUpdateFieldItem;
 import ink.dvc.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
 import ink.dvc.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import lombok.Getter;
-import ink.dvc.ezmybatis.core.sqlstruct.From;
-import ink.dvc.ezmybatis.core.sqlstruct.Join;
-import ink.dvc.ezmybatis.core.sqlstruct.Where;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
-import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder set(String field, Object value) {
-            this.update.set.getItems().add(new UpdateFieldItem(this.update.table, field, value));
+            this.update.set.getItems().add(new UpdateFieldItem((EntityTable) this.update.table, field, value));
             return this;
         }
 
@@ -63,7 +63,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder setSyntax(String field, String syntax) {
-            this.update.set.getItems().add(new SyntaxUpdateFieldItem(this.update.table, field, syntax));
+            this.update.set.getItems().add(new SyntaxUpdateFieldItem((EntityTable) this.update.table, field, syntax));
             return this;
         }
 
@@ -140,13 +140,13 @@ public class EzUpdate extends EzParam<Integer> {
             }
             Join join = new Join();
             this.update.joins.add(join);
-            return new Join.JoinBuilder<>(this, join, this.update.table, joinTable);
+            return new Join.JoinBuilder<>(this, join, (EntityTable) this.update.table, joinTable);
         }
 
         public Where.WhereBuilder<EzUpdateBuilder> where() {
             Where where = new Where(new LinkedList<>());
             this.update.where = where;
-            return new Where.WhereBuilder<>(this, where, this.update.table);
+            return new Where.WhereBuilder<>(this, where, (EntityTable) this.update.table);
         }
 
         public EzUpdate build() {
