@@ -84,6 +84,7 @@ public class MysqlSelectTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(DbTable.of("ez_user"))
                 .select().addAll().done()
                 .where().conditions().addColumn("id", "4").done().done()
+                .having().addColumn("name", "张三").done()
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);
