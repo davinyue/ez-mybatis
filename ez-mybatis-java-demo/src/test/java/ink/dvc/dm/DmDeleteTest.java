@@ -78,7 +78,7 @@ public class DmDeleteTest {
     @Test
     public void deleteByParam() {
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
-                .where().add("id", "56").done()
+                .where().addFieldCondition("id", "56").done()
                 .build();
         int ret = sqlSession.getMapper(EzMapper.class).delete(delete);
         sqlSession.commit();
@@ -89,11 +89,11 @@ public class DmDeleteTest {
     public void batchDeleteByParam() {
         List<EzDelete> deletes = new LinkedList<>();
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
-                .where().add("id", "56").done()
+                .where().addFieldCondition("id", "56").done()
                 .build();
         deletes.add(delete);
         delete = EzDelete.delete(EntityTable.of(User.class))
-                .where().add("id", "23").done()
+                .where().addFieldCondition("id", "23").done()
                 .build();
         deletes.add(delete);
         sqlSession.getMapper(EzMapper.class).batchDelete(deletes);

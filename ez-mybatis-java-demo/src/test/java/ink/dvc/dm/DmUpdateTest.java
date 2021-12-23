@@ -99,7 +99,7 @@ public class DmUpdateTest {
     public void updateByEzParam() {
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 1)
-                .where().add("id", "1").done()
+                .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.update(ezUpdate);
         sqlSession.commit();
@@ -111,11 +111,11 @@ public class DmUpdateTest {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 1)
-                .where().add("id", "1").done()
+                .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
         ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 2)
-                .where().add("id", "2").done()
+                .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
         mapper.batchUpdate(updates);
