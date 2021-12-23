@@ -4,6 +4,7 @@ import ink.dvc.ezmybatis.core.sqlstruct.From;
 import ink.dvc.ezmybatis.core.sqlstruct.Join;
 import ink.dvc.ezmybatis.core.sqlstruct.Update;
 import ink.dvc.ezmybatis.core.sqlstruct.Where;
+import ink.dvc.ezmybatis.core.sqlstruct.join.JoinType;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.sqlstruct.update.SyntaxUpdateColumnItem;
@@ -134,19 +135,31 @@ public class EzUpdate extends EzParam<Integer> {
             return this;
         }
 
-        public Join.JoinBuilder<EzUpdateBuilder> join(EntityTable joinTable) {
+        public Join.JoinBuilder<EzUpdateBuilder> join(JoinType joinType, Table joinTable) {
             if (this.update.getJoins() == null) {
                 this.update.joins = new LinkedList<>();
             }
             Join join = new Join();
+            join.setJoinType(joinType);
+            join.setTable(this.update.table);
+            join.setJoinTable(joinTable);
             this.update.joins.add(join);
-            return new Join.JoinBuilder<>(this, join, (EntityTable) this.update.table, joinTable);
+            return new Join.JoinBuilder<>(this, join);
+        }
+
+        public Join.JoinBuilder<EzUpdateBuilder> join(Table joinTable) {
+            return this.join(JoinType.InnerJoin, joinTable);
+        }
+
+        public Where.WhereBuilder<EzUpdateBuilder> where(Table table) {
+            if (this.update.where == null) {
+                this.update.where = new Where(new LinkedList<>());
+            }
+            return new Where.WhereBuilder<>(this, this.update.where, table);
         }
 
         public Where.WhereBuilder<EzUpdateBuilder> where() {
-            Where where = new Where(new LinkedList<>());
-            this.update.where = where;
-            return new Where.WhereBuilder<>(this, where, (EntityTable) this.update.table);
+            return this.where(this.update.table);
         }
 
         public EzUpdate build() {
