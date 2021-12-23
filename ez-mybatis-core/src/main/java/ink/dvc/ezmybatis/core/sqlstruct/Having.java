@@ -15,6 +15,7 @@ import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNullAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
+import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.HashMap;
@@ -22,7 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Having extends Where {
+@Getter
+public class Having implements SqlStruct {
     private static final Map<DbType, SqlStruct> CONVERT = new HashMap<>();
 
     static {
@@ -33,8 +35,13 @@ public class Having extends Where {
         CONVERT.put(DbType.DM, defaultConvert);
     }
 
+    /**
+     * 条件
+     */
+    private List<Condition> conditions;
+
     public Having(List<Condition> conditions) {
-        super(conditions);
+        this.conditions = conditions;
     }
 
     private static StringBuilder defaultHavingToSql(StringBuilder sqlBuilder, Configuration configuration,
@@ -53,6 +60,26 @@ public class Having extends Where {
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);
+    }
+
+    public static class HavingBuilder<T> {
+        private T target;
+        private Table table;
+        private Having having;
+
+        public HavingBuilder(T target, Having having, Table table) {
+            this.target = target;
+            this.having = having;
+            this.table = table;
+        }
+
+        public HavingConditionBuilder<HavingBuilder<T>> conditions() {
+            return new HavingConditionBuilder<>(this, this.having.getConditions(), this.table);
+        }
+
+        public T done() {
+            return this.target;
+        }
     }
 
     public static class HavingConditionBuilder<Builder> extends ConditionBuilder<Builder,
