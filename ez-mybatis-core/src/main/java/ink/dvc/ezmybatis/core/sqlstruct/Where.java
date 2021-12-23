@@ -6,7 +6,6 @@ import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.GroupCondition;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
@@ -37,7 +36,7 @@ public class Where implements SqlStruct {
     /**
      * 条件
      */
-    List<Condition> conditions;
+    private List<Condition> conditions;
 
     public Where(List<Condition> conditions) {
         this.conditions = conditions;
@@ -74,26 +73,6 @@ public class Where implements SqlStruct {
                 mybatisParamHolder);
     }
 
-    public static class WhereBuilder<T> {
-        private T target;
-        private EntityTable table;
-        private Where where;
-
-        public WhereBuilder(T target, Where where, EntityTable table) {
-            this.target = target;
-            this.where = where;
-            this.table = table;
-        }
-
-        public WhereConditionBuilder<WhereBuilder<T>> conditions() {
-            return new WhereConditionBuilder<>(this, this.where.getConditions(), this.table);
-        }
-
-        public T done() {
-            return this.target;
-        }
-    }
-
     public static class WhereConditionBuilder<Builder> extends ConditionBuilder<Builder,
             WhereConditionBuilder<Builder>> {
         public WhereConditionBuilder(Builder builder, List<Condition> conditions, Table table) {
@@ -112,4 +91,25 @@ public class Where implements SqlStruct {
             return this.groupCondition(Condition.LoginSymbol.AND);
         }
     }
+
+    public static class WhereBuilder<T> {
+        private T target;
+        private Table table;
+        private Where where;
+
+        public WhereBuilder(T target, Where where, Table table) {
+            this.target = target;
+            this.where = where;
+            this.table = table;
+        }
+
+        public WhereConditionBuilder<WhereBuilder<T>> conditions() {
+            return new WhereConditionBuilder<>(this, this.where.getConditions(), this.table);
+        }
+
+        public T done() {
+            return this.target;
+        }
+    }
+
 }

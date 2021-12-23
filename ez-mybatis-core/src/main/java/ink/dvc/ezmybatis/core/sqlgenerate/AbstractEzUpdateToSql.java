@@ -1,12 +1,12 @@
 package ink.dvc.ezmybatis.core.sqlgenerate;
 
-import ink.dvc.ezmybatis.core.sqlstruct.UpdateSet;
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzUpdate;
 import ink.dvc.ezmybatis.core.sqlstruct.From;
 import ink.dvc.ezmybatis.core.sqlstruct.Join;
+import ink.dvc.ezmybatis.core.sqlstruct.Update;
 import ink.dvc.ezmybatis.core.sqlstruct.Where;
 import ink.dvc.ezmybatis.core.sqlstruct.update.UpdateItem;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
 
     protected StringBuilder setToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                      MybatisParamHolder mybatisParamHolder) {
-        UpdateSet set = update.getSet();
+        Update set = update.getSet();
         if (set == null || set.getItems() == null || set.getItems().isEmpty()) {
             throw new IllegalArgumentException("update items can not be null");
         }
