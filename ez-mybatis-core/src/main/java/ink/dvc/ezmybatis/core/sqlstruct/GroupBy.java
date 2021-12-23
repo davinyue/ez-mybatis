@@ -3,10 +3,12 @@ package ink.dvc.ezmybatis.core.sqlstruct;
 import ink.dvc.ezmybatis.core.EzParam;
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.constant.DbType;
-import ink.dvc.ezmybatis.core.content.EzEntityClassInfoFactory;
-import ink.dvc.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import ink.dvc.ezmybatis.core.sqlstruct.group.ColumnGroupItem;
+import ink.dvc.ezmybatis.core.sqlstruct.group.FieldGroupItem;
+import ink.dvc.ezmybatis.core.sqlstruct.group.GroupItem;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +25,7 @@ public class GroupBy implements SqlStruct {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                GroupBy.defaultGroupByToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
+                GroupBy.defaultGroupByToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
         CONVERT.put(DbType.DM, defaultConvert);
@@ -36,18 +38,15 @@ public class GroupBy implements SqlStruct {
     }
 
     private static StringBuilder defaultGroupByToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                     EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
+                                                     EzQuery<?> query) {
         GroupBy group = query.getGroupBy();
         if (group == null || group.getItems() == null) {
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" GROUP BY ");
             for (int i = 0; i < group.getItems().size(); i++) {
-                GroupBy.GroupItem groupItem = group.getItems().get(i);
-                EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration,
-                        groupItem.getTable().getEtType());
-                sql.append(groupItem.getTable().getAlias()).append(".")
-                        .append(entityClassInfo.getFieldInfo(groupItem.getField()).getColumnName());
+                GroupItem groupItem = group.getItems().get(i);
+                sql.append(groupItem.toSqlStruct(configuration));
                 if (i + 1 < group.getItems().size()) {
                     sql.append(", ");
                 } else {
@@ -65,56 +64,44 @@ public class GroupBy implements SqlStruct {
                 mybatisParamHolder);
     }
 
-
-    public static class GroupItem {
-        private EntityTable table;
-        private String field;
-
-        public GroupItem(EntityTable table, String field) {
-            this.table = table;
-            this.field = field;
-        }
-
-        public EntityTable getTable() {
-            return this.table;
-        }
-
-        public String getField() {
-            return this.field;
-        }
-    }
-
     public static class GroupBuilder<T> {
         private T target;
-        private EntityTable table;
+        private Table table;
         private GroupBy groupBy;
 
-        public GroupBuilder(T target, GroupBy groupBy, EntityTable table) {
+        public GroupBuilder(T target, GroupBy groupBy, Table table) {
             this.target = target;
             this.groupBy = groupBy;
             this.table = table;
         }
 
+        private void checkEntityTable() {
+            if (!(this.table instanceof EntityTable)) {
+                throw new IllegalArgumentException("Only EntityTable is supported");
+            }
+        }
+
         public GroupBuilder<T> add(String field) {
-            this.groupBy.getItems().add(new GroupBy.GroupItem(this.table, field));
+            this.checkEntityTable();
+            this.groupBy.getItems().add(new FieldGroupItem((EntityTable) this.table, field));
             return this;
         }
 
         public GroupBuilder<T> add(boolean sure, String field) {
             if (sure) {
-                this.add(field);
+                return this.add(field);
             }
             return this;
         }
 
-        public GroupBuilder<T> add(EntityTable table, String field) {
-            this.groupBy.getItems().add(new GroupBy.GroupItem(table, field));
+        public GroupBuilder<T> addColumn(String column) {
+            this.groupBy.getItems().add(new ColumnGroupItem(this.table, column));
             return this;
         }
 
-        public GroupBuilder<T> add(boolean sure, EntityTable table, String field) {
+        public GroupBuilder<T> addColumn(boolean sure, String column) {
             if (sure) {
-                this.add(table, field);
+                return this.addColumn(column);
             }
             return this;
         }

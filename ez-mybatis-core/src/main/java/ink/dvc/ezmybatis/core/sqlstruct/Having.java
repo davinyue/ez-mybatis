@@ -5,10 +5,20 @@ import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.constant.DbType;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.GroupCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.between.BetweenAliasCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.between.NotBetweenAliasCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.AliasCompareCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNullAliasCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +27,7 @@ public class Having extends Where {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                Having.defaultWhereToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
+                Having.defaultHavingToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
         CONVERT.put(DbType.DM, defaultConvert);
@@ -27,8 +37,8 @@ public class Having extends Where {
         super(conditions);
     }
 
-    private static StringBuilder defaultWhereToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                   EzQuery<?> ezParam, MybatisParamHolder mybatisParamHolder) {
+    private static StringBuilder defaultHavingToSql(StringBuilder sqlBuilder, Configuration configuration,
+                                                    EzQuery<?> ezParam, MybatisParamHolder mybatisParamHolder) {
         if (ezParam.getHaving() == null || ezParam.getHaving().getConditions() == null ||
                 ezParam.getHaving().getConditions().isEmpty()) {
             return sqlBuilder;
@@ -43,5 +53,229 @@ public class Having extends Where {
                                    MybatisParamHolder mybatisParamHolder) {
         return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
                 mybatisParamHolder);
+    }
+
+    public static class HavingConditionBuilder<Builder> extends ConditionBuilder<Builder,
+            HavingConditionBuilder<Builder>> {
+
+        public HavingConditionBuilder(Builder builder, List<Condition> conditions, Table table) {
+            super(builder, conditions, table);
+            this.sonBuilder = this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(Condition.LoginSymbol loginSymbol, String alias,
+                                                        Operator operator, Object value) {
+            this.conditions.add(new NormalAliasCondition(loginSymbol, alias, operator, value));
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+                                                        Operator operator, Object value) {
+            if (sure) {
+                return this.addAlias(loginSymbol, alias, operator, value);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(Condition.LoginSymbol loginSymbol, String alias,
+                                                        Object value) {
+            return this.addAlias(loginSymbol, alias, Operator.eq, value);
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+                                                        Object value) {
+            if (sure) {
+                return this.addAlias(loginSymbol, alias, value);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(String alias, Object value) {
+            return this.addAlias(Condition.LoginSymbol.AND, alias, Operator.eq, value);
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, String alias, Object value) {
+            if (sure) {
+                return this.addAlias(alias, value);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(String alias, Operator operator, Object value) {
+            return this.addAlias(Condition.LoginSymbol.AND, alias, operator, value);
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, String alias, Operator operator, Object value) {
+            if (sure) {
+                return this.addAlias(alias, operator, value);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(Condition.LoginSymbol loginSymbol, String alias,
+                                                        Operator operator, String otherAlias) {
+            this.conditions.add(new AliasCompareCondition(loginSymbol, alias, operator, otherAlias));
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+                                                        Operator operator, String otherAlias) {
+            if (sure) {
+                return this.addAlias(loginSymbol, alias, operator, otherAlias);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(String alias, Operator operator, String otherAlias) {
+            this.conditions.add(new AliasCompareCondition(Condition.LoginSymbol.AND, alias, operator, otherAlias));
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, String alias, Operator operator,
+                                                        String otherAlias) {
+            if (sure) {
+                return this.addAlias(alias, operator, otherAlias);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(String alias, String otherAlias) {
+            this.conditions.add(new AliasCompareCondition(Condition.LoginSymbol.AND, alias, Operator.eq,
+                    otherAlias));
+            return this;
+        }
+
+        public HavingConditionBuilder<Builder> addAlias(boolean sure, String alias, String otherAlias) {
+            if (sure) {
+                return this.addAlias(alias, otherAlias);
+            }
+            return this;
+        }
+
+        /**
+         * 添加is null条件
+         */
+        public HavingConditionBuilder<Builder> addAliasIsNull(Condition.LoginSymbol loginSymbol, String alias) {
+            this.conditions.add(new IsNullAliasCondition(loginSymbol, alias));
+            return this;
+        }
+
+        /**
+         * 添加is null条件
+         */
+        public HavingConditionBuilder<Builder> addAliasIsNull(boolean sure, Condition.LoginSymbol loginSymbol,
+                                                              String alias) {
+            if (sure) {
+                return this.addAliasIsNull(loginSymbol, alias);
+            }
+            return this;
+        }
+
+        /**
+         * 添加is null条件
+         */
+        public HavingConditionBuilder<Builder> addAliasIsNull(String alias) {
+            this.conditions.add(new IsNullAliasCondition(Condition.LoginSymbol.AND, alias));
+            return this;
+        }
+
+        /**
+         * 添加is null条件
+         */
+        public HavingConditionBuilder<Builder> addAliasIsNull(boolean sure, String alias) {
+            if (sure) {
+                return this.addAliasIsNull(alias);
+            }
+            return this;
+        }
+
+        /**
+         * 添加between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasBt(Condition.LoginSymbol loginSymbol, String alias,
+                                                          Object minValue, Object maxValue) {
+            this.conditions.add(new BetweenAliasCondition(loginSymbol, alias, minValue, maxValue));
+            return this;
+        }
+
+        /**
+         * 添加between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasBt(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+                                                          Object minValue, Object maxValue) {
+            if (sure) {
+                return this.addAliasBt(loginSymbol, alias, minValue, maxValue);
+            }
+            return this;
+        }
+
+        /**
+         * 添加between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasBt(String alias, Object minValue, Object maxValue) {
+            this.conditions.add(new BetweenAliasCondition(Condition.LoginSymbol.AND, alias, minValue, maxValue));
+            return this;
+        }
+
+        /**
+         * 添加between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasBt(boolean sure, String alias, Object minValue,
+                                                          Object maxValue) {
+            if (sure) {
+                return this.addAliasBt(alias, minValue, maxValue);
+            }
+            return this;
+        }
+
+        /**
+         * 添加not between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasNotBt(Condition.LoginSymbol loginSymbol, String alias,
+                                                             Object minValue, Object maxValue) {
+            this.conditions.add(new NotBetweenAliasCondition(loginSymbol, alias, minValue, maxValue));
+            return this;
+        }
+
+        /**
+         * 添加not between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasNotBt(boolean sure, Condition.LoginSymbol loginSymbol,
+                                                             String alias, Object minValue, Object maxValue) {
+            if (sure) {
+                return this.addAliasNotBt(loginSymbol, alias, minValue, maxValue);
+            }
+            return this;
+        }
+
+        /**
+         * 添加not between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasNotBt(String alias, Object minValue, Object maxValue) {
+            this.conditions.add(new NotBetweenAliasCondition(Condition.LoginSymbol.AND, alias, minValue, maxValue));
+            return this;
+        }
+
+        /**
+         * 添加not between on条件
+         */
+        public HavingConditionBuilder<Builder> addAliasNotBt(boolean sure, String alias, Object minValue,
+                                                             Object maxValue) {
+            if (sure) {
+                return this.addAliasNotBt(alias, minValue, maxValue);
+            }
+            return this;
+        }
+
+        public HavingConditionBuilder<HavingConditionBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
+            LinkedList<Condition> conditions = new LinkedList<>();
+            GroupCondition condition = new GroupCondition(conditions, loginSymbol);
+            this.conditions.add(condition);
+            return new HavingConditionBuilder<>(this, conditions, this.table);
+        }
+
+        public HavingConditionBuilder<HavingConditionBuilder<Builder>> groupCondition() {
+            return this.groupCondition(Condition.LoginSymbol.AND);
+        }
     }
 }

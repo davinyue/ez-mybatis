@@ -7,40 +7,41 @@ import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * 表实体属性对比条件
+ * 表实体属性与表列对比条件
  */
 @Getter
-public class CompareFieldCondition implements Condition {
+public class FieldCompareColumnCondition implements Condition {
     private LoginSymbol loginSymbol;
-    private EntityTable table;
-    private String field;
+    private EntityTable leftTable;
+    private String leftField;
     private Operator operator;
-    private EntityTable otherTable;
-    private String otherField;
+    private Table rightTable;
+    private String rightColumn;
 
-    public CompareFieldCondition(EntityTable table, String field, Operator operator,
-                                 EntityTable otherTable, String otherField) {
+    public FieldCompareColumnCondition(EntityTable leftTable, String leftField, Operator operator,
+                                       Table rightTable, String rightColumn) {
         this.loginSymbol = LoginSymbol.AND;
-        this.table = table;
-        this.field = field;
+        this.leftTable = leftTable;
+        this.leftField = leftField;
         this.operator = operator;
-        this.otherTable = otherTable;
-        this.otherField = otherField;
+        this.rightTable = rightTable;
+        this.rightColumn = rightColumn;
     }
 
-    public CompareFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field, Operator operator,
-                                 EntityTable otherTable, String otherField) {
+    public FieldCompareColumnCondition(LoginSymbol loginSymbol, EntityTable leftTable, String leftField, Operator operator,
+                                       Table rightTable, String rightColumn) {
         this.loginSymbol = loginSymbol;
-        this.table = table;
-        this.field = field;
+        this.leftTable = leftTable;
+        this.leftField = leftField;
         this.operator = operator;
-        this.otherTable = otherTable;
-        this.otherField = otherField;
+        this.rightTable = rightTable;
+        this.rightColumn = rightColumn;
     }
 
 
@@ -51,21 +52,19 @@ public class CompareFieldCondition implements Condition {
 
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, this.getTable()
+        EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, this.getLeftTable()
                 .getEtType());
-        EntityClassInfo oEtInfo = EzEntityClassInfoFactory.forClass(configuration,
-                this.getOtherTable().getEtType());
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        return " " + this.getTable().getAlias() + "." +
+        return " " + this.getLeftTable().getAlias() + "." +
                 keywordQM +
-                etInfo.getFieldInfo(this.getField()).getColumnName() +
+                etInfo.getFieldInfo(this.getLeftField()).getColumnName() +
                 keywordQM +
                 " " +
                 this.getOperator().getOperator() +
                 " " +
-                this.getOtherTable().getAlias() + "." +
+                this.getRightTable().getAlias() + "." +
                 keywordQM +
-                oEtInfo.getFieldInfo(this.getOtherField()).getColumnName() +
+                this.rightColumn +
                 keywordQM +
                 " ";
     }
