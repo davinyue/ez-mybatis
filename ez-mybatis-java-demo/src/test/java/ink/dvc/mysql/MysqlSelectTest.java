@@ -70,8 +70,8 @@ public class MysqlSelectTest {
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .join(EntityTable.of(UserOrg.class)).add("id", "userId").done()
-                .where().add("id", Operator.in, ids).done()
+                .join(EntityTable.of(UserOrg.class)).addFieldCondition("id", "userId").done()
+                .where().addFieldCondition("id", Operator.in, ids).done()
                 .page(1, 2)
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
@@ -83,8 +83,8 @@ public class MysqlSelectTest {
     public void dbTableQueryTest() {
         EzQuery<User> query = EzQuery.builder(User.class).from(DbTable.of("ez_user"))
                 .select().addAll().done()
-                .where().addColumn("id", "4").done()
-                .having().addColumn("name", "张三").done()
+                .where().addColumnCondition("id", "4").done()
+                .having().addColumnCondition("name", "张三").done()
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);
@@ -95,7 +95,7 @@ public class MysqlSelectTest {
     public void groupTest() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().add("name").done()
-                .where().addColumn("name", Operator.gt, 1).done()
+                .where().addColumnCondition("name", Operator.gt, 1).done()
                 //.groupBy().add("name").done()
                 //.having().conditions().add("name", Operator.more, 1).done().done()
                 //.orderBy().add("name").done()
