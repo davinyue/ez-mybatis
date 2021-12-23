@@ -73,42 +73,25 @@ public class Where implements SqlStruct {
                 mybatisParamHolder);
     }
 
-    public static class WhereConditionBuilder<Builder> extends ConditionBuilder<Builder,
-            WhereConditionBuilder<Builder>> {
-        public WhereConditionBuilder(Builder builder, List<Condition> conditions, Table table) {
-            super(builder, conditions, table);
+    public static class WhereBuilder<Builder> extends ConditionBuilder<Builder,
+            WhereBuilder<Builder>> {
+        private Where where;
+
+        public WhereBuilder(Builder builder, Where where, Table table) {
+            super(builder, where.getConditions(), table);
             this.sonBuilder = this;
+            this.where = where;
         }
 
-        public WhereConditionBuilder<WhereConditionBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
+        public WhereBuilder<WhereBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
             LinkedList<Condition> conditions = new LinkedList<>();
             GroupCondition condition = new GroupCondition(conditions, loginSymbol);
             this.conditions.add(condition);
-            return new WhereConditionBuilder<>(this, conditions, this.table);
+            return new WhereBuilder<>(this, this.where, this.table);
         }
 
-        public WhereConditionBuilder<WhereConditionBuilder<Builder>> groupCondition() {
+        public WhereBuilder<WhereBuilder<Builder>> groupCondition() {
             return this.groupCondition(Condition.LoginSymbol.AND);
-        }
-    }
-
-    public static class WhereBuilder<T> {
-        private T target;
-        private Table table;
-        private Where where;
-
-        public WhereBuilder(T target, Where where, Table table) {
-            this.target = target;
-            this.where = where;
-            this.table = table;
-        }
-
-        public WhereConditionBuilder<WhereBuilder<T>> conditions() {
-            return new WhereConditionBuilder<>(this, this.where.getConditions(), this.table);
-        }
-
-        public T done() {
-            return this.target;
         }
     }
 

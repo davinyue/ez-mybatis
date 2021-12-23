@@ -85,7 +85,7 @@ public class OracleSelectTest {
     public void groupTest() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().add("name").done()
-                .where().conditions().addColumn("name", Operator.gt, 1).done().done()
+                .where().addColumn("name", Operator.gt, 1).done()
                 //.groupBy().add("name").done()
                 //.having().conditions().add("name", Operator.more, 1).done().done()
                 //.orderBy().add("name").done()
