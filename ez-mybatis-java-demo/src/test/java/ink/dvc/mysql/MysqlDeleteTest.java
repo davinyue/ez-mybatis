@@ -81,10 +81,10 @@ public class MysqlDeleteTest {
         EntityTable userTable = EntityTable.of(User.class);
         EntityTable uoTable = EntityTable.of(UserOrg.class);
         EzDelete delete = EzDelete.delete(userTable).delete(uoTable)
-                .join(uoTable).conditions()
+                .join(uoTable)
                 .add("id", "userId")
-                .done().done()
-                .where().conditions().add("id", "56").done().done()
+                .done()
+                .where().add("id", "56").done()
                 .build();
         int ret = sqlSession.getMapper(EzMapper.class).delete(delete);
         sqlSession.commit();
@@ -95,11 +95,11 @@ public class MysqlDeleteTest {
     public void batchDeleteByParam() {
         List<EzDelete> deletes = new LinkedList<>();
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
-                .where().conditions().add("id", "56").done().done()
+                .where().add("id", "56").done()
                 .build();
         deletes.add(delete);
         delete = EzDelete.delete(EntityTable.of(User.class))
-                .where().conditions().add("id", "23").done().done()
+                .where().add("id", "23").done()
                 .build();
         deletes.add(delete);
         sqlSession.getMapper(EzMapper.class).batchDelete(deletes);

@@ -1,7 +1,7 @@
 package ink.dvc.ezmybatis.core;
 
 import ink.dvc.ezmybatis.core.sqlstruct.*;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.join.JoinType;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import lombok.Getter;
 
@@ -49,13 +49,21 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             return this.select(this.query.table);
         }
 
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(EntityTable joinTable) {
+
+        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(JoinType joinType, Table joinTable) {
             if (this.query.getJoins() == null) {
                 this.query.joins = new LinkedList<>();
             }
             Join join = new Join();
+            join.setJoinType(joinType);
+            join.setTable(this.query.table);
+            join.setJoinTable(joinTable);
             this.query.joins.add(join);
-            return new Join.JoinBuilder<>(this, join, (EntityTable) this.query.table, joinTable);
+            return new Join.JoinBuilder<>(this, join);
+        }
+
+        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(Table joinTable) {
+            return this.join(JoinType.InnerJoin, joinTable);
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where(Table table) {
