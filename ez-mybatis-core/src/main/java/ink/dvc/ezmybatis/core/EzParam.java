@@ -1,9 +1,9 @@
 package ink.dvc.ezmybatis.core;
 
-import lombok.Getter;
 import ink.dvc.ezmybatis.core.sqlstruct.From;
 import ink.dvc.ezmybatis.core.sqlstruct.Where;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
+import lombok.Getter;
 
 @Getter
 public abstract class EzParam<Rt> {
@@ -11,7 +11,7 @@ public abstract class EzParam<Rt> {
      * 返回结果
      */
     protected Class<Rt> retType;
-    protected EntityTable table;
+    protected Table table;
     protected From from;
     protected Where where;
 

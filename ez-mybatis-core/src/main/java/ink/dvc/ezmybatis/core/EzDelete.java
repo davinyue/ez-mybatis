@@ -1,11 +1,11 @@
 package ink.dvc.ezmybatis.core;
 
-import lombok.Getter;
 import ink.dvc.ezmybatis.core.sqlstruct.From;
 import ink.dvc.ezmybatis.core.sqlstruct.Join;
 import ink.dvc.ezmybatis.core.sqlstruct.Where;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
+import lombok.Getter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,13 +44,13 @@ public class EzDelete extends EzParam<Integer> {
             }
             Join join = new Join();
             this.delete.joins.add(join);
-            return new Join.JoinBuilder<>(this, join, this.delete.table, joinTable);
+            return new Join.JoinBuilder<>(this, join, (EntityTable) this.delete.table, joinTable);
         }
 
         public Where.WhereBuilder<EzDeleteBuilder> where() {
             Where where = new Where(new LinkedList<>());
             this.delete.where = where;
-            return new Where.WhereBuilder<>(this, where, this.delete.table);
+            return new Where.WhereBuilder<>(this, where, (EntityTable) this.delete.table);
         }
 
         public EzDelete build() {

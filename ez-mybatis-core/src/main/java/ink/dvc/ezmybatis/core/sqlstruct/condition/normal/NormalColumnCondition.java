@@ -2,7 +2,7 @@ package ink.dvc.ezmybatis.core.sqlstruct.condition.normal;
 
 import ink.dvc.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import ink.dvc.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
@@ -12,10 +12,10 @@ import org.apache.ibatis.session.Configuration;
  */
 @Getter
 public class NormalColumnCondition extends NormalCondition {
-    private EntityTable table;
+    private Table table;
     private String column;
 
-    public NormalColumnCondition(LoginSymbol loginSymbol, EntityTable table, String column, Operator operator,
+    public NormalColumnCondition(LoginSymbol loginSymbol, Table table, String column, Operator operator,
                                  Object value) {
         super(loginSymbol, operator, value);
         this.table = table;
