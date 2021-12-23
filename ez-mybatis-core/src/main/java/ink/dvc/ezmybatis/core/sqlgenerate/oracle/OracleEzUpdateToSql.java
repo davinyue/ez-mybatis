@@ -1,12 +1,12 @@
 package ink.dvc.ezmybatis.core.sqlgenerate.oracle;
 
-import ink.dvc.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
-import ink.dvc.ezmybatis.core.sqlstruct.UpdateSet;
-import ink.dvc.ezmybatis.core.sqlstruct.update.UpdateItem;
-import org.apache.ibatis.session.Configuration;
 import ink.dvc.ezmybatis.core.EzUpdate;
+import ink.dvc.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import ink.dvc.ezmybatis.core.sqlstruct.Update;
+import ink.dvc.ezmybatis.core.sqlstruct.update.UpdateItem;
 import ink.dvc.ezmybatis.core.utils.Assert;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
     @Override
     protected StringBuilder setToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                      MybatisParamHolder mybatisParamHolder) {
-        UpdateSet set = update.getSet();
+        Update set = update.getSet();
         if (set != null && set.getItems() != null) {
             List<UpdateItem> items = set.getItems().stream().filter(e -> e.getTable() == update.getTable())
                     .collect(Collectors.toList());

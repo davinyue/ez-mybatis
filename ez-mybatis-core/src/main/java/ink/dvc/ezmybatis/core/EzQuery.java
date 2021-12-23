@@ -2,6 +2,7 @@ package ink.dvc.ezmybatis.core;
 
 import ink.dvc.ezmybatis.core.sqlstruct.*;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
 import lombok.Getter;
 
 import java.util.LinkedList;
@@ -9,7 +10,6 @@ import java.util.List;
 
 @Getter
 public class EzQuery<Rt> extends EzParam<Rt> {
-
     private Select select;
     private List<Join> joins;
     private GroupBy groupBy;
@@ -32,16 +32,21 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             this.query = new EzQuery<>(retType);
         }
 
-        public EzQueryBuilder<Rt> from(EntityTable table) {
+        public EzQueryBuilder<Rt> from(Table table) {
             this.query.table = table;
             this.query.from = new From(table);
             return this;
         }
 
+        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(Table table) {
+            if (this.query.select == null) {
+                this.query.select = new Select(new LinkedList<>());
+            }
+            return new Select.EzSelectBuilder<>(this, this.query.select, table);
+        }
+
         public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select() {
-            Select select = new Select(new LinkedList<>());
-            this.query.select = select;
-            return new Select.EzSelectBuilder<>(this, select, (EntityTable) this.query.table);
+            return this.select(this.query.table);
         }
 
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(EntityTable joinTable) {
@@ -53,28 +58,48 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             return new Join.JoinBuilder<>(this, join, (EntityTable) this.query.table, joinTable);
         }
 
+        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(Table table) {
+            if (this.query.where == null) {
+                this.query.where = new Where(new LinkedList<>());
+            }
+            return new Where.WhereBuilder<>(this, this.query.where, table);
+        }
+
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where() {
-            Where where = new Where(new LinkedList<>());
-            this.query.where = where;
-            return new Where.WhereBuilder<>(this, where, (EntityTable) this.query.table);
+            return this.where(this.query.table);
+        }
+
+        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(Table table) {
+            if (this.query.groupBy == null) {
+                this.query.groupBy = new GroupBy(new LinkedList<>());
+            }
+            return new GroupBy.GroupBuilder<>(this, this.query.groupBy, table);
         }
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy() {
-            GroupBy group = new GroupBy(new LinkedList<>());
-            this.query.groupBy = group;
-            return new GroupBy.GroupBuilder<>(this, group, (EntityTable) this.query.table);
+            return this.groupBy(this.query.table);
+        }
+
+        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(Table table) {
+            if (this.query.orderBy == null) {
+                this.query.orderBy = new OrderBy(new LinkedList<>());
+            }
+            return new OrderBy.OrderBuilder<>(this, this.query.orderBy, table);
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy() {
-            OrderBy orderBy = new OrderBy(new LinkedList<>());
-            this.query.orderBy = orderBy;
-            return new OrderBy.OrderBuilder<>(this, orderBy, (EntityTable) this.query.table);
+            return this.orderBy(this.query.table);
         }
 
-        public Where.WhereBuilder<EzQueryBuilder<Rt>> having() {
-            Having where = new Having(new LinkedList<>());
-            this.query.having = where;
-            return new Where.WhereBuilder<>(this, where, (EntityTable) this.query.table);
+        public Having.HavingBuilder<EzQueryBuilder<Rt>> having(Table table) {
+            if (this.query.having == null) {
+                this.query.having = new Having(new LinkedList<>());
+            }
+            return new Having.HavingBuilder<>(this, this.query.having, table);
+        }
+
+        public Having.HavingBuilder<EzQueryBuilder<Rt>> having() {
+            return this.having(this.query.table);
         }
 
         /**

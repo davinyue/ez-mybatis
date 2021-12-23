@@ -1,16 +1,16 @@
 package ink.dvc.ezmybatis.core.sqlstruct;
 
-import lombok.Getter;
 import ink.dvc.ezmybatis.core.sqlstruct.update.UpdateItem;
+import lombok.Getter;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class UpdateSet {
+public class Update {
     private List<UpdateItem> items;
 
-    public UpdateSet() {
+    public Update() {
         this.items = new LinkedList<>();
     }
 }

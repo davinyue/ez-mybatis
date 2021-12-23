@@ -2,7 +2,7 @@ package ink.dvc.ezmybatis.core;
 
 import ink.dvc.ezmybatis.core.sqlstruct.From;
 import ink.dvc.ezmybatis.core.sqlstruct.Join;
-import ink.dvc.ezmybatis.core.sqlstruct.UpdateSet;
+import ink.dvc.ezmybatis.core.sqlstruct.Update;
 import ink.dvc.ezmybatis.core.sqlstruct.Where;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @Getter
 public class EzUpdate extends EzParam<Integer> {
-    private UpdateSet set;
+    private Update set;
     private List<Join> joins;
 
     private EzUpdate() {
         super(Integer.class);
-        this.set = new UpdateSet();
+        this.set = new Update();
     }
 
     public static EzUpdateBuilder update(EntityTable table) {
