@@ -3,6 +3,7 @@ package ink.dvc.mysql;
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.mapper.EzMapper;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
+import ink.dvc.ezmybatis.core.sqlstruct.table.DbTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
 import ink.dvc.ezmybatis.java.entity.User;
 import ink.dvc.ezmybatis.java.entity.UserOrg;
@@ -72,6 +73,17 @@ public class MysqlSelectTest {
                 .join(EntityTable.of(UserOrg.class)).conditions().add("id", "userId").done().done()
                 .where().conditions().add("id", Operator.in, ids).done().done()
                 .page(1, 2)
+                .build();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        List<User> users = userMapper.query(query);
+        log.info(JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void dbTableQueryTest() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(DbTable.of("ez_user"))
+                .select().addAll().done()
+                .where().conditions().addColumn("id", "4").done().done()
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);

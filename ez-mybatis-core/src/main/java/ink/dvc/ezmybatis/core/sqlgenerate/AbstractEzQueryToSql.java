@@ -90,11 +90,11 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
 
     protected StringBuilder havingToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                         MybatisParamHolder mybatisParamHolder) {
-        Where where = query.getHaving();
-        if (where == null || where.getConditions() == null) {
+        Having having = query.getHaving();
+        if (having == null || having.getConditions() == null) {
             return sqlBuilder;
         } else {
-            return where.toSqlPart(sqlBuilder, configuration, query, mybatisParamHolder);
+            return having.toSqlPart(sqlBuilder, configuration, query, mybatisParamHolder);
         }
     }
 
