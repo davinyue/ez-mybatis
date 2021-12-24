@@ -2,11 +2,11 @@ package ink.dvc.ezmybatis.core.sqlstruct.condition.normal;
 
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamEscape;
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.utils.Assert;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 
 import java.util.Collection;
 
