@@ -67,7 +67,7 @@ public class Having implements SqlStruct {
         private Having having;
 
         public HavingBuilder(Builder builder, Having having, Table table) {
-            super(builder, having.getConditions(), table);
+            super(builder, having.getConditions(), table, table);
             this.sonBuilder = this;
             this.having = having;
         }
