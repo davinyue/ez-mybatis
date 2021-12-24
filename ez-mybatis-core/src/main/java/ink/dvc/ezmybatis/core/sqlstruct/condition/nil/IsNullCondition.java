@@ -1,11 +1,11 @@
 package ink.dvc.ezmybatis.core.sqlstruct.condition.nil;
 
 import ink.dvc.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 
 /**
  * 是空条件
