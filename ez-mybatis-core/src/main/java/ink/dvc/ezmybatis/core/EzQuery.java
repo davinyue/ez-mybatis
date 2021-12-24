@@ -58,6 +58,7 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             join.setJoinType(joinType);
             join.setTable(this.query.table);
             join.setJoinTable(joinTable);
+            join.setOnConditions(new LinkedList<>());
             this.query.joins.add(join);
             return new Join.JoinBuilder<>(this, join);
         }

@@ -20,11 +20,31 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 public class EzResultSetHandler extends DefaultResultSetHandler {
+    private static final Method skipRowsMethod = ReflectionUtils.getMethod(DefaultResultSetHandler.class,
+            "skipRows", ResultSet.class, RowBounds.class);
+    private static final Method shouldProcessMoreRowsMethod = ReflectionUtils.getMethod(DefaultResultSetHandler.class,
+            "shouldProcessMoreRows", ResultContext.class, RowBounds.class);
+    private static final Method storeObjectMethod = ReflectionUtils.getMethod(DefaultResultSetHandler.class,
+            "storeObject", ResultHandler.class, DefaultResultContext.class, Object.class, ResultMapping.class,
+            ResultSet.class);
+    private static final Method createResultObjectMethod = ReflectionUtils.getMethod(DefaultResultSetHandler.class,
+            "createResultObject", ResultSetWrapper.class, ResultMap.class, ResultLoaderMap.class, String.class);
+    private static final Method hasTypeHandlerForResultObjectMethod = ReflectionUtils.getMethod(
+            DefaultResultSetHandler.class, "hasTypeHandlerForResultObject", ResultSetWrapper.class, Class.class);
+    private static final Method shouldApplyAutomaticMappingsMethod = ReflectionUtils.getMethod(
+            DefaultResultSetHandler.class, "shouldApplyAutomaticMappings", ResultMap.class, boolean.class);
+    private static final Method applyPropertyMappingsMethod = ReflectionUtils.getMethod(
+            DefaultResultSetHandler.class, "applyPropertyMappings", ResultSetWrapper.class, ResultMap.class,
+            MetaObject.class, ResultLoaderMap.class, String.class);
+    private static final Field useConstructorMappingsField = ReflectionUtils.getField(DefaultResultSetHandler.class,
+            "useConstructorMappings");
     private final Configuration configuration;
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
@@ -50,50 +70,38 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     private void _skipRows(ResultSet rs, RowBounds rowBounds) throws SQLException {
-        ReflectionUtils.invokeMethod(this, "skipRows",
-                new Class[]{ResultSet.class, RowBounds.class},
-                new Object[]{rs, rowBounds});
+        ReflectionUtils.invokeMethod(this, skipRowsMethod, rs, rowBounds);
     }
 
     private boolean _shouldProcessMoreRows(ResultContext<?> context, RowBounds rowBounds) {
-        return ReflectionUtils.invokeMethod(this, "shouldProcessMoreRows",
-                new Class[]{ResultContext.class, RowBounds.class}, new Object[]{context, rowBounds});
+        return ReflectionUtils.invokeMethod(this, shouldProcessMoreRowsMethod, context, rowBounds);
     }
 
     private void _storeObject(ResultHandler<?> resultHandler, DefaultResultContext<Object> resultContext,
                               Object rowValue, ResultMapping parentMapping, ResultSet rs) throws SQLException {
-        ReflectionUtils.invokeMethod(this, "storeObject",
-                new Class[]{ResultHandler.class, DefaultResultContext.class, Object.class, ResultMapping.class,
-                        ResultSet.class},
-                new Object[]{resultHandler, resultContext, rowValue, parentMapping, rs});
+        ReflectionUtils.invokeMethod(this, storeObjectMethod, resultHandler, resultContext, rowValue,
+                parentMapping, rs);
     }
 
     private Object _createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader,
                                        String columnPrefix) throws SQLException {
-        return ReflectionUtils.invokeMethod(this, "createResultObject",
-                new Class[]{ResultSetWrapper.class, ResultMap.class, ResultLoaderMap.class, String.class},
-                new Object[]{rsw, resultMap, lazyLoader, columnPrefix});
+        return ReflectionUtils.invokeMethod(this, createResultObjectMethod, rsw, resultMap, lazyLoader,
+                columnPrefix);
     }
 
     private boolean _hasTypeHandlerForResultObject(ResultSetWrapper rsw, Class<?> resultType) {
-        return ReflectionUtils.invokeMethod(this, "hasTypeHandlerForResultObject",
-                new Class[]{ResultSetWrapper.class, Class.class},
-                new Object[]{rsw, resultType});
+        return ReflectionUtils.invokeMethod(this, hasTypeHandlerForResultObjectMethod, rsw, resultType);
     }
 
     private boolean _shouldApplyAutomaticMappings(ResultMap resultMap, boolean isNested) {
-        return ReflectionUtils.invokeMethod(this, "shouldApplyAutomaticMappings",
-                new Class[]{ResultMap.class, boolean.class},
-                new Object[]{resultMap, isNested});
+        return ReflectionUtils.invokeMethod(this, shouldApplyAutomaticMappingsMethod, resultMap, isNested);
     }
 
     private boolean _applyPropertyMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject,
                                            ResultLoaderMap lazyLoader, String columnPrefix)
             throws SQLException {
-        return ReflectionUtils.invokeMethod(this, "applyPropertyMappings",
-                new Class[]{ResultSetWrapper.class, ResultMap.class, MetaObject.class, ResultLoaderMap.class,
-                        String.class},
-                new Object[]{rsw, resultMap, metaObject, lazyLoader, columnPrefix});
+        return ReflectionUtils.invokeMethod(this, applyPropertyMappingsMethod, rsw, resultMap, metaObject,
+                lazyLoader, columnPrefix);
     }
 
     private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap,
@@ -118,7 +126,7 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         if (rowValue != null && !this._hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
             final MetaObject metaObject = this.configuration.newMetaObject(rowValue);
             //boolean foundValues = this.useConstructorMappings;
-            boolean foundValues = ReflectionUtils.getFieldValue(this, "useConstructorMappings");
+            boolean foundValues = ReflectionUtils.getFieldValue(this, useConstructorMappingsField);
             if (this._shouldApplyAutomaticMappings(resultMap, false)) {
                 foundValues = this.applyAutomaticMappings(rsw, resultMap, metaObject, columnPrefix) || foundValues;
             }
