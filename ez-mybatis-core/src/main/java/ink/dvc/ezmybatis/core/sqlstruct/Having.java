@@ -11,6 +11,7 @@ import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.between.BetweenAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.between.NotBetweenAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.AliasCompareCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNotNullAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNullAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.table.Table;
@@ -193,6 +194,43 @@ public class Having implements SqlStruct {
         public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, String alias) {
             if (sure) {
                 return this.addAliasIsNullCondition(alias);
+            }
+            return this;
+        }
+
+        /**
+         * 添加is not null条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(Condition.LoginSymbol loginSymbol, String alias) {
+            this.conditions.add(new IsNotNullAliasCondition(loginSymbol, alias));
+            return this;
+        }
+
+        /**
+         * 添加is not null条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, Condition.LoginSymbol loginSymbol,
+                                                                 String alias) {
+            if (sure) {
+                return this.addAliasIsNotNullCondition(loginSymbol, alias);
+            }
+            return this;
+        }
+
+        /**
+         * 添加is not null条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(String alias) {
+            this.conditions.add(new IsNotNullAliasCondition(Condition.LoginSymbol.AND, alias));
+            return this;
+        }
+
+        /**
+         * 添加is not null条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, String alias) {
+            if (sure) {
+                return this.addAliasIsNotNullCondition(alias);
             }
             return this;
         }
