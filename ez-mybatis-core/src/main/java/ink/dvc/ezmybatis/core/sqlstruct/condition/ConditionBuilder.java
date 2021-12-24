@@ -4,6 +4,8 @@ import ink.dvc.ezmybatis.core.sqlstruct.condition.between.BetweenColumnCondition
 import ink.dvc.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.between.NotBetweenColumnCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.ColumnCompareCondition;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.compare.FieldCompareCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNotNullColumnCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNotNullFiledCondition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.nil.IsNullColumnCondition;
@@ -20,11 +22,13 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     protected SonBuilder sonBuilder = null;
     protected List<Condition> conditions;
     protected Table table;
+    protected Table otherTable;
 
-    public ConditionBuilder(ParentBuilder parentBuilder, List<Condition> conditions, Table table) {
+    public ConditionBuilder(ParentBuilder parentBuilder, List<Condition> conditions, Table table, Table otherTable) {
         this.parentBuilder = parentBuilder;
         this.conditions = conditions;
         this.table = table;
+        this.otherTable = otherTable;
     }
 
     public ParentBuilder done() {
@@ -35,6 +39,17 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         if (!(this.table instanceof EntityTable)) {
             throw new IllegalArgumentException("Only EntityTable is supported");
         }
+    }
+
+    private void checkOtherEntityTable() {
+        if (!(this.otherTable instanceof EntityTable)) {
+            throw new IllegalArgumentException("Only EntityTable is supported");
+        }
+    }
+
+    private void checkAllEntityTable() {
+        this.checkEntityTable();
+        this.checkOtherEntityTable();
     }
 
     public SonBuilder addFieldCondition(Condition.LoginSymbol loginSymbol, String field,
@@ -452,6 +467,157 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
                                               Object maxValue) {
         if (sure) {
             return this.addColumnNotBtCondition(column, minValue, maxValue);
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(Condition.LoginSymbol loginSymbol, String leftField, Operator operator,
+                                        String rightField) {
+        this.checkAllEntityTable();
+        this.conditions.add(new FieldCompareCondition(loginSymbol, (EntityTable) this.table, leftField,
+                operator, (EntityTable) this.otherTable, rightField));
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(String leftField, Operator operator, String rightField) {
+        return this.addFieldCondition(Condition.LoginSymbol.AND, leftField, operator, rightField);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(String leftField, String rightField) {
+        return this.addFieldCondition(leftField, Operator.eq, rightField);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, String leftField, String rightField) {
+        if (sure) {
+            this.addFieldCondition(leftField, rightField);
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(Condition.LoginSymbol loginSymbol, String leftField, String rightField) {
+        return this.addFieldCondition(loginSymbol, leftField, Operator.eq, rightField);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, Condition.LoginSymbol loginSymbol, String leftField,
+                                        String rightField) {
+        if (sure) {
+            this.addFieldCondition(loginSymbol, leftField, rightField);
+        }
+        return this.sonBuilder;
+    }
+
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, String leftField, Operator operator, String rightField) {
+        if (sure) {
+            this.addFieldCondition(leftField, operator, rightField);
+        }
+        return this.sonBuilder;
+    }
+
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, Condition.LoginSymbol loginSymbol, String leftField,
+                                        Operator operator, String rightField) {
+        if (sure) {
+            return this.addFieldCondition(loginSymbol, leftField, operator, rightField);
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(String leftColumn, String rightColumn) {
+        this.conditions.add(new ColumnCompareCondition(this.table, leftColumn, Operator.eq,
+                this.otherTable, rightColumn));
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, String leftColumn, String rightColumn) {
+        if (sure) {
+            return this.addColumnCondition(leftColumn, rightColumn);
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(Condition.LoginSymbol loginSymbol, String leftColumn, String rightColumn) {
+        return this.addFieldCondition(loginSymbol, leftColumn, Operator.eq, rightColumn);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, Condition.LoginSymbol loginSymbol, String leftColumn,
+                                         String rightColumn) {
+        if (sure) {
+            return this.addColumnCondition(loginSymbol, leftColumn, rightColumn);
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(String leftColumn, Operator operator, String rightColumn) {
+        return this.addFieldCondition(Condition.LoginSymbol.AND, leftColumn, operator, rightColumn);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, String leftColumn, Operator operator, String rightColumn) {
+        if (sure) {
+            return this.addColumnCondition(leftColumn, operator, rightColumn);
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(Condition.LoginSymbol loginSymbol, String leftColumn, Operator operator,
+                                         String rightColumn) {
+        this.conditions.add(new ColumnCompareCondition(loginSymbol, this.table, leftColumn, operator,
+                this.otherTable, rightColumn));
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, Condition.LoginSymbol loginSymbol, String leftColumn,
+                                         Operator operator, String rightColumn) {
+        if (sure) {
+            return this.addColumnCondition(loginSymbol, leftColumn, operator, rightColumn);
         }
         return this.sonBuilder;
     }

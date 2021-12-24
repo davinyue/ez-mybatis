@@ -78,7 +78,7 @@ public class Where implements SqlStruct {
         private Where where;
 
         public WhereBuilder(Builder builder, Where where, Table table) {
-            super(builder, where.getConditions(), table);
+            super(builder, where.getConditions(), table, table);
             this.sonBuilder = this;
             this.where = where;
         }
