@@ -2,10 +2,10 @@ package ink.dvc.mysql;
 
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.mapper.EzMapper;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.sqlstruct.table.DbTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
+import ink.dvc.ezmybatis.java.entity.Org;
 import ink.dvc.ezmybatis.java.entity.User;
 import ink.dvc.ezmybatis.java.entity.UserOrg;
 import ink.dvc.ezmybatis.java.mapper.UserMapper;
@@ -19,7 +19,10 @@ import org.linuxprobe.luava.json.JacksonUtils;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 public class MysqlSelectTest {
@@ -64,19 +67,15 @@ public class MysqlSelectTest {
 
     @Test
     public void queryTest() {
-        Set<String> ids = new HashSet<>();
-        ids.add("1");
-        ids.add("2");
-
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
                 .join(EntityTable.of(UserOrg.class))
-                .groupCondition()
-                .addFieldCondition("id", "userId")
-                .addFieldCondition(Condition.LoginSymbol.OR, "id", "userId")
-                .done().done()
-                .where().addFieldCondition("id", Operator.in, ids).done()
+                .addFieldCompareCondition("id", "userId")
+                .join(EntityTable.of(Org.class))
+                .addFieldCompareCondition("orgId", "id").done()
+                .done()
+                .where().addFieldCondition("id", 1).done()
                 .page(1, 2)
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
