@@ -2,6 +2,7 @@ package ink.dvc.mysql;
 
 import ink.dvc.ezmybatis.core.EzQuery;
 import ink.dvc.ezmybatis.core.mapper.EzMapper;
+import ink.dvc.ezmybatis.core.sqlstruct.condition.Condition;
 import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
 import ink.dvc.ezmybatis.core.sqlstruct.table.DbTable;
 import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -70,7 +71,11 @@ public class MysqlSelectTest {
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .join(EntityTable.of(UserOrg.class)).addFieldCondition("id", "userId").done()
+                .join(EntityTable.of(UserOrg.class))
+                .groupCondition()
+                .addFieldCondition("id", "userId")
+                .addFieldCondition(Condition.LoginSymbol.OR, "id", "userId")
+                .done().done()
                 .where().addFieldCondition("id", Operator.in, ids).done()
                 .page(1, 2)
                 .build();

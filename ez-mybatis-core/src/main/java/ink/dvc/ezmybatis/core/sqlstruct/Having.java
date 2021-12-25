@@ -64,12 +64,10 @@ public class Having implements SqlStruct {
     }
 
     public static class HavingBuilder<Builder> extends ConditionBuilder<Builder, HavingBuilder<Builder>> {
-        private Having having;
 
         public HavingBuilder(Builder builder, Having having, Table table) {
             super(builder, having.getConditions(), table, table);
             this.sonBuilder = this;
-            this.having = having;
         }
 
         public HavingBuilder<Builder> addAliasCondition(Condition.LoginSymbol loginSymbol, String alias,
@@ -314,10 +312,9 @@ public class Having implements SqlStruct {
         }
 
         public HavingBuilder<HavingBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
-            LinkedList<Condition> conditions = new LinkedList<>();
-            GroupCondition condition = new GroupCondition(conditions, loginSymbol);
+            GroupCondition condition = new GroupCondition(new LinkedList<>(), loginSymbol);
             this.conditions.add(condition);
-            return new HavingBuilder<>(this, this.having, this.table);
+            return new HavingBuilder<>(this, new Having(condition.getConditions()), this.table);
         }
 
         public HavingBuilder<HavingBuilder<Builder>> groupCondition() {

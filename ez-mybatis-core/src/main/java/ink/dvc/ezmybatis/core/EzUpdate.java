@@ -143,6 +143,7 @@ public class EzUpdate extends EzParam<Integer> {
             join.setJoinType(joinType);
             join.setTable(this.update.table);
             join.setJoinTable(joinTable);
+            join.setOnConditions(new LinkedList<>());
             this.update.joins.add(join);
             return new Join.JoinBuilder<>(this, join);
         }
