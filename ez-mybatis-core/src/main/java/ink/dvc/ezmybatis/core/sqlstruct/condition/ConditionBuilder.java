@@ -493,7 +493,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      * 添对比条件
      */
     public SonBuilder addFieldCompareCondition(String leftField, String rightField) {
-        return this.addFieldCondition(leftField, Operator.eq, rightField);
+        return this.addFieldCompareCondition(leftField, Operator.eq, rightField);
     }
 
     /**
