@@ -63,12 +63,12 @@ public class Join implements SqlStruct {
         if (this.joinType != JoinType.CrossJoin) {
             sqlBuilder.append(" ON ");
         }
+        sqlBuilder.append(sonSql);
         if (this.getJoins() != null && !this.getJoins().isEmpty()) {
             for (Join join : this.joins) {
                 sqlBuilder.append(join.joinToSql(new StringBuilder(), configuration, mybatisParamHolder));
             }
         }
-        sqlBuilder.append(sonSql);
         return sqlBuilder;
     }
 
@@ -94,6 +94,23 @@ public class Join implements SqlStruct {
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
             return this.groupCondition(Condition.LoginSymbol.AND);
+        }
+
+        public JoinBuilder<JoinBuilder<Builder>> join(JoinType joinType, Table joinTable) {
+            if (this.join.getJoins() == null) {
+                this.join.joins = new LinkedList<>();
+            }
+            Join newJoin = new Join();
+            newJoin.setJoinType(joinType);
+            newJoin.setTable(this.join.getJoinTable());
+            newJoin.setJoinTable(joinTable);
+            newJoin.setOnConditions(new LinkedList<>());
+            this.join.joins.add(newJoin);
+            return new Join.JoinBuilder<>(this, newJoin);
+        }
+
+        public JoinBuilder<JoinBuilder<Builder>> join(Table joinTable) {
+            return this.join(JoinType.InnerJoin, joinTable);
         }
     }
 }
