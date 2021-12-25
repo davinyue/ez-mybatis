@@ -45,12 +45,19 @@ public class Where implements SqlStruct {
     public static StringBuilder conditionsToSqlPart(StringBuilder sqlBuilder, Configuration configuration,
                                                     MybatisParamHolder mybatisParamHolder,
                                                     List<Condition> conditions) {
-        for (int i = 0; i < conditions.size(); i++) {
-            Condition condition = conditions.get(i);
-            if (i != 0) {
+        boolean lastConditionEmpty = true;
+        for (Condition condition : conditions) {
+            String sqlPart = condition.toSqlPart(configuration, mybatisParamHolder);
+            boolean emptySql = sqlPart.trim().isEmpty();
+            if (!lastConditionEmpty && !emptySql) {
                 sqlBuilder.append(condition.getLoginSymbol().name()).append(" ");
             }
-            sqlBuilder.append(condition.toSqlPart(configuration, mybatisParamHolder));
+            if (!emptySql) {
+                lastConditionEmpty = false;
+                sqlBuilder.append(sqlPart);
+            } else {
+                lastConditionEmpty = true;
+            }
         }
         return sqlBuilder;
     }
@@ -75,19 +82,16 @@ public class Where implements SqlStruct {
 
     public static class WhereBuilder<Builder> extends ConditionBuilder<Builder,
             WhereBuilder<Builder>> {
-        private Where where;
 
         public WhereBuilder(Builder builder, Where where, Table table) {
             super(builder, where.getConditions(), table, table);
             this.sonBuilder = this;
-            this.where = where;
         }
 
         public WhereBuilder<WhereBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
-            LinkedList<Condition> conditions = new LinkedList<>();
-            GroupCondition condition = new GroupCondition(conditions, loginSymbol);
+            GroupCondition condition = new GroupCondition(new LinkedList<>(), loginSymbol);
             this.conditions.add(condition);
-            return new WhereBuilder<>(this, this.where, this.table);
+            return new WhereBuilder<>(this, new Where(condition.getConditions()), this.table);
         }
 
         public WhereBuilder<WhereBuilder<Builder>> groupCondition() {
