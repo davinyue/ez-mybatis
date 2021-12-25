@@ -19,6 +19,7 @@ import java.util.List;
 @Getter
 @Accessors(chain = true)
 public class Join implements SqlStruct {
+
     /**
      * 主表
      */
@@ -82,10 +83,13 @@ public class Join implements SqlStruct {
         }
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
-            LinkedList<Condition> conditions = new LinkedList<>();
-            GroupCondition condition = new GroupCondition(conditions, loginSymbol);
+            GroupCondition condition = new GroupCondition(new LinkedList<>(), loginSymbol);
             this.conditions.add(condition);
-            return new JoinBuilder<>(this, this.join);
+            Join newJoin = new Join();
+            newJoin.setTable(this.join.getTable());
+            newJoin.setJoinTable(this.join.getJoinTable());
+            newJoin.setOnConditions(condition.getConditions());
+            return new JoinBuilder<>(this, newJoin);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
