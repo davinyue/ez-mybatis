@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.content.entityinfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.type.IntegerTypeHandler;
 import org.apache.ibatis.type.TypeHandler;
+import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
 
 import javax.persistence.Column;
@@ -37,7 +37,19 @@ public class EntityFieldInfo {
         if (field.isAnnotationPresent(Id.class)) {
             this.isPrimaryKey = true;
         }
-        this.typeHandler = new IntegerTypeHandler();
+        if (field.isAnnotationPresent(ColumnHandler.class)) {
+            ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
+            Class<?> typeHandlerClass = annotation.value();
+            if (TypeHandler.class.isAssignableFrom(typeHandlerClass)) {
+                try {
+                    this.typeHandler = (TypeHandler<?>) typeHandlerClass.newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new IllegalArgumentException("columnHandler must extend org.apache.ibatis.type.TypeHandler");
+            }
+        }
     }
 
     public Field getField() {

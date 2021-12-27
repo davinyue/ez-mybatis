@@ -81,6 +81,7 @@ public class EntityClassInfo {
     }
 
     public EntityFieldInfo getPrimaryKeyInfo() {
+        Assert.notNull(this.primaryKeyInfo, "can not find primary key info");
         return this.primaryKeyInfo;
     }
 
