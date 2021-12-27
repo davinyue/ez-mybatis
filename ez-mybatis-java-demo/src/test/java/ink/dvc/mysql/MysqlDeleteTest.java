@@ -1,17 +1,17 @@
 package ink.dvc.mysql;
 
-import ink.dvc.ezmybatis.core.EzDelete;
-import ink.dvc.ezmybatis.core.mapper.EzMapper;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
-import ink.dvc.ezmybatis.java.entity.User;
-import ink.dvc.ezmybatis.java.entity.UserOrg;
-import ink.dvc.ezmybatis.java.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
+import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.java.entity.User;
+import org.rdlinux.ezmybatis.java.entity.UserOrg;
+import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
