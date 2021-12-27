@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.core;
 
-import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.loader.ResultLoaderMap;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
@@ -19,6 +17,10 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -202,10 +204,25 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                     if (resultMap.getMappedProperties().contains(property)) {
                         continue;
                     }
+                    TypeHandler<?> setTypeHandler = null;
+                    if (!(metaObject.getOriginalObject() instanceof Map)) {
+                        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(this.configuration,
+                                metaObject.getOriginalObject().getClass());
+                        EntityFieldInfo entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(property);
+                        if (entityFieldInfo != null && entityFieldInfo.getTypeHandler() != null) {
+                            setTypeHandler = entityFieldInfo.getTypeHandler();
+                        }
+                    }
                     final Class<?> propertyType = metaObject.getSetterType(property);
                     if (this.typeHandlerRegistry.hasTypeHandler(propertyType, rsw.getJdbcType(columnName))) {
-                        final TypeHandler<?> typeHandler = rsw.getTypeHandler(propertyType, columnName);
+                        TypeHandler<?> typeHandler = rsw.getTypeHandler(propertyType, columnName);
+                        if (setTypeHandler != null) {
+                            typeHandler = setTypeHandler;
+                        }
                         autoMapping.add(new UnMappedColumnAutoMapping(columnName, property, typeHandler,
+                                propertyType.isPrimitive()));
+                    } else if (setTypeHandler != null) {
+                        autoMapping.add(new UnMappedColumnAutoMapping(columnName, property, setTypeHandler,
                                 propertyType.isPrimitive()));
                     } else {
                         this.configuration.getAutoMappingUnknownColumnBehavior()
