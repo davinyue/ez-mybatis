@@ -2,6 +2,8 @@ package org.rdlinux.ezmybatis.java.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.type.StringTypeHandler;
+import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +15,7 @@ import javax.persistence.Transient;
 @Getter
 @Setter
 public class User extends BaseEntity {
+    @ColumnHandler(StringTypeHandler.class)
     private String name;
     private Sex sex;
     @Column(name = "age")
