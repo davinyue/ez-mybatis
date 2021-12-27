@@ -1,14 +1,5 @@
 package ink.dvc.mysql;
 
-import ink.dvc.ezmybatis.core.EzQuery;
-import ink.dvc.ezmybatis.core.mapper.EzMapper;
-import ink.dvc.ezmybatis.core.sqlstruct.condition.Operator;
-import ink.dvc.ezmybatis.core.sqlstruct.table.DbTable;
-import ink.dvc.ezmybatis.core.sqlstruct.table.EntityTable;
-import ink.dvc.ezmybatis.java.entity.Org;
-import ink.dvc.ezmybatis.java.entity.User;
-import ink.dvc.ezmybatis.java.entity.UserOrg;
-import ink.dvc.ezmybatis.java.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -16,6 +7,15 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
+import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.java.entity.Org;
+import org.rdlinux.ezmybatis.java.entity.User;
+import org.rdlinux.ezmybatis.java.entity.UserOrg;
+import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
