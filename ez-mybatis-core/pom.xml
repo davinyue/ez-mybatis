@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ez-mybatis</artifactId>
-        <groupId>ink.dvc</groupId>
+        <groupId>org.rdlinux</groupId>
         <version>0.0.1.RS</version>
     </parent>
     <packaging>jar</packaging>
@@ -59,7 +59,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ink.dvc</groupId>
+            <groupId>org.rdlinux</groupId>
             <artifactId>ez-mybatis-annotation</artifactId>
             <version>0.0.1.RS</version>
         </dependency>

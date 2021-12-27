@@ -32,13 +32,13 @@
         <!--        <plugin interceptor="MybatisUpdateInterceptor">-->
         <!--            <property name="dialect" value="mysql"/>-->
         <!--        </plugin>-->
-        <plugin interceptor="ink.dvc.ezmybatis.core.interceptor.ResultSetHandlerInterceptor">
+        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ResultSetHandlerInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
-        <plugin interceptor="ink.dvc.ezmybatis.core.interceptor.ExecutorInterceptor">
+        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ExecutorInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
-        <plugin interceptor="ink.dvc.ezmybatis.core.interceptor.UpdateInterceptor">
+        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.UpdateInterceptor">
             <property name="dialect" value="mysql"/>
         </plugin>
     </plugins>
@@ -58,7 +58,7 @@
     </environments>
     <!-- 配置映射文件：用来配置sql语句和结果集类型等 -->
     <mappers>
-        <mapper class="ink.dvc.ezmybatis.java.mapper.UserMapper"/>
-        <mapper class="ink.dvc.ezmybatis.core.mapper.EzMapper"/>
+        <mapper class="org.rdlinux.ezmybatis.java.mapper.UserMapper"/>
+        <mapper class="org.rdlinux.ezmybatis.core.mapper.EzMapper"/>
     </mappers>
 </configuration>
