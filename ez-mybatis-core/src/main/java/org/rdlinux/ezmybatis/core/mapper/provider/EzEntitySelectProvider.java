@@ -1,25 +1,32 @@
 package org.rdlinux.ezmybatis.core.mapper.provider;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 
 import java.util.List;
 import java.util.Map;
 
 public class EzEntitySelectProvider {
-    public String selectById(@Param(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION) Configuration configuration,
-                             @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
-                             @Param(EzMybatisConstant.MAPPER_PARAM_ID) Object id) {
-        return SqlGenerateFactory.getSqlGenerate(configuration).getSelectByIdSql(configuration, ntClass, id);
+    public String selectById(Map<String, Object> param) {
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Object id = param.get(EzMybatisConstant.MAPPER_PARAM_ID);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getSelectByIdSql(configuration, paramHolder, ntClass,
+                id);
     }
 
-    public String selectByIds(@Param(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION) Configuration configuration,
-                              @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> ntClass,
-                              @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Object> ids) {
-        return SqlGenerateFactory.getSqlGenerate(configuration).getSelectByIdsSql(configuration, ntClass, ids);
+    @SuppressWarnings("unchecked")
+    public String selectByIds(Map<String, Object> param) {
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        List<Object> ids = (List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_IDS);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getSelectByIdsSql(configuration, paramHolder,
+                ntClass, ids);
     }
 
     @SuppressWarnings("unchecked")
@@ -33,12 +40,14 @@ public class EzEntitySelectProvider {
     public String query(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzQuery<?> query = (EzQuery<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getQuerySql(configuration, query, param);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getQuerySql(configuration, paramHolder, query);
     }
 
     public String queryCount(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzQuery<?> query = (EzQuery<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getQueryCountSql(configuration, query, param);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        return SqlGenerateFactory.getSqlGenerate(configuration).getQueryCountSql(configuration, paramHolder, query);
     }
 }
