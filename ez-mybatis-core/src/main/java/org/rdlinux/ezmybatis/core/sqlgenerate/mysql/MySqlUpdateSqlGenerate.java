@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
 import java.util.List;
-import java.util.Map;
 
 public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     private static volatile MySqlUpdateSqlGenerate instance;
@@ -25,12 +25,13 @@ public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, EzUpdate update, Map<String, Object> mybatisParam) {
-        return MySqlEzUpdateToSql.getInstance().toSql(configuration, update, mybatisParam);
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, EzUpdate update) {
+        return MySqlEzUpdateToSql.getInstance().toSql(configuration, mybatisParamHolder, update);
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, List<EzUpdate> updates, Map<String, Object> mybatisParam) {
-        return MySqlEzUpdateToSql.getInstance().toSql(configuration, updates, mybatisParam);
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+                               List<EzUpdate> updates) {
+        return MySqlEzUpdateToSql.getInstance().toSql(configuration, mybatisParamHolder, updates);
     }
 }
