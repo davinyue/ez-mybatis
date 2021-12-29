@@ -7,21 +7,18 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
     @Override
-    public String toSql(Configuration configuration, EzDelete delete, Map<String, Object> mybatisParam) {
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
-        return this.toSql(configuration, delete, mybatisParamHolder);
+    public String toSql(Configuration configuration, MybatisParamHolder paramHolder, EzDelete delete) {
+        return this.toSql(configuration, delete, paramHolder);
     }
 
     @Override
-    public String toSql(Configuration configuration, List<EzDelete> deletes, Map<String, Object> mybatisParam) {
+    public String toSql(Configuration configuration, MybatisParamHolder paramHolder, List<EzDelete> deletes) {
         StringBuilder sql = new StringBuilder();
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
         for (EzDelete delete : deletes) {
-            sql.append(this.toSql(configuration, delete, mybatisParamHolder)).append(";\n");
+            sql.append(this.toSql(configuration, delete, paramHolder)).append(";\n");
         }
         return sql.toString();
     }

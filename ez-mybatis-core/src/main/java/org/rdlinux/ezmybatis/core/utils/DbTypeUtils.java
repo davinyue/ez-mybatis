@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.utils;
 
-import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.constant.DbType;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +12,7 @@ public class DbTypeUtils {
     /**
      * 配置与数据库类型映射
      */
-    private static final ConcurrentMap<Configuration, DbType> DB_TYPE_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentMap<Configuration, DbType> DB_TYPE_MAP = new ConcurrentHashMap<>();
 
     public static DbType getDbType(Configuration configuration) {
         DbType dbType = DB_TYPE_MAP.get(configuration);

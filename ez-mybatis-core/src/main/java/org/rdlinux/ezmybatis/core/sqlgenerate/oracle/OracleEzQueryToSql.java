@@ -9,8 +9,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 
-import java.util.Map;
-
 public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     private static final String ROW_NUM_ALIAS = "ORACLE_ROW_NO";
     private static volatile OracleEzQueryToSql instance;
@@ -30,15 +28,14 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    public String toCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam) {
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
+    public String toCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, mybatisParamHolder);
-        sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, mybatisParamHolder);
-        sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, mybatisParamHolder);
-        sqlBuilder = super.whereToSql(sqlBuilder, configuration, query, mybatisParamHolder);
-        sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, mybatisParamHolder);
-        sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, mybatisParamHolder);
+        sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = super.whereToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
             return "SELECT COUNT(1) FROM ( " + sqlBuilder.toString() + ") " + Alias.getAlias();
         } else {

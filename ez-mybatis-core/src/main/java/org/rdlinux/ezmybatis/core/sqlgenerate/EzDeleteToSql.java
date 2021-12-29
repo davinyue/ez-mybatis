@@ -4,16 +4,9 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
 
 import java.util.List;
-import java.util.Map;
 
 public interface EzDeleteToSql {
-    /**
-     * @param mybatisParam mybatis参数
-     */
-    String toSql(Configuration configuration, EzDelete delete, Map<String, Object> mybatisParam);
+    String toSql(Configuration configuration, MybatisParamHolder paramHolder, EzDelete delete);
 
-    /**
-     * @param mybatisParam mybatis参数
-     */
-    String toSql(Configuration configuration, List<EzDelete> deletes, Map<String, Object> mybatisParam);
+    String toSql(Configuration configuration, MybatisParamHolder paramHolder, List<EzDelete> deletes);
 }

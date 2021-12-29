@@ -1,13 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.utils.Assert;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -16,7 +15,8 @@ import java.util.Map;
 public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
-    public String getUpdateSql(Configuration configuration, Object entity, boolean isReplace) {
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
+                               boolean isReplace) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableName();
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
@@ -40,8 +40,8 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             if (fieldValue == null) {
                 sqlBuilder.append("NULL, ");
             } else {
-                sqlBuilder.append(MybatisParamEscape.getEscapeChar(fieldValue)).append("{")
-                        .append(EzMybatisConstant.MAPPER_PARAM_ENTITY).append(".").append(field.getName())
+                String paramName = mybatisParamHolder.getParamName(fieldValue);
+                sqlBuilder.append(MybatisParamEscape.getEscapeChar(fieldValue)).append("{").append(paramName)
                         .append("}, ");
             }
             //有字段更新, sql才有效
@@ -51,17 +51,17 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
                 .append(" = ").append(MybatisParamEscape.getEscapeChar(idValue)).append("{")
-                .append(EzMybatisConstant.MAPPER_PARAM_ENTITY).append(".").append(idField.getName()).append("}");
+                .append(mybatisParamHolder.getParamName(idValue)).append("}");
         return sqlBuilder.toString();
     }
 
     @Override
-    public String getBatchUpdateSql(Configuration configuration, List<Object> entitys, boolean isReplace) {
+    public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+                                    List<Object> entitys, boolean isReplace) {
         StringBuilder sqlBuilder = new StringBuilder();
-        for (int i = 0; i < entitys.size(); i++) {
-            String sqlTmpl = this.getUpdateSql(configuration, entitys.get(i), isReplace);
-            sqlBuilder.append(sqlTmpl.replaceAll(EzMybatisConstant.MAPPER_PARAM_ENTITY + ".",
-                    EzMybatisConstant.MAPPER_PARAM_ENTITYS + "[" + i + "]" + ".")).append(";");
+        for (Object entity : entitys) {
+            String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
+            sqlBuilder.append(sqlTmpl).append(";");
         }
         return sqlBuilder.toString();
     }

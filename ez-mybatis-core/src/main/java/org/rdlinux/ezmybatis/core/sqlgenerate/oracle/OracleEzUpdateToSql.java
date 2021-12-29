@@ -1,15 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Update;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.core.utils.Assert;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
@@ -30,8 +29,8 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
     }
 
     @Override
-    public String toSql(Configuration configuration, List<EzUpdate> updates, Map<String, Object> mybatisParam) {
-        String sql = super.toSql(configuration, updates, mybatisParam);
+    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, List<EzUpdate> updates) {
+        String sql = super.toSql(configuration, mybatisParamHolder, updates);
         return "BEGIN \n" + sql + "END;";
     }
 
