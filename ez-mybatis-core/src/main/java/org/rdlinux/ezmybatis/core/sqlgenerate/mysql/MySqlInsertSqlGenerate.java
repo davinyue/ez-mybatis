@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
 import java.util.List;
 
@@ -24,10 +24,11 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
     }
 
     @Override
-    public String getBatchInsertSql(Configuration configuration, List<Object> entitys) {
+    public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+                                    List<Object> entitys) {
         StringBuilder sqlBuilder = new StringBuilder();
         for (int i = 0; i < entitys.size(); i++) {
-            String insertSql = this.getInsertSql(configuration, entitys.get(i));
+            String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entitys.get(i));
             String flag = "VALUES ";
             int vIndex = insertSql.indexOf(flag);
             String valve = insertSql.substring(vIndex + flag.length());
@@ -35,8 +36,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
                 String prefix = insertSql.substring(0, vIndex + flag.length());
                 sqlBuilder.append(prefix);
             }
-            sqlBuilder.append(valve.replaceAll(EzMybatisConstant.MAPPER_PARAM_ENTITY + ".",
-                    EzMybatisConstant.MAPPER_PARAM_ENTITYS + "[" + i + "]" + "."));
+            sqlBuilder.append(valve);
             if (i + 1 < entitys.size()) {
                 sqlBuilder.append(", ");
             }

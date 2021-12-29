@@ -69,7 +69,7 @@ public class MysqlDeleteTest {
     public void batchDeleteById() {
         List<String> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
-            users.add("016cdcdd76f94879ab3d24850514812b");
+            users.add("016cdcdd76f94879ab3d24850514812b" + i);
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchDeleteById(users);
         sqlSession.commit();

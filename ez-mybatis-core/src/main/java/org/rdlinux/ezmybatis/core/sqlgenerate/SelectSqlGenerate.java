@@ -4,14 +4,14 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
 
 import java.util.List;
-import java.util.Map;
 
 public interface SelectSqlGenerate {
-    String getSelectByIdSql(Configuration configuration, Class<?> ntClass, Object id);
+    String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass, Object id);
 
-    String getSelectByIdsSql(Configuration configuration, Class<?> ntClass, List<?> ids);
+    String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
+                             List<?> ids);
 
-    String getQuerySql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam);
+    String getQuerySql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query);
 
-    String getQueryCountSql(Configuration configuration, EzQuery<?> query, Map<String, Object> mybatisParam);
+    String getQueryCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query);
 }

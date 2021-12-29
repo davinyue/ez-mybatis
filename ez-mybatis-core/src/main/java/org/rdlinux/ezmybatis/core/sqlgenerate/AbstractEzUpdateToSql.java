@@ -1,27 +1,24 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Update;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
     @Override
-    public String toSql(Configuration configuration, EzUpdate update, Map<String, Object> mybatisParam) {
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
+    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, EzUpdate update) {
         return this.toSql(configuration, update, mybatisParamHolder);
     }
 
     @Override
-    public String toSql(Configuration configuration, List<EzUpdate> updates, Map<String, Object> mybatisParam) {
+    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, List<EzUpdate> updates) {
         StringBuilder sql = new StringBuilder();
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(mybatisParam);
         for (EzUpdate update : updates) {
             sql.append(this.toSql(configuration, update, mybatisParamHolder)).append(";\n");
         }

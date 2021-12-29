@@ -1,12 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.Map;
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
     @Override
-    public String getInsertSql(Configuration configuration, Object entity) {
+    public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableName();
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
@@ -27,13 +26,13 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         for (String column : columnMapFieldInfo.keySet()) {
             Field field = columnMapFieldInfo.get(column).getField();
             Object fieldValue = ReflectionUtils.getFieldValue(entity, field);
-            String escape = MybatisParamEscape.getEscapeChar(ReflectionUtils.getFieldValue(entity, field));
             columnBuilder.append(keywordQM).append(column).append(keywordQM);
             if (fieldValue == null) {
                 paramBuilder.append("NULL");
             } else {
-                paramBuilder.append(escape).append("{").append(EzMybatisConstant.MAPPER_PARAM_ENTITY).append(".")
-                        .append(field.getName()).append("}");
+                String escape = MybatisParamEscape.getEscapeChar(ReflectionUtils.getFieldValue(entity, field));
+                paramBuilder.append(escape).append("{").append(mybatisParamHolder.getParamName(fieldValue))
+                        .append("}");
             }
             if (i < columnMapFieldInfo.size()) {
                 columnBuilder.append(", ");
