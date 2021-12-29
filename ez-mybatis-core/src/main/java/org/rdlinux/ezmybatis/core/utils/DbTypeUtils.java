@@ -12,7 +12,13 @@ public class DbTypeUtils {
     /**
      * 配置与数据库类型映射
      */
-    public static final ConcurrentMap<Configuration, DbType> DB_TYPE_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Configuration, DbType> DB_TYPE_MAP = new ConcurrentHashMap<>();
+
+    public static void setDbType(Configuration configuration, DbType dbType) {
+        Assert.notNull(configuration, "configuration can not be null");
+        Assert.notNull(dbType, "dbType can not be null");
+        DB_TYPE_MAP.put(configuration, dbType);
+    }
 
     public static DbType getDbType(Configuration configuration) {
         DbType dbType = DB_TYPE_MAP.get(configuration);
