@@ -121,7 +121,7 @@ public class OracleSelectTest {
 
         PayVoucherMapper userMapper = sqlSession.getMapper(PayVoucherMapper.class);
         List<PayRequest> requests = new LinkedList<>();
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 1000; i++) {
             PayRequest request = JacksonUtils.conversion(json, PayRequest.class);
             request.setPay_app_id(UUID.randomUUID().toString().replaceAll("-", ""));
             request.setBgt_id("1234test");
@@ -131,8 +131,8 @@ public class OracleSelectTest {
         long start = System.currentTimeMillis();
         //int size = 6;
         int size = 50;
-        int count = 500 / size;
-        if ((500 % size) > 0) {
+        int count = requests.size() / size;
+        if ((requests.size() % size) > 0) {
             count++;
         }
         for (int i = 0; i < count; i++) {
