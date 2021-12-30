@@ -16,8 +16,9 @@ public class MybatisParamHolder {
 
     public String getParamName(Object paramValue) {
         Assert.notNull(paramValue, "paramValue can not be null");
+        String escape = MybatisParamEscape.getEscapeChar(paramValue);
         String paramName = EzMybatisConstant.MAPPER_PARAM_EZPARAM + "_" + this.pNo.getAndIncrement();
         this.mybatisParam.put(paramName, paramValue);
-        return paramName;
+        return escape + "{" + paramName + "}";
     }
 }

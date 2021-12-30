@@ -40,9 +40,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             if (fieldValue == null) {
                 sqlBuilder.append("NULL, ");
             } else {
-                String paramName = mybatisParamHolder.getParamName(fieldValue);
-                sqlBuilder.append(MybatisParamEscape.getEscapeChar(fieldValue)).append("{").append(paramName)
-                        .append("}, ");
+                sqlBuilder.append(mybatisParamHolder.getParamName(fieldValue)).append(", ");
             }
             //有字段更新, sql才有效
             invalidSql = false;
@@ -50,8 +48,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         Assert.isTrue(!invalidSql, "cannot update empty entity");
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
-                .append(" = ").append(MybatisParamEscape.getEscapeChar(idValue)).append("{")
-                .append(mybatisParamHolder.getParamName(idValue)).append("}");
+                .append(" = ").append(mybatisParamHolder.getParamName(idValue));
         return sqlBuilder.toString();
     }
 

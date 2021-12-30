@@ -30,9 +30,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             if (fieldValue == null) {
                 paramBuilder.append("NULL");
             } else {
-                String escape = MybatisParamEscape.getEscapeChar(ReflectionUtils.getFieldValue(entity, field));
-                paramBuilder.append(escape).append("{").append(mybatisParamHolder.getParamName(fieldValue))
-                        .append("}");
+                paramBuilder.append(mybatisParamHolder.getParamName(fieldValue));
             }
             if (i < columnMapFieldInfo.size()) {
                 columnBuilder.append(", ");
