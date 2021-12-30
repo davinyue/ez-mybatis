@@ -12,17 +12,12 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
-import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
-import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j2
 public class MysqlSelectTest {
@@ -67,15 +62,14 @@ public class MysqlSelectTest {
 
     @Test
     public void queryTest() {
+        Set<String> ids = new HashSet<>();
+        ids.add("100");
+        ids.add("200");
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .join(EntityTable.of(UserOrg.class))
-                .addFieldCompareCondition("id", "userId")
-                .join(EntityTable.of(Org.class))
-                .addFieldCompareCondition("orgId", "id").done()
-                .done()
-                .where().addFieldCondition("id", 1).done()
+                .where().addFieldCondition("id", 1)
+                .addFieldCondition("id", Operator.in, ids).done()
                 .page(1, 2)
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);

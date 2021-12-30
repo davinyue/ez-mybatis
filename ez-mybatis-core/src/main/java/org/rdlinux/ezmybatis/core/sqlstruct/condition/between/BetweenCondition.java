@@ -1,14 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.between;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamEscape;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 
 /**
  * between 条件
@@ -39,14 +36,9 @@ public abstract class BetweenCondition implements Condition {
         if (this.minValue == null || this.maxValue == null) {
             return "";
         }
-        String minParam = mybatisParamHolder.getParamName(this.minValue);
-        String maxParam = mybatisParamHolder.getParamName(this.maxValue);
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        return " " + keywordQM + this.getSqlField(configuration) + keywordQM +
+        return " " + this.getSqlField(configuration) +
                 " " + this.getOperator().getOperator() + " " +
-                MybatisParamEscape.getEscapeChar(this.minValue) + "{" + minParam +
-                "}" + " AND " +
-                MybatisParamEscape.getEscapeChar(this.maxValue) + "{" + maxParam +
-                "}" + " ";
+                mybatisParamHolder.getParamName(this.minValue) + " AND " +
+                mybatisParamHolder.getParamName(this.maxValue) + " ";
     }
 }

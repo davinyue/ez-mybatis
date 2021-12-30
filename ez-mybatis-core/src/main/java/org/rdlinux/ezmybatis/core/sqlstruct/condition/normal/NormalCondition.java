@@ -1,12 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamEscape;
+import lombok.Getter;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.utils.Assert;
-import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.Collection;
 
@@ -47,7 +46,7 @@ public abstract class NormalCondition implements Condition {
                 int i = 0;
                 for (Object value : (Collection<?>) this.getValue()) {
                     String inValueParam = mybatisParamHolder.getParamName(value);
-                    sql.append(MybatisParamEscape.getEscapeChar(value)).append("{").append(inValueParam).append("}");
+                    sql.append(inValueParam);
                     if (i + 1 < ((Collection<?>) this.getValue()).size()) {
                         sql.append(", ");
                     }
@@ -57,20 +56,18 @@ public abstract class NormalCondition implements Condition {
                 int i = 0;
                 for (Object value : (Object[]) this.getValue()) {
                     String inValueParam = mybatisParamHolder.getParamName(value);
-                    sql.append(MybatisParamEscape.getEscapeChar(value)).append("{").append(inValueParam).append("}");
+                    sql.append(inValueParam);
                     if (i + 1 < ((Object[]) this.getValue()).length) {
                         sql.append(", ");
                     }
                     i++;
                 }
             } else {
-                sql.append(MybatisParamEscape.getEscapeChar(this.getValue())).append("{").append(param)
-                        .append("}").append(" ");
+                sql.append(param).append(" ");
             }
             sql.append(" ) ");
         } else {
-            sql.append(MybatisParamEscape.getEscapeChar(this.getValue())).append("{").append(param)
-                    .append("}").append(" ");
+            sql.append(param).append(" ");
         }
         return sql.toString();
     }
