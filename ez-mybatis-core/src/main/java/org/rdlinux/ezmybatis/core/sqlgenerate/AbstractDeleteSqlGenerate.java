@@ -16,10 +16,9 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        String escape = MybatisParamEscape.getEscapeChar(id);
         String kwQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        return "DELETE FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + escape
-                + "{" + paramHolder.getParamName(id) + "}";
+        return "DELETE FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + paramHolder
+                .getParamName(id);
     }
 
 
@@ -36,8 +35,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         for (int i = 0; i < ids.size(); i++) {
             Object id = ids.get(i);
             Assert.notNull(id, String.format("ids[%d] can not be null", i));
-            String escape = MybatisParamEscape.getEscapeChar(id);
-            sqlBuilder.append(escape).append("{").append(paramHolder.getParamName(id)).append("}");
+            sqlBuilder.append(paramHolder.getParamName(id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

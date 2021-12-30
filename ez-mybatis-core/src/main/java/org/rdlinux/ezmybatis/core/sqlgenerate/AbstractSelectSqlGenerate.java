@@ -19,8 +19,8 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String escape = MybatisParamEscape.getEscapeChar(id);
         String kwQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
-        return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " + escape
-                + "{" + paramHolder.getParamName(id) + "}";
+        return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " +
+                paramHolder.getParamName(id);
     }
 
     @Override
@@ -36,8 +36,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         for (int i = 0; i < ids.size(); i++) {
             Object id = ids.get(i);
             Assert.notNull(id, String.format("ids[%d] can not be null", i));
-            String escape = MybatisParamEscape.getEscapeChar(id);
-            sqlBuilder.append(escape).append("{").append(paramHolder.getParamName(id)).append("}");
+            sqlBuilder.append(paramHolder.getParamName(id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }
