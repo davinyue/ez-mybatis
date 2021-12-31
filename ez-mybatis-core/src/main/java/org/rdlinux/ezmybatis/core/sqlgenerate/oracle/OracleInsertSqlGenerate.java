@@ -24,7 +24,8 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
     }
 
     @Override
-    public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, List<Object> entitys) {
+    public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+                                    List<Object> entitys) {
         StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
         for (Object entity : entitys) {
             String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entity);
