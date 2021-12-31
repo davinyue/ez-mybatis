@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.mapper.provider;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.annotation.SqlProviderMethod;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
@@ -14,7 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EzEntityDeleteProvider {
+public class EzDeleteProvider {
+    public static final String DELETE_METHOD = "delete";
+    public static final String BATCH_DELETE_METHOD = "batchDelete";
+    public static final String DELETE_BY_ID_METHOD = "deleteById";
+    public static final String BATCH_DELETE_BY_ID_METHOD = "batchDeleteById";
+    public static final String DELETE_BY_EZ_DELETE_METHOD = "deleteByEzDelete";
+    public static final String BATCH_DELETE_BY_EZ_DELETE_METHOD = "batchDeleteByEzDelete";
+    public static final String DELETE_BY_SQL_METHOD = "deleteBySql";
+
+    @SqlProviderMethod(DELETE_METHOD)
     public String delete(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
@@ -29,6 +39,7 @@ public class EzEntityDeleteProvider {
     }
 
     @SuppressWarnings(value = {"rawtype", "unchecked"})
+    @SqlProviderMethod(BATCH_DELETE_METHOD)
     public String batchDelete(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
@@ -46,6 +57,7 @@ public class EzEntityDeleteProvider {
                 ntClass, ids);
     }
 
+    @SqlProviderMethod(DELETE_BY_ID_METHOD)
     public String deleteById(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
@@ -56,6 +68,7 @@ public class EzEntityDeleteProvider {
     }
 
     @SuppressWarnings("unchecked")
+    @SqlProviderMethod(BATCH_DELETE_BY_ID_METHOD)
     public String batchDeleteById(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
@@ -65,6 +78,7 @@ public class EzEntityDeleteProvider {
                 ntClass, ids);
     }
 
+    @SqlProviderMethod(DELETE_BY_EZ_DELETE_METHOD)
     public String deleteByEzDelete(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzDelete delete = (EzDelete) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
@@ -73,6 +87,7 @@ public class EzEntityDeleteProvider {
     }
 
     @SuppressWarnings("unchecked")
+    @SqlProviderMethod(BATCH_DELETE_BY_EZ_DELETE_METHOD)
     public String batchDeleteByEzDelete(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         List<EzDelete> deletes = (List<EzDelete>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
@@ -81,6 +96,7 @@ public class EzEntityDeleteProvider {
     }
 
     @SuppressWarnings("unchecked")
+    @SqlProviderMethod(DELETE_BY_SQL_METHOD)
     public String deleteBySql(Map<String, Object> param) {
         String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
         Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
