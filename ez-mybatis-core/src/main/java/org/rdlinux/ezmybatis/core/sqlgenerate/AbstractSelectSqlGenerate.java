@@ -17,7 +17,6 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String table = entityClassInfo.getTableName();
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        String escape = MybatisParamEscape.getEscapeChar(id);
         String kwQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " +
                 paramHolder.getParamName(id);
