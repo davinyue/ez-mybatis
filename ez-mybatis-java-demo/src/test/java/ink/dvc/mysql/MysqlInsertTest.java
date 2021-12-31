@@ -5,15 +5,13 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MysqlInsertTest {
     public static SqlSession sqlSession;
@@ -83,5 +81,22 @@ public class MysqlInsertTest {
         sqlSession.commit();
         long end = System.currentTimeMillis();
         System.out.println("耗时" + (end - start));
+    }
+
+    @Test
+    public void insertBySql() {
+        String sql = "INSERT INTO `ez_user` (`id`, `create_time`, `update_time`, `name`, `sex`, `age`) " +
+                "VALUES ('09b6a5af501b4a1fb8c22002df5f15af', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
+                "'王二', 1, 27);\n";
+        Integer integer = sqlSession.getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
+        System.out.println(integer);
+    }
+
+    @Test
+    public void insertTest1() {
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        List<Object> users = new LinkedList<>();
+        users.add(new User());
+        //mapper.insert(users);
     }
 }
