@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.mapper.provider;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.annotation.SqlProviderMethod;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
@@ -8,7 +9,12 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import java.util.List;
 import java.util.Map;
 
-public class EzEntityInsertProvider {
+public class EzInsertProvider {
+    public static final String INSERT_METHOD = "insert";
+    public static final String BATCH_INSERT_METHOD = "batchInsert";
+    public static final String INSERT_BY_SQL_METHOD = "insertBySql";
+
+    @SqlProviderMethod(INSERT_METHOD)
     public String insert(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
@@ -17,6 +23,7 @@ public class EzEntityInsertProvider {
     }
 
     @SuppressWarnings("unchecked")
+    @SqlProviderMethod(BATCH_INSERT_METHOD)
     public String batchInsert(Map<String, Object> param) {
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         List<Object> entitys = (List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
@@ -26,6 +33,7 @@ public class EzEntityInsertProvider {
     }
 
     @SuppressWarnings("unchecked")
+    @SqlProviderMethod(INSERT_BY_SQL_METHOD)
     public String insertBySql(Map<String, Object> param) {
         String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
         Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
