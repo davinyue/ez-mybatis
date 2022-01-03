@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
@@ -92,6 +93,26 @@ public class MysqlSelectTest {
                 .select().addAll().done().build();
         List<UserOrg> uos = ezMapper.query(uosQuery);
         System.out.println(JacksonUtils.toJsonString(uos));
+    }
+
+    @Test
+    public void ezMapperQueryTest() {
+        EntityTable userTable = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
+                .select().addAll().done()
+                .page(1, 1)
+                .build();
+        EzMapper ezMapper = sqlSession.getMapper(EzMapper.class);
+        List<User> users = ezMapper.query(query);
+        System.out.println("用户" + JacksonUtils.toJsonString(users));
+        EzQuery<UserOrg> uosQuery = EzQuery.builder(UserOrg.class).from(EntityTable.of(UserOrg.class))
+                .select().addAll().done().page(1, 1).build();
+        List<UserOrg> uos = ezMapper.query(uosQuery);
+        System.out.println("用户机构映射" + JacksonUtils.toJsonString(uos));
+        EzQuery<Org> orgQuery = EzQuery.builder(Org.class).from(EntityTable.of(Org.class))
+                .select().addAll().done().page(1, 1).build();
+        List<Org> orgs = ezMapper.query(orgQuery);
+        System.out.println("机构" + JacksonUtils.toJsonString(orgs));
     }
 
     @Test
