@@ -22,7 +22,6 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
-        Field idField = primaryKeyInfo.getField();
         String idColumn = primaryKeyInfo.getColumnName();
         Object idValue = ReflectionUtils.getFieldValue(entity, primaryKeyInfo.getField());
         Assert.notNull(idValue, primaryKeyInfo.getFieldName() + " cannot be null");

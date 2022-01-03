@@ -162,7 +162,7 @@ public class MysqlUpdateTest {
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
-        int ret = mapper.update(ezUpdate);
+        int ret = mapper.ezUpdate(ezUpdate);
         sqlSession.commit();
         log.info("更新条数{}", ret);
     }
@@ -179,7 +179,7 @@ public class MysqlUpdateTest {
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
-        mapper.batchUpdate(updates);
+        mapper.batchEzUpdate(updates);
         sqlSession.commit();
     }
 }

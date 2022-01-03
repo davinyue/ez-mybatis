@@ -38,16 +38,20 @@ public class MysqlSelectTest {
 
     @Test
     public void selectById() {
-        User user = sqlSession.getMapper(UserMapper.class).selectById("980e1f193035494198f90d24e01d6706");
+        User user = sqlSession.getMapper(UserMapper.class).selectById("01e3ff9339f2427d9a66d3a8799de2c9");
+        System.out.println(JacksonUtils.toJsonString(user));
+        user = sqlSession.getMapper(EzMapper.class).selectById(User.class, "01e3ff9339f2427d9a66d3a8799de2c9");
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
     @Test
     public void selectByIds() {
         List<String> ids = new LinkedList<>();
-        ids.add("980e1f193035494198f90d24e01d6706");
-        ids.add("1s");
+        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
+        ids.add("1");
         List<User> users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
@@ -90,18 +94,21 @@ public class MysqlSelectTest {
     }
 
     @Test
-    public void groupTest() {
+    public void countTest() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().add("name").done()
-                .where().addColumnCondition("name", Operator.gt, 1).done()
-                //.groupBy().add("name").done()
-                //.having().conditions().add("name", Operator.more, 1).done().done()
-                //.orderBy().add("name").done()
-                .page(2, 5)
                 .build();
-        List<User> users = sqlSession.getMapper(UserMapper.class).query(query);
-        System.out.println(JacksonUtils.toJsonString(users));
         int i = sqlSession.getMapper(UserMapper.class).queryCount(query);
+        System.out.println("总数" + i);
+    }
+
+    @Test
+    public void countTest1() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().add("name").done()
+                //.where().addColumnCondition("name", Operator.gt, 1).done()
+                .build();
+        int i = sqlSession.getMapper(EzMapper.class).queryCount(query);
         System.out.println("总数" + i);
     }
 
@@ -138,7 +145,7 @@ public class MysqlSelectTest {
         EzQuery<Integer> query = EzQuery.builder(Integer.class).from(EntityTable.of(User.class))
                 .select().addCount("id").done().page(1, 1)
                 .build();
-        int count = sqlSession.getMapper(EzMapper.class).queryOne(query);
+        Integer count = sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(count));
     }
 

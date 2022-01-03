@@ -85,39 +85,11 @@ public class MysqlInsertTest {
     }
 
     @Test
-    public void batchInsertTUT() {
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        userMapper.selectById("1s");
-        long start = System.currentTimeMillis();
-        List<User> users = new LinkedList<>();
-        for (int i = 0; i < 500; i++) {
-            User user = new User();
-            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-            user.setName("王");
-            user.setUserAge(27 + i);
-            user.setSex(User.Sex.MAN);
-            users.add(user);
-        }
-        int insert = userMapper.batchInsert(users);
-        sqlSession.commit();
-        long end = System.currentTimeMillis();
-        System.out.println("耗时" + (end - start));
-    }
-
-    @Test
     public void insertBySql() {
         String sql = "INSERT INTO `ez_user` (`id`, `create_time`, `update_time`, `name`, `sex`, `age`) " +
                 "VALUES ('09b6a5af501b4a1fb8c22002df5f15af', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
                 "'王二', 1, 27);\n";
         Integer integer = sqlSession.getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
         System.out.println(integer);
-    }
-
-    @Test
-    public void insertTest1() {
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        List<Object> users = new LinkedList<>();
-        users.add(new User());
-        //mapper.insert(users);
     }
 }

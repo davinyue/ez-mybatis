@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.*;
+import org.rdlinux.ezmybatis.annotation.SqlProviderMethod;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -19,12 +20,28 @@ import java.util.Map;
  */
 @Mapper
 public interface EzMapper {
+    String QUERY_METHOD = "query";
+    String QUERY_ONE_METHOD = "queryOne";
+    String QUERY_COUNT_METHOD = "queryCount";
+    String SELECT_BY_ID_METHOD = "selectById";
+    String SELECT_BY_IDS_METHOD = "selectByIds";
+
     /**
-     * 根据sql插入记录
+     * 根据主键查询
      */
-    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_SQL_METHOD)
-    Integer insertBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
-                        @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+    @SqlProviderMethod(SELECT_BY_ID_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_ID_METHOD)
+    <Id extends Serializable, NT> NT selectById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
+                                                @Param(EzMybatisConstant.MAPPER_PARAM_ID) Id id);
+
+    /**
+     * 根据主键批量查询
+     */
+    @SqlProviderMethod(SELECT_BY_IDS_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_IDS_METHOD)
+    <Id extends Serializable, NT> List<NT> selectByIds(
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Id> ids);
 
     /**
      * 根据sql查询一条数据并返回map
@@ -40,11 +57,20 @@ public interface EzMapper {
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
                                              @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
+    @SqlProviderMethod(QUERY_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
     <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
 
+    @SqlProviderMethod(QUERY_ONE_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
     <Rt> Rt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
+
+    /**
+     * 根据ezQuery查询count
+     */
+    @SqlProviderMethod(QUERY_COUNT_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_COUNT_METHOD)
+    int queryCount(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<?> query);
 
     /**
      * 根据更新参数更新
@@ -95,6 +121,13 @@ public interface EzMapper {
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
     int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+
+    /**
+     * 根据sql插入记录
+     */
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_SQL_METHOD)
+    Integer insertBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                        @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
      * 更新, 只更新非空字段
