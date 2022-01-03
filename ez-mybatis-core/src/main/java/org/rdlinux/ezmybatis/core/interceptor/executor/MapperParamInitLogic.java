@@ -9,10 +9,9 @@ import org.rdlinux.ezmybatis.core.mapper.EzBaseMapper;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzDeleteProvider;
 import org.rdlinux.ezmybatis.core.utils.Assert;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +37,7 @@ public class MapperParamInitLogic implements InterceptorLogic {
         Class<?> mapperClass = Class.forName(className);
         //添加参数
         if (EzBaseMapper.class.isAssignableFrom(mapperClass) && methodNames.contains(methodName)) {
-            Type[] genericInterfaces = mapperClass.getGenericInterfaces();
-            Type[] actualTypeArguments = ((ParameterizedTypeImpl) genericInterfaces[0]).getActualTypeArguments();
-            Class<?> etClass = (Class<?>) actualTypeArguments[0];
+            Class<?> etClass = ReflectionUtils.getGenericSuperinterface(mapperClass, 0, 0);
             Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
             param.put(EzMybatisConstant.MAPPER_PARAM_MAPPER_CLASS, mapperClass);
             param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, etClass);
