@@ -1,11 +1,5 @@
 package org.rdlinux.ezmybatis.core.interceptor;
 
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
-import org.rdlinux.ezmybatis.core.mapper.EzBaseMapper;
-import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -17,6 +11,13 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
+import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.mapper.EzBaseMapper;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -103,7 +104,8 @@ public class UpdateInterceptor implements Interceptor {
             return invocation.proceed();
         }
         Method mapperMethod = ReflectionUtils.getFieldValue(sqlSource, MAPPER_METHOD_FIELD);
-        if (!mapperMethod.getDeclaringClass().getName().equals(EzBaseMapper.class.getName())) {
+        if (!mapperMethod.getDeclaringClass().getName().equals(EzBaseMapper.class.getName()) &&
+                !mapperMethod.getDeclaringClass().getName().equals(EzMapper.class.getName())) {
             return invocation.proceed();
         }
         String statementId = mappedStatement.getId();
@@ -138,8 +140,16 @@ public class UpdateInterceptor implements Interceptor {
             } else {
                 String className = statementId.substring(0, statementId.lastIndexOf("."));
                 Class<?> mapperClass = Class.forName(className);
-                Class<?> etType = ReflectionUtils.getGenericSuperinterface(mapperClass,
-                        0, 0);
+                Class<?> etType = null;
+                //如果是baseMapper, 实例类型从接口泛型参数上获取
+                if (mapperMethod.getDeclaringClass().getName().equals(EzBaseMapper.class.getName())) {
+                    etType = ReflectionUtils.getGenericSuperinterface(mapperClass,
+                            0, 0);
+                }
+                //如果是ezMapper, 实体类型从入参获取
+                else if (mapperMethod.getDeclaringClass().getName().equals(EzMapper.class.getName())) {
+                    etType = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+                }
                 if (statementId.endsWith("." + EzMybatisConstant.DELETE_BY_ID_METHOD_NAME)) {
                     log.debug("on delete by primary key");
                     this.onDeleteById(param.get(EzMybatisConstant.MAPPER_PARAM_ID), etType);
