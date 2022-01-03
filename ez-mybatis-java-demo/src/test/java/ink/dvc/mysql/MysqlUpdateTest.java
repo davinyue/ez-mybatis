@@ -48,6 +48,19 @@ public class MysqlUpdateTest {
     }
 
     @Test
+    public void update1() {
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(EzMapper.class).update(user);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
     public void batchUpdate() {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -67,11 +80,40 @@ public class MysqlUpdateTest {
     }
 
     @Test
+    public void batchUpdate1() {
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchUpdate(users);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
     public void replace() {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         int insert = sqlSession.getMapper(UserMapper.class).replace(user);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void replace1() {
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        int insert = sqlSession.getMapper(EzMapper.class).replace(user);
         sqlSession.commit();
         System.out.println(insert);
     }
@@ -91,6 +133,25 @@ public class MysqlUpdateTest {
             users.add(user);
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchReplace(users);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void batchReplace1() {
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchReplace(users);
         sqlSession.commit();
         System.out.println(insert);
     }
