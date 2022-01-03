@@ -9,15 +9,18 @@ import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
+import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 public class MysqlSelectTest {
@@ -66,19 +69,29 @@ public class MysqlSelectTest {
 
     @Test
     public void queryTest() {
-        Set<String> ids = new HashSet<>();
-        ids.add("100");
-        ids.add("200");
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition("id", 1)
-                .addFieldCondition("id", Operator.in, ids).done()
+                .join(EntityTable.of(UserOrg.class))
+                .addFieldCompareCondition("id", "userId")
+                .joinTableCondition()
+                .addFieldCondition("orgId", "2")
+                .done()
                 .page(1, 2)
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);
-        log.info(JacksonUtils.toJsonString(users));
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.clearCache();
+        users = userMapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        EzMapper ezMapper = sqlSession.getMapper(EzMapper.class);
+        users = ezMapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        EzQuery<UserOrg> uosQuery = EzQuery.builder(UserOrg.class).from(EntityTable.of(UserOrg.class))
+                .select().addAll().done().build();
+        List<UserOrg> uos = ezMapper.query(uosQuery);
+        System.out.println(JacksonUtils.toJsonString(uos));
     }
 
     @Test

@@ -1,5 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzParam;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
@@ -7,10 +11,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class Join implements SqlStruct {
     }
 
     public static class JoinBuilder<Builder> extends ConditionBuilder<Builder,
-                JoinBuilder<Builder>> {
+            JoinBuilder<Builder>> {
         private Join join;
 
         public JoinBuilder(Builder builder, Join join) {
@@ -111,6 +111,24 @@ public class Join implements SqlStruct {
 
         public JoinBuilder<JoinBuilder<Builder>> join(Table joinTable) {
             return this.join(JoinType.InnerJoin, joinTable);
+        }
+
+        /**
+         * 将被join表设置为条件构造表
+         */
+        public JoinBuilder<Builder> joinTableCondition() {
+            this.table = this.join.getJoinTable();
+            this.otherTable = this.join.getTable();
+            return this;
+        }
+
+        /**
+         * 将被主表设置为条件构造表
+         */
+        public JoinBuilder<Builder> masterTableCondition() {
+            this.table = this.join.getTable();
+            this.otherTable = this.join.getJoinTable();
+            return this;
         }
     }
 }
