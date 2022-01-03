@@ -36,12 +36,14 @@ public class MysqlInsertTest {
         user.setUpdateTime(new Date());
         user.setCreateTime(new Date());
         user.setName("王二");
-        //user.setFirstName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).insert(user);
-        sqlSession.commit();
         System.out.println(insert);
+        user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        int insert1 = sqlSession.getMapper(EzMapper.class).insert(user);
+        sqlSession.commit();
+        System.out.println(insert1);
     }
 
     @Test
@@ -59,6 +61,25 @@ public class MysqlInsertTest {
             users.add(user);
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchInsert(users);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void batchInsert1() {
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setUpdateTime(new Date());
+            user.setCreateTime(new Date());
+            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            user.setName("芳" + i + 1);
+            user.setName("王");
+            user.setUserAge(27 + i);
+            user.setSex(User.Sex.MAN);
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchInsert(users);
         sqlSession.commit();
         System.out.println(insert);
     }
