@@ -45,6 +45,14 @@ public class MysqlDeleteTest {
     }
 
     @Test
+    public void delete1() {
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        int delete = sqlSession.getMapper(EzMapper.class).delete(user);
+        System.out.println(delete);
+    }
+
+    @Test
     public void batchDelete() {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -58,9 +66,30 @@ public class MysqlDeleteTest {
     }
 
     @Test
+    public void batchDelete1() {
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchDelete(users);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
     public void deleteById() {
         int insert = sqlSession.getMapper(UserMapper.class)
                 .deleteById("016cdcdd76f94879ab3d24850514812b");
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void deleteById1() {
+        int insert = sqlSession.getMapper(EzMapper.class)
+                .deleteById(User.class, "016cdcdd76f94879ab3d24850514812b");
         sqlSession.commit();
         System.out.println(insert);
     }
@@ -77,6 +106,17 @@ public class MysqlDeleteTest {
     }
 
     @Test
+    public void batchDeleteById1() {
+        List<String> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            users.add("016cdcdd76f94879ab3d24850514812b" + i);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, users);
+        sqlSession.commit();
+        System.out.println(insert);
+    }
+
+    @Test
     public void deleteByParam() {
         EntityTable userTable = EntityTable.of(User.class);
         EntityTable uoTable = EntityTable.of(UserOrg.class);
@@ -86,7 +126,7 @@ public class MysqlDeleteTest {
                 .done()
                 .where().addFieldCondition("id", "56").done()
                 .build();
-        int ret = sqlSession.getMapper(EzMapper.class).delete(delete);
+        int ret = sqlSession.getMapper(EzMapper.class).ezDelete(delete);
         sqlSession.commit();
         log.info("删除{}条", ret);
     }
@@ -102,7 +142,7 @@ public class MysqlDeleteTest {
                 .where().addFieldCondition("id", "23").done()
                 .build();
         deletes.add(delete);
-        sqlSession.getMapper(EzMapper.class).batchDelete(deletes);
+        sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
         sqlSession.commit();
     }
 }

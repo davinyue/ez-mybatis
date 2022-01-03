@@ -80,7 +80,7 @@ public class DmDeleteTest {
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
                 .where().addFieldCondition("id", "56").done()
                 .build();
-        int ret = sqlSession.getMapper(EzMapper.class).delete(delete);
+        int ret = sqlSession.getMapper(EzMapper.class).ezDelete(delete);
         sqlSession.commit();
         log.info("删除{}条", ret);
     }
@@ -96,7 +96,7 @@ public class DmDeleteTest {
                 .where().addFieldCondition("id", "23").done()
                 .build();
         deletes.add(delete);
-        sqlSession.getMapper(EzMapper.class).batchDelete(deletes);
+        sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
         sqlSession.commit();
     }
 }
