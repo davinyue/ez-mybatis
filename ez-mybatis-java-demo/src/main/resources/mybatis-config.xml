@@ -15,6 +15,7 @@
         <setting name="cacheEnabled" value="true"/>
         <setting name="logImpl" value="STDOUT_LOGGING"/>
         <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <setting name="cacheEnabled" value="false"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
     </settings>

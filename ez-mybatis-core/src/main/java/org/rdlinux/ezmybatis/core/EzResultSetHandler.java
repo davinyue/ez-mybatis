@@ -167,7 +167,9 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     private List<UnMappedColumnAutoMapping> createAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap,
                                                                     MetaObject metaObject, String columnPrefix)
             throws SQLException {
-        final String mapKey = resultMap.getId() + ":" + columnPrefix;
+        //EzMapper的查询返回的结果类型是动态的, 所以此处的缓存key需要加上返回结果类型
+        final String mapKey = resultMap.getId() + ":" + metaObject.getOriginalObject().getClass().getName()
+                + ":" + columnPrefix;
         List<UnMappedColumnAutoMapping> autoMapping = this.autoMappingsCache.get(mapKey);
         if (autoMapping == null) {
             autoMapping = new ArrayList<>();
