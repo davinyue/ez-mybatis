@@ -18,6 +18,8 @@ import java.util.Map;
 public class ResultMapInitLogic implements InterceptorLogic {
     private static final Field resultMapsField = ReflectionUtils.getField(MappedStatement.class,
             "resultMaps");
+    private static final Field hasNestedResultMapsFiled = ReflectionUtils.getField(ResultMap.class,
+            "hasNestedResultMaps");
 
     @Override
     @SuppressWarnings(value = {"rawtype", "unchecked"})
@@ -33,15 +35,30 @@ public class ResultMapInitLogic implements InterceptorLogic {
             if (resultMap.getResultMappings() != null && !resultMap.getResultMappings().isEmpty()) {
                 continue;
             }
-            if (!resultMap.getType().getName().equals(Object.class.getName())) {
-                continue;
-            }
-            if (resultMap.getId().startsWith(EzMapper.class.getName())) {
+            //泛型接口, 需要动态的设置返回结果类型，这两个接口的返回类型由query参数传入
+            if (resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.QUERY_METHOD + "-") ||
+                    resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.QUERY_ONE_METHOD + "-")) {
                 Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
                 EzParam<?> ezParam = (EzParam<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
                 ResultMap newRm = new ResultMap.Builder(ms.getConfiguration(), resultMap.getId(),
                         ezParam.getRetType(), resultMap.getResultMappings()).build();
                 ReflectionUtils.setFieldValue(ms, resultMapsField, Collections.singletonList(newRm), false);
+            }
+            //泛型接口, 需要动态的设置返回结果类型，这两个接口的返回类型是由参数参入的
+            else if (resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.SELECT_BY_ID_METHOD
+                    + "-") ||
+                    resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.SELECT_BY_IDS_METHOD
+                            + "-")) {
+                Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
+                Class<?> entityClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+                ResultMap newRm = new ResultMap.Builder(ms.getConfiguration(), resultMap.getId(),
+                        entityClass, resultMap.getResultMappings()).build();
+                ReflectionUtils.setFieldValue(ms, resultMapsField, Collections.singletonList(newRm), false);
+            }
+            //查询count, 需要把hasNestedResultMaps设置为false, 才能解析结果
+            else if (resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.QUERY_COUNT_METHOD
+                    + "-")) {
+                ReflectionUtils.setFieldValue(resultMap, hasNestedResultMapsFiled, false);
             }
         }
         return new InterceptorLogicResult(true, null);
