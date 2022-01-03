@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzUpdateProvider;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +50,13 @@ public interface EzMapper {
      * 根据更新参数更新
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_BY_EZ_UPDATE_METHOD)
-    int update(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzUpdate update);
+    int ezUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzUpdate update);
 
     /**
      * 根据更新参数更新
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_BY_EZ_UPDATE_METHOD)
-    void batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzUpdate> updates);
+    void batchEzUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzUpdate> updates);
 
     /**
      * 根据sql更新
@@ -68,13 +69,13 @@ public interface EzMapper {
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_EZ_DELETE_METHOD)
-    int delete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzDelete delete);
+    int ezDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzDelete delete);
 
     /**
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_EZ_DELETE_METHOD)
-    void batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
+    void ezBatchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
 
     /**
      * 根据sql删除
@@ -86,6 +87,62 @@ public interface EzMapper {
     /**
      * 插入, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
-    //@InsertProvider(type = EzEntityInsertProvider.class, method = "insert")
-    //int insert(Object entity);
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_METHOD)
+    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
+     * 批量插入
+     */
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
+    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+
+    /**
+     * 更新, 只更新非空字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_METHOD)
+    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
+     * 批量更新, 只更新非空字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_METHOD)
+    int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+
+    /**
+     * 更新, 更新所有字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.REPLACE_METHOD)
+    int replace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
+     * 批量更新, 更新所有字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_METHOD)
+    int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+
+    /**
+     * 删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_METHOD)
+    int delete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
+     * 批量删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_METHOD)
+    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+
+    /**
+     * 根据主键删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_ID_METHOD)
+    <T extends Serializable> int deleteById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
+                                            @Param(EzMybatisConstant.MAPPER_PARAM_ID) T id);
+
+    /**
+     * 根据主键批量删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_ID_METHOD)
+    <T extends Serializable> int batchDeleteById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
+                                                 @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<T> ids);
 }
