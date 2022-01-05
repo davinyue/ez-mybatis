@@ -1,14 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
-import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzParam;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.HashMap;
 import java.util.Map;

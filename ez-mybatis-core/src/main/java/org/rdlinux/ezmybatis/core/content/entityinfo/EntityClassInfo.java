@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.content.entityinfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.core.utils.Assert;
-import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
-import org.rdlinux.ezmybatis.core.utils.SqlReflectionUtils;
+import org.rdlinux.ezmybatis.utils.Assert;
+import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
+import org.rdlinux.ezmybatis.utils.SqlReflectionUtils;
 
 import javax.persistence.Table;
 import java.lang.reflect.Field;

@@ -4,8 +4,8 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
-import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Map;

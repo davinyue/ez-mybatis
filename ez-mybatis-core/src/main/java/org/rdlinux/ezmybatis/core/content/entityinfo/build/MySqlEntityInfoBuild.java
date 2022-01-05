@@ -1,10 +1,10 @@
 package org.rdlinux.ezmybatis.core.content.entityinfo.build;
 
-import org.rdlinux.ezmybatis.core.constant.DbType;
+import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityInfoBuildConfig;
-import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 
 public class MySqlEntityInfoBuild implements EntityInfoBuild {
     private static volatile MySqlEntityInfoBuild instance;
@@ -14,7 +14,7 @@ public class MySqlEntityInfoBuild implements EntityInfoBuild {
 
     public static MySqlEntityInfoBuild getInstance() {
         if (instance == null) {
-            synchronized ( MySqlEntityInfoBuild.class ) {
+            synchronized (MySqlEntityInfoBuild.class) {
                 if (instance == null) {
                     instance = new MySqlEntityInfoBuild();
                 }

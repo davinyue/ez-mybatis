@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.nil;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 /**
  * 是空条件

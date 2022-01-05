@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Update;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
-import org.rdlinux.ezmybatis.core.utils.Assert;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
 import java.util.stream.Collectors;

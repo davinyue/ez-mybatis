@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 
+import lombok.Getter;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
-import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 /**
  * 普通列条件
