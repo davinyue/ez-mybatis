@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
-import org.rdlinux.ezmybatis.core.utils.Assert;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     @Override

@@ -2,14 +2,14 @@ package org.rdlinux.ezmybatis.core.interceptor.executor;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Invocation;
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.interceptor.InterceptorLogic;
 import org.rdlinux.ezmybatis.core.interceptor.InterceptorLogicResult;
 import org.rdlinux.ezmybatis.core.mapper.EzBaseMapper;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzDeleteProvider;
-import org.rdlinux.ezmybatis.core.utils.Assert;
-import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
+import org.rdlinux.ezmybatis.utils.Assert;
+import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

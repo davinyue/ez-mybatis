@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.*;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;

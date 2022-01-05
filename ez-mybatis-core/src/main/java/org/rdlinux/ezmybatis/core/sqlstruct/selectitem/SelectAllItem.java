@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.rdlinux.ezmybatis.core.utils.Assert;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 public class SelectAllItem implements SelectItem {
     private Table table;

@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.constant;
+package org.rdlinux.ezmybatis.constant;
 
 /**
  * 常量

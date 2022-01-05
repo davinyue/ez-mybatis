@@ -1,10 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.update;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 public class SyntaxUpdateColumnItem extends UpdateItem {
     private String column;

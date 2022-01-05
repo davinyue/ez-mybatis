@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.utils.Assert;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
 

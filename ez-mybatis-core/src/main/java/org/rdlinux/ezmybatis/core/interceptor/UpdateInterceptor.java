@@ -11,13 +11,13 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.mapper.EzBaseMapper;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
+import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

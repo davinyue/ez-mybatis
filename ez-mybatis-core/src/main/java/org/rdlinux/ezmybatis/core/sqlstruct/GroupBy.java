@@ -1,18 +1,18 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzParam;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.group.ColumnGroupItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.group.FieldGroupItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.group.GroupItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.HashMap;
 import java.util.List;

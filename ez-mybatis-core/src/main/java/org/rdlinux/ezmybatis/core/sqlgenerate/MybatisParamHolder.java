@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
-import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.core.utils.Assert;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;

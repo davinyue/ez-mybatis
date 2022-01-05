@@ -1,16 +1,16 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -81,7 +81,7 @@ public class Where implements SqlStruct {
     }
 
     public static class WhereBuilder<Builder> extends ConditionBuilder<Builder,
-                WhereBuilder<Builder>> {
+            WhereBuilder<Builder>> {
 
         public WhereBuilder(Builder builder, Where where, Table table) {
             super(builder, where.getConditions(), table, table);

@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 @Getter
 public class UpdateFieldItem extends UpdateItem {

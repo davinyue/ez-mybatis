@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.utils;
+package org.rdlinux.ezmybatis.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

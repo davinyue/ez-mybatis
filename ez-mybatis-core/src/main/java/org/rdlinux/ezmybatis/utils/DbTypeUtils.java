@@ -1,8 +1,8 @@
-package org.rdlinux.ezmybatis.core.utils;
+package org.rdlinux.ezmybatis.utils;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.constant.DbType;
+import org.rdlinux.ezmybatis.constant.DbType;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ConcurrentHashMap;
