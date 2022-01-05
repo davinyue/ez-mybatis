@@ -37,7 +37,6 @@ public abstract class NormalCondition implements Condition {
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = new StringBuilder();
-        String param = mybatisParamHolder.getParamName(this.getValue());
         sql.append(" ").append(this.getSqlField(configuration)).append(" ")
                 .append(this.getOperator().getOperator()).append(" ");
         if (this.getOperator() == Operator.in) {
@@ -63,10 +62,12 @@ public abstract class NormalCondition implements Condition {
                     i++;
                 }
             } else {
+                String param = mybatisParamHolder.getParamName(this.getValue());
                 sql.append(param).append(" ");
             }
             sql.append(" ) ");
         } else {
+            String param = mybatisParamHolder.getParamName(this.getValue());
             sql.append(param).append(" ");
         }
         return sql.toString();

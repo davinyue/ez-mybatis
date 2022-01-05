@@ -44,7 +44,6 @@ public class HumpLineStringUtils {
      */
     public static String lineToHump(String str, String interval) {
         Pattern linePattern = Pattern.compile(interval + "(\\w)");
-        str = str.toLowerCase();
         Matcher matcher = linePattern.matcher(str);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
