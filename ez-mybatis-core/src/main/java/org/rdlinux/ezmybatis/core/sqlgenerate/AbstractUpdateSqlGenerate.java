@@ -8,7 +8,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +30,8 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         boolean invalidSql = true;
         for (String column : columnMapFieldInfo.keySet()) {
             EntityFieldInfo entityFieldInfo = columnMapFieldInfo.get(column);
-            Field field = entityFieldInfo.getField();
-            Object fieldValue = ReflectionUtils.getFieldValue(entity, field);
+            Method fieldGetMethod = entityFieldInfo.getFieldGetMethod();
+            Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
             if ((!isReplace && fieldValue == null) || column.equals(idColumn)) {
                 continue;
             }

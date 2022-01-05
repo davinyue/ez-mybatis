@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
@@ -24,8 +24,8 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         StringBuilder paramBuilder = new StringBuilder("( ");
         int i = 1;
         for (String column : columnMapFieldInfo.keySet()) {
-            Field field = columnMapFieldInfo.get(column).getField();
-            Object fieldValue = ReflectionUtils.getFieldValue(entity, field);
+            Method fieldGetMethod = columnMapFieldInfo.get(column).getFieldGetMethod();
+            Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
             columnBuilder.append(keywordQM).append(column).append(keywordQM);
             if (fieldValue == null) {
                 paramBuilder.append("NULL");
