@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
-import org.rdlinux.ezmybatis.core.constant.DbType;
+import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.dm.DmSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.oracle.OracleSqlGenerate;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.HashMap;
 import java.util.Map;

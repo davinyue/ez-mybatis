@@ -10,7 +10,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.rdlinux.ezmybatis.core.interceptor.InterceptorLogic;
 import org.rdlinux.ezmybatis.core.interceptor.InterceptorLogicResult;
-import org.rdlinux.ezmybatis.core.utils.ReflectionUtils;
+import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.sql.Statement;

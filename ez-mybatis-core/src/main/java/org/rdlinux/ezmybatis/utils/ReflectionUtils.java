@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.utils;
+package org.rdlinux.ezmybatis.utils;
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 

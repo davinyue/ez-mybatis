@@ -1,6 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
-import org.rdlinux.ezmybatis.core.constant.DbType;
+import org.rdlinux.ezmybatis.constant.DbType;
 
 import java.util.HashMap;
 import java.util.Map;

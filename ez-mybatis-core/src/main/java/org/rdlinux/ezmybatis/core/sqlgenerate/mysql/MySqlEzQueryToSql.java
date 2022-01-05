@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
     private static volatile MySqlEzQueryToSql instance;

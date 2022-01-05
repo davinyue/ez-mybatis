@@ -1,12 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.utils.Assert;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.utils.Assert;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 @Getter
 @Setter

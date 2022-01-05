@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.utils;
+package org.rdlinux.ezmybatis.utils;
 
 import javax.persistence.*;
 import java.lang.reflect.Field;

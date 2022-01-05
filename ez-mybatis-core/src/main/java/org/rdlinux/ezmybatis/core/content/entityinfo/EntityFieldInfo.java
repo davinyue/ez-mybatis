@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.content.entityinfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.TypeHandler;
 import org.rdlinux.ezmybatis.annotation.ColumnHandler;
-import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
+import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
