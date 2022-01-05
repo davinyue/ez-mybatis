@@ -10,7 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,8 @@ public class EzDeleteProvider {
         Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Object entity = param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        Field idField = entityClassInfo.getPrimaryKeyInfo().getField();
-        Object id = ReflectionUtils.getFieldValue(entity, idField);
+        Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
+        Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
         param.put("id", id);
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteByIdSql(configuration, paramHolder, ntClass,
@@ -47,8 +47,8 @@ public class EzDeleteProvider {
         List<Object> ids = new ArrayList<>(entitys.size());
         for (Object entity : entitys) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-            Field idField = entityClassInfo.getPrimaryKeyInfo().getField();
-            Object id = ReflectionUtils.getFieldValue(entity, idField);
+            Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
+            Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
             ids.add(id);
         }
         param.put("ids", ids);
