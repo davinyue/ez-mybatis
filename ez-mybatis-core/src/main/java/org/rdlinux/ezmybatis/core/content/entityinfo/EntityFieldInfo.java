@@ -8,18 +8,21 @@ import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class EntityFieldInfo {
     private Field field;
+    private Method fieldGetMethod;
     private String fieldName;
     private String columnName;
     private boolean isPrimaryKey = false;
     private TypeHandler<?> typeHandler;
     private EntityInfoBuildConfig buildConfig;
 
-    public EntityFieldInfo(Field field, EntityInfoBuildConfig buildConfig) {
+    public EntityFieldInfo(Field field, Method fieldGetMethod, EntityInfoBuildConfig buildConfig) {
         field.setAccessible(true);
         this.field = field;
+        this.fieldGetMethod = fieldGetMethod;
         this.fieldName = field.getName();
         this.columnName = field.getName();
         this.buildConfig = buildConfig;
@@ -74,5 +77,9 @@ public class EntityFieldInfo {
 
     public String getFieldName() {
         return this.fieldName;
+    }
+
+    public Method getFieldGetMethod() {
+        return this.fieldGetMethod;
     }
 }
