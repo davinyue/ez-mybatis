@@ -50,9 +50,9 @@
                 <!-- 配置连接信息 -->
                 <property name="driver" value="oracle.jdbc.OracleDriver"/>
                 <property name="url"
-                          value="jdbc:oracle:thin:@192.168.1.110:1521/helowin"/>
-                <property name="username" value="EZMYBATIS"/>
-                <property name="password" value="123456"/>
+                          value="jdbc:oracle:thin:@192.168.11.36:1521/ynczdb4"/>
+                <property name="username" value="pay_ys"/>
+                <property name="password" value="a"/>
             </dataSource>
         </environment>
     </environments>
@@ -60,5 +60,6 @@
     <mappers>
         <mapper class="org.rdlinux.ezmybatis.java.mapper.UserMapper"/>
         <mapper class="org.rdlinux.ezmybatis.core.mapper.EzMapper"/>
+        <mapper class="org.rdlinux.ezmybatis.java.mapper.PayVoucherMapper"/>
     </mappers>
 </configuration>

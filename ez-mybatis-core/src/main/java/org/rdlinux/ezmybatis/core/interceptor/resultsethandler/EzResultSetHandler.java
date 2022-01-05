@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core;
+package org.rdlinux.ezmybatis.core.interceptor.resultsethandler;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.loader.ResultLoaderMap;

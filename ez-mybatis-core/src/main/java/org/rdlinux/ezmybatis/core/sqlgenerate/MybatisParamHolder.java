@@ -3,10 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 import org.rdlinux.ezmybatis.core.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.utils.Assert;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,11 +15,10 @@ public class MybatisParamHolder {
     }
 
     private static String getEscapeChar(Object param) {
-        if (param instanceof CharSequence || param instanceof Date || param instanceof LocalTime
-                || param instanceof LocalDate || param instanceof LocalDateTime || param instanceof Enum) {
-            return "#";
-        } else {
+        if (param instanceof Number) {
             return "$";
+        } else {
+            return "#";
         }
     }
 

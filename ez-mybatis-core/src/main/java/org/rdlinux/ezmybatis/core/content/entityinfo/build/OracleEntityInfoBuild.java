@@ -1,10 +1,10 @@
 package org.rdlinux.ezmybatis.core.content.entityinfo.build;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.constant.DbType;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityInfoBuildConfig;
 import org.rdlinux.ezmybatis.core.utils.HumpLineStringUtils;
-import org.apache.ibatis.session.Configuration;
 
 public class OracleEntityInfoBuild implements EntityInfoBuild {
     private static volatile OracleEntityInfoBuild instance;
@@ -38,7 +38,14 @@ public class OracleEntityInfoBuild implements EntityInfoBuild {
     @Override
     public String computeFieldNameByColumn(Configuration configuration, String column) {
         if (configuration.isMapUnderscoreToCamelCase()) {
-            return HumpLineStringUtils.lineToHump(column.toLowerCase(), "_");
+            //大小写都有, 则直接返回
+            if (column.matches("^.*[a-z]+.*$") && column.matches("^.*[A-Z]+.*$")) {
+                return column;
+            } else if (column.matches("^.*[a-z]+.*$")) {
+                return HumpLineStringUtils.lineToHump(column, "_");
+            } else {
+                return HumpLineStringUtils.lineToHump(column.toLowerCase(), "_");
+            }
         }
         return column.toLowerCase();
     }

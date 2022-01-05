@@ -81,7 +81,7 @@ public class ReflectionUtils {
             return null;
         }
         Class<?> objClass = getRealClassOfProxyClass(obj.getClass());
-        T result = null;
+        T result;
         if (!useGetter) {
             field.setAccessible(true);
             try {
@@ -196,7 +196,7 @@ public class ReflectionUtils {
                 prefix = "is";
             }
         }
-        Method methodOfGet = null;
+        Method methodOfGet;
         try {
             methodOfGet = objClass.getMethod(prefix + funSuffix);
         } catch (NoSuchMethodException | SecurityException e) {
@@ -307,7 +307,7 @@ public class ReflectionUtils {
         objClass = getRealClassOfProxyClass(objClass);
         String fieldName = field.getName();
         String funSuffix = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-        Method methodOfSet = null;
+        Method methodOfSet;
         try {
             methodOfSet = objClass.getMethod("set" + funSuffix, field.getType());
         } catch (NoSuchMethodException | SecurityException e) {
@@ -363,6 +363,7 @@ public class ReflectionUtils {
      * @param method 需要执行的方法
      * @param args   参数
      */
+    @SuppressWarnings("unchecked")
     public static <R> R invokeMethod(Object object, Method method, Object... args) {
         method.setAccessible(true);
         try {

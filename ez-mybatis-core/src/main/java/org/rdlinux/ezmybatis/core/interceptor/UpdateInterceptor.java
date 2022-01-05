@@ -131,7 +131,10 @@ public class UpdateInterceptor implements Interceptor {
             }
         } else if (sqlCommandType == SqlCommandType.DELETE) {
             Map<String, Object> param = (Map<String, Object>) args[1];
-            if (statementId.endsWith("." + EzMybatisConstant.DELETE_METHOD_NAME)) {
+            if (statementId.endsWith("." + EzMapper.EZ_DELETE_METHOD) ||
+                    statementId.endsWith("." + EzMapper.EZ_BATCH_DELETE_METHOD)) {
+                log.debug("ez delete 不支持事件处理");
+            } else if (statementId.endsWith("." + EzMybatisConstant.DELETE_METHOD_NAME)) {
                 log.debug("on delete");
                 this.onDelete(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
             } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_DELETE_METHOD_NAME)) {
