@@ -25,6 +25,8 @@ public interface EzMapper {
     String QUERY_COUNT_METHOD = "queryCount";
     String SELECT_BY_ID_METHOD = "selectById";
     String SELECT_BY_IDS_METHOD = "selectByIds";
+    String EZ_DELETE_METHOD = "ezDelete";
+    String EZ_BATCH_DELETE_METHOD = "ezBatchDelete";
 
     /**
      * 根据主键查询
@@ -94,12 +96,14 @@ public interface EzMapper {
     /**
      * 批量删除
      */
+    @SqlProviderMethod(EZ_DELETE_METHOD)
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_EZ_DELETE_METHOD)
     int ezDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzDelete delete);
 
     /**
      * 批量删除
      */
+    @SqlProviderMethod(EZ_BATCH_DELETE_METHOD)
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_EZ_DELETE_METHOD)
     void ezBatchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
 
