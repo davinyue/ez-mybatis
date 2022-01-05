@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.core.utils.DbTypeUtils;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 @Getter
 public abstract class AbstractTable implements Table {

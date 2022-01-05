@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.interceptor.ExecutorInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.ResultSetHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.UpdateInterceptor;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.utils.Assert;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 public class EzMybatisConfigurationCustom {
     private Configuration configuration;
