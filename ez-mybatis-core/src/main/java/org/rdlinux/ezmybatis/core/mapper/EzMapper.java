@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.mapper;
 
 import org.apache.ibatis.annotations.*;
-import org.rdlinux.ezmybatis.annotation.SqlProviderMethod;
+import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -31,7 +31,7 @@ public interface EzMapper {
     /**
      * 根据主键查询
      */
-    @SqlProviderMethod(SELECT_BY_ID_METHOD)
+    @MethodName(SELECT_BY_ID_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_ID_METHOD)
     <Id extends Serializable, NT> NT selectById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
                                                 @Param(EzMybatisConstant.MAPPER_PARAM_ID) Id id);
@@ -39,7 +39,7 @@ public interface EzMapper {
     /**
      * 根据主键批量查询
      */
-    @SqlProviderMethod(SELECT_BY_IDS_METHOD)
+    @MethodName(SELECT_BY_IDS_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_IDS_METHOD)
     <Id extends Serializable, NT> List<NT> selectByIds(
             @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
@@ -59,18 +59,18 @@ public interface EzMapper {
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
                                              @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
-    @SqlProviderMethod(QUERY_METHOD)
+    @MethodName(QUERY_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
     <Rt> List<Rt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
 
-    @SqlProviderMethod(QUERY_ONE_METHOD)
+    @MethodName(QUERY_ONE_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
     <Rt> Rt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Rt> query);
 
     /**
      * 根据ezQuery查询count
      */
-    @SqlProviderMethod(QUERY_COUNT_METHOD)
+    @MethodName(QUERY_COUNT_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_COUNT_METHOD)
     int queryCount(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<?> query);
 
@@ -96,14 +96,14 @@ public interface EzMapper {
     /**
      * 批量删除
      */
-    @SqlProviderMethod(EZ_DELETE_METHOD)
+    @MethodName(EZ_DELETE_METHOD)
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_EZ_DELETE_METHOD)
     int ezDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzDelete delete);
 
     /**
      * 批量删除
      */
-    @SqlProviderMethod(EZ_BATCH_DELETE_METHOD)
+    @MethodName(EZ_BATCH_DELETE_METHOD)
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_EZ_DELETE_METHOD)
     void ezBatchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
 
