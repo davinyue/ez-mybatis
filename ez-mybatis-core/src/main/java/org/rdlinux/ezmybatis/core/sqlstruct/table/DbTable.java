@@ -1,8 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 @Getter
 public class DbTable extends AbstractTable {
@@ -13,7 +14,7 @@ public class DbTable extends AbstractTable {
         this.tableName = tableName;
     }
 
-    private DbTable(String tableName, String partition) {
+    private DbTable(String tableName, Partition partition) {
         super(Alias.getAlias(), partition);
         this.tableName = tableName;
     }
@@ -22,7 +23,7 @@ public class DbTable extends AbstractTable {
         return new DbTable(tableName);
     }
 
-    public static DbTable of(String tableName, String partition) {
+    public static DbTable of(String tableName, Partition partition) {
         return new DbTable(tableName, partition);
     }
 
