@@ -51,7 +51,7 @@
                 <property name="driver" value="oracle.jdbc.OracleDriver"/>
                 <property name="url"
                           value="jdbc:oracle:thin:@192.168.11.36:1521/ynczdb4"/>
-                <property name="username" value="pay_ys"/>
+                <property name="username" value="ycglb"/>
                 <property name="password" value="a"/>
             </dataSource>
         </environment>

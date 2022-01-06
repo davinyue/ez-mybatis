@@ -10,7 +10,9 @@ import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
@@ -36,6 +38,13 @@ public class OracleSelectTest {
         SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(reader);
         sqlSession = sqlSessionFactory.openSession();
+    }
+
+    @Test
+    public void partitionTest() {
+        DbTable table = DbTable.of("GLA_VOU_HEAD", SubPartition.of("GLA_VOU_HEAD_2017_M450000000"));
+        EzQuery<Map> ezQuery = EzQuery.builder(Map.class).from(table).select().addAll().done().build();
+        sqlSession.getMapper(EzMapper.class).query(ezQuery);
     }
 
     @Test

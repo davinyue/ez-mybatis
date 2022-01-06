@@ -1,8 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 public class EntityTable extends AbstractTable {
     private Class<?> etType;
@@ -12,7 +13,7 @@ public class EntityTable extends AbstractTable {
         this.etType = etType;
     }
 
-    private EntityTable(Class<?> etType, String partition) {
+    private EntityTable(Class<?> etType, Partition partition) {
         super(Alias.getAlias(), partition);
         this.etType = etType;
     }
@@ -21,7 +22,7 @@ public class EntityTable extends AbstractTable {
         return new EntityTable(etType);
     }
 
-    public static EntityTable of(Class<?> etType, String partition) {
+    public static EntityTable of(Class<?> etType, Partition partition) {
         return new EntityTable(etType, partition);
     }
 
