@@ -29,7 +29,7 @@ public class SubPartition extends NormalPartition {
     @Override
     public String toSqlStruct(Configuration configuration) {
         DbType dbType = DbTypeUtils.getDbType(configuration);
-        if (dbType == DbType.ORACLE) {
+        if (dbType == DbType.ORACLE || dbType == DbType.DM) {
             return " SUBPARTITION(" + this.partitions.get(0) + ") ";
         } else {
             return super.toSqlStruct(configuration);

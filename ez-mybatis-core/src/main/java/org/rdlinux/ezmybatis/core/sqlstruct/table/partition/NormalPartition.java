@@ -41,7 +41,7 @@ public class NormalPartition implements Partition {
         DbType dbType = DbTypeUtils.getDbType(configuration);
         if (this.partitions == null || this.partitions.isEmpty()) {
             return "";
-        } else if (dbType == DbType.ORACLE) {
+        } else if (dbType == DbType.ORACLE || dbType == DbType.DM) {
             return " PARTITION(" + this.partitions.get(0) + ") ";
         } else {
             StringBuilder sql = new StringBuilder(" PARTITION(");
