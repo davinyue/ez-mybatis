@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.spring.boot.start;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.spring.EzMybatisConfigurationCustom;
 import org.rdlinux.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
-import org.rdlinux.ezmybatis.spring.boot.EzConfigurationCustomizer;
-import org.rdlinux.ezmybatis.spring.interceptor.EzMybatisSpringUpdateInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -18,6 +18,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -36,18 +38,19 @@ import java.util.stream.Stream;
 @Configuration
 @ConditionalOnClass({EzMapper.class})
 @AutoConfigureBefore({MybatisAutoConfiguration.class})
-public class EzMybatisAutoConfiguration {
+public class EzMybatisAutoConfiguration implements ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(EzMybatisAutoConfiguration.class);
+    private ApplicationContext applicationContext;
 
-    @Bean
-    public EzConfigurationCustomizer ezConfigurationCustomizer() {
-        return new EzConfigurationCustomizer(null, null,
-                this.ezMybatisSpringUpdateInterceptor());
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     @Bean
-    public EzMybatisSpringUpdateInterceptor ezMybatisSpringUpdateInterceptor() {
-        return new EzMybatisSpringUpdateInterceptor();
+    public ConfigurationCustomizer ezConfigurationCustomizer() {
+        return configuration -> new EzMybatisConfigurationCustom(configuration,
+                EzMybatisAutoConfiguration.this.applicationContext);
     }
 
     public static class EzMapperRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar {
