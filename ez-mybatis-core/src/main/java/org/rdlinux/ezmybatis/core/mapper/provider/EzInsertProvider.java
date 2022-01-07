@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -16,27 +17,27 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_METHOD)
     public String insert(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        Object entity = param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getInsertSql(configuration, mybatisParamHolder, entity);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getInsertSql(configuration, paramHolder, entity);
     }
 
-    @SuppressWarnings("unchecked")
     @MethodName(BATCH_INSERT_METHOD)
     public String batchInsert(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        List<Object> entitys = (List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getBatchInsertSql(configuration, mybatisParamHolder,
-                entitys);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        List<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getBatchInsertSql(configuration, paramHolder, entitys);
     }
 
-    @SuppressWarnings("unchecked")
     @MethodName(INSERT_BY_SQL_METHOD)
     public String insertBySql(Map<String, Object> param) {
-        String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
-        Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        String sql = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQL);
+        Map<String, Object> sqlParam = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
         param.putAll(sqlParam);
         return sql;
     }

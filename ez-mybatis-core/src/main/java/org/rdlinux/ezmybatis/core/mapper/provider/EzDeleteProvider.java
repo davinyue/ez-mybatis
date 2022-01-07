@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -26,24 +27,24 @@ public class EzDeleteProvider {
 
     @MethodName(DELETE_METHOD)
     public String delete(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Object entity = param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
         Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
         param.put("id", id);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteByIdSql(configuration, paramHolder, ntClass,
-                id);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getDeleteByIdSql(configuration, paramHolder, ntClass, id);
     }
 
-    @SuppressWarnings(value = {"rawtype", "unchecked"})
     @MethodName(BATCH_DELETE_METHOD)
     public String batchDelete(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        List<Object> entitys = (List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        List<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         List<Object> ids = new ArrayList<>(entitys.size());
         for (Object entity : entitys) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
@@ -52,54 +53,53 @@ public class EzDeleteProvider {
             ids.add(id);
         }
         param.put("ids", ids);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getBatchDeleteByIdSql(configuration, paramHolder,
-                ntClass, ids);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
     }
 
     @MethodName(DELETE_BY_ID_METHOD)
     public String deleteById(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Object id = param.get(EzMybatisConstant.MAPPER_PARAM_ID);
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteByIdSql(configuration, paramHolder, ntClass,
-                id);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getDeleteByIdSql(configuration, paramHolder, ntClass, id);
     }
 
-    @SuppressWarnings("unchecked")
     @MethodName(BATCH_DELETE_BY_ID_METHOD)
     public String batchDeleteById(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        Class<?> ntClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        List<Object> ids = (List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_IDS);
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getBatchDeleteByIdSql(configuration, paramHolder,
-                ntClass, ids);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        List<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
     }
 
     @MethodName(DELETE_BY_EZ_DELETE_METHOD)
     public String deleteByEzDelete(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        EzDelete delete = (EzDelete) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteSql(configuration, paramHolder, delete);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        EzDelete delete = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getDeleteSql(configuration, paramHolder, delete);
     }
 
-    @SuppressWarnings("unchecked")
     @MethodName(BATCH_DELETE_BY_EZ_DELETE_METHOD)
     public String batchDeleteByEzDelete(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        List<EzDelete> deletes = (List<EzDelete>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        return SqlGenerateFactory.getSqlGenerate(configuration).getDeleteSql(configuration, paramHolder, deletes);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        List<EzDelete> deletes = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getDeleteSql(configuration, paramHolder, deletes);
     }
 
-    @SuppressWarnings("unchecked")
     @MethodName(DELETE_BY_SQL_METHOD)
     public String deleteBySql(Map<String, Object> param) {
-        String sql = (String) param.get(EzMybatisConstant.MAPPER_PARAM_SQL);
-        Map<String, Object> sqlParam = (Map<String, Object>) param.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        String sql = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQL);
+        Map<String, Object> sqlParam = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
         param.putAll(sqlParam);
         return sql;
     }
