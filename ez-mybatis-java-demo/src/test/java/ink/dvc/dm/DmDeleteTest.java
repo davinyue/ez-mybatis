@@ -1,10 +1,6 @@
 package ink.dvc.dm;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -12,34 +8,16 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
-public class DmDeleteTest {
-
-    public static SqlSession sqlSession;
-
-    static {
-        String resource = "mybatis-config-dm.xml";
-        Reader reader = null;
-        try {
-            reader = Resources.getResourceAsReader(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
-        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(reader);
-        sqlSession = sqlSessionFactory.openSession();
-    }
-
+public class DmDeleteTest extends DmBaseTest {
     @Test
     public void delete() {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        int delete = sqlSession.getMapper(UserMapper.class).delete(user);
+        int delete = DmBaseTest.sqlSession.getMapper(UserMapper.class).delete(user);
         System.out.println(delete);
     }
 
@@ -51,16 +29,16 @@ public class DmDeleteTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             users.add(user);
         }
-        int insert = sqlSession.getMapper(UserMapper.class).batchDelete(users);
-        sqlSession.commit();
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).batchDelete(users);
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void deleteById() {
-        int insert = sqlSession.getMapper(UserMapper.class)
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class)
                 .deleteById("016cdcdd76f94879ab3d24850514812b");
-        sqlSession.commit();
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
@@ -70,8 +48,8 @@ public class DmDeleteTest {
         for (int i = 0; i < 2; i++) {
             users.add("016cdcdd76f94879ab3d24850514812b");
         }
-        int insert = sqlSession.getMapper(UserMapper.class).batchDeleteById(users);
-        sqlSession.commit();
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).batchDeleteById(users);
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
@@ -80,8 +58,8 @@ public class DmDeleteTest {
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
                 .where().addFieldCondition("id", "56").done()
                 .build();
-        int ret = sqlSession.getMapper(EzMapper.class).ezDelete(delete);
-        sqlSession.commit();
+        int ret = DmBaseTest.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
+        DmBaseTest.sqlSession.commit();
         log.info("删除{}条", ret);
     }
 
@@ -96,7 +74,7 @@ public class DmDeleteTest {
                 .where().addFieldCondition("id", "23").done()
                 .build();
         deletes.add(delete);
-        sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
-        sqlSession.commit();
+        DmBaseTest.sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
+        DmBaseTest.sqlSession.commit();
     }
 }
