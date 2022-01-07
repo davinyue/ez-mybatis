@@ -36,40 +36,46 @@ public abstract class NormalCondition implements Condition {
 
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
+        if (this.getOperator() == Operator.in) {
+            return this.inToSqlPart(configuration, mybatisParamHolder);
+        } else {
+            return this.otherToSqlPart(configuration, mybatisParamHolder);
+        }
+    }
+
+    private String otherToSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
+        return " " + this.getSqlField(configuration) + " " +
+                this.getOperator().getOperator() + " " +
+                Condition.valueToSqlStruct(configuration, mybatisParamHolder, this.value) + " ";
+    }
+
+    private String inToSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = new StringBuilder();
         sql.append(" ").append(this.getSqlField(configuration)).append(" ")
                 .append(this.getOperator().getOperator()).append(" ");
-        if (this.getOperator() == Operator.in) {
-            sql.append("( ");
-            if (this.getValue() instanceof Collection) {
-                int i = 0;
-                for (Object value : (Collection<?>) this.getValue()) {
-                    String inValueParam = mybatisParamHolder.getParamName(value);
-                    sql.append(inValueParam);
-                    if (i + 1 < ((Collection<?>) this.getValue()).size()) {
-                        sql.append(", ");
-                    }
-                    i++;
+        sql.append("( ");
+        if (this.value instanceof Collection) {
+            int i = 0;
+            for (Object valueItem : (Collection<?>) this.value) {
+                sql.append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, valueItem));
+                if (i + 1 < ((Collection<?>) this.value).size()) {
+                    sql.append(", ");
                 }
-            } else if (this.getValue().getClass().isArray()) {
-                int i = 0;
-                for (Object value : (Object[]) this.getValue()) {
-                    String inValueParam = mybatisParamHolder.getParamName(value);
-                    sql.append(inValueParam);
-                    if (i + 1 < ((Object[]) this.getValue()).length) {
-                        sql.append(", ");
-                    }
-                    i++;
-                }
-            } else {
-                String param = mybatisParamHolder.getParamName(this.getValue());
-                sql.append(param).append(" ");
+                i++;
             }
-            sql.append(" ) ");
+        } else if (this.value.getClass().isArray()) {
+            int i = 0;
+            for (Object valueItem : (Object[]) this.value) {
+                sql.append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, valueItem));
+                if (i + 1 < ((Object[]) this.value).length) {
+                    sql.append(", ");
+                }
+                i++;
+            }
         } else {
-            String param = mybatisParamHolder.getParamName(this.getValue());
-            sql.append(param).append(" ");
+            sql.append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, this.value));
         }
+        sql.append(" ) ");
         return sql.toString();
     }
 }

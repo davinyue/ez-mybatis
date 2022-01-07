@@ -21,7 +21,7 @@ public class From implements SqlStruct {
 
     static {
         SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                From.fromSql(sqlBuilder, configuration, (EzParam<?>) ezParam);
+                From.fromSql(sqlBuilder, configuration, mybatisParamHolder, (EzParam<?>) ezParam);
         CONVERT.put(DbType.MYSQL, defaultConvert);
         CONVERT.put(DbType.ORACLE, defaultConvert);
         CONVERT.put(DbType.DM, defaultConvert);
@@ -33,10 +33,11 @@ public class From implements SqlStruct {
         this.table = table;
     }
 
-    private static StringBuilder fromSql(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> param) {
+    private static StringBuilder fromSql(StringBuilder sqlBuilder, Configuration configuration,
+                                         MybatisParamHolder paramHolder, EzParam<?> param) {
         From from = param.getFrom();
         Table fromTable = from.getTable();
-        sqlBuilder.append(" FROM ").append(fromTable.toSqlStruct(configuration));
+        sqlBuilder.append(" FROM ").append(fromTable.toSqlStruct(configuration, paramHolder));
         return sqlBuilder;
     }
 
