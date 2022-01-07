@@ -15,6 +15,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
+import org.rdlinux.ezmybatis.utils.StringHashMap;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -43,7 +44,7 @@ public class OracleSelectTest {
     @Test
     public void partitionTest() {
         DbTable table = DbTable.of("GLA_VOU_HEAD", SubPartition.of("GLA_VOU_HEAD_2017_M450000000"));
-        EzQuery<Map> ezQuery = EzQuery.builder(Map.class).from(table).select().addAll().done().build();
+        EzQuery<StringHashMap> ezQuery = EzQuery.builder(StringHashMap.class).from(table).select().addAll().done().build();
         sqlSession.getMapper(EzMapper.class).query(ezQuery);
     }
 
