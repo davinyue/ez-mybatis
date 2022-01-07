@@ -15,8 +15,9 @@ public interface Condition {
     static String valueToSqlStruct(Configuration configuration, MybatisParamHolder mybatisParamHolder,
                                    Object value) {
         if (value instanceof EzQuery) {
-            String sql = " (" + SqlGenerateFactory.getSqlGenerate(configuration).getQuerySql(configuration,
-                    mybatisParamHolder, (EzQuery<?>) value) + ") ";
+            String sql = " (" + SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                    .getQuerySql(configuration,
+                            mybatisParamHolder, (EzQuery<?>) value) + ") ";
             DbType dbType = DbTypeUtils.getDbType(configuration);
             if (dbType == DbType.MYSQL) {
                 if (((EzQuery<?>) value).getLimit() != null) {

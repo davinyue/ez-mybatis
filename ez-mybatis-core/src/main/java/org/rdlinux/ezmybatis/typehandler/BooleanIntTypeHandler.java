@@ -5,6 +5,9 @@ import org.apache.ibatis.type.JdbcType;
 
 import java.sql.*;
 
+/**
+ * 将bool类型存储为int处理器
+ */
 public class BooleanIntTypeHandler extends BaseTypeHandler<Boolean> {
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Boolean parameter, JdbcType jdbcType)
