@@ -22,6 +22,11 @@ public class MybatisParamHolder {
         }
     }
 
+    @SuppressWarnings(value = {"unchecked"})
+    public <T> T get(String param) {
+        return (T) this.mybatisParam.get(param);
+    }
+
     public String getParamName(Object paramValue) {
         Assert.notNull(paramValue, "paramValue can not be null");
         String escape = getEscapeChar(paramValue);
