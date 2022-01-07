@@ -38,7 +38,7 @@ public abstract class BetweenCondition implements Condition {
         }
         return " " + this.getSqlField(configuration) +
                 " " + this.getOperator().getOperator() + " " +
-                mybatisParamHolder.getParamName(this.minValue) + " AND " +
-                mybatisParamHolder.getParamName(this.maxValue) + " ";
+                Condition.valueToSqlStruct(configuration, mybatisParamHolder, this.minValue) + " AND " +
+                Condition.valueToSqlStruct(configuration, mybatisParamHolder, this.maxValue) + " ";
     }
 }

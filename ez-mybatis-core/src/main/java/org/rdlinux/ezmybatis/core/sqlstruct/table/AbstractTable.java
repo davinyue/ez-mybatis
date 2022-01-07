@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
@@ -26,7 +27,7 @@ public abstract class AbstractTable implements Table {
     }
 
     @Override
-    public String toSqlStruct(Configuration configuration) {
+    public String toSqlStruct(Configuration configuration, MybatisParamHolder paramHolder) {
         StringBuilder sqlBuilder = new StringBuilder();
         String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
         sqlBuilder.append(" ").append(keywordQM).append(this.getTableName(configuration)).append(keywordQM);

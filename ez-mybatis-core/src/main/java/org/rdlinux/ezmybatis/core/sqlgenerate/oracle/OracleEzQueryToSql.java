@@ -37,7 +37,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
-            return "SELECT COUNT(1) FROM ( " + sqlBuilder.toString() + ") " + Alias.getAlias();
+            return "SELECT COUNT(*) FROM ( " + sqlBuilder.toString() + ") " + Alias.getAlias();
         } else {
             return sqlBuilder.toString();
         }
