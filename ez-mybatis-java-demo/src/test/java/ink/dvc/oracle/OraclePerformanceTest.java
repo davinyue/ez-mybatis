@@ -1,13 +1,6 @@
 package ink.dvc.oracle;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -15,15 +8,13 @@ import org.rdlinux.ezmybatis.java.entity.PayRequest;
 import org.rdlinux.ezmybatis.java.mapper.PayVoucherMapper;
 import org.rdlinux.ezmybatis.java.oracle.OracleDatasourceInit;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
 @Slf4j
-public class OraclePerformanceTest {
+public class OraclePerformanceTest extends OracleBaseTest {
     private static final String sql = "insert into PAY_VOUCHER (PAY_APP_ID, PAY_APP_NO, CREATE_DATE, AGENCY_CODE, " +
             "BGT_TYPE_CODE, FUND_TYPE_CODE, EXP_FUNC_CODE, GOV_BGT_ECO_CODE, DEP_BGT_ECO_CODE, PRO_CODE, BGT_ID, " +
             "SET_MODE_CODE, PAY_TYPE_CODE, USE_DES, PAY_BUS_TYPE_CODE, PAY_APP_AMT, PAY_CERT_ID, PAY_ACCT_NAME, " +
@@ -76,23 +67,6 @@ public class OraclePerformanceTest {
             "'97EA156A-3EC7-4460-B091-7935A366E891', '11', '年初安排', '429A065F-D5B1-4E88-8024-914D965C7887', '112', " +
             "'社会保障缴费', null, null, '1', '年初批复')";
 
-    public static SqlSession sqlSession;
-
-    static {
-        String resource = "mybatis-config-oracle.xml";
-        Reader reader = null;
-        try {
-            reader = Resources.getResourceAsReader(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
-        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(reader);
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        configuration.setEnvironment(new Environment("development", new JdbcTransactionFactory(),
-                OracleDatasourceInit.dataSource));
-        sqlSession = sqlSessionFactory.openSession();
-    }
 
     private String createSql() {
         String id = UUID.randomUUID().toString().replaceAll("-", "-");
@@ -124,7 +98,7 @@ public class OraclePerformanceTest {
      */
     @Test
     public void mybatisSqlTest() {
-        EzMapper ezMapper = sqlSession.getMapper(EzMapper.class);
+        EzMapper ezMapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
         long start = System.currentTimeMillis();
         int batchSize = 6;
         for (int h = 0; h < 500 / batchSize; h++) {
@@ -135,7 +109,7 @@ public class OraclePerformanceTest {
             sql.append("end;");
             ezMapper.updateBySql(sql.toString(), new HashMap<>());
         }
-        sqlSession.commit();
+        OracleBaseTest.sqlSession.commit();
         long end = System.currentTimeMillis();
         System.out.println("耗时:" + (end - start));
     }
@@ -190,7 +164,7 @@ public class OraclePerformanceTest {
                 "\"云南省\",\"currency_id\":\"eea4d6d26jl04c26b77a638232c9ecd5\",\"currency_code\":\"CNY\"," +
                 "\"currency_name\":\"人民币\",\"est_rat\":0.0,\"update_time\":\"2021-07-14 16:06:29\",\"create_time\"" +
                 ":\"2021-07-14 16:05:57\",\"is_deleted\":2}";
-        PayVoucherMapper voucherMapper = sqlSession.getMapper(PayVoucherMapper.class);
+        PayVoucherMapper voucherMapper = OracleBaseTest.sqlSession.getMapper(PayVoucherMapper.class);
         List<PayRequest> requests = new LinkedList<>();
         for (int i = 0; i < 500; i++) {
             PayRequest request = JacksonUtils.conversion(json, PayRequest.class);
@@ -216,7 +190,7 @@ public class OraclePerformanceTest {
         }
         long end = System.currentTimeMillis();
         System.out.println("耗时" + (end - start));
-        sqlSession.commit();
+        OracleBaseTest.sqlSession.commit();
     }
 
     @Test
