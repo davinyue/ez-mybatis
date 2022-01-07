@@ -59,7 +59,8 @@ public class Join implements SqlStruct {
                 return sqlBuilder;
             }
         }
-        sqlBuilder.append(this.joinType.toSqlStruct()).append(this.joinTable.toSqlStruct(configuration));
+        sqlBuilder.append(this.joinType.toSqlStruct()).append(this.joinTable.toSqlStruct(configuration,
+                mybatisParamHolder));
         if (this.joinType != JoinType.CrossJoin) {
             sqlBuilder.append(" ON ");
         }
