@@ -16,6 +16,7 @@ import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
+import org.rdlinux.ezmybatis.utils.StringHashMap;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -178,11 +179,11 @@ public class MysqlSelectTest {
 
     @Test
     public void normalQueryMap() {
-        EzQuery<?> query = EzQuery.builder(Map.class).from(EntityTable.of(User.class))
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
                 .build();
         EzMapper ezMapper = sqlSession.getMapper(EzMapper.class);
-        List<Map<String, Object>> users = (List<Map<String, Object>>) ezMapper.query(query);
+        List<StringHashMap> users = ezMapper.query(query);
         System.out.println(JacksonUtils.toJsonString(users));
     }
 
