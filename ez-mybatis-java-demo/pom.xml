@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ez-mybatis</artifactId>
-        <groupId>ink.dvc</groupId>
-        <version>0.0.1.RS</version>
+        <groupId>org.rdlinux</groupId>
+        <version>0.0.8.RS</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ez-mybatis-java-demo</artifactId>
@@ -52,9 +52,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>ink.dvc</groupId>
+            <groupId>org.rdlinux</groupId>
             <artifactId>ez-mybatis-core</artifactId>
-            <version>0.0.1.RS</version>
+            <version>0.0.8.RS</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -122,6 +122,16 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <version>2.16.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <version>2.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
         </dependency>
     </dependencies>
     <build>
