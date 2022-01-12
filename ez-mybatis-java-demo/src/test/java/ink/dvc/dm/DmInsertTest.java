@@ -1,34 +1,14 @@
 package ink.dvc.dm;
 
-import ink.dvc.ezmybatis.java.entity.User;
-import ink.dvc.ezmybatis.java.mapper.UserMapper;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
+import org.rdlinux.ezmybatis.java.entity.User;
+import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class DmInsertTest {
-    public static SqlSession sqlSession;
-
-    static {
-        String resource = "mybatis-config-dm.xml";
-        Reader reader = null;
-        try {
-            reader = Resources.getResourceAsReader(resource);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
-        SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(reader);
-        sqlSession = sqlSessionFactory.openSession();
-    }
+public class DmInsertTest extends DmBaseTest {
 
     @Test
     public void insert() {
@@ -38,8 +18,8 @@ public class DmInsertTest {
         //user.setFirstName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = sqlSession.getMapper(UserMapper.class).insert(user);
-        sqlSession.commit();
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
@@ -59,14 +39,14 @@ public class DmInsertTest {
             user.setSex(User.Sex.MAN);
             users.add(user);
         }
-        int insert = sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        sqlSession.commit();
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchInsertTUT() {
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        UserMapper userMapper = DmBaseTest.sqlSession.getMapper(UserMapper.class);
         userMapper.selectById("1s");
         long start = System.currentTimeMillis();
         List<User> users = new LinkedList<>();
@@ -80,7 +60,7 @@ public class DmInsertTest {
             users.add(user);
         }
         int insert = userMapper.batchInsert(users);
-        sqlSession.commit();
+        DmBaseTest.sqlSession.commit();
         long end = System.currentTimeMillis();
         System.out.println("耗时" + (end - start));
     }

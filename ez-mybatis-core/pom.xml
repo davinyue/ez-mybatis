@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ez-mybatis</artifactId>
-        <groupId>ink.dvc</groupId>
-        <version>0.0.1.RS</version>
+        <groupId>org.rdlinux</groupId>
+        <version>0.0.8.RS</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
@@ -59,9 +59,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>ink.dvc</groupId>
+            <groupId>org.rdlinux</groupId>
             <artifactId>ez-mybatis-annotation</artifactId>
-            <version>0.0.1.RS</version>
+            <version>0.0.8.RS</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -73,11 +73,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>3.3.0</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>cglib</groupId>-->
+        <!--            <artifactId>cglib</artifactId>-->
+        <!--            <version>3.3.0</version>-->
+        <!--        </dependency>-->
     </dependencies>
     <build>
         <plugins>

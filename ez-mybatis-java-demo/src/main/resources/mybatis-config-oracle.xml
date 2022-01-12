@@ -13,7 +13,7 @@
         <setting name="aggressiveLazyLoading" value="false"/>
         <!--开启二级缓存 -->
         <setting name="cacheEnabled" value="true"/>
-        <setting name="logImpl" value="LOG4j2"/>
+        <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>
         <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
@@ -28,20 +28,6 @@
     <typeHandlers>
         <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="java.math.RoundingMode"/>
     </typeHandlers>
-    <plugins>
-        <!--        <plugin interceptor="MybatisUpdateInterceptor">-->
-        <!--            <property name="dialect" value="mysql"/>-->
-        <!--        </plugin>-->
-        <plugin interceptor="ink.dvc.ezmybatis.core.interceptor.ResultSetHandlerInterceptor">
-            <property name="dialect" value="mysql"/>
-        </plugin>
-        <plugin interceptor="ink.dvc.ezmybatis.core.interceptor.ExecutorInterceptor">
-            <property name="dialect" value="mysql"/>
-        </plugin>
-        <plugin interceptor="ink.dvc.ezmybatis.core.interceptor.UpdateInterceptor">
-            <property name="dialect" value="mysql"/>
-        </plugin>
-    </plugins>
     <!-- 配置环境：可以配置多个环境，default：配置某一个环境的唯一标识，表示默认使用哪个环境 -->
     <environments default="development">
         <environment id="development">
@@ -50,15 +36,15 @@
                 <!-- 配置连接信息 -->
                 <property name="driver" value="oracle.jdbc.OracleDriver"/>
                 <property name="url"
-                          value="jdbc:oracle:thin:@192.168.1.110:1521/helowin"/>
-                <property name="username" value="EZMYBATIS"/>
-                <property name="password" value="123456"/>
+                          value="jdbc:oracle:thin:@192.168.11.36:1521/ynczdb4"/>
+                <property name="username" value="pay_ys"/>
+                <property name="password" value="a"/>
             </dataSource>
         </environment>
     </environments>
     <!-- 配置映射文件：用来配置sql语句和结果集类型等 -->
     <mappers>
-        <mapper class="ink.dvc.ezmybatis.java.mapper.UserMapper"/>
-        <mapper class="ink.dvc.ezmybatis.core.mapper.EzMapper"/>
+        <mapper class="org.rdlinux.ezmybatis.java.mapper.UserMapper"/>
+        <mapper class="org.rdlinux.ezmybatis.java.mapper.PayVoucherMapper"/>
     </mappers>
 </configuration>
