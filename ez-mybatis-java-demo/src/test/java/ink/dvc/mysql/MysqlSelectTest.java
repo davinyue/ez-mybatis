@@ -23,9 +23,15 @@ import java.util.Map;
 public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void selectById() {
-        User user = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).selectById("01e3ff9339f2427d9a66d3a8799de2c9");
+        User user = MysqlBaseTest.sqlSession.getMapper(UserMapper.class)
+                .selectById("01e3ff9339f2427d9a66d3a8799de2c9");
         System.out.println(JacksonUtils.toJsonString(user));
-        user = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).selectById(User.class, "01e3ff9339f2427d9a66d3a8799de2c9");
+    }
+
+    @Test
+    public void normalSelectById() {
+        User user = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).selectById(User.class,
+                "01e3ff9339f2427d9a66d3a8799de2c9");
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
@@ -167,6 +173,15 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
+    public void queryOne() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done().page(1, 1)
+                .build();
+        User user = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).queryOne(query);
+        System.out.println(JacksonUtils.toJsonString(user));
+    }
+
+    @Test
     public void normalQueryOne() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done().page(1, 1)
@@ -177,7 +192,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
 
     @Test
     public void normalQueryCount() {
-        EzQuery<Integer> query = EzQuery.builder(Integer.class).from(EntityTable.of(User.class))
+        EzQuery<Integer> query = EzQuery.builder(int.class).from(EntityTable.of(User.class))
                 .select().addCount("id").done().page(1, 1)
                 .build();
         Integer count = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
