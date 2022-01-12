@@ -111,6 +111,10 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
     List<Nt> query(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Nt> query);
 
+
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
+    Nt queryOne(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<Nt> query);
+
     /**
      * 根据ezQuery查询count
      */
