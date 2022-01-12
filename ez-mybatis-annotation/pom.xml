@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ez-mybatis</artifactId>
-        <groupId>ink.dvc</groupId>
-        <version>0.0.1.RS</version>
+        <groupId>org.rdlinux</groupId>
+        <version>0.0.8.RS</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
