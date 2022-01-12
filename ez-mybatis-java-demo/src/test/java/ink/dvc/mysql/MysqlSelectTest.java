@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 @Log4j2
 public class MysqlSelectTest extends MysqlBaseTest {
@@ -35,6 +36,47 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(JacksonUtils.toJsonString(user));
     }
 
+    /**
+     * 通用mapper结果类型并发测试
+     */
+    @Test
+    public void normalConcurrentRetTypeTest() throws InterruptedException {
+        EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzQuery<User> userQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done().page(1, 1).build();
+        EzQuery<UserOrg> uoQuery = EzQuery.builder(UserOrg.class).from(EntityTable.of(UserOrg.class))
+                .select().addAll().done().page(1, 1).build();
+        CountDownLatch downLatch = new CountDownLatch(2);
+        CountDownLatch sync = new CountDownLatch(2);
+        new Thread(() -> {
+            downLatch.countDown();
+            try {
+                downLatch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            for (int i = 0; i < 1000; i++) {
+                List<User> ret = mapper.query(userQuery);
+                System.out.println("用户:" + JacksonUtils.toJsonString(ret));
+            }
+            sync.countDown();
+        }).start();
+        new Thread(() -> {
+            downLatch.countDown();
+            try {
+                downLatch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            for (int i = 0; i < 1000; i++) {
+                List<UserOrg> ret = mapper.query(uoQuery);
+                System.out.println("用户机构:" + JacksonUtils.toJsonString(ret));
+            }
+            sync.countDown();
+        }).start();
+        sync.await();
+    }
+
     @Test
     public void selectByIds() {
         List<String> ids = new LinkedList<>();
@@ -47,7 +89,26 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
+    public void normalSelectByIds() {
+        List<String> ids = new LinkedList<>();
+        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
+        ids.add("1");
+        List<User> users = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+    }
+
+    @Test
     public void ezQueryJoinTest() {
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+                .where().addFieldCondition("name", "张三").done().page(1, 1).build();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
+                .join(sonQ).addColumnCompareCondition("id", "id").done().build();
+        List<User> ret = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(ret));
+    }
+
+    @Test
+    public void normalEzQueryJoinTest() {
         EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
@@ -58,6 +119,16 @@ public class MysqlSelectTest extends MysqlBaseTest {
 
     @Test
     public void ezQueryInTest() {
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+                .build();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
+                .where().addColumnCondition("id", Operator.in, sonQ).done().build();
+        List<User> ret = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(ret));
+    }
+
+    @Test
+    public void normalEzQueryInTest() {
         EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
@@ -76,7 +147,19 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
-    public void queryTest() {
+    public void normalSelectBySql() {
+        HashMap<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("id", "1");
+        List<Map<String, Object>> users = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).selectMapBySql(
+                "select name from ez_user WHERE id = #{id}", sqlParam);
+        System.out.println(JacksonUtils.toJsonString(users));
+    }
+
+    /**
+     * 交替测试, 主要测试ezMapper的返回类型是否正确
+     */
+    @Test
+    public void alternateQueryTest() {
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
@@ -87,12 +170,14 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .page(1, 2)
                 .build();
+        //先使用专用mapper查询
         UserMapper userMapper = MysqlBaseTest.sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);
         System.out.println(JacksonUtils.toJsonString(users));
         MysqlBaseTest.sqlSession.clearCache();
         users = userMapper.query(query);
         System.out.println(JacksonUtils.toJsonString(users));
+        //使用通用mapper查询
         EzMapper ezMapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
         users = ezMapper.query(query);
         System.out.println(JacksonUtils.toJsonString(users));
@@ -103,7 +188,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
-    public void ezMapperQueryTest() {
+    public void alternateEzMapperQueryTest() {
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
@@ -144,7 +229,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
-    public void countTest1() {
+    public void normalCountTest() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().add("name").done()
                 //.where().addColumnCondition("name", Operator.gt, 1).done()
