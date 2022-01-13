@@ -3,9 +3,10 @@ package org.rdlinux.ezmybatis.spring.boot.start;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.spring.EzMybatisConfigurationCustom;
 import org.rdlinux.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
+import org.rdlinux.ezmybatis.spring.SpringEzMybatisInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.beans.PropertyDescriptor;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,10 +40,13 @@ import java.util.stream.Stream;
 @Import(EzMybatisAutoConfiguration.EzMapperRegistrar.class)
 @Configuration
 @ConditionalOnClass({EzMapper.class})
+@EnableConfigurationProperties(EzMybatisProperties.class)
 @AutoConfigureBefore({MybatisAutoConfiguration.class})
 public class EzMybatisAutoConfiguration implements ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(EzMybatisAutoConfiguration.class);
     private ApplicationContext applicationContext;
+    @Resource
+    private EzMybatisProperties ezMybatisProperties;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -49,8 +55,12 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
 
     @Bean
     public ConfigurationCustomizer ezConfigurationCustomizer() {
-        return configuration -> new EzMybatisConfigurationCustom(configuration,
-                EzMybatisAutoConfiguration.this.applicationContext);
+        return configuration -> {
+            SpringEzMybatisInit.init(configuration, EzMybatisAutoConfiguration.this.applicationContext);
+            if (this.ezMybatisProperties.getDbType() != null) {
+                EzMybatisContent.setDbType(configuration, this.ezMybatisProperties.getDbType());
+            }
+        };
     }
 
     public static class EzMapperRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar {
@@ -60,6 +70,7 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
         public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
                                             BeanDefinitionRegistry registry) {
             List<String> packages = new LinkedList<>(AutoConfigurationPackages.get(this.beanFactory));
+            packages.add(EzMapper.class.getPackage().getName());
             if (EzMybatisAutoConfiguration.log.isDebugEnabled()) {
                 packages.forEach(pkg -> EzMybatisAutoConfiguration.log
                         .debug("Using auto-configuration base package '{}'", pkg));

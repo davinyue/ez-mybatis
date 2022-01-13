@@ -4,9 +4,16 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 
 public class EzMybatisMapperScannerConfigurer extends MapperScannerConfigurer {
+    public EzMybatisMapperScannerConfigurer() {
+        super.setBasePackage(EzMapper.class.getPackage().getName());
+    }
+
     @Override
     public void setBasePackage(String basePackage) {
-        basePackage = basePackage + "," + EzMapper.class.getPackage().getName();
+        String defaultPackage = EzMapper.class.getPackage().getName();
+        if (!basePackage.contains(defaultPackage)) {
+            basePackage = basePackage + "," + defaultPackage;
+        }
         super.setBasePackage(basePackage);
     }
 }
