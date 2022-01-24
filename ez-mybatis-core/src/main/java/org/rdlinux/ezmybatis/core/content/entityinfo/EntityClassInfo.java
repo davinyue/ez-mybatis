@@ -23,7 +23,7 @@ public class EntityClassInfo {
     private EntityFieldInfo primaryKeyInfo;
 
     public EntityClassInfo(Class<?> entityClass, EntityInfoBuildConfig buildConfig) {
-        Assert.notNull(entityClass);
+        Assert.notNull(entityClass, "entityClass can not be null");
         this.tableName = HumpLineStringUtils.humpToLine(entityClass.getSimpleName());
         if (entityClass.isAnnotationPresent(Table.class)) {
             Table annotation = entityClass.getAnnotation(Table.class);
