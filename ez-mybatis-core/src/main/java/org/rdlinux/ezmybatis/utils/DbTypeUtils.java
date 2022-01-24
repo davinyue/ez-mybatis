@@ -37,6 +37,7 @@ public class DbTypeUtils {
                             driver = ReflectionUtils.getFieldValue(dataSource, "driverClassName");
                         }
                     }
+                    Assert.notEmpty(driver, "Unsupported db type");
                     if (driver.contains("mysql")) {
                         dbType = DbType.MYSQL;
                     } else if (driver.contains("oracle")) {
