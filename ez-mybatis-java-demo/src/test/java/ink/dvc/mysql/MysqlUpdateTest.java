@@ -138,7 +138,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     @Test
     public void updateByEzParam() {
         EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
@@ -150,11 +150,11 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     public void batchUpdateByEzParam() {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("name", "张碧澄")
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "张碧澄")
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("name", "杨修")
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "杨修")
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);

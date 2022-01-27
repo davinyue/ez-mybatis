@@ -77,7 +77,7 @@ public class OracleUpdateTest extends OracleBaseTest {
     @Test
     public void updateByEzParam() {
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.update(ezUpdate);
@@ -89,11 +89,11 @@ public class OracleUpdateTest extends OracleBaseTest {
     public void batchUpdateByEzParam() {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).set("userAge", 2)
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 2)
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
