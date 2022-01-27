@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core;
 
+import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Update;
@@ -11,7 +12,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.update.SyntaxUpdateColumnItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.SyntaxUpdateFieldItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
-import lombok.Getter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,27 +26,27 @@ public class EzUpdate extends EzParam<Integer> {
         this.set = new Update();
     }
 
-    public static EzUpdateBuilder update(EntityTable table) {
+    public static EzUpdateBuilder update(Table table) {
         return new EzUpdateBuilder(table);
     }
 
     public static class EzUpdateBuilder {
         private EzUpdate update;
 
-        private EzUpdateBuilder(EntityTable table) {
+        private EzUpdateBuilder(Table table) {
             this.update = new EzUpdate();
             this.update.table = table;
             this.update.from = new From(table);
         }
 
-        public EzUpdateBuilder set(String field, Object value) {
+        public EzUpdateBuilder setField(String field, Object value) {
             this.update.set.getItems().add(new UpdateFieldItem((EntityTable) this.update.table, field, value));
             return this;
         }
 
-        public EzUpdateBuilder set(boolean sure, String field, Object value) {
+        public EzUpdateBuilder setField(boolean sure, String field, Object value) {
             if (sure) {
-                this.set(field, value);
+                this.setField(field, value);
             }
             return this;
         }
@@ -63,14 +63,14 @@ public class EzUpdate extends EzParam<Integer> {
             return this;
         }
 
-        public EzUpdateBuilder setSyntax(String field, String syntax) {
+        public EzUpdateBuilder setFieldSyntax(String field, String syntax) {
             this.update.set.getItems().add(new SyntaxUpdateFieldItem((EntityTable) this.update.table, field, syntax));
             return this;
         }
 
-        public EzUpdateBuilder setSyntax(boolean sure, String field, String syntax) {
+        public EzUpdateBuilder setFieldSyntax(boolean sure, String field, String syntax) {
             if (sure) {
-                this.setSyntax(field, syntax);
+                this.setFieldSyntax(field, syntax);
             }
             return this;
         }
@@ -87,14 +87,14 @@ public class EzUpdate extends EzParam<Integer> {
             return this;
         }
 
-        public EzUpdateBuilder set(EntityTable table, String field, Object value) {
+        public EzUpdateBuilder setField(EntityTable table, String field, Object value) {
             this.update.set.getItems().add(new UpdateFieldItem(table, field, value));
             return this;
         }
 
-        public EzUpdateBuilder set(boolean sure, EntityTable table, String field, Object value) {
+        public EzUpdateBuilder setField(boolean sure, EntityTable table, String field, Object value) {
             if (sure) {
-                this.set(table, field, value);
+                this.setField(table, field, value);
             }
             return this;
         }
@@ -111,14 +111,14 @@ public class EzUpdate extends EzParam<Integer> {
             return this;
         }
 
-        public EzUpdateBuilder setSyntax(EntityTable table, String field, String syntax) {
+        public EzUpdateBuilder setFieldSyntax(EntityTable table, String field, String syntax) {
             this.update.set.getItems().add(new SyntaxUpdateFieldItem(table, field, syntax));
             return this;
         }
 
-        public EzUpdateBuilder setSyntax(boolean sure, EntityTable table, String field, String syntax) {
+        public EzUpdateBuilder setFieldSyntax(boolean sure, EntityTable table, String field, String syntax) {
             if (sure) {
-                this.setSyntax(table, field, syntax);
+                this.setFieldSyntax(table, field, syntax);
             }
             return this;
         }
