@@ -97,8 +97,8 @@
                 <version>2.9</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <defaultAuthor>LarryYu</defaultAuthor>
-                    <defaultVersion>2.1.2.RELEASE</defaultVersion>
+                    <defaultAuthor>DavinYue</defaultAuthor>
+                    <defaultVersion>${project.version}</defaultVersion>
                 </configuration>
                 <executions>
                     <execution>

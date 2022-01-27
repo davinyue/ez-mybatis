@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.rdlinux</groupId>
             <artifactId>ez-mybatis-annotation</artifactId>
-            <version>0.1.0.RS</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -118,8 +118,8 @@
                 <version>2.9</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <defaultAuthor>LarryYu</defaultAuthor>
-                    <defaultVersion>2.1.2.RELEASE</defaultVersion>
+                    <defaultAuthor>DavinYue</defaultAuthor>
+                    <defaultVersion>${project.version}</defaultVersion>
                 </configuration>
                 <executions>
                     <execution>
