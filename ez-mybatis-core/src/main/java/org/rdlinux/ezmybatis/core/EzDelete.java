@@ -1,12 +1,12 @@
 package org.rdlinux.ezmybatis.core;
 
+import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import lombok.Getter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,14 +20,14 @@ public class EzDelete extends EzParam<Integer> {
         super(Integer.class);
     }
 
-    public static EzDeleteBuilder delete(EntityTable table) {
+    public static EzDeleteBuilder delete(Table table) {
         return new EzDeleteBuilder(table);
     }
 
     public static class EzDeleteBuilder {
         private EzDelete delete;
 
-        private EzDeleteBuilder(EntityTable table) {
+        private EzDeleteBuilder(Table table) {
             this.delete = new EzDelete();
             this.delete.deletes.add(table);
             this.delete.table = table;
