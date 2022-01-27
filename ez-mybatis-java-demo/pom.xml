@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.rdlinux</groupId>
             <artifactId>ez-mybatis-core</artifactId>
-            <version>0.1.0.RS</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -174,7 +174,7 @@
                 <configuration>
                     <aggregate>true</aggregate>
                     <defaultAuthor>DavinYue</defaultAuthor>
-                    <defaultVersion>2.1.2.RELEASE</defaultVersion>
+                    <defaultVersion>${project.version}</defaultVersion>
                 </configuration>
                 <executions>
                     <execution>
