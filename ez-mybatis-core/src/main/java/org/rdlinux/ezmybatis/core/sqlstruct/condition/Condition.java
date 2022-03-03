@@ -33,11 +33,14 @@ public interface Condition {
     /**
      * 获取逻辑运算符号
      */
-    LoginSymbol getLoginSymbol();
+    LogicalOperator getLogicalOperator();
 
     String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder);
 
-    static enum LoginSymbol {
+    /**
+     * 逻辑运算符
+     */
+    static enum LogicalOperator {
         OR,
         AND;
     }

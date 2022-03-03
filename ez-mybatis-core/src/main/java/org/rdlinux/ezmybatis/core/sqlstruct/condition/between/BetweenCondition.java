@@ -15,7 +15,7 @@ public abstract class BetweenCondition implements Condition {
     protected Operator operator = Operator.between;
     @Getter
     @Setter
-    protected LoginSymbol loginSymbol;
+    protected LogicalOperator logicalOperator;
     @Getter
     @Setter
     protected Object minValue;
@@ -23,8 +23,8 @@ public abstract class BetweenCondition implements Condition {
     @Setter
     protected Object maxValue;
 
-    public BetweenCondition(LoginSymbol loginSymbol, Object minValue, Object maxValue) {
-        this.loginSymbol = loginSymbol;
+    public BetweenCondition(LogicalOperator logicalOperator, Object minValue, Object maxValue) {
+        this.logicalOperator = logicalOperator;
         this.minValue = minValue;
         this.maxValue = maxValue;
     }

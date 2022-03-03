@@ -11,18 +11,18 @@ import java.util.List;
  */
 public class GroupCondition implements Condition {
     private List<Condition> conditions;
-    private LoginSymbol loginSymbol;
+    private LogicalOperator logicalOperator;
 
-    public GroupCondition(List<Condition> conditions, LoginSymbol loginSymbol) {
+    public GroupCondition(List<Condition> conditions, LogicalOperator logicalOperator) {
         Assert.notNull(conditions, "conditions can not be empty");
-        Assert.notNull(loginSymbol, "loginSymbol can not be null");
+        Assert.notNull(logicalOperator, "loginSymbol can not be null");
         this.conditions = conditions;
-        this.loginSymbol = loginSymbol;
+        this.logicalOperator = logicalOperator;
     }
 
     @Override
-    public LoginSymbol getLoginSymbol() {
-        return this.loginSymbol;
+    public LogicalOperator getLogicalOperator() {
+        return this.logicalOperator;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GroupCondition implements Condition {
                 Condition condition = this.conditions.get(i);
                 Assert.notNull(condition, "condition can not be null");
                 if (i != 0) {
-                    sql.append(" ").append(condition.getLoginSymbol().name()).append(" ");
+                    sql.append(" ").append(condition.getLogicalOperator().name()).append(" ");
                 }
                 sql.append(condition.toSqlPart(configuration, mybatisParamHolder));
             }

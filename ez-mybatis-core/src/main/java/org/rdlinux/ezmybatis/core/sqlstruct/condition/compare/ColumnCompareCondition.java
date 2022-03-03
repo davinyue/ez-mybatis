@@ -14,7 +14,7 @@ import org.rdlinux.ezmybatis.utils.DbTypeUtils;
  */
 @Getter
 public class ColumnCompareCondition implements Condition {
-    private LoginSymbol loginSymbol;
+    private LogicalOperator logicalOperator;
     private Table leftTable;
     private String leftColumn;
     private Operator operator;
@@ -23,7 +23,7 @@ public class ColumnCompareCondition implements Condition {
 
     public ColumnCompareCondition(Table leftTable, String leftColumn, Operator operator,
                                   Table rightTable, String rightColumn) {
-        this.loginSymbol = LoginSymbol.AND;
+        this.logicalOperator = LogicalOperator.AND;
         this.leftTable = leftTable;
         this.leftColumn = leftColumn;
         this.operator = operator;
@@ -31,9 +31,9 @@ public class ColumnCompareCondition implements Condition {
         this.rightColumn = rightColumn;
     }
 
-    public ColumnCompareCondition(LoginSymbol loginSymbol, Table leftTable, String leftColumn, Operator operator,
+    public ColumnCompareCondition(LogicalOperator logicalOperator, Table leftTable, String leftColumn, Operator operator,
                                   Table rightTable, String rightColumn) {
-        this.loginSymbol = loginSymbol;
+        this.logicalOperator = logicalOperator;
         this.leftTable = leftTable;
         this.leftColumn = leftColumn;
         this.operator = operator;
@@ -43,8 +43,8 @@ public class ColumnCompareCondition implements Condition {
 
 
     @Override
-    public LoginSymbol getLoginSymbol() {
-        return this.loginSymbol;
+    public LogicalOperator getLogicalOperator() {
+        return this.logicalOperator;
     }
 
     @Override

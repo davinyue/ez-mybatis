@@ -17,9 +17,9 @@ public class NormalFieldCondition extends NormalCondition {
     private EntityTable table;
     private String field;
 
-    public NormalFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field, Operator operator,
+    public NormalFieldCondition(LogicalOperator logicalOperator, EntityTable table, String field, Operator operator,
                                 Object value) {
-        super(loginSymbol, operator, value);
+        super(logicalOperator, operator, value);
         this.table = table;
         this.field = field;
     }

@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.nil;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 
 /**
  * 是空条件
@@ -15,7 +15,7 @@ public abstract class IsNullCondition implements Condition {
     protected Operator operator = Operator.isNull;
     @Getter
     @Setter
-    protected LoginSymbol loginSymbol;
+    protected LogicalOperator logicalOperator;
 
     protected abstract String getSqlField(Configuration configuration);
 

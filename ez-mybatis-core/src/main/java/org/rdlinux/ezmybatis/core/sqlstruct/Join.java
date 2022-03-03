@@ -83,8 +83,8 @@ public class Join implements SqlStruct {
             this.join = join;
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
-            GroupCondition condition = new GroupCondition(new LinkedList<>(), loginSymbol);
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(Condition.LogicalOperator logicalOperator) {
+            GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             Join newJoin = new Join();
             newJoin.setTable(this.join.getTable());
@@ -94,7 +94,7 @@ public class Join implements SqlStruct {
         }
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
-            return this.groupCondition(Condition.LoginSymbol.AND);
+            return this.groupCondition(Condition.LogicalOperator.AND);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> join(JoinType joinType, Table joinTable) {
