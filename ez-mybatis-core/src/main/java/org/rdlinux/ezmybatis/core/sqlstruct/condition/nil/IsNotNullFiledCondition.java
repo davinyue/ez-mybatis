@@ -8,8 +8,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
  */
 public class IsNotNullFiledCondition extends IsNullFieldCondition {
 
-    public IsNotNullFiledCondition(LoginSymbol loginSymbol, EntityTable table, String field) {
-        super(loginSymbol, table, field);
+    public IsNotNullFiledCondition(LogicalOperator logicalOperator, EntityTable table, String field) {
+        super(logicalOperator, table, field);
         this.operator = Operator.isNotNull;
     }
 }

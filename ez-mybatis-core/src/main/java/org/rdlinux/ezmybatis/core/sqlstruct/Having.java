@@ -70,35 +70,35 @@ public class Having implements SqlStruct {
             this.sonBuilder = this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasCondition(Condition.LogicalOperator logicalOperator, String alias,
                                                         Operator operator, Object value) {
-            this.conditions.add(new NormalAliasCondition(loginSymbol, alias, operator, value));
+            this.conditions.add(new NormalAliasCondition(logicalOperator, alias, operator, value));
             return this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, Condition.LogicalOperator logicalOperator, String alias,
                                                         Operator operator, Object value) {
             if (sure) {
-                return this.addAliasCondition(loginSymbol, alias, operator, value);
+                return this.addAliasCondition(logicalOperator, alias, operator, value);
             }
             return this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasCondition(Condition.LogicalOperator logicalOperator, String alias,
                                                         Object value) {
-            return this.addAliasCondition(loginSymbol, alias, Operator.eq, value);
+            return this.addAliasCondition(logicalOperator, alias, Operator.eq, value);
         }
 
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, Condition.LogicalOperator logicalOperator, String alias,
                                                         Object value) {
             if (sure) {
-                return this.addAliasCondition(loginSymbol, alias, value);
+                return this.addAliasCondition(logicalOperator, alias, value);
             }
             return this;
         }
 
         public HavingBuilder<Builder> addAliasCondition(String alias, Object value) {
-            return this.addAliasCondition(Condition.LoginSymbol.AND, alias, Operator.eq, value);
+            return this.addAliasCondition(Condition.LogicalOperator.AND, alias, Operator.eq, value);
         }
 
         public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Object value) {
@@ -109,7 +109,7 @@ public class Having implements SqlStruct {
         }
 
         public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, Object value) {
-            return this.addAliasCondition(Condition.LoginSymbol.AND, alias, operator, value);
+            return this.addAliasCondition(Condition.LogicalOperator.AND, alias, operator, value);
         }
 
         public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator, Object value) {
@@ -119,22 +119,22 @@ public class Having implements SqlStruct {
             return this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasCondition(Condition.LogicalOperator logicalOperator, String alias,
                                                         Operator operator, String otherAlias) {
-            this.conditions.add(new AliasCompareCondition(loginSymbol, alias, operator, otherAlias));
+            this.conditions.add(new AliasCompareCondition(logicalOperator, alias, operator, otherAlias));
             return this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, Condition.LogicalOperator logicalOperator, String alias,
                                                         Operator operator, String otherAlias) {
             if (sure) {
-                return this.addAliasCondition(loginSymbol, alias, operator, otherAlias);
+                return this.addAliasCondition(logicalOperator, alias, operator, otherAlias);
             }
             return this;
         }
 
         public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, String otherAlias) {
-            this.conditions.add(new AliasCompareCondition(Condition.LoginSymbol.AND, alias, operator, otherAlias));
+            this.conditions.add(new AliasCompareCondition(Condition.LogicalOperator.AND, alias, operator, otherAlias));
             return this;
         }
 
@@ -147,7 +147,7 @@ public class Having implements SqlStruct {
         }
 
         public HavingBuilder<Builder> addAliasCondition(String alias, String otherAlias) {
-            this.conditions.add(new AliasCompareCondition(Condition.LoginSymbol.AND, alias, Operator.eq,
+            this.conditions.add(new AliasCompareCondition(Condition.LogicalOperator.AND, alias, Operator.eq,
                     otherAlias));
             return this;
         }
@@ -162,18 +162,18 @@ public class Having implements SqlStruct {
         /**
          * 添加is null条件
          */
-        public HavingBuilder<Builder> addAliasIsNullCondition(Condition.LoginSymbol loginSymbol, String alias) {
-            this.conditions.add(new IsNullAliasCondition(loginSymbol, alias));
+        public HavingBuilder<Builder> addAliasIsNullCondition(Condition.LogicalOperator logicalOperator, String alias) {
+            this.conditions.add(new IsNullAliasCondition(logicalOperator, alias));
             return this;
         }
 
         /**
          * 添加is null条件
          */
-        public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, Condition.LoginSymbol loginSymbol,
+        public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, Condition.LogicalOperator logicalOperator,
                                                               String alias) {
             if (sure) {
-                return this.addAliasIsNullCondition(loginSymbol, alias);
+                return this.addAliasIsNullCondition(logicalOperator, alias);
             }
             return this;
         }
@@ -182,7 +182,7 @@ public class Having implements SqlStruct {
          * 添加is null条件
          */
         public HavingBuilder<Builder> addAliasIsNullCondition(String alias) {
-            this.conditions.add(new IsNullAliasCondition(Condition.LoginSymbol.AND, alias));
+            this.conditions.add(new IsNullAliasCondition(Condition.LogicalOperator.AND, alias));
             return this;
         }
 
@@ -199,18 +199,18 @@ public class Having implements SqlStruct {
         /**
          * 添加is not null条件
          */
-        public HavingBuilder<Builder> addAliasIsNotNullCondition(Condition.LoginSymbol loginSymbol, String alias) {
-            this.conditions.add(new IsNotNullAliasCondition(loginSymbol, alias));
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(Condition.LogicalOperator logicalOperator, String alias) {
+            this.conditions.add(new IsNotNullAliasCondition(logicalOperator, alias));
             return this;
         }
 
         /**
          * 添加is not null条件
          */
-        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, Condition.LoginSymbol loginSymbol,
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, Condition.LogicalOperator logicalOperator,
                                                                  String alias) {
             if (sure) {
-                return this.addAliasIsNotNullCondition(loginSymbol, alias);
+                return this.addAliasIsNotNullCondition(logicalOperator, alias);
             }
             return this;
         }
@@ -219,7 +219,7 @@ public class Having implements SqlStruct {
          * 添加is not null条件
          */
         public HavingBuilder<Builder> addAliasIsNotNullCondition(String alias) {
-            this.conditions.add(new IsNotNullAliasCondition(Condition.LoginSymbol.AND, alias));
+            this.conditions.add(new IsNotNullAliasCondition(Condition.LogicalOperator.AND, alias));
             return this;
         }
 
@@ -236,19 +236,19 @@ public class Having implements SqlStruct {
         /**
          * 添加between on条件
          */
-        public HavingBuilder<Builder> addAliasBtCondition(Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasBtCondition(Condition.LogicalOperator logicalOperator, String alias,
                                                           Object minValue, Object maxValue) {
-            this.conditions.add(new BetweenAliasCondition(loginSymbol, alias, minValue, maxValue));
+            this.conditions.add(new BetweenAliasCondition(logicalOperator, alias, minValue, maxValue));
             return this;
         }
 
         /**
          * 添加between on条件
          */
-        public HavingBuilder<Builder> addAliasBtCondition(boolean sure, Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasBtCondition(boolean sure, Condition.LogicalOperator logicalOperator, String alias,
                                                           Object minValue, Object maxValue) {
             if (sure) {
-                return this.addAliasBtCondition(loginSymbol, alias, minValue, maxValue);
+                return this.addAliasBtCondition(logicalOperator, alias, minValue, maxValue);
             }
             return this;
         }
@@ -257,7 +257,7 @@ public class Having implements SqlStruct {
          * 添加between on条件
          */
         public HavingBuilder<Builder> addAliasBtCondition(String alias, Object minValue, Object maxValue) {
-            this.conditions.add(new BetweenAliasCondition(Condition.LoginSymbol.AND, alias, minValue, maxValue));
+            this.conditions.add(new BetweenAliasCondition(Condition.LogicalOperator.AND, alias, minValue, maxValue));
             return this;
         }
 
@@ -275,19 +275,19 @@ public class Having implements SqlStruct {
         /**
          * 添加not between on条件
          */
-        public HavingBuilder<Builder> addAliasNotBtCondition(Condition.LoginSymbol loginSymbol, String alias,
+        public HavingBuilder<Builder> addAliasNotBtCondition(Condition.LogicalOperator logicalOperator, String alias,
                                                              Object minValue, Object maxValue) {
-            this.conditions.add(new NotBetweenAliasCondition(loginSymbol, alias, minValue, maxValue));
+            this.conditions.add(new NotBetweenAliasCondition(logicalOperator, alias, minValue, maxValue));
             return this;
         }
 
         /**
          * 添加not between on条件
          */
-        public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, Condition.LoginSymbol loginSymbol,
+        public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, Condition.LogicalOperator logicalOperator,
                                                              String alias, Object minValue, Object maxValue) {
             if (sure) {
-                return this.addAliasNotBtCondition(loginSymbol, alias, minValue, maxValue);
+                return this.addAliasNotBtCondition(logicalOperator, alias, minValue, maxValue);
             }
             return this;
         }
@@ -296,7 +296,7 @@ public class Having implements SqlStruct {
          * 添加not between on条件
          */
         public HavingBuilder<Builder> addAliasNotBtCondition(String alias, Object minValue, Object maxValue) {
-            this.conditions.add(new NotBetweenAliasCondition(Condition.LoginSymbol.AND, alias, minValue, maxValue));
+            this.conditions.add(new NotBetweenAliasCondition(Condition.LogicalOperator.AND, alias, minValue, maxValue));
             return this;
         }
 
@@ -311,14 +311,14 @@ public class Having implements SqlStruct {
             return this;
         }
 
-        public HavingBuilder<HavingBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
-            GroupCondition condition = new GroupCondition(new LinkedList<>(), loginSymbol);
+        public HavingBuilder<HavingBuilder<Builder>> groupCondition(Condition.LogicalOperator logicalOperator) {
+            GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             return new HavingBuilder<>(this, new Having(condition.getConditions()), this.table);
         }
 
         public HavingBuilder<HavingBuilder<Builder>> groupCondition() {
-            return this.groupCondition(Condition.LoginSymbol.AND);
+            return this.groupCondition(Condition.LogicalOperator.AND);
         }
     }
 }

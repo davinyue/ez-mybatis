@@ -13,8 +13,8 @@ import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 public class NormalAliasCondition extends NormalCondition {
     private String alias;
 
-    public NormalAliasCondition(LoginSymbol loginSymbol, String alias, Operator operator, Object value) {
-        super(loginSymbol, operator, value);
+    public NormalAliasCondition(LogicalOperator logicalOperator, String alias, Operator operator, Object value) {
+        super(logicalOperator, operator, value);
         this.alias = alias;
     }
 

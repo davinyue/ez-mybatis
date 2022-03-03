@@ -8,8 +8,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
  */
 public class IsNotNullColumnCondition extends IsNullColumnCondition {
 
-    public IsNotNullColumnCondition(LoginSymbol loginSymbol, Table table, String column) {
-        super(loginSymbol, table, column);
+    public IsNotNullColumnCondition(LogicalOperator logicalOperator, Table table, String column) {
+        super(logicalOperator, table, column);
         this.operator = Operator.isNotNull;
     }
 }

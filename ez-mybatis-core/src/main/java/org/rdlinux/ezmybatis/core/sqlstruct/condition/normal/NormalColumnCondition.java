@@ -15,9 +15,9 @@ public class NormalColumnCondition extends NormalCondition {
     private Table table;
     private String column;
 
-    public NormalColumnCondition(LoginSymbol loginSymbol, Table table, String column, Operator operator,
+    public NormalColumnCondition(LogicalOperator logicalOperator, Table table, String column, Operator operator,
                                  Object value) {
-        super(loginSymbol, operator, value);
+        super(logicalOperator, operator, value);
         this.table = table;
         this.column = column;
     }
