@@ -18,9 +18,9 @@ public class BetweenColumnCondition extends BetweenCondition {
     @Setter
     protected String column;
 
-    public BetweenColumnCondition(LoginSymbol loginSymbol, Table table, String column,
+    public BetweenColumnCondition(LogicalOperator logicalOperator, Table table, String column,
                                   Object minValue, Object maxValue) {
-        super(loginSymbol, minValue, maxValue);
+        super(logicalOperator, minValue, maxValue);
         this.table = table;
         this.column = column;
     }

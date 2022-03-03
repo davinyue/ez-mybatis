@@ -18,10 +18,10 @@ public class IsNullFieldCondition extends IsNullCondition {
     protected EntityTable table;
     protected String field;
 
-    public IsNullFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field) {
+    public IsNullFieldCondition(LogicalOperator logicalOperator, EntityTable table, String field) {
         this.table = table;
         this.field = field;
-        this.loginSymbol = loginSymbol;
+        this.logicalOperator = logicalOperator;
     }
 
 
