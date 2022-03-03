@@ -14,9 +14,9 @@ import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 public class IsNullAliasCondition extends IsNullCondition {
     protected String alias;
 
-    public IsNullAliasCondition(LoginSymbol loginSymbol, String alias) {
+    public IsNullAliasCondition(LogicalOperator logicalOperator, String alias) {
         this.alias = alias;
-        this.loginSymbol = loginSymbol;
+        this.logicalOperator = logicalOperator;
     }
 
 
@@ -27,7 +27,7 @@ public class IsNullAliasCondition extends IsNullCondition {
     }
 
     @Override
-    public LoginSymbol getLoginSymbol() {
-        return this.loginSymbol;
+    public LogicalOperator getLogicalOperator() {
+        return this.logicalOperator;
     }
 }

@@ -20,9 +20,9 @@ public class BetweenFieldCondition extends BetweenCondition {
     @Setter
     protected String field;
 
-    public BetweenFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field,
+    public BetweenFieldCondition(LogicalOperator logicalOperator, EntityTable table, String field,
                                  Object minValue, Object maxValue) {
-        super(loginSymbol, minValue, maxValue);
+        super(logicalOperator, minValue, maxValue);
         this.table = table;
         this.field = field;
     }

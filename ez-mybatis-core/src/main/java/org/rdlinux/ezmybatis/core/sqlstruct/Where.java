@@ -50,7 +50,7 @@ public class Where implements SqlStruct {
             String sqlPart = condition.toSqlPart(configuration, mybatisParamHolder);
             boolean emptySql = sqlPart.trim().isEmpty();
             if (!lastConditionEmpty && !emptySql) {
-                sqlBuilder.append(condition.getLoginSymbol().name()).append(" ");
+                sqlBuilder.append(condition.getLogicalOperator().name()).append(" ");
             }
             if (!emptySql) {
                 lastConditionEmpty = false;
@@ -88,14 +88,14 @@ public class Where implements SqlStruct {
             this.sonBuilder = this;
         }
 
-        public WhereBuilder<WhereBuilder<Builder>> groupCondition(Condition.LoginSymbol loginSymbol) {
-            GroupCondition condition = new GroupCondition(new LinkedList<>(), loginSymbol);
+        public WhereBuilder<WhereBuilder<Builder>> groupCondition(Condition.LogicalOperator logicalOperator) {
+            GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             return new WhereBuilder<>(this, new Where(condition.getConditions()), this.table);
         }
 
         public WhereBuilder<WhereBuilder<Builder>> groupCondition() {
-            return this.groupCondition(Condition.LoginSymbol.AND);
+            return this.groupCondition(Condition.LogicalOperator.AND);
         }
     }
 

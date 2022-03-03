@@ -9,9 +9,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 public class NotBetweenFieldCondition extends BetweenFieldCondition {
 
 
-    public NotBetweenFieldCondition(LoginSymbol loginSymbol, EntityTable table, String field, Object minValue,
+    public NotBetweenFieldCondition(LogicalOperator logicalOperator, EntityTable table, String field, Object minValue,
                                     Object maxValue) {
-        super(loginSymbol, table, field, minValue, maxValue);
+        super(logicalOperator, table, field, minValue, maxValue);
         this.operator = Operator.notBetween;
     }
 }

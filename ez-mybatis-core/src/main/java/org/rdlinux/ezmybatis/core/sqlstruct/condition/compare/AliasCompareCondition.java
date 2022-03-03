@@ -13,20 +13,20 @@ import org.rdlinux.ezmybatis.utils.DbTypeUtils;
  */
 @Getter
 public class AliasCompareCondition implements Condition {
-    private LoginSymbol loginSymbol;
+    private LogicalOperator logicalOperator;
     private String leftAlias;
     private Operator operator;
     private String rightAlias;
 
     public AliasCompareCondition(String leftAlias, Operator operator, String rightAlias) {
-        this.loginSymbol = LoginSymbol.AND;
+        this.logicalOperator = LogicalOperator.AND;
         this.leftAlias = leftAlias;
         this.operator = operator;
         this.rightAlias = rightAlias;
     }
 
-    public AliasCompareCondition(LoginSymbol loginSymbol, String leftAlias, Operator operator, String rightAlias) {
-        this.loginSymbol = loginSymbol;
+    public AliasCompareCondition(LogicalOperator logicalOperator, String leftAlias, Operator operator, String rightAlias) {
+        this.logicalOperator = logicalOperator;
         this.leftAlias = leftAlias;
         this.operator = operator;
         this.rightAlias = rightAlias;
@@ -34,8 +34,8 @@ public class AliasCompareCondition implements Condition {
 
 
     @Override
-    public LoginSymbol getLoginSymbol() {
-        return this.loginSymbol;
+    public LogicalOperator getLogicalOperator() {
+        return this.logicalOperator;
     }
 
     @Override

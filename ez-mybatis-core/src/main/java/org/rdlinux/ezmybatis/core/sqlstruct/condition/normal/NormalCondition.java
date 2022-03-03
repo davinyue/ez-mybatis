@@ -14,13 +14,13 @@ import java.util.Collection;
  */
 @Getter
 public abstract class NormalCondition implements Condition {
-    protected LoginSymbol loginSymbol;
+    protected LogicalOperator logicalOperator;
     protected Operator operator;
     protected Object value;
 
-    public NormalCondition(LoginSymbol loginSymbol, Operator operator, Object value) {
-        if (loginSymbol == null) {
-            loginSymbol = LoginSymbol.AND;
+    public NormalCondition(LogicalOperator logicalOperator, Operator operator, Object value) {
+        if (logicalOperator == null) {
+            logicalOperator = LogicalOperator.AND;
         }
         if (operator == Operator.between || operator == Operator.notBetween || operator == Operator.isNull ||
                 operator == Operator.isNotNull) {
@@ -28,7 +28,7 @@ public abstract class NormalCondition implements Condition {
         }
         Assert.notNull(value, "value can not be null");
         this.operator = operator;
-        this.loginSymbol = loginSymbol;
+        this.logicalOperator = logicalOperator;
         this.value = value;
     }
 

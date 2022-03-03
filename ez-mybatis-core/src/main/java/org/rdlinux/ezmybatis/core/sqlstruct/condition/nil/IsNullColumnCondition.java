@@ -16,10 +16,10 @@ public class IsNullColumnCondition extends IsNullCondition {
     protected Table table;
     protected String column;
 
-    public IsNullColumnCondition(LoginSymbol loginSymbol, Table table, String column) {
+    public IsNullColumnCondition(LogicalOperator logicalOperator, Table table, String column) {
         this.table = table;
         this.column = column;
-        this.loginSymbol = loginSymbol;
+        this.logicalOperator = logicalOperator;
     }
 
 
@@ -30,7 +30,7 @@ public class IsNullColumnCondition extends IsNullCondition {
     }
 
     @Override
-    public LoginSymbol getLoginSymbol() {
-        return this.loginSymbol;
+    public LogicalOperator getLogicalOperator() {
+        return this.logicalOperator;
     }
 }

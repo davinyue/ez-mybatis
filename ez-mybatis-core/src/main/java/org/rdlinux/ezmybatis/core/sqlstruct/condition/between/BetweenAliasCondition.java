@@ -14,8 +14,8 @@ public class BetweenAliasCondition extends BetweenCondition {
     @Setter
     protected String alias;
 
-    public BetweenAliasCondition(LoginSymbol loginSymbol, String alias, Object minValue, Object maxValue) {
-        super(loginSymbol, minValue, maxValue);
+    public BetweenAliasCondition(LogicalOperator logicalOperator, String alias, Object minValue, Object maxValue) {
+        super(logicalOperator, minValue, maxValue);
         this.alias = alias;
     }
 
