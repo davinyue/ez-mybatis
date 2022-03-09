@@ -3,16 +3,18 @@ package org.rdlinux.ezmybatis.core;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.plugin.InterceptorChain;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.interceptor.ExecutorInterceptor;
-import org.rdlinux.ezmybatis.core.interceptor.ResultSetHandlerInterceptor;
-import org.rdlinux.ezmybatis.core.interceptor.UpdateInterceptor;
+import org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor;
+import org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor;
+import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -58,12 +60,15 @@ public class EzMybatisContent {
     }
 
     private static void initInterceptor(Configuration configuration) {
-        configuration.addInterceptor(new ResultSetHandlerInterceptor());
-        configuration.addInterceptor(new ExecutorInterceptor());
+        InterceptorChain interceptorChain = ReflectionUtils.getFieldValue(configuration, "interceptorChain");
+        EzMybatisInterceptorChain ezMybatisInterceptorChain = new EzMybatisInterceptorChain(interceptorChain);
+        ReflectionUtils.setFieldValue(configuration, "interceptorChain", ezMybatisInterceptorChain);
+        ezMybatisInterceptorChain.addEzInterceptor(new EzMybatisResultSetHandlerInterceptor());
+        ezMybatisInterceptorChain.addEzInterceptor(new EzMybatisExecutorInterceptor());
         ConfigurationConfig configurationConfig = new ConfigurationConfig()
-                .setConfiguration(configuration).setUpdateInterceptor(new UpdateInterceptor());
+                .setConfiguration(configuration).setUpdateInterceptor(new EzMybatisUpdateInterceptor());
         CFG_CONFIG_MAP.put(configuration, configurationConfig);
-        configuration.addInterceptor(configurationConfig.getUpdateInterceptor());
+        ezMybatisInterceptorChain.addInterceptor(configurationConfig.getUpdateInterceptor());
     }
 
 
@@ -72,6 +77,6 @@ public class EzMybatisContent {
     @Accessors(chain = true)
     private static class ConfigurationConfig {
         private Configuration configuration;
-        private UpdateInterceptor updateInterceptor;
+        private EzMybatisUpdateInterceptor updateInterceptor;
     }
 }

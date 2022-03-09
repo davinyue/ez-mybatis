@@ -32,8 +32,8 @@ import java.util.Map;
                 args = {MappedStatement.class, Object.class}
         )
 })
-public class UpdateInterceptor implements Interceptor {
-    private static final Log log = LogFactory.getLog(UpdateInterceptor.class);
+public class EzMybatisUpdateInterceptor implements Interceptor {
+    private static final Log log = LogFactory.getLog(EzMybatisUpdateInterceptor.class);
     private static final Field MAPPER_METHOD_FIELD = ReflectionUtils.getField(ProviderSqlSource.class,
             "mapperMethod");
     private final List<EzMybatisInsertListener> insertListeners = new LinkedList<>();
