@@ -30,13 +30,13 @@
         <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="java.math.RoundingMode"/>
     </typeHandlers>
     <!--    <plugins>-->
-    <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ResultSetHandlerInterceptor">-->
+    <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor">-->
     <!--            <property name="dialect" value="mysql"/>-->
     <!--        </plugin>-->
-    <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.ExecutorInterceptor">-->
+    <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor">-->
     <!--            <property name="dialect" value="mysql"/>-->
     <!--        </plugin>-->
-    <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.UpdateInterceptor">-->
+    <!--        <plugin interceptor="org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor">-->
     <!--            <property name="dialect" value="mysql"/>-->
     <!--        </plugin>-->
     <!--    </plugins>-->
