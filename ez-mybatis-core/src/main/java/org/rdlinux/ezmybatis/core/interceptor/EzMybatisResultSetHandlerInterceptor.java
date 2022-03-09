@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.interceptor;
 
-import org.rdlinux.ezmybatis.core.interceptor.resultsethandler.ResultSetLogic;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Signature;
+import org.rdlinux.ezmybatis.core.interceptor.resultsethandler.ResultSetLogic;
 
 import java.sql.Statement;
 import java.util.LinkedList;
@@ -19,10 +19,10 @@ import java.util.List;
                 args = {Statement.class}
         )
 })
-public class ResultSetHandlerInterceptor extends AbstractInterceptor {
+public class EzMybatisResultSetHandlerInterceptor extends AbstractInterceptor {
     protected List<InterceptorLogic> logics = new LinkedList<>();
 
-    public ResultSetHandlerInterceptor() {
+    public EzMybatisResultSetHandlerInterceptor() {
         this.logics.add(new ResultSetLogic());
     }
 

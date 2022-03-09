@@ -54,10 +54,10 @@ public class ResultMapInitLogic implements InterceptorLogic {
             if (resultMap.getResultMappings() != null && !resultMap.getResultMappings().isEmpty()) {
                 continue;
             }
-            Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
             //泛型接口, 需要动态的设置返回结果类型，这两个接口的返回类型由query参数传入
             if (resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.QUERY_METHOD + "-") ||
                     resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.QUERY_ONE_METHOD + "-")) {
+                Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
                 EzParam<?> ezParam = (EzParam<?>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
                 RET_TYPE_TL.set(ezParam.getRetType());
                 ReflectionUtils.setFieldValue(resultMap, hasNestedResultMapsFiled, false);
@@ -67,6 +67,7 @@ public class ResultMapInitLogic implements InterceptorLogic {
                     + "-") ||
                     resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.SELECT_BY_IDS_METHOD
                             + "-")) {
+                Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
                 Class<?> entityClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
                 RET_TYPE_TL.set(entityClass);
                 ReflectionUtils.setFieldValue(resultMap, hasNestedResultMapsFiled, false);
