@@ -2,9 +2,10 @@ package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import org.apache.ibatis.session.Configuration;
 
-public class SelectAllItem implements SelectItem {
+public class SelectAllDistinct extends AbstractSelectItem {
+
     @Override
     public String toSqlPart(Configuration configuration) {
-        return " * ";
+        return " DISTINCT * ";
     }
 }
