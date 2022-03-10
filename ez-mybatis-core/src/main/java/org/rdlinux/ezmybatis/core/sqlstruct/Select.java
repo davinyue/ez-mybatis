@@ -86,8 +86,20 @@ public class Select implements SqlStruct {
             return this.target;
         }
 
+        public EzSelectBuilder<T> addAllTable() {
+            this.selectFields.add(new SelectAllItem());
+            return this;
+        }
+
+        public EzSelectBuilder<T> addAllTable(boolean sure) {
+            if (sure) {
+                return this.addAllTable();
+            }
+            return this;
+        }
+
         public EzSelectBuilder<T> addAll() {
-            this.selectFields.add(new SelectAllItem(this.table));
+            this.selectFields.add(new SelectTableAllItem(this.table));
             return this;
         }
 
@@ -346,6 +358,78 @@ public class Select implements SqlStruct {
                 return this.addColumnAvg(column, alias);
             }
             return this;
+        }
+
+        public EzSelectBuilder<T> addDistinct(String field) {
+            this.checkEntityTable();
+            this.selectFields.add(new SelectDistinctField((EntityTable) this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addDistinct(boolean sure, String field) {
+            if (sure) {
+                return this.addMax(field);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addDistinct(String field, String alias) {
+            this.checkEntityTable();
+            this.selectFields.add(new SelectDistinctField((EntityTable) this.table, field, alias));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addDistinct(boolean sure, String field, String alias) {
+            if (sure) {
+                return this.addMax(field, alias);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnDistinct(String column) {
+            this.selectFields.add(new SelectDistinctColumn(this.table, column));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnDistinct(boolean sure, String column) {
+            if (sure) {
+                return this.addColumnMax(column);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnDistinct(String column, String alias) {
+            this.selectFields.add(new SelectDistinctColumn(this.table, column, alias));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnDistinct(boolean sure, String column, String alias) {
+            if (sure) {
+                return this.addColumnMax(column, alias);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addAllDistinct(boolean sure) {
+            if (sure) {
+                this.selectFields.add(new SelectTableDistinct(this.table));
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addAllDistinct() {
+            return this.addAllDistinct(true);
+        }
+
+        public EzSelectBuilder<T> addAllTableDistinct(boolean sure) {
+            if (sure) {
+                this.selectFields.add(new SelectAllDistinct());
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addAllTableDistinct() {
+            return this.addAllTableDistinct(true);
         }
     }
 }
