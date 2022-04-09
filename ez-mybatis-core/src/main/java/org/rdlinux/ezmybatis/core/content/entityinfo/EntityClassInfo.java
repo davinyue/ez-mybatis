@@ -1,96 +1,42 @@
 package org.rdlinux.ezmybatis.core.content.entityinfo;
 
-import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.utils.Assert;
-import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
-import org.rdlinux.ezmybatis.utils.ReflectionUtils;
-import org.rdlinux.ezmybatis.utils.SqlReflectionUtils;
-
-import javax.persistence.Table;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class EntityClassInfo {
-    private Class<?> entityClass;
-    private String tableName;
-    private List<EntityFieldInfo> fieldInfos;
-    private Map<String, EntityFieldInfo> columnMapFieldInfo;
-    private Map<String, EntityFieldInfo> filedNameMapFieldInfo;
-    private EntityFieldInfo primaryKeyInfo;
+public interface EntityClassInfo {
+    /**
+     * 获取实体类
+     */
+    Class<?> getEntityClass();
 
-    public EntityClassInfo(Class<?> entityClass, EntityInfoBuildConfig buildConfig) {
-        Assert.notNull(entityClass, "entityClass can not be null");
-        this.tableName = HumpLineStringUtils.humpToLine(entityClass.getSimpleName());
-        if (entityClass.isAnnotationPresent(Table.class)) {
-            Table annotation = entityClass.getAnnotation(Table.class);
-            String tn = annotation.name();
-            if (StringUtils.isNotEmpty(tn)) {
-                this.tableName = tn;
-            }
-        }
-        this.entityClass = entityClass;
-        this.fieldInfos = new LinkedList<>();
-        this.columnMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
-        this.filedNameMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
-        List<Field> fields = SqlReflectionUtils.getSupportFields(entityClass);
-        for (Field field : fields) {
-            Method fieldGetMethod;
-            try {
-                fieldGetMethod = ReflectionUtils.getMethodOfFieldGet(entityClass, field);
-            } catch (Exception e) {
-                continue;
-            }
-            EntityFieldInfo fieldInfo = new EntityFieldInfo(field, fieldGetMethod, buildConfig);
-            this.fieldInfos.add(fieldInfo);
-            if (fieldInfo.isPrimaryKey()) {
-                this.primaryKeyInfo = fieldInfo;
-            }
-        }
-        this.fieldInfos.forEach(fieldInfo -> {
-            this.columnMapFieldInfo.put(fieldInfo.getColumnName(), fieldInfo);
-            this.filedNameMapFieldInfo.put(fieldInfo.getFieldName(), fieldInfo);
-        });
-    }
+    /**
+     * 获取表明
+     */
+    String getTableName();
 
-    public Class<?> getEntityClass() {
-        return this.entityClass;
-    }
+    /**
+     * 获取属性信息
+     */
+    List<EntityFieldInfo> getFieldInfos();
 
-    public String getTableName() {
-        return this.tableName;
-    }
+    /**
+     * 获取列与属性信息映射
+     */
+    Map<String, EntityFieldInfo> getColumnMapFieldInfo();
 
-    public List<EntityFieldInfo> getFieldInfos() {
-        return this.fieldInfos;
-    }
+    /**
+     * 根据列名获取属性名
+     */
+    String getFieldNameByColumn(String column);
 
-    public Map<String, EntityFieldInfo> getColumnMapFieldInfo() {
-        return this.columnMapFieldInfo;
-    }
+    /**
+     * 根据属性名获取属性信息
+     */
+    EntityFieldInfo getFieldInfo(String field);
 
-    public String getFieldNameByColumn(String column) {
-        EntityFieldInfo entityFieldInfo = this.columnMapFieldInfo.get(column);
-        if (entityFieldInfo == null) {
-            return null;
-        } else {
-            return entityFieldInfo.getFieldName();
-        }
-    }
-
-    public EntityFieldInfo getFieldInfo(String field) {
-        EntityFieldInfo fieldInfo = this.filedNameMapFieldInfo.get(field);
-        Assert.notNull(fieldInfo, String.format("class %s not found '%s' field", this.getEntityClass()
-                .getName(), field));
-        return fieldInfo;
-    }
-
-    public EntityFieldInfo getPrimaryKeyInfo() {
-        Assert.notNull(this.primaryKeyInfo, "can not find primary key info");
-        return this.primaryKeyInfo;
-    }
+    /**
+     * 获取主键信息
+     */
+    EntityFieldInfo getPrimaryKeyInfo();
 
 }
