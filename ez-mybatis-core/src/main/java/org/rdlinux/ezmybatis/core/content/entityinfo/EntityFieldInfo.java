@@ -19,6 +19,28 @@ public class EntityFieldInfo {
     private TypeHandler<?> typeHandler;
     private EntityInfoBuildConfig buildConfig;
 
+    public EntityFieldInfo(Field field, Method fieldGetMethod, String column, boolean isPrimaryKey) {
+        field.setAccessible(true);
+        this.field = field;
+        this.fieldGetMethod = fieldGetMethod;
+        this.fieldName = field.getName();
+        this.columnName = column;
+        this.isPrimaryKey = isPrimaryKey;
+        if (field.isAnnotationPresent(ColumnHandler.class)) {
+            ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
+            Class<?> typeHandlerClass = annotation.value();
+            if (TypeHandler.class.isAssignableFrom(typeHandlerClass)) {
+                try {
+                    this.typeHandler = (TypeHandler<?>) typeHandlerClass.newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new IllegalArgumentException("columnHandler must extend org.apache.ibatis.type.TypeHandler");
+            }
+        }
+    }
+
     public EntityFieldInfo(Field field, Method fieldGetMethod, EntityInfoBuildConfig buildConfig) {
         field.setAccessible(true);
         this.field = field;

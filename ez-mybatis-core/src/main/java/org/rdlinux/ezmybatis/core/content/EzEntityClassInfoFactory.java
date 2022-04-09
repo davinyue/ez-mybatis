@@ -40,9 +40,14 @@ public class EzEntityClassInfoFactory {
         return entityInfo.get(ntClass.getName());
     }
 
-    private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass) {
+    private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass,
+                                             EntityInfoBuild entityInfoBuild) {
         DbType dbType = DbTypeUtils.getDbType(configuration);
-        EntityClassInfo entityClassInfo = ENTITY_INFO_BUILD_MAP.get(dbType).buildInfo(configuration, ntClass);
+        EntityInfoBuild infoBuild = ENTITY_INFO_BUILD_MAP.get(dbType);
+        if (entityInfoBuild != null) {
+            infoBuild = entityInfoBuild;
+        }
+        EntityClassInfo entityClassInfo = infoBuild.buildInfo(configuration, ntClass);
         Map<String, EntityClassInfo> entityInfo;
         if (ENTITY_INFO_MAP.get(configuration) == null) {
             entityInfo = new HashMap<>();
@@ -59,12 +64,22 @@ public class EzEntityClassInfoFactory {
      * @param configuration mybatis配置
      */
     public static EntityClassInfo forClass(Configuration configuration, Class<?> ntClass) {
+        return forClass(configuration, ntClass, null);
+    }
+
+    /**
+     * @param ntClass         实体对象类型
+     * @param configuration   mybatis配置
+     * @param entityInfoBuild 实体信息构造器
+     */
+    public static EntityClassInfo forClass(Configuration configuration, Class<?> ntClass,
+                                           EntityInfoBuild entityInfoBuild) {
         EntityClassInfo result = get(configuration, ntClass);
         if (result == null) {
             synchronized (configuration) {
                 result = get(configuration, ntClass);
                 if (result == null) {
-                    result = buildInfo(configuration, ntClass);
+                    result = buildInfo(configuration, ntClass, entityInfoBuild);
                 }
             }
         }
