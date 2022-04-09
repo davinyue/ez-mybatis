@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.content.entityinfo.build;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.content.entityinfo.DefaultEntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.content.entityinfo.EntityInfoBuildConfig;
 import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
@@ -32,7 +33,7 @@ public class MySqlEntityInfoBuild implements EntityInfoBuild {
         } else {
             buildConfig = new EntityInfoBuildConfig(EntityInfoBuildConfig.ColumnHandle.ORIGINAL);
         }
-        return new EntityClassInfo(ntClass, buildConfig);
+        return new DefaultEntityClassInfo(ntClass, buildConfig);
     }
 
     @Override

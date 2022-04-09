@@ -100,7 +100,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         EntityTable uoTable = EntityTable.of(UserOrg.class);
         EzDelete delete = EzDelete.delete(userTable).delete(uoTable)
                 .join(uoTable)
-                .addFieldCondition("id", "userId")
+                .addFieldCompareCondition("id", "userId")
                 .done()
                 .where().addFieldCondition("id", "56").done()
                 .build();
