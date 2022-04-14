@@ -1,11 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.utils.Assert;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -19,7 +19,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                                boolean isReplace) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableName();
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         String idColumn = primaryKeyInfo.getColumnName();
@@ -36,18 +36,14 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                 continue;
             }
             sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ");
-            if (fieldValue == null) {
-                sqlBuilder.append("NULL, ");
-            } else {
-                sqlBuilder.append(mybatisParamHolder.getParamName(fieldValue)).append(", ");
-            }
+            sqlBuilder.append(mybatisParamHolder.getParamName(fieldValue, true)).append(", ");
             //有字段更新, sql才有效
             invalidSql = false;
         }
         Assert.isTrue(!invalidSql, "cannot update empty entity");
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
-                .append(" = ").append(mybatisParamHolder.getParamName(idValue));
+                .append(" = ").append(mybatisParamHolder.getParamName(idValue, false));
         return sqlBuilder.toString();
     }
 

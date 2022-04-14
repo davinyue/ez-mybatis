@@ -1,13 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
     private static volatile MySqlEzQueryToSql instance;
@@ -43,7 +42,7 @@ public class MySqlEzQueryToSql extends AbstractEzQueryToSql {
         if (limit == null) {
             return sqlBuilder;
         }
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         sqlBuilder.append(" LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize());
 //        EzFrom from = query.getFrom();
 //        EzTable table = from.getTable();

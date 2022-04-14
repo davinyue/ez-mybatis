@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.content.entityinfo;
+package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
 /**
  * 实体信息构建配置

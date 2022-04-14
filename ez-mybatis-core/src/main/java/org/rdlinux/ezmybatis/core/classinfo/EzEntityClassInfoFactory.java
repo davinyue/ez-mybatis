@@ -1,12 +1,12 @@
-package org.rdlinux.ezmybatis.core.content;
+package org.rdlinux.ezmybatis.core.classinfo;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.content.entityinfo.build.DmEntityInfoBuild;
-import org.rdlinux.ezmybatis.core.content.entityinfo.build.EntityInfoBuild;
-import org.rdlinux.ezmybatis.core.content.entityinfo.build.MySqlEntityInfoBuild;
-import org.rdlinux.ezmybatis.core.content.entityinfo.build.OracleEntityInfoBuild;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.DmEntityInfoBuild;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuild;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.MySqlEntityInfoBuild;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.OracleEntityInfoBuild;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.HashMap;

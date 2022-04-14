@@ -26,9 +26,11 @@ public class MybatisParamHolder {
         return (T) this.mybatisParam.get(param);
     }
 
-    public String getParamName(Object paramValue) {
-        if (paramValue == null) {
+    public String getParamName(Object paramValue, boolean canBeNull) {
+        if (canBeNull && paramValue == null) {
             return "NULL";
+        } else if (!canBeNull && paramValue == null) {
+            throw new IllegalArgumentException("paramValue can not be null");
         }
         String escape = getEscapeChar(paramValue);
         String paramName = EzMybatisConstant.MAPPER_PARAM_EZPARAM + "_" + this.pNo.getAndIncrement();
