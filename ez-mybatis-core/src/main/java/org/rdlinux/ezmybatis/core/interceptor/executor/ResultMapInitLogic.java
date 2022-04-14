@@ -42,7 +42,8 @@ public class ResultMapInitLogic implements InterceptorLogic {
 
     @Override
     @SuppressWarnings(value = {"rawtype", "unchecked"})
-    public InterceptorLogicResult invokeBefore(Invocation invocation) throws Throwable {
+    public InterceptorLogicResult invokeBefore(Invocation invocation) {
+        cleanRetType();
         if (!(invocation.getTarget() instanceof Executor)) {
             return new InterceptorLogicResult(true, null);
         }
