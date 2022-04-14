@@ -15,11 +15,11 @@ public class MysqlInsertTest extends MysqlBaseTest {
         user.setName("王二");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).insert(user);
         System.out.println(insert);
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-        int insert1 = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).insert(user);
-        MysqlBaseTest.sqlSession.commit();
+        int insert1 = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).insert(user);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert1);
     }
 
@@ -37,8 +37,8 @@ public class MysqlInsertTest extends MysqlBaseTest {
             user.setSex(User.Sex.MAN);
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).batchInsert(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -56,8 +56,8 @@ public class MysqlInsertTest extends MysqlBaseTest {
             user.setSex(User.Sex.MAN);
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).batchInsert(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).batchInsert(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -66,7 +66,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         String sql = "INSERT INTO `ez_user` (`id`, `create_time`, `update_time`, `name`, `sex`, `age`) " +
                 "VALUES ('09b6a5af501b4a1fb8c22002df5f15af', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
                 "'王二', 1, 27);\n";
-        Integer integer = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
+        Integer integer = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
         System.out.println(integer);
     }
 }
