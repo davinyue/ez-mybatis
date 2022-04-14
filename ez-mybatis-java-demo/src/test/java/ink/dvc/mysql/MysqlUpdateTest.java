@@ -154,7 +154,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "杨修")
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
