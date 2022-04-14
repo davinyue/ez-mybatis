@@ -3,7 +3,6 @@ package ink.dvc.mysql;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
@@ -17,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MysqlBaseTest {
-    public static SqlSession sqlSession;
+    public static SqlSessionFactory sqlSessionFactory;
 
     static {
         String resource = "mybatis-config.xml";
@@ -45,7 +44,6 @@ public class MysqlBaseTest {
                 entitys.forEach(this::onInsert);
             }
         });
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        sqlSession = sqlSessionFactory.openSession();
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 }

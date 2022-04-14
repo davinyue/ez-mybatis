@@ -18,7 +18,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
     public void delete() {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        int delete = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).delete(user);
+        int delete = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).delete(user);
         System.out.println(delete);
     }
 
@@ -26,7 +26,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
     public void delete1() {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        int delete = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).delete(user);
+        int delete = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).delete(user);
         System.out.println(delete);
     }
 
@@ -38,8 +38,8 @@ public class MysqlDeleteTest extends MysqlBaseTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).batchDelete(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).batchDelete(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -51,24 +51,24 @@ public class MysqlDeleteTest extends MysqlBaseTest {
             user.setId("016cdcdd76f94879ab3d24850514812b");
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).batchDelete(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).batchDelete(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
     @Test
     public void deleteById() {
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class)
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class)
                 .deleteById("016cdcdd76f94879ab3d24850514812b");
-        MysqlBaseTest.sqlSession.commit();
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
     @Test
     public void deleteById1() {
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class)
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class)
                 .deleteById(User.class, "016cdcdd76f94879ab3d24850514812b");
-        MysqlBaseTest.sqlSession.commit();
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -78,8 +78,8 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         for (int i = 0; i < 2; i++) {
             users.add("016cdcdd76f94879ab3d24850514812b" + i);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).batchDeleteById(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).batchDeleteById(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -89,8 +89,8 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         for (int i = 0; i < 2; i++) {
             users.add("016cdcdd76f94879ab3d24850514812b" + i);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).batchDeleteById(User.class, users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -104,8 +104,8 @@ public class MysqlDeleteTest extends MysqlBaseTest {
                 .done()
                 .where().addFieldCondition("id", "56").done()
                 .build();
-        int ret = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
-        MysqlBaseTest.sqlSession.commit();
+        int ret = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).ezDelete(delete);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         log.info("删除{}条", ret);
     }
 
@@ -120,7 +120,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
                 .where().addFieldCondition("id", "23").done()
                 .build();
         deletes.add(delete);
-        MysqlBaseTest.sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
-        MysqlBaseTest.sqlSession.commit();
+        MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).ezBatchDelete(deletes);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
     }
 }
