@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,7 +27,9 @@ public class MybatisParamHolder {
     }
 
     public String getParamName(Object paramValue) {
-        Assert.notNull(paramValue, "paramValue can not be null");
+        if (paramValue == null) {
+            return "NULL";
+        }
         String escape = getEscapeChar(paramValue);
         String paramName = EzMybatisConstant.MAPPER_PARAM_EZPARAM + "_" + this.pNo.getAndIncrement();
         this.mybatisParam.put(paramName, paramValue);
