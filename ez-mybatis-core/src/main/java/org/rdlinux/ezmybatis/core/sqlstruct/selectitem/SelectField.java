@@ -1,12 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.utils.Assert;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 public class SelectField extends AbstractSelectItem {
     protected EntityTable table;
@@ -45,7 +44,7 @@ public class SelectField extends AbstractSelectItem {
     @Override
     public String toSqlPart(Configuration configuration) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, this.table.getEtType());
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String columnName = keywordQM + entityClassInfo.getFieldInfo(this.field).getColumnName() + keywordQM;
         String sql = " " + this.table.getAlias() + "." + columnName + " ";
         String alias = this.getAlias();

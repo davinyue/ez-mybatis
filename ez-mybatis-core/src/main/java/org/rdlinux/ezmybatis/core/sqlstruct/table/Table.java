@@ -13,5 +13,10 @@ public interface Table {
 
     String getTableName(Configuration configuration);
 
+    /**
+     * 获取数据库模式
+     */
+    String getSchema(Configuration configuration);
+
     String toSqlStruct(Configuration configuration, MybatisParamHolder paramHolder);
 }

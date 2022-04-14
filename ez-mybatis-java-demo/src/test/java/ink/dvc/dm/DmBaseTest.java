@@ -6,6 +6,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class DmBaseTest {
         }
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
-        EzMybatisContent.init(configuration);
+        EzMybatisContent.init(new EzMybatisConfig(configuration));
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         sqlSession = sqlSessionFactory.openSession();
     }

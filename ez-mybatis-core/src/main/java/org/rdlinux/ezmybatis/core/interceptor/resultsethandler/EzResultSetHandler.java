@@ -26,9 +26,9 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
-import org.rdlinux.ezmybatis.core.content.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.content.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.content.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.executor.ResultMapInitLogic;
 
 import java.lang.reflect.Constructor;

@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.content.entityinfo;
+package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -12,16 +12,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-public class DefaultEntityClassInfo implements EntityClassInfo {
-    private Class<?> entityClass;
-    private String tableName;
-    private List<EntityFieldInfo> fieldInfos;
-    private Map<String, EntityFieldInfo> columnMapFieldInfo;
-    private Map<String, EntityFieldInfo> filedNameMapFieldInfo;
-    private EntityFieldInfo primaryKeyInfo;
-
+public class DefaultEntityClassInfo extends AbstractEntityClassInfo {
     public DefaultEntityClassInfo(Class<?> entityClass, EntityInfoBuildConfig buildConfig) {
         Assert.notNull(entityClass, "entityClass can not be null");
         this.tableName = HumpLineStringUtils.humpToLine(entityClass.getSimpleName());
@@ -31,6 +23,7 @@ public class DefaultEntityClassInfo implements EntityClassInfo {
             if (StringUtils.isNotEmpty(tn)) {
                 this.tableName = tn;
             }
+            this.schema = annotation.schema();
         }
         this.entityClass = entityClass;
         this.fieldInfos = new LinkedList<>();
@@ -55,49 +48,4 @@ public class DefaultEntityClassInfo implements EntityClassInfo {
             this.filedNameMapFieldInfo.put(fieldInfo.getFieldName(), fieldInfo);
         });
     }
-
-    @Override
-    public Class<?> getEntityClass() {
-        return this.entityClass;
-    }
-
-    @Override
-    public String getTableName() {
-        return this.tableName;
-    }
-
-    @Override
-    public List<EntityFieldInfo> getFieldInfos() {
-        return this.fieldInfos;
-    }
-
-    @Override
-    public Map<String, EntityFieldInfo> getColumnMapFieldInfo() {
-        return this.columnMapFieldInfo;
-    }
-
-    @Override
-    public String getFieldNameByColumn(String column) {
-        EntityFieldInfo entityFieldInfo = this.columnMapFieldInfo.get(column);
-        if (entityFieldInfo == null) {
-            return null;
-        } else {
-            return entityFieldInfo.getFieldName();
-        }
-    }
-
-    @Override
-    public EntityFieldInfo getFieldInfo(String field) {
-        EntityFieldInfo fieldInfo = this.filedNameMapFieldInfo.get(field);
-        Assert.notNull(fieldInfo, String.format("class %s not found '%s' field", this.getEntityClass()
-                .getName(), field));
-        return fieldInfo;
-    }
-
-    @Override
-    public EntityFieldInfo getPrimaryKeyInfo() {
-        Assert.notNull(this.primaryKeyInfo, "can not find primary key info");
-        return this.primaryKeyInfo;
-    }
-
 }

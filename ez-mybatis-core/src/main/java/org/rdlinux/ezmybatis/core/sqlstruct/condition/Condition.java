@@ -26,7 +26,7 @@ public interface Condition {
             }
             return sql;
         } else {
-            return mybatisParamHolder.getParamName(value);
+            return mybatisParamHolder.getParamName(value, false);
         }
     }
 
