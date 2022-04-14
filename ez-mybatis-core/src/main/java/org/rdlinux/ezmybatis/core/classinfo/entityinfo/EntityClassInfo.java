@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.content.entityinfo;
+package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
 import java.util.List;
 import java.util.Map;
@@ -8,6 +8,11 @@ public interface EntityClassInfo {
      * 获取实体类
      */
     Class<?> getEntityClass();
+
+    /**
+     * 获取数据库模式
+     */
+    String getSchema();
 
     /**
      * 获取表明

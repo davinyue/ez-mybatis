@@ -6,6 +6,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
@@ -28,8 +29,9 @@ public class MysqlBaseTest {
         }
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
-        EzMybatisContent.init(configuration);
-        EzMybatisContent.addInsertListener(configuration, new EzMybatisInsertListener() {
+        EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
+        EzMybatisContent.init(ezMybatisConfig);
+        EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
             @Override
             public void onInsert(Object entity) {
                 if (entity instanceof BaseEntity) {

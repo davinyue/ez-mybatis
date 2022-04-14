@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.spring.boot.start;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
@@ -56,7 +57,9 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
     @Bean
     public ConfigurationCustomizer ezConfigurationCustomizer() {
         return configuration -> {
-            SpringEzMybatisInit.init(configuration, EzMybatisAutoConfiguration.this.applicationContext);
+            EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
+            ezMybatisConfig.setEscapeKeyword(this.ezMybatisProperties.isEscapeKeyword());
+            SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
             if (this.ezMybatisProperties.getDbType() != null) {
                 EzMybatisContent.setDbType(configuration, this.ezMybatisProperties.getDbType());
             }

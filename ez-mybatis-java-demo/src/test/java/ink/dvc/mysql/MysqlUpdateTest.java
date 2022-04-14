@@ -154,11 +154,21 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "1")
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
         mapper.batchEzUpdate(updates);
+        MysqlBaseTest.sqlSession.commit();
+    }
+
+    @Test
+    public void updateSetNull() {
+        EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
+                .where().addFieldCondition("id", "2").done()
+                .build();
+        mapper.ezUpdate(ezUpdate);
         MysqlBaseTest.sqlSession.commit();
     }
 }

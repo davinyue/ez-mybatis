@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.content.entityinfo.build;
+package org.rdlinux.ezmybatis.core.classinfo.entityinfo.build;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 

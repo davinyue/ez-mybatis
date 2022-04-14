@@ -305,4 +305,29 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .selectMapBySql("select * from ez_user", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(users));
     }
+
+    @Test
+    public void schemaTest() {
+        EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
+
+        EntityTable table1 = EntityTable.of("ez_mybatis", User.class);
+        EzQuery<User> query1 = EzQuery.builder(User.class).from(table1).select().addAll().done()
+                .page(1, 1).build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query1)));
+
+        EntityTable table2 = EntityTable.of(User.class);
+        EzQuery<User> query2 = EzQuery.builder(User.class).from(table2).select().addAll().done()
+                .page(1, 1).build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query2)));
+
+        DbTable table3 = DbTable.of("ez_mybatis", "ez_user");
+        EzQuery<User> query3 = EzQuery.builder(User.class).from(table3).select().addAll().done()
+                .page(1, 1).build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query3)));
+
+        EntityTable table4 = EntityTable.of("test", User.class);
+        EzQuery<User> query4 = EzQuery.builder(User.class).from(table4).select().addAll().done()
+                .page(1, 1).build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query4)));
+    }
 }

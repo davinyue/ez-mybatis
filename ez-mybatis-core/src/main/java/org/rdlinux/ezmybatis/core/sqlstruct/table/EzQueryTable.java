@@ -33,6 +33,11 @@ public class EzQueryTable implements Table {
     }
 
     @Override
+    public String getSchema(Configuration configuration) {
+        return null;
+    }
+
+    @Override
     public String toSqlStruct(Configuration configuration, MybatisParamHolder paramHolder) {
         String querySql = SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
                 .getQuerySql(configuration, paramHolder, this.ezQuery);

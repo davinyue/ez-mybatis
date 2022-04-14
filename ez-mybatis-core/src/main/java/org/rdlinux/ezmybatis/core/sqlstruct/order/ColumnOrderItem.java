@@ -2,9 +2,8 @@ package org.rdlinux.ezmybatis.core.sqlstruct.order;
 
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 @Getter
 public class ColumnOrderItem extends OrderItem {
@@ -22,7 +21,7 @@ public class ColumnOrderItem extends OrderItem {
 
     @Override
     public String toSqlStruct(Configuration configuration) {
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         return " " + this.getTable().getAlias() + "." +
                 keywordQM + this.column + keywordQM + " "
                 + this.type.name() + " ";
