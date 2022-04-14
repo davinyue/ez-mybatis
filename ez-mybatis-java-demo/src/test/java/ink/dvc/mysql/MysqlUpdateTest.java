@@ -21,8 +21,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).update(user);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).update(user);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -34,8 +34,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).update(user);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).update(user);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -53,8 +53,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             }
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).batchUpdate(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).batchUpdate(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -72,8 +72,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             }
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).batchUpdate(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).batchUpdate(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -82,8 +82,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).replace(user);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).replace(user);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -92,8 +92,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).replace(user);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).replace(user);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -111,8 +111,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             }
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(UserMapper.class).batchReplace(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(UserMapper.class).batchReplace(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
@@ -130,26 +130,26 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             }
             users.add(user);
         }
-        int insert = MysqlBaseTest.sqlSession.getMapper(EzMapper.class).batchReplace(users);
-        MysqlBaseTest.sqlSession.commit();
+        int insert = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class).batchReplace(users);
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         System.out.println(insert);
     }
 
     @Test
     public void updateByEzParam() {
-        EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
-        MysqlBaseTest.sqlSession.commit();
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
         log.info("更新条数{}", ret);
     }
 
     @Test
     public void batchUpdateByEzParam() {
         List<EzUpdate> updates = new LinkedList<>();
-        EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "张碧澄")
                 .where().addFieldCondition("id", "1").done()
                 .build();
@@ -159,16 +159,16 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                 .build();
         updates.add(ezUpdate);
         mapper.batchEzUpdate(updates);
-        MysqlBaseTest.sqlSession.commit();
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
     }
 
     @Test
     public void updateSetNull() {
-        EzMapper mapper = MysqlBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = MysqlBaseTest.sqlSessionFactory.openSession().getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
                 .where().addFieldCondition("id", "2").done()
                 .build();
         mapper.ezUpdate(ezUpdate);
-        MysqlBaseTest.sqlSession.commit();
+        MysqlBaseTest.sqlSessionFactory.openSession().commit();
     }
 }
