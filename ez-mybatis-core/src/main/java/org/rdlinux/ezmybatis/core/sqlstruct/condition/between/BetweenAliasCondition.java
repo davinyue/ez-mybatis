@@ -3,8 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.between;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 
 /**
  * between 条件
@@ -21,7 +20,7 @@ public class BetweenAliasCondition extends BetweenCondition {
 
     @Override
     protected String getSqlField(Configuration configuration) {
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         return " " + keywordQM + this.alias + keywordQM + " ";
     }
 }

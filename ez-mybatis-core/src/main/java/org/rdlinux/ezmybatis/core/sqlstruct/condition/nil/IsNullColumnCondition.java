@@ -3,9 +3,8 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.nil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 /**
  * 是空条件
@@ -25,7 +24,7 @@ public class IsNullColumnCondition extends IsNullCondition {
 
     @Override
     protected String getSqlField(Configuration configuration) {
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         return this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM;
     }
 

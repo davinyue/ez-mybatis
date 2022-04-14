@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.content.entityinfo;
+package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.TypeHandler;

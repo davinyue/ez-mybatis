@@ -2,11 +2,10 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.compare;
 
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 /**
  * 别名对比条件
@@ -40,7 +39,7 @@ public class AliasCompareCondition implements Condition {
 
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        String keywordQM = DbKeywordQMFactory.getKeywordQM(DbTypeUtils.getDbType(configuration));
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         return " " + keywordQM + this.leftAlias + keywordQM +
                 " " +
                 this.getOperator().getOperator() +
