@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 import java.util.List;
 import java.util.Map;
 
-public class AbstractEntityClassInfo implements EntityClassInfo {
+public abstract class AbstractEntityClassInfo implements EntityClassInfo {
     protected Class<?> entityClass;
     protected String tableName;
     protected String schema;
