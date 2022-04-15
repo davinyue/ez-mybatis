@@ -110,28 +110,60 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * please use {@link #addField(String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> add(String field) {
+            return this.addField(field);
+        }
+
+        public EzSelectBuilder<T> addField(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectField((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * please use {@link #addField(boolean, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> add(boolean sure, String field) {
+            return this.addField(sure, field);
+        }
+
+        public EzSelectBuilder<T> addField(boolean sure, String field) {
             if (sure) {
-                return this.add(field);
+                return this.addField(field);
             }
             return this;
         }
 
+        /**
+         * please use {@link #addField(String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> add(String field, String alias) {
+            return this.addField(field, alias);
+        }
+
+        public EzSelectBuilder<T> addField(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectField((EntityTable) this.table, field, alias));
             return this;
         }
 
+        /**
+         * please use {@link #addField(boolean, String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> add(boolean sure, String field, String alias) {
+            return this.addField(sure, field, alias);
+        }
+
+        public EzSelectBuilder<T> addField(boolean sure, String field, String alias) {
             if (sure) {
-                return this.add(field, alias);
+                return this.addField(field, alias);
             }
             return this;
         }
@@ -160,28 +192,60 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMax(String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMax(String field) {
+            return this.addFieldMax(field);
+        }
+
+        public EzSelectBuilder<T> addFieldMax(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMax(boolean, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMax(boolean sure, String field) {
+            return this.addFieldMax(sure, field);
+        }
+
+        public EzSelectBuilder<T> addFieldMax(boolean sure, String field) {
             if (sure) {
-                return this.addMax(field);
+                return this.addFieldMax(field);
             }
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMax(String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMax(String field, String alias) {
+            return this.addFieldMax(field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldMax(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field, alias));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMax(boolean, String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMax(boolean sure, String field, String alias) {
+            return this.addFieldMax(sure, field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldMax(boolean sure, String field, String alias) {
             if (sure) {
-                return this.addMax(field, alias);
+                return this.addFieldMax(field, alias);
             }
             return this;
         }
@@ -210,28 +274,60 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * please use {@link #addFieldCount(String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addCount(String field) {
+            return this.addFieldCount(field);
+        }
+
+        public EzSelectBuilder<T> addFieldCount(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectCountField((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldCount(boolean, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addCount(boolean sure, String field) {
+            return this.addFieldCount(sure, field);
+        }
+
+        public EzSelectBuilder<T> addFieldCount(boolean sure, String field) {
             if (sure) {
-                return this.addCount(field);
+                return this.addFieldCount(field);
             }
             return this;
         }
 
+        /**
+         * please use {@link #addFieldCount(String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addCount(String field, String alias) {
+            return this.addFieldCount(field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldCount(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectCountField((EntityTable) this.table, field, alias));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldCount(boolean, String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addCount(boolean sure, String field, String alias) {
+            return this.addFieldCount(sure, field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldCount(boolean sure, String field, String alias) {
             if (sure) {
-                return this.addCount(field, alias);
+                return this.addFieldCount(field, alias);
             }
             return this;
         }
@@ -260,28 +356,60 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMin(String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMin(String field) {
+            return this.addFieldMin(field);
+        }
+
+        public EzSelectBuilder<T> addFieldMin(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMin(boolean, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMin(boolean sure, String field) {
+            return this.addFieldMin(sure, field);
+        }
+
+        public EzSelectBuilder<T> addFieldMin(boolean sure, String field) {
             if (sure) {
-                return this.addMin(field);
+                return this.addFieldMin(field);
             }
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMin(String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMin(String field, String alias) {
+            return this.addFieldMin(field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldMin(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field, alias));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldMin(boolean, String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addMin(boolean sure, String field, String alias) {
+            return this.addFieldMin(sure, field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldMin(boolean sure, String field, String alias) {
             if (sure) {
-                return this.addMin(field, alias);
+                return this.addFieldMin(field, alias);
             }
             return this;
         }
@@ -310,28 +438,60 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * please use {@link #addFieldAvg(String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addAvg(String field) {
+            return this.addFieldAvg(field);
+        }
+
+        public EzSelectBuilder<T> addFieldAvg(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectAvgField((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldAvg(boolean, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addAvg(boolean sure, String field) {
+            return this.addFieldAvg(sure, field);
+        }
+
+        public EzSelectBuilder<T> addFieldAvg(boolean sure, String field) {
             if (sure) {
-                return this.addAvg(field);
+                return this.addFieldAvg(field);
             }
             return this;
         }
 
+        /**
+         * please use {@link #addFieldAvg(String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addAvg(String field, String alias) {
+            return this.addFieldAvg(field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldAvg(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectAvgField((EntityTable) this.table, field, alias));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldAvg(boolean, String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addAvg(boolean sure, String field, String alias) {
+            return this.addFieldAvg(sure, field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldAvg(boolean sure, String field, String alias) {
             if (sure) {
-                return this.addAvg(field, alias);
+                return this.addFieldAvg(field, alias);
             }
             return this;
         }
@@ -360,28 +520,60 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * please use {@link #addFieldDistinct(String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addDistinct(String field) {
+            return this.addFieldDistinct(field);
+        }
+
+        public EzSelectBuilder<T> addFieldDistinct(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectDistinctField((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldDistinct(boolean, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addDistinct(boolean sure, String field) {
+            return this.addFieldDistinct(sure, field);
+        }
+
+        public EzSelectBuilder<T> addFieldDistinct(boolean sure, String field) {
             if (sure) {
-                return this.addMax(field);
+                return this.addFieldDistinct(field);
             }
             return this;
         }
 
+        /**
+         * please use {@link #addFieldDistinct(String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addDistinct(String field, String alias) {
+            return this.addFieldDistinct(field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldDistinct(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectDistinctField((EntityTable) this.table, field, alias));
             return this;
         }
 
+        /**
+         * please use {@link #addFieldDistinct(boolean, String, String)} replace
+         */
+        @Deprecated
         public EzSelectBuilder<T> addDistinct(boolean sure, String field, String alias) {
+            return this.addFieldDistinct(sure, field, alias);
+        }
+
+        public EzSelectBuilder<T> addFieldDistinct(boolean sure, String field, String alias) {
             if (sure) {
-                return this.addMax(field, alias);
+                return this.addFieldDistinct(field, alias);
             }
             return this;
         }
@@ -393,7 +585,7 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addColumnDistinct(boolean sure, String column) {
             if (sure) {
-                return this.addColumnMax(column);
+                return this.addColumnDistinct(column);
             }
             return this;
         }
@@ -405,7 +597,7 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addColumnDistinct(boolean sure, String column, String alias) {
             if (sure) {
-                return this.addColumnMax(column, alias);
+                return this.addColumnDistinct(column, alias);
             }
             return this;
         }
