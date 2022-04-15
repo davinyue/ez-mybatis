@@ -20,7 +20,7 @@ public class DbKeywordQMFactory {
     }
 
     private EzMybatisConfig ezMybatisConfig;
-    private String keywordQM;
+    private volatile String keywordQM;
 
     public DbKeywordQMFactory(EzMybatisConfig ezMybatisConfig) {
         this.ezMybatisConfig = ezMybatisConfig;
@@ -29,6 +29,9 @@ public class DbKeywordQMFactory {
     public String getKeywordQM() {
         if (this.keywordQM == null) {
             synchronized (this) {
+                if (this.keywordQM != null) {
+                    return this.keywordQM;
+                }
                 if (this.ezMybatisConfig.isEscapeKeyword()) {
                     this.keywordQM = DB_TYPE_MAP_KEYWORD_QM.get(DbTypeUtils
                             .getDbType(this.ezMybatisConfig.getConfiguration()));
