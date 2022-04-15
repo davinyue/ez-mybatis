@@ -25,10 +25,16 @@ import java.util.concurrent.ConcurrentMap;
 public class EzMybatisContent {
     private static final ConcurrentMap<Configuration, ConfigurationConfig> CFG_CONFIG_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 设置数据库类型
+     */
     public static void setDbType(Configuration configuration, DbType dbType) {
         DbTypeUtils.setDbType(configuration, dbType);
     }
 
+    /**
+     * 初始化content
+     */
     public static void init(EzMybatisConfig config) {
         ConfigurationConfig configurationConfig = new ConfigurationConfig();
         configurationConfig.setConfiguration(config.getConfiguration());
@@ -45,21 +51,30 @@ public class EzMybatisContent {
         Assert.notNull(configuration, "configuration can not be null");
         ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
         Assert.notNull(configurationConfig, "please init");
-        return configurationConfig.getDbKeywordQMFactory().getKeywordQM(DbTypeUtils.getDbType(configuration));
+        return configurationConfig.getDbKeywordQMFactory().getKeywordQM();
     }
 
+    /**
+     * 添加插入监听器
+     */
     public static void addInsertListener(EzMybatisConfig config, EzMybatisInsertListener listener) {
         checkInit(config);
         ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.getUpdateInterceptor().addInsertListener(listener);
     }
 
+    /**
+     * 添加更新监听器
+     */
     public static void addUpdateListener(EzMybatisConfig config, EzMybatisUpdateListener listener) {
         checkInit(config);
         ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.getUpdateInterceptor().addUpdateListener(listener);
     }
 
+    /**
+     * 添加删除监听器
+     */
     public static void addDeleteListener(EzMybatisConfig config, EzMybatisDeleteListener listener) {
         checkInit(config);
         ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
