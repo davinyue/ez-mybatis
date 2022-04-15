@@ -19,17 +19,24 @@ public class DbKeywordQMFactory {
         DB_TYPE_MAP_KEYWORD_QM.put(DbType.DM, "\"");
     }
 
+    private EzMybatisConfig ezMybatisConfig;
     private String keywordQM;
 
     public DbKeywordQMFactory(EzMybatisConfig ezMybatisConfig) {
-        if (ezMybatisConfig.isEscapeKeyword()) {
-            this.keywordQM = DB_TYPE_MAP_KEYWORD_QM.get(DbTypeUtils.getDbType(ezMybatisConfig.getConfiguration()));
-        } else {
-            this.keywordQM = "";
-        }
+        this.ezMybatisConfig = ezMybatisConfig;
     }
 
     public String getKeywordQM() {
+        if (this.keywordQM == null) {
+            synchronized (this) {
+                if (this.ezMybatisConfig.isEscapeKeyword()) {
+                    this.keywordQM = DB_TYPE_MAP_KEYWORD_QM.get(DbTypeUtils
+                            .getDbType(this.ezMybatisConfig.getConfiguration()));
+                } else {
+                    this.keywordQM = "";
+                }
+            }
+        }
         return this.keywordQM;
     }
 }
