@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public class EzInsertProvider {
@@ -28,7 +28,7 @@ public class EzInsertProvider {
     public String batchInsert(Map<String, Object> param) {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        List<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
                 .getBatchInsertSql(configuration, paramHolder, entitys);
     }

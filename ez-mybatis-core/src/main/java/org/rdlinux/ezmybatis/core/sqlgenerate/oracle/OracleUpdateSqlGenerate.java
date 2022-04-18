@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
-import java.util.List;
+import java.util.Collection;
 
 public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     private static volatile OracleUpdateSqlGenerate instance;
@@ -26,7 +26,7 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys, boolean isReplace) {
+                                    Collection<Object> entitys, boolean isReplace) {
         return "BEGIN \n" + super.getBatchUpdateSql(configuration, mybatisParamHolder, entitys, isReplace) + " END;";
     }
 
@@ -37,7 +37,7 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                               List<EzUpdate> updates) {
+                               Collection<EzUpdate> updates) {
         return OracleEzUpdateToSql.getInstance().toSql(configuration, mybatisParamHolder, updates);
     }
 }

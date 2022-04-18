@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-import java.util.List;
+import java.util.Collection;
 
 public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
 
@@ -24,7 +24,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
 
     @Override
     public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    List<?> ids) {
+                                    Collection<?> ids) {
         Assert.notEmpty(ids, "ids cannot be null");
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String table = entityClassInfo.getTableName();
@@ -32,13 +32,14 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM +
                 idColumn + kwQM + " IN ( ");
-        for (int i = 0; i < ids.size(); i++) {
-            Object id = ids.get(i);
+        int i = 0;
+        for (Object id : ids) {
             Assert.notNull(id, String.format("ids[%d] can not be null", i));
             sqlBuilder.append(paramHolder.getParamName(id, false));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }
+            i++;
         }
         sqlBuilder.append(" )");
         return sqlBuilder.toString();

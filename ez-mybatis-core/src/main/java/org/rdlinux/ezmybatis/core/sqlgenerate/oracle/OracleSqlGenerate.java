@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
-import java.util.List;
+import java.util.Collection;
 
 public class OracleSqlGenerate implements SqlGenerate {
     private static volatile OracleSqlGenerate instance;
@@ -33,7 +33,7 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys) {
+                                    Collection<Object> entitys) {
         return OracleInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, entitys);
     }
 
@@ -45,7 +45,7 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    List<?> ids) {
+                                    Collection<?> ids) {
         return OracleSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, ntClass, ids);
     }
 
@@ -67,7 +67,7 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys, boolean isReplace) {
+                                    Collection<Object> entitys, boolean isReplace) {
         return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, entitys,
                 isReplace);
     }
@@ -79,7 +79,7 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                               List<EzUpdate> updates) {
+                               Collection<EzUpdate> updates) {
         return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, updates);
     }
 
@@ -91,7 +91,7 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                        List<?> ids) {
+                                        Collection<?> ids) {
         return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
     }
 
@@ -101,7 +101,7 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, List<EzDelete> deletes) {
+    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, Collection<EzDelete> deletes) {
         return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, deletes);
     }
 }
