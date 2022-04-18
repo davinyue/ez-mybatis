@@ -4,7 +4,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
-import java.util.List;
+import java.util.Collection;
 
 public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
     private static volatile MySqlInsertSqlGenerate instance;
@@ -25,10 +25,11 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys) {
+                                    Collection<Object> entitys) {
         StringBuilder sqlBuilder = new StringBuilder();
-        for (int i = 0; i < entitys.size(); i++) {
-            String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entitys.get(i));
+        int i = 0;
+        for (Object entity : entitys) {
+            String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entity);
             String flag = "VALUES ";
             int vIndex = insertSql.indexOf(flag);
             String valve = insertSql.substring(vIndex + flag.length());
@@ -40,6 +41,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
             if (i + 1 < entitys.size()) {
                 sqlBuilder.append(", ");
             }
+            i++;
         }
         return sqlBuilder.toString();
     }

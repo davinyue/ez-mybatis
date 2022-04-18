@@ -8,7 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public class EzSelectProvider {
@@ -33,7 +33,7 @@ public class EzSelectProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        List<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
+        Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
                 .getSelectByIdsSql(configuration, paramHolder, ntClass, ids);
     }

@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Update;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 
+import java.util.Collection;
 import java.util.List;
 
 public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
@@ -17,7 +18,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
     }
 
     @Override
-    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, List<EzUpdate> updates) {
+    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Collection<EzUpdate> updates) {
         StringBuilder sql = new StringBuilder();
         for (EzUpdate update : updates) {
             sql.append(this.toSql(configuration, update, mybatisParamHolder)).append(";\n");

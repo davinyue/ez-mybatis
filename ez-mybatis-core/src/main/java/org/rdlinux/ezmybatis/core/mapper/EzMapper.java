@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzUpdateProvider;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public interface EzMapper {
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_IDS_METHOD)
     <Id extends Serializable, NT> List<NT> selectByIds(
             @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
-            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<Id> ids);
+            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Id> ids);
 
     /**
      * 根据sql查询一条数据并返回map
@@ -84,7 +85,7 @@ public interface EzMapper {
      * 根据更新参数更新
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_BY_EZ_UPDATE_METHOD)
-    void batchEzUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzUpdate> updates);
+    void batchEzUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) Collection<EzUpdate> updates);
 
     /**
      * 根据sql更新
@@ -105,7 +106,7 @@ public interface EzMapper {
      */
     @MethodName(EZ_BATCH_DELETE_METHOD)
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_EZ_DELETE_METHOD)
-    void ezBatchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) List<EzDelete> deletes);
+    void ezBatchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) Collection<EzDelete> deletes);
 
     /**
      * 根据sql删除
@@ -124,7 +125,7 @@ public interface EzMapper {
      * 批量插入
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
-    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 根据sql插入记录
@@ -143,7 +144,7 @@ public interface EzMapper {
      * 批量更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_METHOD)
-    int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+    int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 更新, 更新所有字段
@@ -155,7 +156,7 @@ public interface EzMapper {
      * 批量更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_METHOD)
-    int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+    int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 删除
@@ -167,7 +168,7 @@ public interface EzMapper {
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_METHOD)
-    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) List<?> entitys);
+    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 根据主键删除
@@ -181,5 +182,5 @@ public interface EzMapper {
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_ID_METHOD)
     <T extends Serializable> int batchDeleteById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
-                                                 @Param(EzMybatisConstant.MAPPER_PARAM_IDS) List<T> ids);
+                                                 @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<T> ids);
 }
