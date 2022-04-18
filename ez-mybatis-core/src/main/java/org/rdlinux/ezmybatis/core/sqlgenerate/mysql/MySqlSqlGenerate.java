@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 
-import java.util.List;
+import java.util.Collection;
 
 public class MySqlSqlGenerate implements SqlGenerate {
     private static volatile MySqlSqlGenerate instance;
@@ -34,7 +34,7 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys) {
+                                    Collection<Object> entitys) {
         return MySqlInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, entitys);
     }
 
@@ -46,7 +46,7 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    List<?> ids) {
+                                    Collection<?> ids) {
         return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, ntClass, ids);
     }
 
@@ -68,8 +68,9 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys, boolean isReplace) {
-        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, entitys, isReplace);
+                                    Collection<Object> entitys, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, entitys,
+                isReplace);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                               List<EzUpdate> updates) {
+                               Collection<EzUpdate> updates) {
         return MySqlUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, updates);
     }
 
@@ -91,7 +92,7 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                        List<?> ids) {
+                                        Collection<?> ids) {
         return MySqlDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
     }
 
@@ -101,7 +102,8 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, List<EzDelete> deletes) {
+    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder,
+                               Collection<EzDelete> deletes) {
         return MySqlDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, deletes);
     }
 }

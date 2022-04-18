@@ -9,7 +9,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
@@ -49,7 +49,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys, boolean isReplace) {
+                                    Collection<Object> entitys, boolean isReplace) {
         StringBuilder sqlBuilder = new StringBuilder();
         for (Object entity : entitys) {
             String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);

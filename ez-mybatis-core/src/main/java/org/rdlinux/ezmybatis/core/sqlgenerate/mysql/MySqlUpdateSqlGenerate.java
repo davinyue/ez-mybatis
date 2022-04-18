@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
-import java.util.List;
+import java.util.Collection;
 
 public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     private static volatile MySqlUpdateSqlGenerate instance;
@@ -31,7 +31,7 @@ public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                               List<EzUpdate> updates) {
+                               Collection<EzUpdate> updates) {
         return MySqlEzUpdateToSql.getInstance().toSql(configuration, mybatisParamHolder, updates);
     }
 }

@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Update;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +30,7 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
     }
 
     @Override
-    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, List<EzUpdate> updates) {
+    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Collection<EzUpdate> updates) {
         String sql = super.toSql(configuration, mybatisParamHolder, updates);
         return "BEGIN \n" + sql + "END;";
     }
