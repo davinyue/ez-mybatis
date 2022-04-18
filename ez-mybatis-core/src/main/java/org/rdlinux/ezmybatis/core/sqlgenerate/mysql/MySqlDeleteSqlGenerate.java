@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractDeleteSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
-import java.util.List;
+import java.util.Collection;
 
 public class MySqlDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     private static volatile MySqlDeleteSqlGenerate instance;
@@ -30,7 +30,8 @@ public class MySqlDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, List<EzDelete> deletes) {
+    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder,
+                               Collection<EzDelete> deletes) {
         return MySqlEzDeleteToSql.getInstance().toSql(configuration, paramHolder, deletes);
     }
 }

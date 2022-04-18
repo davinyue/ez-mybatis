@@ -4,7 +4,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 
-import java.util.List;
+import java.util.Collection;
 
 public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
     private static volatile OracleInsertSqlGenerate instance;
@@ -25,7 +25,7 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    List<Object> entitys) {
+                                    Collection<Object> entitys) {
         StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
         for (Object entity : entitys) {
             String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entity);

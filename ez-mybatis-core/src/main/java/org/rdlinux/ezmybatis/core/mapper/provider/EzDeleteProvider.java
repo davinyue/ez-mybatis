@@ -13,7 +13,7 @@ import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public class EzDeleteProvider {
@@ -44,8 +44,8 @@ public class EzDeleteProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        List<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        List<Object> ids = new ArrayList<>(entitys.size());
+        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Collection<Object> ids = new ArrayList<>(entitys.size());
         for (Object entity : entitys) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
             Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
@@ -72,7 +72,7 @@ public class EzDeleteProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        List<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
+        Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
                 .getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
     }
@@ -90,7 +90,7 @@ public class EzDeleteProvider {
     public String batchDeleteByEzDelete(Map<String, Object> param) {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        List<EzDelete> deletes = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        Collection<EzDelete> deletes = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
                 .getDeleteSql(configuration, paramHolder, deletes);
     }
