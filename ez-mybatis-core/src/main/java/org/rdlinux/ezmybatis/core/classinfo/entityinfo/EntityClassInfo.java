@@ -15,11 +15,16 @@ public interface EntityClassInfo {
     String getSchema();
 
     /**
-     * 获取表名
+     * 获取带schema的表名
      *
      * @param keywordQM 关键字转义符
      */
     String getTableNameWithSchema(String keywordQM);
+
+    /**
+     * 获取表名
+     */
+    String getTableName();
 
     /**
      * 获取属性信息

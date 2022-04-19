@@ -37,6 +37,11 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
     }
 
     @Override
+    public String getTableName() {
+        return this.tableName;
+    }
+
+    @Override
     public List<EntityFieldInfo> getFieldInfos() {
         return this.fieldInfos;
     }
