@@ -15,10 +15,10 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                                    Object id) {
         Assert.notNull(id, "id cannot be null");
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        String table = entityClassInfo.getTableName();
-        String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
-        return "SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM + idColumn + kwQM + " = " +
+        String table = entityClassInfo.getTableNameWithSchema(kwQM);
+        String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
+        return "SELECT * FROM " + table + " WHERE " + kwQM + idColumn + kwQM + " = " +
                 paramHolder.getParamName(id, false);
     }
 
@@ -27,10 +27,10 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                                     Collection<?> ids) {
         Assert.notEmpty(ids, "ids cannot be null");
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        String table = entityClassInfo.getTableName();
-        String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM " + kwQM + table + kwQM + " WHERE " + kwQM +
+        String table = entityClassInfo.getTableNameWithSchema(kwQM);
+        String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM " + table + " WHERE " + kwQM +
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {
