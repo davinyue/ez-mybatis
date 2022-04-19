@@ -25,8 +25,15 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
     }
 
     @Override
-    public String getTableName() {
-        return this.tableName;
+    public String getTableNameWithSchema(String keywordQM) {
+        if (keywordQM == null) {
+            keywordQM = "";
+        }
+        if (this.schema != null && !this.schema.isEmpty()) {
+            return keywordQM + this.schema + keywordQM + "." + keywordQM + this.tableName + keywordQM;
+        } else {
+            return this.tableName;
+        }
     }
 
     @Override

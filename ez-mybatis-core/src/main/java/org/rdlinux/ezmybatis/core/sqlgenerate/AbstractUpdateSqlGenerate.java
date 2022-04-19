@@ -17,16 +17,15 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
                                boolean isReplace) {
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
-        String tableName = entityClassInfo.getTableName();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
+        String tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         String idColumn = primaryKeyInfo.getColumnName();
         Object idValue = ReflectionUtils.getFieldValue(entity, primaryKeyInfo.getField());
         Assert.notNull(idValue, primaryKeyInfo.getFieldName() + " cannot be null");
-        StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(keywordQM).append(tableName)
-                .append(keywordQM).append(" SET ");
+        StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
         boolean invalidSql = true;
         for (String column : columnMapFieldInfo.keySet()) {
             EntityFieldInfo entityFieldInfo = columnMapFieldInfo.get(column);
