@@ -17,6 +17,9 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
                                boolean isReplace) {
+        if (entity instanceof Collection) {
+            throw new IllegalArgumentException("entity can not instanceof Collection");
+        }
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName = entityClassInfo.getTableNameWithSchema(keywordQM);

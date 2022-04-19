@@ -13,6 +13,9 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
     public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
                                    Object id) {
         Assert.notNull(id, "id cannot be null");
+        if (id instanceof Collection) {
+            throw new IllegalArgumentException("id can not instanceof Collection");
+        }
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
         String table = entityClassInfo.getTableNameWithSchema(kwQM);
