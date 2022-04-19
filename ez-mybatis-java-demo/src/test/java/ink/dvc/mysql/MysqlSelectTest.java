@@ -15,10 +15,7 @@ import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 import org.rdlinux.ezmybatis.utils.StringHashMap;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 @Log4j2
@@ -382,5 +379,39 @@ public class MysqlSelectTest extends MysqlBaseTest {
 //        EzQuery<User> query4 = EzQuery.builder(User.class).from(table4).select().addAll().done()
 //                .page(1, 1).build();
 //        System.out.println(JacksonUtils.toJsonString(mapper.query(query4)));
+    }
+
+    @Test
+    public void inSelectTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        String[] nameArray = new String[]{"牛儿", "网友"};
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.name, Operator.in, "1")
+                .addFieldCondition(User.Fields.name, Operator.in, Collections.singletonList("张三"))
+                .addFieldCondition(User.Fields.name, Operator.in, Arrays.asList("李四", "王二"))
+                .addFieldCondition(User.Fields.name, Operator.in, nameArray)
+                .done().build();
+        System.out.println(mapper.query(query));
+        sqlSession.close();
+    }
+
+    @Test
+    public void notInSelectTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        String[] nameArray = new String[]{"牛儿", "网友"};
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.name, Operator.notIn, "1")
+                .addFieldCondition(User.Fields.name, Operator.notIn, Collections.singletonList("张三"))
+                .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
+                .addFieldCondition(User.Fields.name, Operator.notIn, nameArray)
+                .done().build();
+        System.out.println(mapper.query(query));
+        sqlSession.close();
     }
 }
