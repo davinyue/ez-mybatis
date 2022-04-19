@@ -15,11 +15,10 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     @Override
     public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
-        String tableName = entityClassInfo.getTableName();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
-        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(keywordQM).append(tableName)
-                .append(keywordQM).append(" ");
+        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
         StringBuilder columnBuilder = new StringBuilder("( ");
         StringBuilder paramBuilder = new StringBuilder("( ");
         int i = 1;
