@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
@@ -79,8 +78,7 @@ public class EntityTable extends AbstractTable {
         if (this.tableName != null && !this.tableName.isEmpty()) {
             return this.tableName;
         }
-        return EzEntityClassInfoFactory.forClass(configuration, this.etType)
-                .getTableNameWithSchema(EzMybatisContent.getKeywordQM(configuration));
+        return EzEntityClassInfoFactory.forClass(configuration, this.etType).getTableName();
     }
 
     @Override
