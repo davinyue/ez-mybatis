@@ -8,12 +8,16 @@ import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
     @Override
     public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity) {
+        if (entity instanceof Collection) {
+            throw new IllegalArgumentException("entity can not instanceof Collection");
+        }
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
