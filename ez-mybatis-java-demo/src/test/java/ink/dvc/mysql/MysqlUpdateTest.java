@@ -186,12 +186,18 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     @Test
     public void updateSetNull() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
-                .where().addFieldCondition("id", "2").done()
-                .build();
-        mapper.ezUpdate(ezUpdate);
-        sqlSession.commit();
-        sqlSession.close();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
+                    .where().addFieldCondition("id", "1").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
     }
 }
