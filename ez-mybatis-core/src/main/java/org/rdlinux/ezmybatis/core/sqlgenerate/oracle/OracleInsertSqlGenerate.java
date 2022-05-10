@@ -29,7 +29,7 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
         StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
         for (Object entity : entitys) {
             String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entity);
-            sqlBuilder.append(insertSql).append("; \n");
+            sqlBuilder.append(insertSql).append(";\n");
         }
         sqlBuilder.append("END;");
         return sqlBuilder.toString();
