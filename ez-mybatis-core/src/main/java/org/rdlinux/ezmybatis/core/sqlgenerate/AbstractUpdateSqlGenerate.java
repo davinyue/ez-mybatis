@@ -55,7 +55,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         StringBuilder sqlBuilder = new StringBuilder();
         for (Object entity : entitys) {
             String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
-            sqlBuilder.append(sqlTmpl).append(";");
+            sqlBuilder.append(sqlTmpl).append(";\n");
         }
         return sqlBuilder.toString();
     }
