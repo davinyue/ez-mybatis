@@ -39,7 +39,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
             }
             sqlBuilder.append(valve);
             if (i + 1 < entitys.size()) {
-                sqlBuilder.append(", ");
+                sqlBuilder.append(", \n");
             }
             i++;
         }
