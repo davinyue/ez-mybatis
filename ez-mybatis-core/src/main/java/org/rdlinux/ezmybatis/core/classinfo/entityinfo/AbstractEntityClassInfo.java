@@ -53,7 +53,16 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
 
     @Override
     public String getFieldNameByColumn(String column) {
+        //先根据原始列名查询
         EntityFieldInfo entityFieldInfo = this.columnMapFieldInfo.get(column);
+        //如果没有则根据小写列名查询
+        if (entityFieldInfo == null) {
+            entityFieldInfo = this.columnMapFieldInfo.get(column.toLowerCase());
+        }
+        //如果没有则根据大写列名查询
+        if (entityFieldInfo == null) {
+            entityFieldInfo = this.columnMapFieldInfo.get(column.toUpperCase());
+        }
         if (entityFieldInfo == null) {
             return null;
         } else {

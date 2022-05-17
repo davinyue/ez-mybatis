@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.utils;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 
@@ -26,7 +27,14 @@ public class DbTypeUtils {
             synchronized (configuration) {
                 dbType = DB_TYPE_MAP.get(configuration);
                 if (dbType == null) {
-                    DataSource dataSource = configuration.getEnvironment().getDataSource();
+                    Environment environment = configuration.getEnvironment();
+                    if (environment == null) {
+                        throw new RuntimeException("Unsupported db type");
+                    }
+                    DataSource dataSource = environment.getDataSource();
+                    if (dataSource == null) {
+                        throw new RuntimeException("Unsupported db type");
+                    }
                     String driver;
                     if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
                         driver = ((PooledDataSource) dataSource).getDriver();
