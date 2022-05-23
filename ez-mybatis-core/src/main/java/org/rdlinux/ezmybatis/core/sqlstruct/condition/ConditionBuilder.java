@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -620,5 +621,39 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
             return this.addColumnCompareCondition(leftColumn, rightColumn);
         }
         return this.sonBuilder;
+    }
+
+    /**
+     * 添sql条件
+     */
+    public SonBuilder addSqlCondition(boolean sure, Condition.LogicalOperator logicalOperator, String sql) {
+        if (sure) {
+            this.conditions.add(new SqlCondition(logicalOperator, sql));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添sql条件
+     */
+    public SonBuilder addSqlCondition(Condition.LogicalOperator logicalOperator, String sql) {
+        return this.addSqlCondition(true, logicalOperator, sql);
+    }
+
+    /**
+     * 添sql条件
+     */
+    public SonBuilder addSqlCondition(boolean sure, String sql) {
+        if (sure) {
+            this.conditions.add(new SqlCondition(Condition.LogicalOperator.AND, sql));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添sql条件
+     */
+    public SonBuilder addSqlCondition(String sql) {
+        return this.addSqlCondition(true, sql);
     }
 }
