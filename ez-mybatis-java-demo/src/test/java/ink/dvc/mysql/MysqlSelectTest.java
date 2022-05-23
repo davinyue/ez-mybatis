@@ -239,7 +239,8 @@ public class MysqlSelectTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(DbTable.of("ez_user"))
                 .select().addAll().done()
-                .where().addColumnCondition("id", "4").done()
+                .where().addColumnCondition("id", "4")
+                .done()
                 .having().addColumnCondition("name", "张三").done()
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
