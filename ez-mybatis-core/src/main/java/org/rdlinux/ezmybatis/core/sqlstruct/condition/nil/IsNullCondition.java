@@ -21,6 +21,6 @@ public abstract class IsNullCondition implements Condition {
 
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        return " " + this.getSqlField(configuration) + " " + this.operator.getOperator();
+        return " " + this.getSqlField(configuration) + " " + this.operator.getOperator() + " ";
     }
 }

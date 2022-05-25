@@ -28,9 +28,9 @@ public class GroupCondition implements Condition {
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
         if (this.conditions == null || this.conditions.isEmpty()) {
-            return "";
+            return " ";
         } else {
-            StringBuilder sql = new StringBuilder("( ");
+            StringBuilder sql = new StringBuilder(" ( ");
             for (int i = 0; i < this.conditions.size(); i++) {
                 Condition condition = this.conditions.get(i);
                 Assert.notNull(condition, "condition can not be null");
@@ -39,7 +39,7 @@ public class GroupCondition implements Condition {
                 }
                 sql.append(condition.toSqlPart(configuration, mybatisParamHolder));
             }
-            sql.append(" )");
+            sql.append(" ) ");
             return sql.toString();
         }
     }
