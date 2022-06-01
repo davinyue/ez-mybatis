@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -15,6 +16,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
     @Override
     public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity) {
+        Assert.notNull(entity, "entity can not be null");
         if (entity instanceof Collection) {
             throw new IllegalArgumentException("entity can not instanceof Collection");
         }

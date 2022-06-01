@@ -30,6 +30,13 @@ public class Select implements SqlStruct {
         CONVERT.put(DbType.DM, defaultConvert);
     }
 
+    /**
+     * 是否去重
+     */
+    private boolean distinct = false;
+    /**
+     * 查询项
+     */
     private List<SelectItem> selectFields;
 
     public Select(List<SelectItem> selectFields) {
@@ -40,11 +47,14 @@ public class Select implements SqlStruct {
                                                        EzQuery<?> ezParam) {
         From from = ezParam.getFrom();
         Select select = ezParam.getSelect();
+        sqlBuilder.append("SELECT ");
+        if (select != null && select.distinct) {
+            sqlBuilder.append("DISTINCT ");
+        }
         if (select == null || select.getSelectFields() == null || select.getSelectFields().isEmpty()) {
-            sqlBuilder.append("SELECT ").append(from.getTable().getAlias()).append(".* ");
+            sqlBuilder.append(from.getTable().getAlias()).append(".* ");
         } else {
             List<SelectItem> selectFields = select.getSelectFields();
-            sqlBuilder.append("SELECT ");
             for (int i = 0; i < selectFields.size(); i++) {
                 sqlBuilder.append(selectFields.get(i).toSqlPart(configuration));
                 if (i + 1 < selectFields.size()) {
@@ -66,11 +76,13 @@ public class Select implements SqlStruct {
         private List<SelectItem> selectFields;
         private T target;
         private Table table;
+        private Select select;
 
         public EzSelectBuilder(T target, Select select, Table table) {
             if (select.getSelectFields() == null) {
                 select.setSelectFields(new LinkedList<>());
             }
+            this.select = select;
             this.selectFields = select.getSelectFields();
             this.target = target;
             this.table = table;
@@ -84,6 +96,22 @@ public class Select implements SqlStruct {
 
         public T done() {
             return this.target;
+        }
+
+        /**
+         * 去重
+         */
+        public EzSelectBuilder<T> distinct() {
+            this.select.distinct = true;
+            return this;
+        }
+
+        /**
+         * 不去重
+         */
+        public EzSelectBuilder<T> notDistinct() {
+            this.select.distinct = false;
+            return this;
         }
 
         public EzSelectBuilder<T> addAllTable() {
@@ -518,110 +546,6 @@ public class Select implements SqlStruct {
                 return this.addColumnAvg(column, alias);
             }
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldDistinct(String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addDistinct(String field) {
-            return this.addFieldDistinct(field);
-        }
-
-        public EzSelectBuilder<T> addFieldDistinct(String field) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectDistinctField((EntityTable) this.table, field));
-            return this;
-        }
-
-        /**
-         * please use {@link #addFieldDistinct(boolean, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addDistinct(boolean sure, String field) {
-            return this.addFieldDistinct(sure, field);
-        }
-
-        public EzSelectBuilder<T> addFieldDistinct(boolean sure, String field) {
-            if (sure) {
-                return this.addFieldDistinct(field);
-            }
-            return this;
-        }
-
-        /**
-         * please use {@link #addFieldDistinct(String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addDistinct(String field, String alias) {
-            return this.addFieldDistinct(field, alias);
-        }
-
-        public EzSelectBuilder<T> addFieldDistinct(String field, String alias) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectDistinctField((EntityTable) this.table, field, alias));
-            return this;
-        }
-
-        /**
-         * please use {@link #addFieldDistinct(boolean, String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addDistinct(boolean sure, String field, String alias) {
-            return this.addFieldDistinct(sure, field, alias);
-        }
-
-        public EzSelectBuilder<T> addFieldDistinct(boolean sure, String field, String alias) {
-            if (sure) {
-                return this.addFieldDistinct(field, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnDistinct(String column) {
-            this.selectFields.add(new SelectDistinctColumn(this.table, column));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnDistinct(boolean sure, String column) {
-            if (sure) {
-                return this.addColumnDistinct(column);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnDistinct(String column, String alias) {
-            this.selectFields.add(new SelectDistinctColumn(this.table, column, alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnDistinct(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumnDistinct(column, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addAllDistinct(boolean sure) {
-            if (sure) {
-                this.selectFields.add(new SelectTableDistinct(this.table));
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addAllDistinct() {
-            return this.addAllDistinct(true);
-        }
-
-        public EzSelectBuilder<T> addAllTableDistinct(boolean sure) {
-            if (sure) {
-                this.selectFields.add(new SelectAllDistinct());
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addAllTableDistinct() {
-            return this.addAllTableDistinct(true);
         }
     }
 }
