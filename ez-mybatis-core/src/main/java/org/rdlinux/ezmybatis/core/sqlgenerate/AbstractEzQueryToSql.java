@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     @Override
     public String toSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
+        Assert.notNull(query, "query can not be null");
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder = this.selectToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
@@ -22,6 +23,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
 
     @Override
     public String toCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
+        Assert.notNull(query, "query can not be null");
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);

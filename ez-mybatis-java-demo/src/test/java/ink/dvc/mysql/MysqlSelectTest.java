@@ -441,4 +441,15 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(mapper.query(query));
         sqlSession.close();
     }
+
+    @Test
+    public void distinctTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().distinct().addAll().done()
+                .build();
+        System.out.println(mapper.query(query));
+        sqlSession.close();
+    }
 }

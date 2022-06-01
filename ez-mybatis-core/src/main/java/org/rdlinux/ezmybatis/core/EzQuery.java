@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 public class EzQuery<Rt> extends EzParam<Rt> {
-    private Select select;
+    private Select select = new Select(new LinkedList<>());
     private List<Join> joins;
     private GroupBy groupBy;
     private OrderBy orderBy;

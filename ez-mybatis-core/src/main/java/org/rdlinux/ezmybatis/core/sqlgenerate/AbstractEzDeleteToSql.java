@@ -5,12 +5,14 @@ import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Collection;
 
 public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
     @Override
     public String toSql(Configuration configuration, MybatisParamHolder paramHolder, EzDelete delete) {
+        Assert.notNull(delete, "delete can not be null");
         return this.toSql(configuration, delete, paramHolder);
     }
 
