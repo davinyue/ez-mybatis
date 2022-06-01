@@ -17,6 +17,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
     @Override
     public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
                                boolean isReplace) {
+        Assert.notNull(entity, "entity can not be null");
         if (entity instanceof Collection) {
             throw new IllegalArgumentException("entity can not instanceof Collection");
         }
@@ -52,6 +53,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
                                     Collection<Object> entitys, boolean isReplace) {
+        Assert.notEmpty(entitys, "entitys can not be empty");
         StringBuilder sqlBuilder = new StringBuilder();
         for (Object entity : entitys) {
             String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
