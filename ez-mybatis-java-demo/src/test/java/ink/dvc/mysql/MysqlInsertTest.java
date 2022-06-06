@@ -29,21 +29,25 @@ public class MysqlInsertTest extends MysqlBaseTest {
     @Test
     public void batchInsert() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<User> users = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
-            User user = new User();
-            user.setUpdateTime(new Date());
-            user.setCreateTime(new Date());
-            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-            user.setName("芳" + i + 1);
-            user.setName("王");
-            user.setUserAge(27 + i);
-            user.setSex(User.Sex.MAN);
-            users.add(user);
+
+        long start = System.currentTimeMillis();
+        for (int h = 0; h < 1; h++) {
+            List<User> users = new LinkedList<>();
+            for (int i = 0; i < 2; i++) {
+                User user = new User();
+                user.setUpdateTime(new Date());
+                user.setCreateTime(new Date());
+                user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                user.setName("芳" + (i + 1));
+                user.setUserAge(1 + i);
+                user.setSex(User.Sex.MAN);
+                users.add(user);
+            }
+            sqlSession.getMapper(UserMapper.class).batchInsert(users);
+            sqlSession.commit();
         }
-        int insert = sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        sqlSession.commit();
-        System.out.println(insert);
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
         sqlSession.close();
     }
 
