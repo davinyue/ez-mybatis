@@ -1,4 +1,4 @@
-package ink.dvc.mysql;
+package org.rdlinux.mysql;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;

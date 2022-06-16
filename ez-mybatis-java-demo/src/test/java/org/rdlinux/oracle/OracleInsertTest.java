@@ -1,4 +1,4 @@
-package ink.dvc.dm;
+package org.rdlinux.oracle;
 
 import org.junit.Test;
 import org.rdlinux.ezmybatis.java.entity.User;
@@ -8,8 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class DmInsertTest extends DmBaseTest {
-
+public class OracleInsertTest extends OracleBaseTest {
     @Test
     public void insert() {
         User user = new User();
@@ -18,8 +17,8 @@ public class DmInsertTest extends DmBaseTest {
         //user.setFirstName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
-        DmBaseTest.sqlSession.commit();
+        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
+        OracleBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
@@ -39,14 +38,14 @@ public class DmInsertTest extends DmBaseTest {
             user.setSex(User.Sex.MAN);
             users.add(user);
         }
-        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        DmBaseTest.sqlSession.commit();
+        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
+        OracleBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchInsertTUT() {
-        UserMapper userMapper = DmBaseTest.sqlSession.getMapper(UserMapper.class);
+        UserMapper userMapper = OracleBaseTest.sqlSession.getMapper(UserMapper.class);
         userMapper.selectById("1s");
         long start = System.currentTimeMillis();
         List<User> users = new LinkedList<>();
@@ -60,7 +59,7 @@ public class DmInsertTest extends DmBaseTest {
             users.add(user);
         }
         int insert = userMapper.batchInsert(users);
-        DmBaseTest.sqlSession.commit();
+        OracleBaseTest.sqlSession.commit();
         long end = System.currentTimeMillis();
         System.out.println("耗时" + (end - start));
     }

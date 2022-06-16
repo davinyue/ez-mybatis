@@ -1,4 +1,4 @@
-package ink.dvc.oracle;
+package org.rdlinux.oracle;
 
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;

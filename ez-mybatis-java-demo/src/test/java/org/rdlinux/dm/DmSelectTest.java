@@ -1,4 +1,4 @@
-package ink.dvc.dm;
+package org.rdlinux.dm;
 
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
