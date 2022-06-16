@@ -1,4 +1,4 @@
-package ink.dvc.mysql;
+package org.rdlinux.mysql;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;

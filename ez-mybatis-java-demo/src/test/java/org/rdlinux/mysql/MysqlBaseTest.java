@@ -1,4 +1,4 @@
-package ink.dvc.mysql;
+package org.rdlinux.mysql;
 
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.io.Resources;

@@ -1,4 +1,4 @@
-package ink.dvc.oracle;
+package org.rdlinux.dm;
 
 import org.junit.Test;
 import org.rdlinux.ezmybatis.java.entity.User;
@@ -8,7 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class OracleInsertTest extends OracleBaseTest {
+public class DmInsertTest extends DmBaseTest {
+
     @Test
     public void insert() {
         User user = new User();
@@ -17,8 +18,8 @@ public class OracleInsertTest extends OracleBaseTest {
         //user.setFirstName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
-        OracleBaseTest.sqlSession.commit();
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
@@ -38,14 +39,14 @@ public class OracleInsertTest extends OracleBaseTest {
             user.setSex(User.Sex.MAN);
             users.add(user);
         }
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        OracleBaseTest.sqlSession.commit();
+        int insert = DmBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
+        DmBaseTest.sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchInsertTUT() {
-        UserMapper userMapper = OracleBaseTest.sqlSession.getMapper(UserMapper.class);
+        UserMapper userMapper = DmBaseTest.sqlSession.getMapper(UserMapper.class);
         userMapper.selectById("1s");
         long start = System.currentTimeMillis();
         List<User> users = new LinkedList<>();
@@ -59,7 +60,7 @@ public class OracleInsertTest extends OracleBaseTest {
             users.add(user);
         }
         int insert = userMapper.batchInsert(users);
-        OracleBaseTest.sqlSession.commit();
+        DmBaseTest.sqlSession.commit();
         long end = System.currentTimeMillis();
         System.out.println("耗时" + (end - start));
     }

@@ -1,4 +1,4 @@
-package ink.dvc.dm;
+package org.rdlinux.oracle;
 
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.io.Resources;
@@ -12,11 +12,11 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import java.io.IOException;
 import java.io.Reader;
 
-public class DmBaseTest {
+public class OracleBaseTest {
     public static SqlSession sqlSession;
 
     static {
-        String resource = "mybatis-config-dm.xml";
+        String resource = "mybatis-config-oracle.xml";
         Reader reader = null;
         try {
             reader = Resources.getResourceAsReader(resource);
