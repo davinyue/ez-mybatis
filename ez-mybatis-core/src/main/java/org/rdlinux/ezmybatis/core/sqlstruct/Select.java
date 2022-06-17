@@ -547,5 +547,55 @@ public class Select implements SqlStruct {
             }
             return this;
         }
+
+        public EzSelectBuilder<T> addFieldSum(String field, String alias) {
+            this.checkEntityTable();
+            this.selectFields.add(new SelectSumField((EntityTable) this.table, field, alias));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addFieldSum(boolean sure, String field, String alias) {
+            if (sure) {
+                return this.addFieldSum(field, alias);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addFieldSum(String field) {
+            this.checkEntityTable();
+            this.selectFields.add(new SelectSumField((EntityTable) this.table, field));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addFieldSum(boolean sure, String field) {
+            if (sure) {
+                return this.addFieldSum(field);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnSum(String column) {
+            this.selectFields.add(new SelectSumColumn(this.table, column));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnSum(boolean sure, String column) {
+            if (sure) {
+                return this.addColumnSum(column);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnSum(String column, String alias) {
+            this.selectFields.add(new SelectSumColumn(this.table, column, alias));
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnSum(boolean sure, String column, String alias) {
+            if (sure) {
+                return this.addColumnSum(column, alias);
+            }
+            return this;
+        }
     }
 }
