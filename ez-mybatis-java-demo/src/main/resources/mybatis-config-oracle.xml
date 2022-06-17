@@ -13,7 +13,7 @@
         <setting name="aggressiveLazyLoading" value="false"/>
         <!--开启二级缓存 -->
         <setting name="cacheEnabled" value="true"/>
-        <setting name="logImpl" value="LOG4j2"/>
+        <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>
         <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
@@ -34,15 +34,16 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <!-- 配置连接信息 -->
-                <property name="driver" value="dm.jdbc.driver.DmDriver"/>
-                <property name="url" value="jdbc:dm://192.168.163.3:5236/"/>
-                <property name="username" value="SYSDBA"/>
-                <property name="password" value="SYSDBA"/>
+                <property name="driver" value="oracle.jdbc.OracleDriver"/>
+                <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521/orcl"/>
+                <property name="username" value="root"/>
+                <property name="password" value="1"/>
             </dataSource>
         </environment>
     </environments>
     <!-- 配置映射文件：用来配置sql语句和结果集类型等 -->
     <mappers>
         <mapper class="org.rdlinux.ezmybatis.java.mapper.UserMapper"/>
+        <mapper class="org.rdlinux.ezmybatis.java.mapper.PayVoucherMapper"/>
     </mappers>
 </configuration>
