@@ -65,8 +65,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
     protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                       MybatisParamHolder mybatisParamHolder) {
         From from = update.getFrom();
-        return new StringBuilder(from.toSqlPart(sqlBuilder, configuration, update, mybatisParamHolder)
-                .toString().replace("FROM", ""));
+        return sqlBuilder.append(from.getTable().toSqlStruct(configuration, mybatisParamHolder));
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
