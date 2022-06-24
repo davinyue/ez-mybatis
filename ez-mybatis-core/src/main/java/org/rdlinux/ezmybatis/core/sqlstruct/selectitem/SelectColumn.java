@@ -28,7 +28,7 @@ public class SelectColumn extends AbstractSelectItem {
     @Override
     public String toSqlPart(Configuration configuration) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        String sql = " " + this.table.getAlias() + "." + this.column + " ";
+        String sql = " " + this.table.getAlias() + "." + keywordQM + this.column + keywordQM + " ";
         String alias = this.getAlias();
         if (alias != null && !alias.isEmpty()) {
             sql = sql + keywordQM + alias + keywordQM + " ";

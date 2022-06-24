@@ -2,11 +2,15 @@ package org.rdlinux.oracle;
 
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
+import org.rdlinux.ezmybatis.utils.StringHashMap;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -80,7 +84,7 @@ public class OracleUpdateTest extends OracleBaseTest {
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
-        int ret = mapper.update(ezUpdate);
+        int ret = mapper.ezUpdate(ezUpdate);
         OracleBaseTest.sqlSession.commit();
         log.info("更新条数{}", ret);
     }
@@ -99,5 +103,20 @@ public class OracleUpdateTest extends OracleBaseTest {
         updates.add(ezUpdate);
         mapper.batchUpdate(updates);
         OracleBaseTest.sqlSession.commit();
+    }
+
+    @Test
+    public void unionUpdate() {
+        DbTable listTable = DbTable.of("A");
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("B"))
+                .select().addColumn("PRO_NAME", "T1PN").done()
+                .select(listTable).addColumn("PRO_NAME", "T2PN").done()
+                .join(listTable)
+                .addColumnCompareCondition("SO_CODE", "SO_CODE").done().build();
+        EzQueryTable queryTable = EzQueryTable.of(query);
+        EzUpdate ezUpdate = EzUpdate.update(queryTable)
+                .setColumnSyntax("T2PN", queryTable.getAlias() + "." + "T1PN").build();
+        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        mapper.ezUpdate(ezUpdate);
     }
 }
