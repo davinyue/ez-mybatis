@@ -21,6 +21,7 @@ import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
         this.insertListeners.forEach(e -> e.onInsert(entity));
     }
 
-    protected void onBatchInsert(List<Object> entitys) {
+    protected void onBatchInsert(Collection<Object> entitys) {
         this.insertListeners.forEach(e -> e.onBatchInsert(entitys));
     }
 
@@ -73,15 +74,23 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
         this.updateListeners.forEach(e -> e.onUpdate(entity));
     }
 
-    protected void onBatchUpdate(List<Object> entitys) {
+    protected void onBatchUpdate(Collection<Object> entitys) {
         this.updateListeners.forEach(e -> e.onBatchUpdate(entitys));
+    }
+
+    protected void onReplace(Object entity) {
+        this.updateListeners.forEach(e -> e.onReplace(entity));
+    }
+
+    protected void onBatchReplace(Collection<Object> entitys) {
+        this.updateListeners.forEach(e -> e.onBatchReplace(entitys));
     }
 
     protected void onDelete(Object entity) {
         this.deleteListeners.forEach(e -> e.onDelete(entity));
     }
 
-    protected void onBatchDelete(List<Object> entitys) {
+    protected void onBatchDelete(Collection<Object> entitys) {
         this.deleteListeners.forEach(e -> e.onBatchDelete(entitys));
     }
 
@@ -89,7 +98,7 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
         this.deleteListeners.forEach(e -> e.onDeleteById(id, ntClass));
     }
 
-    protected void onBatchDeleteById(List<Object> ids, Class<?> ntClass) {
+    protected void onBatchDeleteById(Collection<Object> ids, Class<?> ntClass) {
         this.deleteListeners.forEach(e -> e.onBatchDeleteById(ids, ntClass));
     }
 
@@ -104,6 +113,9 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
             return invocation.proceed();
         }
         Method mapperMethod = ReflectionUtils.getFieldValue(sqlSource, MAPPER_METHOD_FIELD);
+        if (mapperMethod == null) {
+            return invocation.proceed();
+        }
         if (!mapperMethod.getDeclaringClass().getName().equals(EzBaseMapper.class.getName()) &&
                 !mapperMethod.getDeclaringClass().getName().equals(EzMapper.class.getName())) {
             return invocation.proceed();
@@ -116,18 +128,22 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
                 this.onInsert(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
             } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_INSERT_METHOD_NAME)) {
                 log.debug("on batch insert");
-                this.onBatchInsert((List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
+                this.onBatchInsert((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
             }
         } else if (sqlCommandType == SqlCommandType.UPDATE) {
             Map<String, Object> param = (Map<String, Object>) args[1];
-            if (statementId.endsWith("." + EzMybatisConstant.UPDATE_METHOD_NAME) ||
-                    statementId.endsWith("." + EzMybatisConstant.REPLACE_METHOD_NAME)) {
+            if (statementId.endsWith("." + EzMybatisConstant.UPDATE_METHOD_NAME)) {
                 log.debug("on update");
                 this.onUpdate(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
-            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_UPDATE_METHOD_NAME) ||
-                    statementId.endsWith("." + EzMybatisConstant.BATCH_REPLACE_METHOD_NAME)) {
+            } else if (statementId.endsWith("." + EzMybatisConstant.REPLACE_METHOD_NAME)) {
+                log.debug("on replace");
+                this.onReplace(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
+            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_UPDATE_METHOD_NAME)) {
                 log.debug("on batch update");
-                this.onBatchUpdate((List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
+                this.onBatchUpdate((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
+            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_REPLACE_METHOD_NAME)) {
+                log.debug("on batch replace");
+                this.onBatchReplace((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
             }
         } else if (sqlCommandType == SqlCommandType.DELETE) {
             Map<String, Object> param = (Map<String, Object>) args[1];
@@ -139,7 +155,7 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
                 this.onDelete(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
             } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_DELETE_METHOD_NAME)) {
                 log.debug("on batch delete");
-                this.onBatchDelete((List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
+                this.onBatchDelete((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
             } else {
                 String className = statementId.substring(0, statementId.lastIndexOf("."));
                 Class<?> mapperClass = Class.forName(className);
@@ -158,7 +174,7 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
                     this.onDeleteById(param.get(EzMybatisConstant.MAPPER_PARAM_ID), etType);
                 } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_DELETE_BY_ID_METHOD_NAME)) {
                     log.debug("on batch delete by primary key");
-                    this.onBatchDeleteById((List<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_IDS), etType);
+                    this.onBatchDeleteById((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_IDS), etType);
                 }
             }
         }
