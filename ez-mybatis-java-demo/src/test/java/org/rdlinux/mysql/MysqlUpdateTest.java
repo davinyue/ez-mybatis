@@ -178,7 +178,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
-        mapper.batchEzUpdate(updates);
+        mapper.ezBatchUpdate(updates);
         sqlSession.commit();
         sqlSession.close();
     }
