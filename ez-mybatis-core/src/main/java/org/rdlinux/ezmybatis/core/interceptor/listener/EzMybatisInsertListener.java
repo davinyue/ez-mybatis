@@ -1,6 +1,6 @@
 package org.rdlinux.ezmybatis.core.interceptor.listener;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * 插入事件监听器
@@ -8,7 +8,7 @@ import java.util.List;
 public interface EzMybatisInsertListener {
     void onInsert(Object entity);
 
-    void onBatchInsert(List<Object> entitys);
+    void onBatchInsert(Collection<Object> entitys);
 
     default int order() {
         return 1;
