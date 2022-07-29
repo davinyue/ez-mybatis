@@ -54,8 +54,12 @@ public abstract class NormalCondition implements Condition {
 
     private Collection<?> valueToCollection() {
         if (this.value instanceof Collection) {
+            Assert.isTrue(((Collection<?>) this.value).size() > 0,
+                    "When using in query, the data cannot be empty");
             return (Collection<?>) this.value;
         } else if (this.value.getClass().isArray()) {
+            Assert.isTrue(((Object[]) this.value).length > 0,
+                    "When using in query, the data cannot be empty");
             return Arrays.asList((Object[]) this.value);
         } else {
             return Collections.singleton(this.value);
