@@ -40,7 +40,7 @@ public class GroupBy implements SqlStruct {
     private static StringBuilder defaultGroupByToSql(StringBuilder sqlBuilder, Configuration configuration,
                                                      EzQuery<?> query) {
         GroupBy group = query.getGroupBy();
-        if (group == null || group.getItems() == null) {
+        if (group == null || group.getItems() == null || group.getItems().isEmpty()) {
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" GROUP BY ");

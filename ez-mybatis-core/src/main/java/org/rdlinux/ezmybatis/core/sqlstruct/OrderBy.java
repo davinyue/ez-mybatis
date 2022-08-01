@@ -41,7 +41,7 @@ public class OrderBy implements SqlStruct {
     private static StringBuilder defaultOrderByToSql(StringBuilder sqlBuilder, Configuration configuration,
                                                      EzQuery<?> ezParam) {
         OrderBy order = ezParam.getOrderBy();
-        if (order == null || order.getItems() == null) {
+        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" ORDER BY ");
