@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
@@ -88,14 +89,14 @@ public class Where implements SqlStruct {
             this.sonBuilder = this;
         }
 
-        public WhereBuilder<WhereBuilder<Builder>> groupCondition(Condition.LogicalOperator logicalOperator) {
+        public WhereBuilder<WhereBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
             GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             return new WhereBuilder<>(this, new Where(condition.getConditions()), this.table);
         }
 
         public WhereBuilder<WhereBuilder<Builder>> groupCondition() {
-            return this.groupCondition(Condition.LogicalOperator.AND);
+            return this.groupCondition(LogicalOperator.AND);
         }
     }
 
