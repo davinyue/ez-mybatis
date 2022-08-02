@@ -12,12 +12,14 @@ import java.util.List;
 public class GroupCondition implements Condition {
     private List<Condition> conditions;
     private LogicalOperator logicalOperator;
+    private boolean sure;
 
-    public GroupCondition(List<Condition> conditions, LogicalOperator logicalOperator) {
+    public GroupCondition(boolean sure, List<Condition> conditions, LogicalOperator logicalOperator) {
         Assert.notNull(conditions, "conditions can not be empty");
         Assert.notNull(logicalOperator, "loginSymbol can not be null");
         this.conditions = conditions;
         this.logicalOperator = logicalOperator;
+        this.sure = sure;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class GroupCondition implements Condition {
 
     @Override
     public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        if (this.conditions == null || this.conditions.isEmpty()) {
+        if (!this.sure || this.conditions == null || this.conditions.isEmpty()) {
             return " ";
         } else {
             StringBuilder sql = new StringBuilder(" ( ");
