@@ -91,8 +91,8 @@ public class Join implements SqlStruct {
             this.join = join;
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
-            GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure, LogicalOperator logicalOperator) {
+            GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             Join newJoin = new Join();
             newJoin.setTable(this.join.getTable());
@@ -101,8 +101,16 @@ public class Join implements SqlStruct {
             return new JoinBuilder<>(this, newJoin);
         }
 
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
+            return this.groupCondition(true, logicalOperator);
+        }
+
         public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
             return this.groupCondition(LogicalOperator.AND);
+        }
+
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure) {
+            return this.groupCondition(sure, LogicalOperator.AND);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, JoinType joinType, Table joinTable) {

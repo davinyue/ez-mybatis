@@ -308,14 +308,22 @@ public class Having implements SqlStruct {
             return this;
         }
 
-        public HavingBuilder<HavingBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
-            GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
+        public HavingBuilder<HavingBuilder<Builder>> groupCondition(boolean sure, LogicalOperator logicalOperator) {
+            GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             return new HavingBuilder<>(this, new Having(condition.getConditions()), this.table);
         }
 
+        public HavingBuilder<HavingBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
+            return this.groupCondition(true, logicalOperator);
+        }
+
         public HavingBuilder<HavingBuilder<Builder>> groupCondition() {
             return this.groupCondition(LogicalOperator.AND);
+        }
+
+        public HavingBuilder<HavingBuilder<Builder>> groupCondition(boolean sure) {
+            return this.groupCondition(sure, LogicalOperator.AND);
         }
     }
 }
