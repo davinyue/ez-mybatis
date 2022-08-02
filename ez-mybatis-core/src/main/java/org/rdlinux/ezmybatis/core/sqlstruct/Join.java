@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -83,7 +84,7 @@ public class Join implements SqlStruct {
             this.join = join;
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(Condition.LogicalOperator logicalOperator) {
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
             GroupCondition condition = new GroupCondition(new LinkedList<>(), logicalOperator);
             this.conditions.add(condition);
             Join newJoin = new Join();
@@ -94,7 +95,7 @@ public class Join implements SqlStruct {
         }
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
-            return this.groupCondition(Condition.LogicalOperator.AND);
+            return this.groupCondition(LogicalOperator.AND);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> join(JoinType joinType, Table joinTable) {

@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.between;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
