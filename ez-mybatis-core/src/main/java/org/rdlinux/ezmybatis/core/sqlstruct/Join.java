@@ -41,6 +41,10 @@ public class Join implements SqlStruct {
      * 关联表
      */
     private List<Join> joins;
+    /**
+     * 是否确认连表
+     */
+    private boolean sure;
 
     @Override
     public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
@@ -50,6 +54,9 @@ public class Join implements SqlStruct {
 
     protected StringBuilder joinToSql(StringBuilder sqlBuilder, Configuration configuration,
                                       MybatisParamHolder mybatisParamHolder) {
+        if (!this.isSure()) {
+            return sqlBuilder;
+        }
         StringBuilder sonSql;
         if (this.joinType == JoinType.CrossJoin) {
             sonSql = new StringBuilder();
@@ -98,7 +105,7 @@ public class Join implements SqlStruct {
             return this.groupCondition(LogicalOperator.AND);
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> join(JoinType joinType, Table joinTable) {
+        public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, JoinType joinType, Table joinTable) {
             if (this.join.getJoins() == null) {
                 this.join.joins = new LinkedList<>();
             }
@@ -107,12 +114,21 @@ public class Join implements SqlStruct {
             newJoin.setTable(this.join.getJoinTable());
             newJoin.setJoinTable(joinTable);
             newJoin.setOnConditions(new LinkedList<>());
+            newJoin.setSure(sure);
             this.join.joins.add(newJoin);
             return new Join.JoinBuilder<>(this, newJoin);
         }
 
+        public JoinBuilder<JoinBuilder<Builder>> join(JoinType joinType, Table joinTable) {
+            return this.join(true, joinType, joinTable);
+        }
+
         public JoinBuilder<JoinBuilder<Builder>> join(Table joinTable) {
             return this.join(JoinType.InnerJoin, joinTable);
+        }
+
+        public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, Table joinTable) {
+            return this.join(sure, JoinType.InnerJoin, joinTable);
         }
 
         /**
