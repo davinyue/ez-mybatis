@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
@@ -114,7 +115,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
-                .join(sonQ).addColumnCompareCondition("id", "id").done().build();
+                .join(EzQueryTable.of(sonQ)).addColumnCompareCondition("id", "id").done().build();
         List<User> ret = sqlSession.getMapper(UserMapper.class).query(query);
         sqlSession.close();
         System.out.println(JacksonUtils.toJsonString(ret));
@@ -126,7 +127,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
-                .join(sonQ).addColumnCompareCondition("id", "id").done().build();
+                .join(EzQueryTable.of(sonQ)).addColumnCompareCondition("id", "id").done().build();
         List<User> ret = sqlSession.getMapper(EzMapper.class).query(query);
         sqlSession.close();
         System.out.println(JacksonUtils.toJsonString(ret));

@@ -3,7 +3,6 @@ package org.rdlinux.ezmybatis.core;
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.LinkedList;
@@ -50,8 +49,7 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             return this.select(this.query.table);
         }
 
-
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(JoinType joinType, Table joinTable) {
+        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, JoinType joinType, Table joinTable) {
             if (this.query.getJoins() == null) {
                 this.query.joins = new LinkedList<>();
             }
@@ -60,16 +58,21 @@ public class EzQuery<Rt> extends EzParam<Rt> {
             join.setTable(this.query.table);
             join.setJoinTable(joinTable);
             join.setOnConditions(new LinkedList<>());
+            join.setSure(sure);
             this.query.joins.add(join);
             return new Join.JoinBuilder<>(this, join);
+        }
+
+        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(JoinType joinType, Table joinTable) {
+            return this.join(true, joinType, joinTable);
         }
 
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(Table joinTable) {
             return this.join(JoinType.InnerJoin, joinTable);
         }
 
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(EzQuery<?> ezQuery) {
-            return this.join(EzQueryTable.of(ezQuery));
+        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, Table joinTable) {
+            return this.join(sure, JoinType.InnerJoin, joinTable);
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where(Table table) {
