@@ -36,12 +36,4 @@ public interface Condition {
     LogicalOperator getLogicalOperator();
 
     String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder);
-
-    /**
-     * 逻辑运算符
-     */
-    static enum LogicalOperator {
-        OR,
-        AND;
-    }
 }
