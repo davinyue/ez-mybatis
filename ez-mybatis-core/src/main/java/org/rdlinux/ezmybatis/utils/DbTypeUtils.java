@@ -4,6 +4,7 @@ import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlConverterRegister;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +20,9 @@ public class DbTypeUtils {
         Assert.notNull(configuration, "configuration can not be null");
         Assert.notNull(dbType, "dbType can not be null");
         DB_TYPE_MAP.put(configuration, dbType);
+        if (dbType == DbType.MYSQL) {
+            MySqlConverterRegister.register();
+        }
     }
 
     public static DbType getDbType(Configuration configuration) {
@@ -55,7 +59,7 @@ public class DbTypeUtils {
                     } else {
                         throw new RuntimeException("Unsupported db type");
                     }
-                    DB_TYPE_MAP.put(configuration, dbType);
+                    setDbType(configuration, dbType);
                 }
             }
         }
