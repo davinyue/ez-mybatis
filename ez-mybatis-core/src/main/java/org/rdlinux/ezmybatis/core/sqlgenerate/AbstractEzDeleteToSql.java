@@ -2,9 +2,11 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Collection;
@@ -48,20 +50,19 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
                                        MybatisParamHolder mybatisParamHolder) {
         if (delete.getJoins() != null) {
+            Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : delete.getJoins()) {
-                sqlBuilder = join.toSqlPart(sqlBuilder, configuration, delete, mybatisParamHolder);
+                sqlBuilder = converter.toSqlPart(Converter.Type.DELETE, sqlBuilder, configuration, join,
+                        mybatisParamHolder);
             }
         }
         return sqlBuilder;
     }
 
     protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                       MybatisParamHolder mybatisParamHolder) {
+                                       MybatisParamHolder paramHolder) {
         Where where = delete.getWhere();
-        if (where == null || where.getConditions() == null) {
-            return sqlBuilder;
-        } else {
-            return where.toSqlPart(sqlBuilder, configuration, delete, mybatisParamHolder);
-        }
+        Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
+        return converter.toSqlPart(Converter.Type.DELETE, sqlBuilder, configuration, where, paramHolder);
     }
 }

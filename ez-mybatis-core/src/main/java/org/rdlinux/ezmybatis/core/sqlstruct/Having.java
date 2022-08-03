@@ -1,11 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenAliasCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenAliasCondition;
@@ -14,25 +9,12 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullAliasConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullAliasCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
-public class Having implements SqlStruct {
-    private static final Map<DbType, SqlStruct> CONVERT = new HashMap<>();
-
-    static {
-        SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                Having.defaultHavingToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam, mybatisParamHolder);
-        CONVERT.put(DbType.MYSQL, defaultConvert);
-        CONVERT.put(DbType.ORACLE, defaultConvert);
-        CONVERT.put(DbType.DM, defaultConvert);
-    }
-
+public class Having implements SqlPart {
     /**
      * 条件
      */
@@ -42,23 +24,6 @@ public class Having implements SqlStruct {
         this.conditions = conditions;
     }
 
-    private static StringBuilder defaultHavingToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                    EzQuery<?> ezParam, MybatisParamHolder mybatisParamHolder) {
-        if (ezParam.getHaving() == null || ezParam.getHaving().getConditions() == null ||
-                ezParam.getHaving().getConditions().isEmpty()) {
-            return sqlBuilder;
-        }
-        sqlBuilder.append(" HAVING ");
-        Where.conditionsToSqlPart(sqlBuilder, configuration, mybatisParamHolder, ezParam.getHaving().getConditions());
-        return sqlBuilder;
-    }
-
-    @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
-                                   MybatisParamHolder mybatisParamHolder) {
-        return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
-                mybatisParamHolder);
-    }
 
     public static class HavingBuilder<Builder> extends ConditionBuilder<Builder, HavingBuilder<Builder>> {
 
