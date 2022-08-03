@@ -15,15 +15,59 @@ import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class EzMybatisContent {
+    /**
+     * 配置映射
+     */
     private static final ConcurrentMap<Configuration, ConfigurationConfig> CFG_CONFIG_MAP = new ConcurrentHashMap<>();
+    /**
+     * 转换器映射
+     */
+    private static final Map<DbType, Map<Class<?>, Converter<?>>> CONVERT_MAP = new HashMap<>();
+
+    /**
+     * 注册转换器
+     */
+    public static <T extends SqlPart> void addConverter(DbType dbType, Class<T> sqlStruct, Converter<T> converter) {
+        CONVERT_MAP.putIfAbsent(dbType, new HashMap<>());
+        CONVERT_MAP.get(dbType).put(sqlStruct, converter);
+    }
+
+    /**
+     * 获取转换器
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends SqlPart> Converter<T> getConverter(DbType dbType, Class<T> sqlStruct) {
+        Map<Class<?>, Converter<?>> convertMap = CONVERT_MAP.get(dbType);
+        if (convertMap == null) {
+            throw new RuntimeException("cannot find the converter of " + dbType.name());
+        }
+        Converter<T> converter = (Converter<T>) convertMap.get(sqlStruct);
+        if (converter == null) {
+            throw new RuntimeException(String.format("%s cannot find the converter of %s", dbType.name(),
+                    sqlStruct.getSimpleName()));
+        }
+        return converter;
+    }
+
+    /**
+     * 获取转换器
+     */
+    public static <T extends SqlPart> Converter<T> getConverter(Configuration configuration, Class<T> sqlStruct) {
+        DbType dbType = DbTypeUtils.getDbType(configuration);
+        return getConverter(dbType, sqlStruct);
+    }
 
     /**
      * 设置数据库类型
