@@ -9,9 +9,17 @@ public abstract class EzMybatisConstant {
      */
     public static final String INSERT_METHOD_NAME = "insert";
     /**
+     * 根据表插入实体方法名
+     */
+    public static final String INSERT_BY_TABLE_METHOD_NAME = "insertByTable";
+    /**
      * 批量插入实体方法名
      */
     public static final String BATCH_INSERT_METHOD_NAME = "batchInsert";
+    /**
+     * 批量插入实体方法名
+     */
+    public static final String BATCH_INSERT_BY_TABLE_METHOD_NAME = "batchInsertByTable";
     /**
      * 更新实体方法名
      */
@@ -74,6 +82,10 @@ public abstract class EzMybatisConstant {
      * mapper参数, entitys
      */
     public static final String MAPPER_PARAM_ENTITYS = "mp_entitys";
+    /**
+     * mapper参数, 表
+     */
+    public static final String MAPPER_PARAM_TABLE = "mp_table";
     /**
      * mapper参数, sql
      */
