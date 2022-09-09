@@ -123,10 +123,12 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
         String statementId = mappedStatement.getId();
         if (sqlCommandType == SqlCommandType.INSERT) {
             Map<String, Object> param = (Map<String, Object>) args[1];
-            if (statementId.endsWith("." + EzMybatisConstant.INSERT_METHOD_NAME)) {
+            if (statementId.endsWith("." + EzMybatisConstant.INSERT_METHOD_NAME) ||
+                    statementId.endsWith("." + EzMybatisConstant.INSERT_BY_TABLE_METHOD_NAME)) {
                 log.debug("on insert");
                 this.onInsert(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
-            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_INSERT_METHOD_NAME)) {
+            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_INSERT_METHOD_NAME) ||
+                    statementId.endsWith("." + EzMybatisConstant.BATCH_INSERT_BY_TABLE_METHOD_NAME)) {
                 log.debug("on batch insert");
                 this.onBatchInsert((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
             }
