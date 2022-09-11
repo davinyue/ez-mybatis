@@ -26,7 +26,9 @@ public interface EzMapper {
     String QUERY_ONE_METHOD = "queryOne";
     String QUERY_COUNT_METHOD = "queryCount";
     String SELECT_BY_ID_METHOD = "selectById";
+    String SELECT_BY_TABLE_AND_ID_METHOD = "selectByTableAndId";
     String SELECT_BY_IDS_METHOD = "selectByIds";
+    String SELECT_BY_TABLE_AND_IDS_METHOD = "selectByTableAndIds";
     String EZ_DELETE_METHOD = "ezDelete";
     String EZ_BATCH_DELETE_METHOD = "ezBatchDelete";
 
@@ -39,11 +41,31 @@ public interface EzMapper {
                                                 @Param(EzMybatisConstant.MAPPER_PARAM_ID) Id id);
 
     /**
+     * 根据主键查询
+     */
+    @MethodName(SELECT_BY_TABLE_AND_ID_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_TABLE_AND_ID_METHOD)
+    <Id extends Serializable, NT> NT selectByTableAndId(
+            @Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_ID) Id id);
+
+    /**
      * 根据主键批量查询
      */
     @MethodName(SELECT_BY_IDS_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_IDS_METHOD)
     <Id extends Serializable, NT> List<NT> selectByIds(
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Id> ids);
+
+    /**
+     * 根据主键批量查询
+     */
+    @MethodName(SELECT_BY_TABLE_AND_IDS_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_TABLE_AND_IDS_METHOD)
+    <Id extends Serializable, NT> List<NT> selectByTableAndIds(
+            @Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
             @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
             @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Id> ids);
 

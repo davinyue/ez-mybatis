@@ -66,8 +66,12 @@ public class ResultMapInitLogic implements InterceptorLogic {
             //泛型接口, 需要动态的设置返回结果类型，这两个接口的返回类型是由参数参入的
             else if (resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.SELECT_BY_ID_METHOD
                     + "-") ||
+                    resultMap.getId().startsWith(EzMapper.class.getName() + "." +
+                            EzMapper.SELECT_BY_TABLE_AND_ID_METHOD + "-") ||
                     resultMap.getId().startsWith(EzMapper.class.getName() + "." + EzMapper.SELECT_BY_IDS_METHOD
-                            + "-")) {
+                            + "-") ||
+                    resultMap.getId().startsWith(EzMapper.class.getName() + "." +
+                            EzMapper.SELECT_BY_TABLE_AND_IDS_METHOD + "-")) {
                 Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
                 Class<?> entityClass = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
                 RET_TYPE_TL.set(entityClass);

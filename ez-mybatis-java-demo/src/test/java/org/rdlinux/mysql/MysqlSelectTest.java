@@ -25,19 +25,86 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void selectById() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = sqlSession.getMapper(UserMapper.class)
-                .selectById("01e3ff9339f2427d9a66d3a8799de2c9");
+                .selectById("04b7abcf2c454e56b1bc85f6599e19a5");
         System.out.println(JacksonUtils.toJsonString(user));
         sqlSession.close();
     }
 
     @Test
-    public void normalSelectById() {
+    public void ezSelectById() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        User user = sqlSession.getMapper(EzMapper.class).selectById(User.class,
-                "01e3ff9339f2427d9a66d3a8799de2c9");
+        User user = sqlSession.getMapper(EzMapper.class)
+                .selectById(User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
         System.out.println(JacksonUtils.toJsonString(user));
         sqlSession.close();
     }
+
+    @Test
+    public void selectByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = sqlSession.getMapper(UserMapper.class)
+                .selectByTableAndId(EntityTable.of(User.class), "04b7abcf2c454e56b1bc85f6599e19a5");
+        System.out.println(JacksonUtils.toJsonString(user));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = sqlSession.getMapper(EzMapper.class)
+                .selectByTableAndId(EntityTable.of(User.class), User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
+        System.out.println(JacksonUtils.toJsonString(user));
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectByIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("04b7abcf2c454e56b1bc85f6599e19a5");
+        ids.add("085491774b2240688edb1b31772ff629");
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectByTableAndIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("04b7abcf2c454e56b1bc85f6599e19a5");
+        ids.add("085491774b2240688edb1b31772ff629");
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectByTableAndIds(
+                EntityTable.of(User.class), ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectByIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
+        ids.add("1");
+        List<User> users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectByTableAndIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
+        ids.add("1");
+        List<User> users = sqlSession.getMapper(EzMapper.class).selectByTableAndIds(EntityTable.of(User.class),
+                User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
 
     /**
      * 通用mapper结果类型并发测试
@@ -83,30 +150,6 @@ public class MysqlSelectTest extends MysqlBaseTest {
             sync.countDown();
         }).start();
         sync.await();
-    }
-
-    @Test
-    public void selectByIds() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> ids = new LinkedList<>();
-        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
-        ids.add("1");
-        List<User> users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
-        System.out.println(JacksonUtils.toJsonString(users));
-        users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
-        System.out.println(JacksonUtils.toJsonString(users));
-        sqlSession.close();
-    }
-
-    @Test
-    public void normalSelectByIds() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> ids = new LinkedList<>();
-        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
-        ids.add("1");
-        List<User> users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
-        System.out.println(JacksonUtils.toJsonString(users));
-        sqlSession.close();
     }
 
     @Test
