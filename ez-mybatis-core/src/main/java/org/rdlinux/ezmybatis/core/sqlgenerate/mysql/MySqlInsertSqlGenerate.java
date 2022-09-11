@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Collection;
@@ -26,12 +27,12 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Collection<Object> entitys) {
+                                    Table table, Collection<Object> entitys) {
         Assert.notEmpty(entitys, "entitys cannot be empty");
         StringBuilder sqlBuilder = new StringBuilder();
         int i = 0;
         for (Object entity : entitys) {
-            String insertSql = this.getInsertSql(configuration, mybatisParamHolder, entity);
+            String insertSql = this.getInsertSql(configuration, mybatisParamHolder, table, entity);
             String flag = "VALUES ";
             int vIndex = insertSql.indexOf(flag);
             String valve = insertSql.substring(vIndex + flag.length());

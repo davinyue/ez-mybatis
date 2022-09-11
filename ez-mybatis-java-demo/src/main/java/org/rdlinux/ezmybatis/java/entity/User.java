@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "ez_user", schema = "ez_mybatis")
+@Table(name = "ez_user")
 @Getter
 @Setter
 @FieldNameConstants
