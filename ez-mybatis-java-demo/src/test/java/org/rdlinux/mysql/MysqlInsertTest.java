@@ -3,6 +3,7 @@ package org.rdlinux.mysql;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
@@ -19,8 +20,47 @@ public class MysqlInsertTest extends MysqlBaseTest {
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).insert(user);
         System.out.println(insert);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezInsert() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        user.setName("王二");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
         int insert1 = sqlSession.getMapper(EzMapper.class).insert(user);
+        sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert1);
+    }
+
+    @Test
+    public void insertByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        user.setName("王二");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(UserMapper.class).insertByTable(EntityTable.of(User.class), user);
+        System.out.println(insert);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezInsertByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        user.setName("王二");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert1 = sqlSession.getMapper(EzMapper.class).insertByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
         sqlSession.close();
         System.out.println(insert1);
@@ -44,6 +84,31 @@ public class MysqlInsertTest extends MysqlBaseTest {
                 users.add(user);
             }
             sqlSession.getMapper(UserMapper.class).batchInsert(users);
+            sqlSession.commit();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        sqlSession.close();
+    }
+
+    @Test
+    public void batchInsertByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+
+        long start = System.currentTimeMillis();
+        for (int h = 0; h < 1; h++) {
+            List<User> users = new LinkedList<>();
+            for (int i = 0; i < 2; i++) {
+                User user = new User();
+                user.setUpdateTime(new Date());
+                user.setCreateTime(new Date());
+                user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                user.setName("芳" + (i + 1));
+                user.setUserAge(1 + i);
+                user.setSex(User.Sex.MAN);
+                users.add(user);
+            }
+            sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
             sqlSession.commit();
         }
         long end = System.currentTimeMillis();

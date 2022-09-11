@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzUpdateProvider;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,16 +22,30 @@ import java.util.Map;
  */
 public interface EzBaseMapper<Nt, Pt extends Serializable> {
     /**
-     * 插入
+     * 插入, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或arra
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_METHOD)
     int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+
+    /**
+     * 插入, 指定表, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
+     */
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_TABLE_METHOD)
+    int insertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
 
     /**
      * 批量插入
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
     int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+
+    /**
+     * 批量插入, 指定表
+     */
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_BY_TABLE_METHOD)
+    int batchInsertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
 
     /**
      * 更新, 只更新非空字段
