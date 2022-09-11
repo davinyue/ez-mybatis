@@ -44,7 +44,8 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
     protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
                                       MybatisParamHolder mybatisParamHolder) {
         From from = delete.getFrom();
-        return from.toSqlPart(sqlBuilder, configuration, delete, mybatisParamHolder);
+        Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
+        return converter.toSqlPart(Converter.Type.DELETE, sqlBuilder, configuration, from, mybatisParamHolder);
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,

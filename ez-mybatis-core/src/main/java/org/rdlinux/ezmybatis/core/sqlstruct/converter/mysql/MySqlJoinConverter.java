@@ -26,8 +26,8 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
     }
 
     @Override
-    public StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
-                                     MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
+                                        MybatisParamHolder mybatisParamHolder) {
         if (join == null) {
             return sqlBuilder;
         }
@@ -42,7 +42,7 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
                 return sqlBuilder;
             }
         }
-        sqlBuilder.append(join.getJoinType().toSqlStruct()).append(join.getJoinTable().toSqlStruct(configuration,
+        sqlBuilder.append(join.getJoinType().toSqlStruct()).append(join.getJoinTable().toSqlStruct(type, configuration,
                 mybatisParamHolder));
         if (join.getJoinType() != JoinType.CrossJoin) {
             sqlBuilder.append(" ON ");

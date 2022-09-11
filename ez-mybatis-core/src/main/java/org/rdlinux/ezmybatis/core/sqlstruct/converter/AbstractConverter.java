@@ -16,6 +16,6 @@ public abstract class AbstractConverter<Obj extends SqlPart> implements Converte
         return this.doToSqlPart(type, sqlBuilder, configuration, struct, mybatisParamHolder);
     }
 
-    public abstract StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                              Obj ojb, MybatisParamHolder mybatisParamHolder);
+    protected abstract StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                                 Obj ojb, MybatisParamHolder mybatisParamHolder);
 }

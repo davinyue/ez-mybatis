@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 @Getter
@@ -36,7 +37,7 @@ public abstract class AbstractTable implements Table {
     }
 
     @Override
-    public String toSqlStruct(Configuration configuration, MybatisParamHolder paramHolder) {
+    public String toSqlStruct(Converter.Type type, Configuration configuration, MybatisParamHolder paramHolder) {
         StringBuilder sqlBuilder = new StringBuilder(" ");
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String dbName = this.getSchema(configuration);
@@ -47,7 +48,9 @@ public abstract class AbstractTable implements Table {
         if (this.partition != null) {
             sqlBuilder.append(this.partition.toSqlStruct(configuration));
         }
-        sqlBuilder.append(" ").append(this.alias).append(" ");
+        if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE) {
+            sqlBuilder.append(" ").append(this.alias).append(" ");
+        }
         return sqlBuilder.toString();
     }
 
