@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
 
@@ -28,14 +29,16 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
 
     @Override
-    public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity) {
-        return MySqlInsertSqlGenerate.getInstance().getInsertSql(configuration, mybatisParamHolder, entity);
+    public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                               Object entity) {
+        return MySqlInsertSqlGenerate.getInstance().getInsertSql(configuration, mybatisParamHolder, table, entity);
     }
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Collection<Object> entitys) {
-        return MySqlInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, entitys);
+                                    Table table, Collection<Object> entitys) {
+        return MySqlInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
+                entitys);
     }
 
     @Override
