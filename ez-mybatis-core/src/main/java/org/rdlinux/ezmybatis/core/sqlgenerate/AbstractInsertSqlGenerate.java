@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
@@ -26,7 +27,9 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String tableName;
         if (table != null) {
-            tableName = table.toSqlStruct(configuration, mybatisParamHolder);
+            Converter<Table> converter = EzMybatisContent.getConverter(configuration, Table.class);
+            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+                    mybatisParamHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
         }

@@ -92,6 +92,30 @@ public class MysqlInsertTest extends MysqlBaseTest {
     }
 
     @Test
+    public void ezBatchInsert() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        long start = System.currentTimeMillis();
+        for (int h = 0; h < 1; h++) {
+            List<User> users = new LinkedList<>();
+            for (int i = 0; i < 2; i++) {
+                User user = new User();
+                user.setUpdateTime(new Date());
+                user.setCreateTime(new Date());
+                user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                user.setName("芳" + (i + 1));
+                user.setUserAge(1 + i);
+                user.setSex(User.Sex.MAN);
+                users.add(user);
+            }
+            sqlSession.getMapper(EzMapper.class).batchInsert(users);
+            sqlSession.commit();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        sqlSession.close();
+    }
+
+    @Test
     public void batchInsertByTable() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
 
@@ -109,6 +133,31 @@ public class MysqlInsertTest extends MysqlBaseTest {
                 users.add(user);
             }
             sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
+            sqlSession.commit();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezBatchInsertByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+
+        long start = System.currentTimeMillis();
+        for (int h = 0; h < 1; h++) {
+            List<User> users = new LinkedList<>();
+            for (int i = 0; i < 2; i++) {
+                User user = new User();
+                user.setUpdateTime(new Date());
+                user.setCreateTime(new Date());
+                user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                user.setName("芳" + (i + 1));
+                user.setUserAge(1 + i);
+                user.setSex(User.Sex.MAN);
+                users.add(user);
+            }
+            sqlSession.getMapper(EzMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
             sqlSession.commit();
         }
         long end = System.currentTimeMillis();

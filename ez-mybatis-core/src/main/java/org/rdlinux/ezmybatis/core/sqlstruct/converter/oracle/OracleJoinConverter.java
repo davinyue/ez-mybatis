@@ -8,8 +8,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlJoinConverter;
 
 public class OracleJoinConverter extends MySqlJoinConverter implements Converter<Join> {
     @Override
-    public StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
-                                     MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
+                                        MybatisParamHolder mybatisParamHolder) {
         if (type != Type.SELECT) {
             throw new UnsupportedOperationException(String.format("%s model unsupported", type.name()));
         }

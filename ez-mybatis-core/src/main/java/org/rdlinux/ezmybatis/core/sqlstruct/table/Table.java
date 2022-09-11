@@ -2,9 +2,11 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
-public interface Table {
+public interface Table extends SqlPart {
     default Partition getPartition() {
         return null;
     }
@@ -18,5 +20,5 @@ public interface Table {
      */
     String getSchema(Configuration configuration);
 
-    String toSqlStruct(Configuration configuration, MybatisParamHolder paramHolder);
+    String toSqlStruct(Converter.Type type, Configuration configuration, MybatisParamHolder paramHolder);
 }

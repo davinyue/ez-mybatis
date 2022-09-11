@@ -4,7 +4,9 @@ import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.DmConverterRegister;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleConverterRegister;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +24,10 @@ public class DbTypeUtils {
         DB_TYPE_MAP.put(configuration, dbType);
         if (dbType == DbType.MYSQL) {
             MySqlConverterRegister.register();
+        } else if (dbType == DbType.ORACLE) {
+            OracleConverterRegister.register();
+        } else if (dbType == DbType.DM) {
+            DmConverterRegister.register();
         }
     }
 
