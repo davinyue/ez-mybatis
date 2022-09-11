@@ -123,7 +123,7 @@ public interface EzMapper {
     int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
 
     /**
-     * 插入, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
+     * 插入,指定表, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_TABLE_METHOD)
     int insertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
