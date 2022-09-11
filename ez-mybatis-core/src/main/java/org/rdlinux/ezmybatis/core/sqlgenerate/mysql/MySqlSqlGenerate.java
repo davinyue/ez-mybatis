@@ -42,15 +42,15 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return MySqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, ntClass, id);
+    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return MySqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    Collection<?> ids) {
-        return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, ntClass, ids);
+    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                    Class<?> ntClass, Collection<?> ids) {
+        return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, table, ntClass, ids);
     }
 
     @Override

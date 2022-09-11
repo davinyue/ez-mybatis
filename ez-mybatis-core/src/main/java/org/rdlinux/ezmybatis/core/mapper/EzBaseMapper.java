@@ -102,10 +102,24 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     Nt selectById(@Param(EzMybatisConstant.MAPPER_PARAM_ID) Pt id);
 
     /**
+     * 根据主键查询
+     */
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_TABLE_AND_ID_METHOD)
+    Nt selectByTableAndId(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                          @Param(EzMybatisConstant.MAPPER_PARAM_ID) Pt id);
+
+    /**
      * 根据主键批量查询
      */
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_IDS_METHOD)
     List<Nt> selectByIds(@Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Pt> ids);
+
+    /**
+     * 根据主键批量查询
+     */
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_TABLE_AND_IDS_METHOD)
+    List<Nt> selectByTableAndIds(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                                 @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Pt> ids);
 
     /**
      * 根据sql查询一条数据

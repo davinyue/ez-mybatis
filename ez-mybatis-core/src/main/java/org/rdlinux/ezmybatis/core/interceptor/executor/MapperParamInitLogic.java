@@ -36,21 +36,27 @@ public class MapperParamInitLogic implements InterceptorLogic {
         String className = methodId.substring(0, index);
         Class<?> mapperClass = Class.forName(className);
         //添加参数
+        //如果是EzBaseMapper的方法
         if (EzBaseMapper.class.isAssignableFrom(mapperClass) && methodNames.contains(methodName)) {
             Class<?> etClass = ReflectionUtils.getGenericSuperinterface(mapperClass, 0, 0);
             Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
             param.put(EzMybatisConstant.MAPPER_PARAM_MAPPER_CLASS, mapperClass);
             param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, etClass);
             param.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, mappedStatement.getConfiguration());
-        } else if (EzMapper.class.isAssignableFrom(mapperClass)) {
+        }
+        //如果是EzMapper
+        else if (EzMapper.class.isAssignableFrom(mapperClass)) {
             Map<String, Object> param = (Map<String, Object>) invocation.getArgs()[1];
             param.put(EzMybatisConstant.MAPPER_PARAM_MAPPER_CLASS, mapperClass);
             param.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, mappedStatement.getConfiguration());
+            //如果是根据实体删除
             if (methodName.equals(EzDeleteProvider.DELETE_METHOD)) {
                 Object entity = param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
                 Assert.notNull(entity, "entity can not be null");
                 param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, entity.getClass());
-            } else if (methodName.equals(EzDeleteProvider.BATCH_DELETE_METHOD)) {
+            }
+            //如果是根据实体批量删除
+            else if (methodName.equals(EzDeleteProvider.BATCH_DELETE_METHOD)) {
                 List<?> entitys = (List<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
                 Assert.notEmpty(entitys, "entitys can not be null");
                 param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, entitys.get(0).getClass());
