@@ -54,10 +54,24 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
 
     /**
+     * 更新, 只更新非空字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_BY_TABLE_METHOD)
+    int updateByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+
+    /**
      * 批量更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_METHOD)
     int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+
+    /**
+     * 批量更新, 只更新非空字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_BY_TABLE_METHOD)
+    int batchUpdateByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
 
     /**
      * 更新, 更新所有字段
@@ -66,10 +80,24 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
     int replace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
 
     /**
+     * 更新, 更新所有字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.REPLACE_METHOD_BY_TABLE)
+    int replaceByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                       @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+
+    /**
      * 批量更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_METHOD)
     int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+
+    /**
+     * 批量更新, 更新所有字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_BY_TABLE_METHOD)
+    int batchReplaceByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
 
     /**
      * 删除

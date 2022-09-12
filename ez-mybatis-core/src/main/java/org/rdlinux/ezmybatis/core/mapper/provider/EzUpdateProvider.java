@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.Collection;
@@ -13,9 +14,13 @@ import java.util.Map;
 
 public class EzUpdateProvider {
     public static final String UPDATE_METHOD = "update";
+    public static final String UPDATE_BY_TABLE_METHOD = "updateByTable";
     public static final String BATCH_UPDATE_METHOD = "batchUpdate";
+    public static final String BATCH_UPDATE_BY_TABLE_METHOD = "batchUpdateByTable";
     public static final String REPLACE_METHOD = "replace";
+    public static final String REPLACE_METHOD_BY_TABLE = "replaceByTable";
     public static final String BATCH_REPLACE_METHOD = "batchReplace";
+    public static final String BATCH_REPLACE_BY_TABLE_METHOD = "batchReplaceByTable";
     public static final String UPDATE_BY_EZ_UPDATE_METHOD = "updateByEzUpdate";
     public static final String BATCH_UPDATE_BY_EZ_UPDATE_METHOD = "batchUpdateByEzUpdate";
     public static final String UPDATE_BY_SQL_METHOD = "updateBySql";
@@ -26,7 +31,17 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
-                .getUpdateSql(configuration, paramHolder, entity, false);
+                .getUpdateSql(configuration, paramHolder, null, entity, false);
+    }
+
+    @MethodName(UPDATE_BY_TABLE_METHOD)
+    public String updateByTable(Map<String, Object> param) {
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
+        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getUpdateSql(configuration, paramHolder, table, entity, false);
     }
 
 
@@ -36,7 +51,17 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
-                .getBatchUpdateSql(configuration, paramHolder, entitys, false);
+                .getBatchUpdateSql(configuration, paramHolder, null, entitys, false);
+    }
+
+    @MethodName(BATCH_UPDATE_BY_TABLE_METHOD)
+    public String batchUpdateByTable(Map<String, Object> param) {
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getBatchUpdateSql(configuration, paramHolder, table, entitys, false);
     }
 
     @MethodName(REPLACE_METHOD)
@@ -45,8 +70,19 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
-                .getUpdateSql(configuration, paramHolder, entity, true);
+                .getUpdateSql(configuration, paramHolder, null, entity, true);
     }
+
+    @MethodName(REPLACE_METHOD_BY_TABLE)
+    public String replaceByTable(Map<String, Object> param) {
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
+        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getUpdateSql(configuration, paramHolder, table, entity, true);
+    }
+
 
     @MethodName(BATCH_REPLACE_METHOD)
     public String batchReplace(Map<String, Object> param) {
@@ -54,7 +90,17 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
-                .getBatchUpdateSql(configuration, paramHolder, entitys, true);
+                .getBatchUpdateSql(configuration, paramHolder, null, entitys, true);
+    }
+
+    @MethodName(BATCH_REPLACE_BY_TABLE_METHOD)
+    public String batchReplaceByTable(Map<String, Object> param) {
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+                .getBatchUpdateSql(configuration, paramHolder, table, entitys, true);
     }
 
     @MethodName(UPDATE_BY_EZ_UPDATE_METHOD)

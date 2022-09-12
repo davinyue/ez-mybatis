@@ -63,16 +63,17 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
-                               boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                               Object entity, boolean isReplace) {
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, table, entity,
+                isReplace);
     }
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Collection<Object> entitys, boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, entitys,
-                isReplace);
+                                    Table table, Collection<Object> entitys, boolean isReplace) {
+        return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table,
+                entitys, isReplace);
     }
 
     @Override
