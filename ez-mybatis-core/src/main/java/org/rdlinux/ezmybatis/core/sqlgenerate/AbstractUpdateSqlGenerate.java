@@ -5,6 +5,8 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
@@ -15,15 +17,22 @@ import java.util.Map;
 public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
-                               boolean isReplace) {
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                               Object entity, boolean isReplace) {
         Assert.notNull(entity, "entity can not be null");
         if (entity instanceof Collection) {
             throw new IllegalArgumentException("entity can not instanceof Collection");
         }
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
-        String tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
+        String tableName;
+        if (table != null) {
+            Converter<Table> converter = EzMybatisContent.getConverter(configuration, Table.class);
+            tableName = converter.toSqlPart(Converter.Type.UPDATE, new StringBuilder(), configuration, table,
+                    mybatisParamHolder).toString();
+        } else {
+            tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
+        }
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         String idColumn = primaryKeyInfo.getColumnName();
@@ -52,11 +61,11 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Collection<Object> entitys, boolean isReplace) {
+                                    Table table, Collection<Object> entitys, boolean isReplace) {
         Assert.notEmpty(entitys, "entitys can not be empty");
         StringBuilder sqlBuilder = new StringBuilder();
         for (Object entity : entitys) {
-            String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
+            String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, table, entity, isReplace);
             sqlBuilder.append(sqlTmpl).append(";\n");
         }
         return sqlBuilder.toString();

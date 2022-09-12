@@ -155,7 +155,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void ezQueryJoinTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .join(EzQueryTable.of(sonQ)).addColumnCompareCondition("id", "id").done().build();
@@ -167,7 +167,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void normalEzQueryJoinTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .join(EzQueryTable.of(sonQ)).addColumnCompareCondition("id", "id").done().build();
@@ -179,7 +179,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void ezQueryInTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .where().addColumnCondition("id", Operator.in, sonQ).done().build();
@@ -191,7 +191,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void normalEzQueryInTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .where().addColumnCondition("id", Operator.in, sonQ).done().build();
@@ -297,7 +297,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void countTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-                .select().add("name").done()
+                .select().addField("name").done()
                 .build();
         int i = sqlSession.getMapper(UserMapper.class).queryCount(query);
         sqlSession.close();
@@ -308,7 +308,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalCountTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-                .select().add("name").done()
+                .select().addField("name").done()
                 //.where().addColumnCondition("name", Operator.gt, 1).done()
                 .build();
         int i = sqlSession.getMapper(EzMapper.class).queryCount(query);
@@ -365,7 +365,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalQueryCount() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<Integer> query = EzQuery.builder(int.class).from(EntityTable.of(User.class))
-                .select().addCount("id").done().page(1, 1)
+                .select().addFieldCount("id").done().page(1, 1)
                 .build();
         Integer count = sqlSession.getMapper(EzMapper.class).queryOne(query);
         sqlSession.close();
