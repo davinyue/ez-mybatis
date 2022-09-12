@@ -50,13 +50,15 @@ public class MapperParamInitLogic implements InterceptorLogic {
             param.put(EzMybatisConstant.MAPPER_PARAM_MAPPER_CLASS, mapperClass);
             param.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, mappedStatement.getConfiguration());
             //如果是根据实体删除
-            if (methodName.equals(EzDeleteProvider.DELETE_METHOD)) {
+            if (methodName.equals(EzDeleteProvider.DELETE_METHOD) ||
+                    methodName.equals(EzDeleteProvider.DELETE_BY_TABLE_METHOD)) {
                 Object entity = param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
                 Assert.notNull(entity, "entity can not be null");
                 param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, entity.getClass());
             }
             //如果是根据实体批量删除
-            else if (methodName.equals(EzDeleteProvider.BATCH_DELETE_METHOD)) {
+            else if (methodName.equals(EzDeleteProvider.BATCH_DELETE_METHOD) ||
+                    methodName.equals(EzDeleteProvider.BATCH_DELETE_BY_TABLE_METHOD)) {
                 List<?> entitys = (List<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
                 Assert.notEmpty(entitys, "entitys can not be null");
                 param.put(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS, entitys.get(0).getClass());

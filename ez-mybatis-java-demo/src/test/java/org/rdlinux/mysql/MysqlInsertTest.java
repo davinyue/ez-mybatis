@@ -132,7 +132,8 @@ public class MysqlInsertTest extends MysqlBaseTest {
                 user.setSex(User.Sex.MAN);
                 users.add(user);
             }
-            sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
+            int i = sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
+            System.out.println(i);
             sqlSession.commit();
         }
         long end = System.currentTimeMillis();

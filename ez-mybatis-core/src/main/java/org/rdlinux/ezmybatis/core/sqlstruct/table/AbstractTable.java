@@ -48,7 +48,7 @@ public abstract class AbstractTable implements Table {
         if (this.partition != null) {
             sqlBuilder.append(this.partition.toSqlStruct(configuration));
         }
-        if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE) {
+        if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE || type == Converter.Type.DELETE) {
             sqlBuilder.append(" ").append(this.alias).append(" ");
         }
         return sqlBuilder.toString();

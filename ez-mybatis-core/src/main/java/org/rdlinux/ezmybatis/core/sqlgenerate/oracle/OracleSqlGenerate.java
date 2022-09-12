@@ -88,15 +88,16 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, ntClass, id);
+    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                        Collection<?> ids) {
-        return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
+    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                        Class<?> ntClass, Collection<?> ids) {
+        return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass,
+                ids);
     }
 
     @Override
@@ -105,7 +106,8 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, Collection<EzDelete> deletes) {
+    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder,
+                               Collection<EzDelete> deletes) {
         return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, deletes);
     }
 }
