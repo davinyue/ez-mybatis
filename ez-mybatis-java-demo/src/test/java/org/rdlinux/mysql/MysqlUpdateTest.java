@@ -284,7 +284,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             }
             users.add(user);
         }
-        int insert = sqlSession.getMapper(EzMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
+        int insert = sqlSession.getMapper(EzMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
         System.out.println(insert);
         sqlSession.close();
