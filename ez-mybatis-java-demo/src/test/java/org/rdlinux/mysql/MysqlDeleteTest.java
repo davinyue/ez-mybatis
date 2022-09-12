@@ -26,11 +26,31 @@ public class MysqlDeleteTest extends MysqlBaseTest {
     }
 
     @Test
-    public void delete1() {
+    public void deleteByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        int delete = sqlSession.getMapper(UserMapper.class).deleteByTable(EntityTable.of(User.class), user);
+        System.out.println(delete);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperDelete() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         int delete = sqlSession.getMapper(EzMapper.class).delete(user);
+        System.out.println(delete);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperDeleteByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        int delete = sqlSession.getMapper(EzMapper.class).deleteByTable(EntityTable.of(User.class), user);
         System.out.println(delete);
         sqlSession.close();
     }
@@ -51,7 +71,22 @@ public class MysqlDeleteTest extends MysqlBaseTest {
     }
 
     @Test
-    public void batchDelete1() {
+    public void batchDeleteByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b" + i);
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(UserMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchDelete() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -60,6 +95,21 @@ public class MysqlDeleteTest extends MysqlBaseTest {
             users.add(user);
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchDelete(users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchDeleteByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b" + i);
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
         System.out.println(insert);
         sqlSession.close();
@@ -76,10 +126,30 @@ public class MysqlDeleteTest extends MysqlBaseTest {
     }
 
     @Test
-    public void deleteById1() {
+    public void deleteByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        int insert = sqlSession.getMapper(UserMapper.class)
+                .deleteByTableAndId(EntityTable.of(User.class), "016cdcdd76f94879ab3d24850514812b");
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperDeleteById() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         int insert = sqlSession.getMapper(EzMapper.class)
                 .deleteById(User.class, "016cdcdd76f94879ab3d24850514812b");
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperDeleteByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        int insert = sqlSession.getMapper(EzMapper.class)
+                .deleteByTableAndId(EntityTable.of(User.class), User.class, "016cdcdd76f94879ab3d24850514812b");
         sqlSession.commit();
         System.out.println(insert);
         sqlSession.close();
@@ -99,13 +169,40 @@ public class MysqlDeleteTest extends MysqlBaseTest {
     }
 
     @Test
-    public void batchDeleteById1() {
+    public void batchDeleteByTableId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            users.add("016cdcdd76f94879ab3d24850514812b" + i);
+        }
+        int insert = sqlSession.getMapper(UserMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchDeleteById() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         List<String> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             users.add("016cdcdd76f94879ab3d24850514812b" + i);
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, users);
+        sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void ezMapperBatchDeleteByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            users.add("016cdcdd76f94879ab3d24850514812b" + i);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class),
+                User.class, users);
         sqlSession.commit();
         sqlSession.close();
         System.out.println(insert);

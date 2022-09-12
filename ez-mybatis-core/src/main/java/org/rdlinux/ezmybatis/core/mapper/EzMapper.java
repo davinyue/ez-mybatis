@@ -230,10 +230,24 @@ public interface EzMapper {
     int delete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
 
     /**
+     * 删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_TABLE_METHOD)
+    int deleteByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_METHOD)
     int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+
+    /**
+     * 批量删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_TABLE_METHOD)
+    int batchDeleteByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 根据主键删除
@@ -243,9 +257,26 @@ public interface EzMapper {
                                             @Param(EzMybatisConstant.MAPPER_PARAM_ID) T id);
 
     /**
+     * 根据主键删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_TABLE_AND_ID_METHOD)
+    <T extends Serializable> int deleteByTableAndId(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                                                    @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
+                                                    @Param(EzMybatisConstant.MAPPER_PARAM_ID) T id);
+
+    /**
      * 根据主键批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_ID_METHOD)
     <T extends Serializable> int batchDeleteById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
                                                  @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<T> ids);
+
+    /**
+     * 根据主键批量删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_TABLE_AND_ID_METHOD)
+    <T extends Serializable> int batchDeleteByTableAndId(
+            @Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<T> ids);
 }

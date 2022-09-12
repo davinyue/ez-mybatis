@@ -89,15 +89,16 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return MySqlDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, ntClass, id);
+    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return MySqlDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                        Collection<?> ids) {
-        return MySqlDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
+    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                        Class<?> ntClass, Collection<?> ids) {
+        return MySqlDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass,
+                ids);
     }
 
     @Override
