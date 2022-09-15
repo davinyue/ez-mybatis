@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 public class EzQuery<Rt> extends EzParam<Rt> {
-    private Select select = new Select(new LinkedList<>());
+    private Select select;
     private List<Join> joins;
     private GroupBy groupBy;
     private OrderBy orderBy;
@@ -35,12 +35,13 @@ public class EzQuery<Rt> extends EzParam<Rt> {
         public EzQueryBuilder<Rt> from(Table table) {
             this.query.table = table;
             this.query.from = new From(table);
+            this.query.select = new Select(table, new LinkedList<>());
             return this;
         }
 
         public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(Table table) {
             if (this.query.select == null) {
-                this.query.select = new Select(new LinkedList<>());
+                this.query.select = new Select(table, new LinkedList<>());
             }
             return new Select.EzSelectBuilder<>(this, this.query.select, table);
         }

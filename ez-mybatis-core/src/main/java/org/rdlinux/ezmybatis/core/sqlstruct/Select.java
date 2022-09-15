@@ -2,74 +2,34 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.utils.Assert;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
-public class Select implements SqlStruct {
-    private static final Map<DbType, SqlStruct> CONVERT = new HashMap<>();
-
-    static {
-        SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                Select.defaultQueryToSqlPart(sqlBuilder, configuration, (EzQuery<?>) ezParam);
-        CONVERT.put(DbType.MYSQL, defaultConvert);
-        CONVERT.put(DbType.ORACLE, defaultConvert);
-        CONVERT.put(DbType.DM, defaultConvert);
-    }
-
+public class Select implements SqlPart {
     /**
      * 是否去重
      */
     private boolean distinct = false;
     /**
+     * 查询主表
+     */
+    private Table table;
+    /**
      * 查询项
      */
     private List<SelectItem> selectFields;
 
-    public Select(List<SelectItem> selectFields) {
+    public Select(Table table, List<SelectItem> selectFields) {
+        Assert.notNull(table, "table can not be null");
+        this.table = table;
         this.selectFields = selectFields;
-    }
-
-    private static StringBuilder defaultQueryToSqlPart(StringBuilder sqlBuilder, Configuration configuration,
-                                                       EzQuery<?> ezParam) {
-        From from = ezParam.getFrom();
-        Select select = ezParam.getSelect();
-        sqlBuilder.append("SELECT ");
-        if (select != null && select.distinct) {
-            sqlBuilder.append("DISTINCT ");
-        }
-        if (select == null || select.getSelectFields() == null || select.getSelectFields().isEmpty()) {
-            sqlBuilder.append(from.getTable().getAlias()).append(".* ");
-        } else {
-            List<SelectItem> selectFields = select.getSelectFields();
-            for (int i = 0; i < selectFields.size(); i++) {
-                sqlBuilder.append(selectFields.get(i).toSqlPart(configuration));
-                if (i + 1 < selectFields.size()) {
-                    sqlBuilder.append(", ");
-                }
-            }
-        }
-        return sqlBuilder;
-    }
-
-    @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
-                                   MybatisParamHolder mybatisParamHolder) {
-        return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
-                mybatisParamHolder);
     }
 
     public static class EzSelectBuilder<T> {
@@ -86,6 +46,7 @@ public class Select implements SqlStruct {
             this.selectFields = select.getSelectFields();
             this.target = target;
             this.table = table;
+            select.table = table;
         }
 
         private void checkEntityTable() {
