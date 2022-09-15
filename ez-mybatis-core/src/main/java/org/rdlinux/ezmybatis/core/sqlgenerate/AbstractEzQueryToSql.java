@@ -46,7 +46,8 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
                                         MybatisParamHolder paramHolder) {
         Select select = query.getSelect();
         Assert.notNull(select, "select can not be null");
-        return select.queryToSqlPart(sqlBuilder, configuration, query, paramHolder);
+        Converter<Select> converter = EzMybatisContent.getConverter(configuration, Select.class);
+        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, select, paramHolder);
     }
 
     protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,

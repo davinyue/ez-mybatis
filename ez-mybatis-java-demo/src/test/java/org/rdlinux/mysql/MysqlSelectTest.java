@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
+import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
@@ -111,6 +112,28 @@ public class MysqlSelectTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
+                .orderBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name, OrderType.DESC)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .select(userOrgTable).addField(UserOrg.Fields.orgId)
+                .done()
+                .join(userOrgTable)
+                .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)
+                .done()
                 .orderBy()
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name, OrderType.DESC)
