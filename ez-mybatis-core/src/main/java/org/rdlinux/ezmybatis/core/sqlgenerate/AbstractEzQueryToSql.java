@@ -70,11 +70,8 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     protected StringBuilder groupByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder paramHolder) {
         GroupBy group = query.getGroupBy();
-        if (group == null || group.getItems() == null) {
-            return sqlBuilder;
-        } else {
-            return group.toSqlPart(sqlBuilder, configuration, query, paramHolder);
-        }
+        Converter<GroupBy> converter = EzMybatisContent.getConverter(configuration, GroupBy.class);
+        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, group, paramHolder);
     }
 
     protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,

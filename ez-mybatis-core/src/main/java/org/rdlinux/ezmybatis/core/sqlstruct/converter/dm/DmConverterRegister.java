@@ -17,5 +17,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, From.class, DmFromConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, OrderBy.class, DmOrderByConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Select.class, DmSelectConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, GroupBy.class, DmGroupByConverter.getInstance());
     }
 }
