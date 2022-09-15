@@ -57,8 +57,12 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, from, paramHolder);
     }
 
-    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
-                                                MybatisParamHolder paramHolder);
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
+                                       MybatisParamHolder paramHolder) {
+        Limit limit = query.getLimit();
+        Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
+        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, limit, paramHolder);
+    }
 
     protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder paramHolder) {

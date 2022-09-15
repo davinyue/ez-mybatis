@@ -127,7 +127,7 @@ public class EzQuery<Rt> extends EzParam<Rt> {
          * @param pageSize    页大小
          */
         public EzQueryBuilder<Rt> page(int currentPage, int pageSize) {
-            this.query.limit = new Limit((currentPage - 1) * pageSize, pageSize);
+            this.query.limit = new Limit(this.query, (currentPage - 1) * pageSize, pageSize);
             return this;
         }
 
