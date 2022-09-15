@@ -17,5 +17,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, From.class, OracleFromConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, OrderBy.class, OracleOrderByConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Select.class, OracleSelectConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, GroupBy.class, OracleGroupByConverter.getInstance());
     }
 }

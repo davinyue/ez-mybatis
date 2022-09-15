@@ -124,6 +124,25 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
+    public void groupByTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .done()
+                .groupBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
     public void ezSelectTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EntityTable userOrgTable = EntityTable.of(UserOrg.class);
