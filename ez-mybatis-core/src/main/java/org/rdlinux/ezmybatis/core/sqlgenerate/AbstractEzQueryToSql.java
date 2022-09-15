@@ -62,11 +62,8 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder paramHolder) {
         OrderBy order = query.getOrderBy();
-        if (order == null || order.getItems() == null) {
-            return sqlBuilder;
-        } else {
-            return order.toSqlPart(sqlBuilder, configuration, query, paramHolder);
-        }
+        Converter<OrderBy> converter = EzMybatisContent.getConverter(configuration, OrderBy.class);
+        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, order, paramHolder);
     }
 
     protected StringBuilder groupByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,

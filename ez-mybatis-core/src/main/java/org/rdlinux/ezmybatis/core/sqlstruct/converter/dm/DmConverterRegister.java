@@ -2,10 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlstruct.From;
-import org.rdlinux.ezmybatis.core.sqlstruct.Having;
-import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Where;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 /**
@@ -18,5 +15,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, Join.class, DmJoinConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Table.class, DmTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, From.class, DmFromConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, OrderBy.class, DmOrderByConverter.getInstance());
     }
 }
