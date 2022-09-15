@@ -7,6 +7,7 @@ import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
@@ -101,6 +102,22 @@ public class MysqlSelectTest extends MysqlBaseTest {
         ids.add("1");
         List<User> users = sqlSession.getMapper(EzMapper.class).selectByTableAndIds(EntityTable.of(User.class),
                 User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ordeByTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .orderBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name, OrderType.DESC)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
         sqlSession.close();
     }
@@ -215,7 +232,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalSelectBySql() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         HashMap<String, Object> sqlParam = new HashMap<>();
-        sqlParam.put("id", "1");
+        sqlParam.put("id", "1e4f4409fe714135b8aa20112d913637");
         List<Map<String, Object>> users = sqlSession.getMapper(EzMapper.class).selectMapBySql(
                 "select name from ez_user WHERE id = #{id}", sqlParam);
         System.out.println(JacksonUtils.toJsonString(users));

@@ -2,10 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlstruct.From;
-import org.rdlinux.ezmybatis.core.sqlstruct.Having;
-import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Where;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 /**
@@ -18,5 +15,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, Join.class, OracleJoinConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Table.class, OracleTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, From.class, OracleFromConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, OrderBy.class, OracleOrderByConverter.getInstance());
     }
 }
