@@ -4,7 +4,6 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlgenerate.oracle.OracleEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
@@ -13,6 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
 public class OracleLimitConverter extends AbstractConverter<Limit> implements Converter<Limit> {
+    public static final String ROW_NUM_ALIAS = "ORA_ROWNUM";
     private static volatile OracleLimitConverter instance;
 
     protected OracleLimitConverter() {
@@ -47,18 +47,18 @@ public class OracleLimitConverter extends AbstractConverter<Limit> implements Co
             String bodyAlias = Alias.getAlias();
             return new StringBuilder("SELECT ").append(bodyAlias).append(".* ")
                     .append(" FROM ( ").append(sqlBuilder).append(" ) ").append(bodyAlias)
-                    .append(" WHERE ").append(bodyAlias).append(".").append(OracleEzQueryToSql.ROW_NUM_ALIAS)
+                    .append(" WHERE ").append(bodyAlias).append(".").append(ROW_NUM_ALIAS)
                     .append(" > ")
                     .append(limit.getSkip());
         } else {
             String bodyAlias = Alias.getAlias();
-            String outSqlBody = "SELECT " + bodyAlias + ".*, ROWNUM " + OracleEzQueryToSql.ROW_NUM_ALIAS +
+            String outSqlBody = "SELECT " + bodyAlias + ".*, ROWNUM " + ROW_NUM_ALIAS +
                     " FROM (" + sqlBuilder + ") " + bodyAlias + " WHERE ROWNUM <= " +
                     (limit.getSkip() + limit.getSize()) + " ";
             String outAlias = Alias.getAlias();
             String outSqlHead = "SELECT " + outAlias + ".* FROM ( ";
-            String outSqlTail = " ) " + outAlias + " WHERE " + outAlias + "." + OracleEzQueryToSql.ROW_NUM_ALIAS +
-                    " > " + limit.getSkip();
+            String outSqlTail = " ) " + outAlias + " WHERE " + outAlias + "." + ROW_NUM_ALIAS + " > " +
+                    limit.getSkip();
             return new StringBuilder().append(outSqlHead).append(outSqlBody).append(outSqlTail);
         }
     }
