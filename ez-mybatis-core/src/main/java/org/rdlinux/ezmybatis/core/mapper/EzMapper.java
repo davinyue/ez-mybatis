@@ -31,6 +31,8 @@ public interface EzMapper {
     String SELECT_BY_TABLE_AND_IDS_METHOD = "selectByTableAndIds";
     String EZ_DELETE_METHOD = "ezDelete";
     String EZ_BATCH_DELETE_METHOD = "ezBatchDelete";
+    String SELECT_ONE_OBJECT_BY_SQL_METHOD = "selectOneObjectBySql";
+    String SELECT_OBJECT_BY_SQL_METHOD = "selectObjectBySql";
 
     /**
      * 根据主键查询
@@ -82,6 +84,24 @@ public interface EzMapper {
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_SQL_METHOD)
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
                                              @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+
+    /**
+     * 根据sql查询一条数据并返回对象
+     */
+    @MethodName(SELECT_ONE_OBJECT_BY_SQL_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_SQL_METHOD)
+    <T> T selectOneObjectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_RET) Class<T> clazz,
+                               @Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                               @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+
+    /**
+     * 根据sql查询数据并返回对象列表
+     */
+    @MethodName(SELECT_OBJECT_BY_SQL_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_SQL_METHOD)
+    <T> List<T> selectObjectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_RET) Class<T> clazz,
+                                  @Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                                  @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     @MethodName(QUERY_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
