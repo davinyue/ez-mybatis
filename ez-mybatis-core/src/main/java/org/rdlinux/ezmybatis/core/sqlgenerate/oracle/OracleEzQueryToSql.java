@@ -8,9 +8,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleLimitConverter;
 
 public class OracleEzQueryToSql extends AbstractEzQueryToSql {
-    public static final String ROW_NUM_ALIAS = "ORA_ROWNUM";
     private static volatile OracleEzQueryToSql instance;
 
     private OracleEzQueryToSql() {
@@ -52,7 +52,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
         OrderBy orderBy = query.getOrderBy();
         if (limit != null && (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
                 && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
-            sql.append(", ROWNUM ").append(ROW_NUM_ALIAS).append(" ");
+            sql.append(", ROWNUM ").append(OracleLimitConverter.ROW_NUM_ALIAS).append(" ");
         }
         return sql;
     }
