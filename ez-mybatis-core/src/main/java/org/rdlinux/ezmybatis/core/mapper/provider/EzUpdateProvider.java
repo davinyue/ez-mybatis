@@ -3,11 +3,11 @@ package org.rdlinux.ezmybatis.core.mapper.provider;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class EzUpdateProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getUpdateSql(configuration, paramHolder, null, entity, false);
     }
 
@@ -40,7 +40,7 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getUpdateSql(configuration, paramHolder, table, entity, false);
     }
 
@@ -50,7 +50,7 @@ public class EzUpdateProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchUpdateSql(configuration, paramHolder, null, entitys, false);
     }
 
@@ -60,7 +60,7 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchUpdateSql(configuration, paramHolder, table, entitys, false);
     }
 
@@ -69,7 +69,7 @@ public class EzUpdateProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getUpdateSql(configuration, paramHolder, null, entity, true);
     }
 
@@ -79,7 +79,7 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getUpdateSql(configuration, paramHolder, table, entity, true);
     }
 
@@ -89,7 +89,7 @@ public class EzUpdateProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchUpdateSql(configuration, paramHolder, null, entitys, true);
     }
 
@@ -99,7 +99,7 @@ public class EzUpdateProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchUpdateSql(configuration, paramHolder, table, entitys, true);
     }
 
@@ -108,7 +108,7 @@ public class EzUpdateProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzUpdate update = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getUpdateSql(configuration, paramHolder, update);
     }
 
@@ -117,7 +117,7 @@ public class EzUpdateProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<EzUpdate> updates = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getUpdateSql(configuration, paramHolder, updates);
     }
 

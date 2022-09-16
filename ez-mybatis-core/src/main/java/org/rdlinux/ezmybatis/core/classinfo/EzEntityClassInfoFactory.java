@@ -2,12 +2,12 @@ package org.rdlinux.ezmybatis.core.classinfo;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.DmEntityInfoBuild;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuild;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.MySqlEntityInfoBuild;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.OracleEntityInfoBuild;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class EzEntityClassInfoFactory {
 
     private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass,
                                              EntityInfoBuild entityInfoBuild) {
-        DbType dbType = DbTypeUtils.getDbType(configuration);
+        DbType dbType = EzMybatisContent.getDbType(configuration);
         EntityInfoBuild infoBuild = ENTITY_INFO_BUILD_MAP.get(dbType);
         if (entityInfoBuild != null) {
             infoBuild = entityInfoBuild;
@@ -87,6 +87,6 @@ public class EzEntityClassInfoFactory {
     }
 
     public static EntityInfoBuild getEntityInfoBuild(Configuration configuration) {
-        return ENTITY_INFO_BUILD_MAP.get(DbTypeUtils.getDbType(configuration));
+        return ENTITY_INFO_BUILD_MAP.get(EzMybatisContent.getDbType(configuration));
     }
 }

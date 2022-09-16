@@ -3,11 +3,11 @@ package org.rdlinux.ezmybatis.core.mapper.provider;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class EzSelectProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getSelectByIdSql(configuration, paramHolder, null, ntClass, id);
     }
 
@@ -38,7 +38,7 @@ public class EzSelectProvider {
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
         Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
@@ -48,7 +48,7 @@ public class EzSelectProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getSelectByIdsSql(configuration, paramHolder, null, ntClass, ids);
     }
 
@@ -59,7 +59,7 @@ public class EzSelectProvider {
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
         Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getSelectByIdsSql(configuration, paramHolder, table, ntClass, ids);
     }
 
@@ -77,7 +77,7 @@ public class EzSelectProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQuerySql(configuration, paramHolder, query);
     }
 
@@ -86,7 +86,7 @@ public class EzSelectProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQueryCountSql(configuration, paramHolder, query);
     }
 }

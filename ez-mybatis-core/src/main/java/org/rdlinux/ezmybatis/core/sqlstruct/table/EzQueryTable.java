@@ -1,13 +1,13 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 public class EzQueryTable implements Table {
     private String alias;
@@ -40,7 +40,7 @@ public class EzQueryTable implements Table {
 
     @Override
     public String toSqlStruct(Converter.Type type, Configuration configuration, MybatisParamHolder paramHolder) {
-        String querySql = SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQuerySql(configuration, paramHolder, this.ezQuery);
         return " (" + querySql + ") " + this.alias + " ";
     }

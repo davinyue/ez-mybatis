@@ -3,6 +3,9 @@ package org.rdlinux.ezmybatis.core;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.plugin.InterceptorChain;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
@@ -17,10 +20,13 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.DmConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleConverterRegister;
 import org.rdlinux.ezmybatis.utils.Assert;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,7 +71,7 @@ public class EzMybatisContent {
      * 获取转换器
      */
     public static <T extends SqlPart> Converter<T> getConverter(Configuration configuration, Class<T> sqlStruct) {
-        DbType dbType = DbTypeUtils.getDbType(configuration);
+        DbType dbType = getDbType(configuration);
         return getConverter(dbType, sqlStruct);
     }
 
@@ -73,7 +79,25 @@ public class EzMybatisContent {
      * 设置数据库类型
      */
     public static void setDbType(Configuration configuration, DbType dbType) {
-        DbTypeUtils.setDbType(configuration, dbType);
+        Assert.notNull(configuration, "configuration can not be null");
+        ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        configurationConfig.setDbType(dbType);
+        initConverterRegister(dbType);
+    }
+
+    /**
+     * 获取数据库类型
+     */
+    public static DbType getDbType(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        DbType dbType = configurationConfig.getDbType();
+        if (dbType == null) {
+            throw new RuntimeException("The database type is not recognized. Please configure it manually");
+        }
+        return dbType;
     }
 
     /**
@@ -86,7 +110,9 @@ public class EzMybatisContent {
         CFG_CONFIG_MAP.put(config.getConfiguration(), configurationConfig);
         initMapper(config);
         initInterceptor(config);
+        initDbType(config);
     }
+
 
     /**
      * 获取关键词引号
@@ -135,6 +161,64 @@ public class EzMybatisContent {
         config.getConfiguration().addMapper(EzMapper.class);
     }
 
+    /**
+     * 初始化数据库类型
+     */
+    private static void initDbType(EzMybatisConfig config) {
+        Configuration configuration = config.getConfiguration();
+        Environment environment = configuration.getEnvironment();
+        if (environment == null) {
+            return;
+        }
+        DataSource dataSource = environment.getDataSource();
+        if (dataSource == null) {
+            return;
+        }
+        String driver;
+        if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
+            driver = ((PooledDataSource) dataSource).getDriver();
+        } else {
+            if (dataSource.getClass().getName().contains("druid")) {
+                driver = ReflectionUtils.getFieldValue(dataSource, "driverClass");
+            } else {
+                driver = ReflectionUtils.getFieldValue(dataSource, "driverClassName");
+            }
+        }
+        if (StringUtils.isBlank(driver)) {
+            return;
+        }
+        DbType dbType = null;
+        if (driver.contains("mysql")) {
+            dbType = DbType.MYSQL;
+        } else if (driver.contains("oracle")) {
+            dbType = DbType.ORACLE;
+        } else if (driver.toLowerCase().contains("dmdriver")) {
+            dbType = DbType.DM;
+        }
+        ConfigurationConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        configurationConfig.setDbType(dbType);
+        initConverterRegister(dbType);
+    }
+
+    /**
+     * 初始化类型转换器
+     */
+    private static void initConverterRegister(DbType dbType) {
+        if (dbType == null) {
+            return;
+        }
+        if (dbType == DbType.MYSQL) {
+            MySqlConverterRegister.register();
+        } else if (dbType == DbType.ORACLE) {
+            OracleConverterRegister.register();
+        } else if (dbType == DbType.DM) {
+            DmConverterRegister.register();
+        }
+    }
+
+    /**
+     * 初始化拦截器
+     */
     private static void initInterceptor(EzMybatisConfig config) {
         Configuration configuration = config.getConfiguration();
         InterceptorChain interceptorChain = ReflectionUtils.getFieldValue(configuration, "interceptorChain");
@@ -155,5 +239,6 @@ public class EzMybatisContent {
         private Configuration configuration;
         private EzMybatisUpdateInterceptor updateInterceptor;
         private DbKeywordQMFactory dbKeywordQMFactory;
+        private DbType dbType;
     }
 }

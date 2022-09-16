@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table.partition;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +38,7 @@ public class NormalPartition implements Partition {
 
     @Override
     public String toSqlStruct(Configuration configuration) {
-        DbType dbType = DbTypeUtils.getDbType(configuration);
+        DbType dbType = EzMybatisContent.getDbType(configuration);
         if (this.partitions == null || this.partitions.isEmpty()) {
             return "";
         } else if (dbType == DbType.ORACLE || dbType == DbType.DM) {
