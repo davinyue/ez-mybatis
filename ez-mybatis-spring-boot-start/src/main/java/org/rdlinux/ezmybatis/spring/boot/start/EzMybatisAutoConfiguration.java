@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 
 @Import(EzMybatisAutoConfiguration.EzMapperRegistrar.class)
 @Configuration
-@ConditionalOnClass({EzMapper.class})
+@ConditionalOnClass({EzMapper.class, EzMybatisProperties.class})
 @EnableConfigurationProperties(EzMybatisProperties.class)
 @AutoConfigureBefore({MybatisAutoConfiguration.class})
 public class EzMybatisAutoConfiguration implements ApplicationContextAware {
