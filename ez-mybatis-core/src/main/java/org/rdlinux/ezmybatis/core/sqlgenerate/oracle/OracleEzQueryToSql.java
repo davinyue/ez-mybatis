@@ -10,7 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 
 public class OracleEzQueryToSql extends AbstractEzQueryToSql {
-    private static final String ROW_NUM_ALIAS = "ORACLE_ROW_NO";
+    public static final String ROW_NUM_ALIAS = "ORA_ROWNUM";
     private static volatile OracleEzQueryToSql instance;
 
     private OracleEzQueryToSql() {
