@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -14,21 +15,22 @@ import java.util.List;
 @Setter
 public class Select implements SqlPart {
     /**
+     * 查询
+     */
+    private EzQuery<?> query;
+    /**
      * 是否去重
      */
     private boolean distinct = false;
-    /**
-     * 查询主表
-     */
-    private Table table;
+    ;
     /**
      * 查询项
      */
     private List<SelectItem> selectFields;
 
-    public Select(Table table, List<SelectItem> selectFields) {
-        Assert.notNull(table, "table can not be null");
-        this.table = table;
+    public Select(EzQuery<?> query, List<SelectItem> selectFields) {
+        Assert.notNull(query, "query can not be null");
+        this.query = query;
         this.selectFields = selectFields;
     }
 
@@ -46,7 +48,6 @@ public class Select implements SqlPart {
             this.selectFields = select.getSelectFields();
             this.target = target;
             this.table = table;
-            select.table = table;
         }
 
         private void checkEntityTable() {

@@ -38,7 +38,7 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
             sqlBuilder.append("DISTINCT ");
         }
         if (select.getSelectFields() == null || select.getSelectFields().isEmpty()) {
-            sqlBuilder.append(select.getTable().getAlias()).append(".* ");
+            sqlBuilder.append(select.getQuery().getFrom().getTable().getAlias()).append(".* ");
         } else {
             List<SelectItem> selectFields = select.getSelectFields();
             for (int i = 0; i < selectFields.size(); i++) {
