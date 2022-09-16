@@ -29,6 +29,9 @@ public class OracleSelectConverter extends MySqlSelectConverter {
     @Override
     protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Select select,
                                         MybatisParamHolder mybatisParamHolder) {
+        if (select == null) {
+            return sqlBuilder;
+        }
         sqlBuilder = super.doToSqlPart(type, sqlBuilder, configuration, select, mybatisParamHolder);
         Limit limit = select.getQuery().getLimit();
         GroupBy groupBy = select.getQuery().getGroupBy();
