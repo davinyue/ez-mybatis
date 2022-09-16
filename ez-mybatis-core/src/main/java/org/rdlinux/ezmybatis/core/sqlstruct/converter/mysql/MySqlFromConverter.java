@@ -33,7 +33,7 @@ public class MySqlFromConverter extends AbstractConverter<From> implements Conve
         if (type == Type.SELECT || type == Type.DELETE) {
             sqlBuilder.append(" FROM ");
         }
-        Converter<Table> converter = EzMybatisContent.getConverter(DbType.MYSQL, Table.class);
+        Converter<Table> converter = EzMybatisContent.getConverter(configuration, Table.class);
         return converter.toSqlPart(type, sqlBuilder, configuration, fromTable, mybatisParamHolder);
     }
 
