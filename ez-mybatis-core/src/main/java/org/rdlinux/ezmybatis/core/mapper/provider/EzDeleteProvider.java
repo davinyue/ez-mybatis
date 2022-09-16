@@ -4,12 +4,12 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -40,7 +40,7 @@ public class EzDeleteProvider {
         Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
         Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
         param.put("id", id);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getDeleteByIdSql(configuration, paramHolder, null, ntClass, id);
     }
 
@@ -55,7 +55,7 @@ public class EzDeleteProvider {
         Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
         param.put("id", id);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
@@ -73,7 +73,7 @@ public class EzDeleteProvider {
             ids.add(id);
         }
         param.put("ids", ids);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchDeleteByIdSql(configuration, paramHolder, null, ntClass, ids);
     }
 
@@ -92,7 +92,7 @@ public class EzDeleteProvider {
         }
         param.put("ids", ids);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass, ids);
     }
 
@@ -102,7 +102,7 @@ public class EzDeleteProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getDeleteByIdSql(configuration, paramHolder, null, ntClass, id);
     }
 
@@ -113,7 +113,7 @@ public class EzDeleteProvider {
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
@@ -123,7 +123,7 @@ public class EzDeleteProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchDeleteByIdSql(configuration, paramHolder, null, ntClass, ids);
     }
 
@@ -134,7 +134,7 @@ public class EzDeleteProvider {
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass, ids);
     }
 
@@ -143,7 +143,7 @@ public class EzDeleteProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         EzDelete delete = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getDeleteSql(configuration, paramHolder, delete);
     }
 
@@ -152,7 +152,7 @@ public class EzDeleteProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<EzDelete> deletes = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getDeleteSql(configuration, paramHolder, deletes);
     }
 
