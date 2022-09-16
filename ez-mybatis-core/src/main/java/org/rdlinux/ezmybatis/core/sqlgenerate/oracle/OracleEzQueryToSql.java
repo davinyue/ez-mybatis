@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleLimitConverter;
 
 public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     private static volatile OracleEzQueryToSql instance;
@@ -41,20 +40,6 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
         } else {
             return sqlBuilder.toString();
         }
-    }
-
-    @Override
-    protected StringBuilder selectToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
-                                        MybatisParamHolder mybatisParamHolder) {
-        StringBuilder sql = super.selectToSql(sqlBuilder, configuration, query, mybatisParamHolder);
-        Limit limit = query.getLimit();
-        GroupBy groupBy = query.getGroupBy();
-        OrderBy orderBy = query.getOrderBy();
-        if (limit != null && (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
-                && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
-            sql.append(", ROWNUM ").append(OracleLimitConverter.ROW_NUM_ALIAS).append(" ");
-        }
-        return sql;
     }
 
     @Override

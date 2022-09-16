@@ -35,13 +35,13 @@ public class EzQuery<Rt> extends EzParam<Rt> {
         public EzQueryBuilder<Rt> from(Table table) {
             this.query.table = table;
             this.query.from = new From(table);
-            this.query.select = new Select(table, new LinkedList<>());
+            this.query.select = new Select(this.query, new LinkedList<>());
             return this;
         }
 
         public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(Table table) {
             if (this.query.select == null) {
-                this.query.select = new Select(table, new LinkedList<>());
+                this.query.select = new Select(this.query, new LinkedList<>());
             }
             return new Select.EzSelectBuilder<>(this, this.query.select, table);
         }
