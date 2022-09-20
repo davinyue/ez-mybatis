@@ -37,27 +37,12 @@ public class OrderBy implements SqlPart {
             }
         }
 
-        /**
-         * please use {@link #addField(String)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(String field) {
-            return this.addField(field);
-        }
-
         public OrderBuilder<T> addField(String field) {
             this.checkEntityTable();
             this.orderBy.getItems().add(new FieldOrderItem((EntityTable) this.table, field));
             return this;
         }
 
-        /**
-         * please use {@link #addField(boolean, String)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(boolean sure, String field) {
-            return this.addField(sure, field);
-        }
 
         public OrderBuilder<T> addField(boolean sure, String field) {
             if (sure) {
@@ -78,26 +63,11 @@ public class OrderBy implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addField(String, OrderType)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(String field, OrderType type) {
-            return this.addField(field, type);
-        }
 
         public OrderBuilder<T> addField(String field, OrderType type) {
             this.checkEntityTable();
             this.orderBy.getItems().add(new FieldOrderItem((EntityTable) this.table, field, type));
             return this;
-        }
-
-        /**
-         * please use {@link #addField(boolean, String, OrderType)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(boolean sure, String field, OrderType type) {
-            return this.addField(sure, field, type);
         }
 
         public OrderBuilder<T> addField(boolean sure, String field, OrderType type) {

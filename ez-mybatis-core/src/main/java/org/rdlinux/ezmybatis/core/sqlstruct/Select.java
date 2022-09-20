@@ -100,26 +100,11 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addField(String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> add(String field) {
-            return this.addField(field);
-        }
 
         public EzSelectBuilder<T> addField(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectField((EntityTable) this.table, field));
             return this;
-        }
-
-        /**
-         * please use {@link #addField(boolean, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> add(boolean sure, String field) {
-            return this.addField(sure, field);
         }
 
         public EzSelectBuilder<T> addField(boolean sure, String field) {
@@ -129,27 +114,12 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addField(String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> add(String field, String alias) {
-            return this.addField(field, alias);
-        }
-
         public EzSelectBuilder<T> addField(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectField((EntityTable) this.table, field, alias));
             return this;
         }
 
-        /**
-         * please use {@link #addField(boolean, String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> add(boolean sure, String field, String alias) {
-            return this.addField(sure, field, alias);
-        }
 
         public EzSelectBuilder<T> addField(boolean sure, String field, String alias) {
             if (sure) {
@@ -182,26 +152,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldMax(String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMax(String field) {
-            return this.addFieldMax(field);
-        }
-
         public EzSelectBuilder<T> addFieldMax(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldMax(boolean, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMax(boolean sure, String field) {
-            return this.addFieldMax(sure, field);
         }
 
         public EzSelectBuilder<T> addFieldMax(boolean sure, String field) {
@@ -211,26 +165,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldMax(String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMax(String field, String alias) {
-            return this.addFieldMax(field, alias);
-        }
-
         public EzSelectBuilder<T> addFieldMax(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field, alias));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldMax(boolean, String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMax(boolean sure, String field, String alias) {
-            return this.addFieldMax(sure, field, alias);
         }
 
         public EzSelectBuilder<T> addFieldMax(boolean sure, String field, String alias) {
@@ -264,26 +202,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldCount(String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addCount(String field) {
-            return this.addFieldCount(field);
-        }
-
         public EzSelectBuilder<T> addFieldCount(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectCountField((EntityTable) this.table, field));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldCount(boolean, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addCount(boolean sure, String field) {
-            return this.addFieldCount(sure, field);
         }
 
         public EzSelectBuilder<T> addFieldCount(boolean sure, String field) {
@@ -293,26 +215,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldCount(String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addCount(String field, String alias) {
-            return this.addFieldCount(field, alias);
-        }
-
         public EzSelectBuilder<T> addFieldCount(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectCountField((EntityTable) this.table, field, alias));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldCount(boolean, String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addCount(boolean sure, String field, String alias) {
-            return this.addFieldCount(sure, field, alias);
         }
 
         public EzSelectBuilder<T> addFieldCount(boolean sure, String field, String alias) {
@@ -346,26 +252,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldMin(String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMin(String field) {
-            return this.addFieldMin(field);
-        }
-
         public EzSelectBuilder<T> addFieldMin(String field) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldMin(boolean, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMin(boolean sure, String field) {
-            return this.addFieldMin(sure, field);
         }
 
         public EzSelectBuilder<T> addFieldMin(boolean sure, String field) {
@@ -375,26 +265,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldMin(String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMin(String field, String alias) {
-            return this.addFieldMin(field, alias);
-        }
-
         public EzSelectBuilder<T> addFieldMin(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectMaxField((EntityTable) this.table, field, alias));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldMin(boolean, String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addMin(boolean sure, String field, String alias) {
-            return this.addFieldMin(sure, field, alias);
         }
 
         public EzSelectBuilder<T> addFieldMin(boolean sure, String field, String alias) {
@@ -428,13 +302,6 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldAvg(String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addAvg(String field) {
-            return this.addFieldAvg(field);
-        }
 
         public EzSelectBuilder<T> addFieldAvg(String field) {
             this.checkEntityTable();
@@ -442,13 +309,6 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldAvg(boolean, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addAvg(boolean sure, String field) {
-            return this.addFieldAvg(sure, field);
-        }
 
         public EzSelectBuilder<T> addFieldAvg(boolean sure, String field) {
             if (sure) {
@@ -457,26 +317,10 @@ public class Select implements SqlPart {
             return this;
         }
 
-        /**
-         * please use {@link #addFieldAvg(String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addAvg(String field, String alias) {
-            return this.addFieldAvg(field, alias);
-        }
-
         public EzSelectBuilder<T> addFieldAvg(String field, String alias) {
             this.checkEntityTable();
             this.selectFields.add(new SelectAvgField((EntityTable) this.table, field, alias));
             return this;
-        }
-
-        /**
-         * please use {@link #addFieldAvg(boolean, String, String)} replace
-         */
-        @Deprecated
-        public EzSelectBuilder<T> addAvg(boolean sure, String field, String alias) {
-            return this.addFieldAvg(sure, field, alias);
         }
 
         public EzSelectBuilder<T> addFieldAvg(boolean sure, String field, String alias) {
