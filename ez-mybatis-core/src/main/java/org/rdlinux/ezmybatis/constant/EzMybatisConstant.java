@@ -98,4 +98,8 @@ public abstract class EzMybatisConstant {
      * mapper参数, ezParam
      */
     public static final String MAPPER_PARAM_EZPARAM = "mp";
+    /**
+     * mapper参数, 返回结果类型
+     */
+    public static final String MAPPER_PARAM_RET = "mp_ret";
 }

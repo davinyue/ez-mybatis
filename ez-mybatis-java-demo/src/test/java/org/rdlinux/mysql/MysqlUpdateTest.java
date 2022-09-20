@@ -30,7 +30,22 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     }
 
     @Test
-    public void update1() {
+    public void updateByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
+        sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void ezMapperUpdate() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
@@ -39,6 +54,21 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).update(user);
+        sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void ezMapperUpdateByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
         sqlSession.close();
         System.out.println(insert);
@@ -66,7 +96,28 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     }
 
     @Test
-    public void batchUpdate1() {
+    public void batchUpdateByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(UserMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchUpdate() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -87,6 +138,27 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     }
 
     @Test
+    public void ezMapperBatchUpdateByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
     public void replace() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
@@ -99,12 +171,36 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     }
 
     @Test
-    public void replace1() {
+    public void replaceByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        int insert = sqlSession.getMapper(UserMapper.class).replaceByTable(EntityTable.of(User.class), user);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperReplace() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         int insert = sqlSession.getMapper(EzMapper.class).replace(user);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperReplaceByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        int insert = sqlSession.getMapper(EzMapper.class).replaceByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
         System.out.println(insert);
         sqlSession.close();
@@ -132,7 +228,28 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     }
 
     @Test
-    public void batchReplace1() {
+    public void batchReplaceByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(UserMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchReplace() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -147,6 +264,27 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             users.add(user);
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchReplace(users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchReplaceByTable() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
         System.out.println(insert);
         sqlSession.close();

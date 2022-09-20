@@ -2,7 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table.partition;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 
 import java.util.Collection;
 
@@ -28,7 +28,7 @@ public class SubPartition extends NormalPartition {
 
     @Override
     public String toSqlStruct(Configuration configuration) {
-        DbType dbType = DbTypeUtils.getDbType(configuration);
+        DbType dbType = EzMybatisContent.getDbType(configuration);
         if (dbType == DbType.ORACLE || dbType == DbType.DM) {
             return " SUBPARTITION(" + this.partitions.get(0) + ") ";
         } else {

@@ -7,9 +7,11 @@ import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
+import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
@@ -22,22 +24,164 @@ import java.util.concurrent.CountDownLatch;
 @Log4j2
 public class MysqlSelectTest extends MysqlBaseTest {
     @Test
-    public void selectById() {
+    public void selectObjectBySqlTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        User user = sqlSession.getMapper(UserMapper.class)
-                .selectById("01e3ff9339f2427d9a66d3a8799de2c9");
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        List<User> users = mapper.selectObjectBySql(User.class, "select * from ez_user limit 0,5", new HashMap<>());
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectOneObjectBySqlTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        User user = mapper.selectOneObjectBySql(User.class, "select * from ez_user limit 0,1", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
         sqlSession.close();
     }
 
     @Test
-    public void normalSelectById() {
+    public void selectById() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        User user = sqlSession.getMapper(EzMapper.class).selectById(User.class,
-                "01e3ff9339f2427d9a66d3a8799de2c9");
+        User user = sqlSession.getMapper(UserMapper.class)
+                .selectById("04b7abcf2c454e56b1bc85f6599e19a5");
         System.out.println(JacksonUtils.toJsonString(user));
         sqlSession.close();
     }
+
+    @Test
+    public void ezSelectById() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = sqlSession.getMapper(EzMapper.class)
+                .selectById(User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
+        System.out.println(JacksonUtils.toJsonString(user));
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = sqlSession.getMapper(UserMapper.class)
+                .selectByTableAndId(EntityTable.of(User.class), "04b7abcf2c454e56b1bc85f6599e19a5");
+        System.out.println(JacksonUtils.toJsonString(user));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectByTableAndId() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        User user = sqlSession.getMapper(EzMapper.class)
+                .selectByTableAndId(EntityTable.of(User.class), User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
+        System.out.println(JacksonUtils.toJsonString(user));
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectByIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("04b7abcf2c454e56b1bc85f6599e19a5");
+        ids.add("085491774b2240688edb1b31772ff629");
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void selectByTableAndIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("04b7abcf2c454e56b1bc85f6599e19a5");
+        ids.add("085491774b2240688edb1b31772ff629");
+        List<User> users = sqlSession.getMapper(UserMapper.class).selectByTableAndIds(
+                EntityTable.of(User.class), ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectByIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
+        ids.add("1");
+        List<User> users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectByTableAndIds() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = new LinkedList<>();
+        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
+        ids.add("1");
+        List<User> users = sqlSession.getMapper(EzMapper.class).selectByTableAndIds(EntityTable.of(User.class),
+                User.class, ids);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ordeByTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .orderBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name, OrderType.DESC)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void groupByTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .done()
+                .groupBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezSelectTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .select(userOrgTable).addField(UserOrg.Fields.orgId)
+                .done()
+                .join(userOrgTable)
+                .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)
+                .done()
+                .orderBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name, OrderType.DESC)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
+
 
     /**
      * 通用mapper结果类型并发测试
@@ -86,33 +230,9 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
-    public void selectByIds() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> ids = new LinkedList<>();
-        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
-        ids.add("1");
-        List<User> users = sqlSession.getMapper(UserMapper.class).selectByIds(ids);
-        System.out.println(JacksonUtils.toJsonString(users));
-        users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
-        System.out.println(JacksonUtils.toJsonString(users));
-        sqlSession.close();
-    }
-
-    @Test
-    public void normalSelectByIds() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> ids = new LinkedList<>();
-        ids.add("01e3ff9339f2427d9a66d3a8799de2c9");
-        ids.add("1");
-        List<User> users = sqlSession.getMapper(EzMapper.class).selectByIds(User.class, ids);
-        System.out.println(JacksonUtils.toJsonString(users));
-        sqlSession.close();
-    }
-
-    @Test
     public void ezQueryJoinTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .join(EzQueryTable.of(sonQ)).addColumnCompareCondition("id", "id").done().build();
@@ -124,7 +244,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void normalEzQueryJoinTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .where().addFieldCondition("name", "张三").done().page(1, 1).build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .join(EzQueryTable.of(sonQ)).addColumnCompareCondition("id", "id").done().build();
@@ -136,7 +256,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void ezQueryInTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .where().addColumnCondition("id", Operator.in, sonQ).done().build();
@@ -148,7 +268,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void normalEzQueryInTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().add("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .where().addColumnCondition("id", Operator.in, sonQ).done().build();
@@ -172,7 +292,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalSelectBySql() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         HashMap<String, Object> sqlParam = new HashMap<>();
-        sqlParam.put("id", "1");
+        sqlParam.put("id", "1e4f4409fe714135b8aa20112d913637");
         List<Map<String, Object>> users = sqlSession.getMapper(EzMapper.class).selectMapBySql(
                 "select name from ez_user WHERE id = #{id}", sqlParam);
         System.out.println(JacksonUtils.toJsonString(users));
@@ -254,7 +374,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void countTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-                .select().add("name").done()
+                .select().addField("name").done()
                 .build();
         int i = sqlSession.getMapper(UserMapper.class).queryCount(query);
         sqlSession.close();
@@ -265,7 +385,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalCountTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-                .select().add("name").done()
+                .select().addField("name").done()
                 //.where().addColumnCondition("name", Operator.gt, 1).done()
                 .build();
         int i = sqlSession.getMapper(EzMapper.class).queryCount(query);
@@ -322,7 +442,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalQueryCount() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<Integer> query = EzQuery.builder(int.class).from(EntityTable.of(User.class))
-                .select().addCount("id").done().page(1, 1)
+                .select().addFieldCount("id").done().page(1, 1)
                 .build();
         Integer count = sqlSession.getMapper(EzMapper.class).queryOne(query);
         sqlSession.close();

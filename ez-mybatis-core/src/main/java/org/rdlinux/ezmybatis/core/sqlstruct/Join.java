@@ -3,9 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
@@ -19,7 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class Join implements SqlStruct {
+public class Join implements SqlPart {
 
     /**
      * 主表
@@ -45,41 +42,6 @@ public class Join implements SqlStruct {
      * 是否确认连表
      */
     private boolean sure;
-
-    @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
-                                   MybatisParamHolder mybatisParamHolder) {
-        return this.joinToSql(sqlBuilder, configuration, mybatisParamHolder);
-    }
-
-    protected StringBuilder joinToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                      MybatisParamHolder mybatisParamHolder) {
-        if (!this.isSure()) {
-            return sqlBuilder;
-        }
-        StringBuilder sonSql;
-        if (this.joinType == JoinType.CrossJoin) {
-            sonSql = new StringBuilder();
-        } else {
-            sonSql = Where.conditionsToSqlPart(new StringBuilder(), configuration, mybatisParamHolder,
-                    this.getOnConditions());
-            if (sonSql.length() == 0) {
-                return sqlBuilder;
-            }
-        }
-        sqlBuilder.append(this.joinType.toSqlStruct()).append(this.joinTable.toSqlStruct(configuration,
-                mybatisParamHolder));
-        if (this.joinType != JoinType.CrossJoin) {
-            sqlBuilder.append(" ON ");
-        }
-        sqlBuilder.append(sonSql);
-        if (this.getJoins() != null && !this.getJoins().isEmpty()) {
-            for (Join join : this.joins) {
-                sqlBuilder.append(join.joinToSql(new StringBuilder(), configuration, mybatisParamHolder));
-            }
-        }
-        return sqlBuilder;
-    }
 
     public static class JoinBuilder<Builder> extends ConditionBuilder<Builder,
             JoinBuilder<Builder>> {

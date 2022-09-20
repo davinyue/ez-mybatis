@@ -4,6 +4,8 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Collection;
@@ -11,26 +13,40 @@ import java.util.Collection;
 public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
 
     @Override
-    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
+    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
         Assert.notNull(id, "id cannot be null");
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
-        String table = entityClassInfo.getTableNameWithSchema(kwQM);
+        String tableName;
+        if (table != null) {
+            Converter<Table> converter = EzMybatisContent.getConverter(configuration, Table.class);
+            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+                    paramHolder).toString();
+        } else {
+            tableName = entityClassInfo.getTableNameWithSchema(kwQM);
+        }
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        return "SELECT * FROM " + table + " WHERE " + kwQM + idColumn + kwQM + " = " +
+        return "SELECT * FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " +
                 paramHolder.getParamName(id, false);
     }
 
     @Override
-    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    Collection<?> ids) {
+    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                    Class<?> ntClass, Collection<?> ids) {
         Assert.notEmpty(ids, "ids cannot be null");
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
-        String table = entityClassInfo.getTableNameWithSchema(kwQM);
+        String tableName;
+        if (table != null) {
+            Converter<Table> converter = EzMybatisContent.getConverter(configuration, Table.class);
+            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+                    paramHolder).toString();
+        } else {
+            tableName = entityClassInfo.getTableNameWithSchema(kwQM);
+        }
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
-        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM " + table + " WHERE " + kwQM +
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM " + tableName + " WHERE " + kwQM +
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {

@@ -42,15 +42,15 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return MySqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, ntClass, id);
+    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return MySqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    Collection<?> ids) {
-        return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, ntClass, ids);
+    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                    Class<?> ntClass, Collection<?> ids) {
+        return MySqlSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, table, ntClass, ids);
     }
 
     @Override
@@ -64,15 +64,16 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
-                               boolean isReplace) {
-        return MySqlUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                               Object entity, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, table, entity,
+                isReplace);
     }
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Collection<Object> entitys, boolean isReplace) {
-        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, entitys,
+                                    Table table, Collection<Object> entitys, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table, entitys,
                 isReplace);
     }
 
@@ -88,15 +89,16 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return MySqlDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, ntClass, id);
+    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return MySqlDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                        Collection<?> ids) {
-        return MySqlDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
+    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                        Class<?> ntClass, Collection<?> ids) {
+        return MySqlDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass,
+                ids);
     }
 
     @Override
