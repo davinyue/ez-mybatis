@@ -3,10 +3,10 @@ package org.rdlinux.ezmybatis.core.mapper.provider;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class EzInsertProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getInsertSql(configuration, paramHolder, null, entity);
     }
 
@@ -33,7 +33,7 @@ public class EzInsertProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getInsertSql(configuration, paramHolder, table, entity);
     }
 
@@ -42,7 +42,7 @@ public class EzInsertProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchInsertSql(configuration, paramHolder, null, entitys);
     }
 
@@ -52,7 +52,7 @@ public class EzInsertProvider {
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(DbTypeUtils.getDbType(configuration))
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getBatchInsertSql(configuration, paramHolder, table, entitys);
     }
 

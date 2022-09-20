@@ -2,67 +2,22 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.EzParam;
-import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.ColumnOrderItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.FieldOrderItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
-public class OrderBy implements SqlStruct {
-    private static final Map<DbType, SqlStruct> CONVERT = new HashMap<>();
-
-    static {
-        SqlStruct defaultConvert = (sqlBuilder, configuration, ezParam, mybatisParamHolder) ->
-                OrderBy.defaultOrderByToSql(sqlBuilder, configuration, (EzQuery<?>) ezParam);
-        CONVERT.put(DbType.MYSQL, defaultConvert);
-        CONVERT.put(DbType.ORACLE, defaultConvert);
-        CONVERT.put(DbType.DM, defaultConvert);
-    }
-
+public class OrderBy implements SqlPart {
     private List<OrderItem> items;
 
     public OrderBy(List<OrderItem> items) {
         this.items = items;
-    }
-
-    private static StringBuilder defaultOrderByToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                                     EzQuery<?> ezParam) {
-        OrderBy order = ezParam.getOrderBy();
-        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
-            return sqlBuilder;
-        } else {
-            StringBuilder sql = new StringBuilder(" ORDER BY ");
-            for (int i = 0; i < order.getItems().size(); i++) {
-                OrderItem orderItem = order.getItems().get(i);
-                sql.append(orderItem.toSqlStruct(configuration));
-                if (i + 1 < order.getItems().size()) {
-                    sql.append(", ");
-                } else {
-                    sql.append(" ");
-                }
-            }
-            return sqlBuilder.append(sql);
-        }
-    }
-
-    @Override
-    public StringBuilder toSqlPart(StringBuilder sqlBuilder, Configuration configuration, EzParam<?> ezParam,
-                                   MybatisParamHolder mybatisParamHolder) {
-        return CONVERT.get(DbTypeUtils.getDbType(configuration)).toSqlPart(sqlBuilder, configuration, ezParam,
-                mybatisParamHolder);
     }
 
     public static class OrderBuilder<T> {
@@ -82,27 +37,12 @@ public class OrderBy implements SqlStruct {
             }
         }
 
-        /**
-         * please use {@link #addField(String)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(String field) {
-            return this.addField(field);
-        }
-
         public OrderBuilder<T> addField(String field) {
             this.checkEntityTable();
             this.orderBy.getItems().add(new FieldOrderItem((EntityTable) this.table, field));
             return this;
         }
 
-        /**
-         * please use {@link #addField(boolean, String)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(boolean sure, String field) {
-            return this.addField(sure, field);
-        }
 
         public OrderBuilder<T> addField(boolean sure, String field) {
             if (sure) {
@@ -123,26 +63,11 @@ public class OrderBy implements SqlStruct {
             return this;
         }
 
-        /**
-         * please use {@link #addField(String, OrderType)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(String field, OrderType type) {
-            return this.addField(field, type);
-        }
 
         public OrderBuilder<T> addField(String field, OrderType type) {
             this.checkEntityTable();
             this.orderBy.getItems().add(new FieldOrderItem((EntityTable) this.table, field, type));
             return this;
-        }
-
-        /**
-         * please use {@link #addField(boolean, String, OrderType)} replace
-         */
-        @Deprecated
-        public OrderBuilder<T> add(boolean sure, String field, OrderType type) {
-            return this.addField(sure, field, type);
         }
 
         public OrderBuilder<T> addField(boolean sure, String field, OrderType type) {

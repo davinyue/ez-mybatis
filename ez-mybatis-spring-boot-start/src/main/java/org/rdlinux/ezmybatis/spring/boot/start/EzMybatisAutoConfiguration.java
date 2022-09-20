@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 
 @Import(EzMybatisAutoConfiguration.EzMapperRegistrar.class)
 @Configuration
-@ConditionalOnClass({EzMapper.class})
+@ConditionalOnClass({EzMapper.class, EzMybatisProperties.class})
 @EnableConfigurationProperties(EzMybatisProperties.class)
 @AutoConfigureBefore({MybatisAutoConfiguration.class})
 public class EzMybatisAutoConfiguration implements ApplicationContextAware {
@@ -59,10 +59,10 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
         return configuration -> {
             EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
             ezMybatisConfig.setEscapeKeyword(this.ezMybatisProperties.isEscapeKeyword());
+            SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
             if (this.ezMybatisProperties.getDbType() != null) {
                 EzMybatisContent.setDbType(configuration, this.ezMybatisProperties.getDbType());
             }
-            SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
         };
     }
 

@@ -26,9 +26,13 @@ public interface EzMapper {
     String QUERY_ONE_METHOD = "queryOne";
     String QUERY_COUNT_METHOD = "queryCount";
     String SELECT_BY_ID_METHOD = "selectById";
+    String SELECT_BY_TABLE_AND_ID_METHOD = "selectByTableAndId";
     String SELECT_BY_IDS_METHOD = "selectByIds";
+    String SELECT_BY_TABLE_AND_IDS_METHOD = "selectByTableAndIds";
     String EZ_DELETE_METHOD = "ezDelete";
     String EZ_BATCH_DELETE_METHOD = "ezBatchDelete";
+    String SELECT_ONE_OBJECT_BY_SQL_METHOD = "selectOneObjectBySql";
+    String SELECT_OBJECT_BY_SQL_METHOD = "selectObjectBySql";
 
     /**
      * 根据主键查询
@@ -39,11 +43,31 @@ public interface EzMapper {
                                                 @Param(EzMybatisConstant.MAPPER_PARAM_ID) Id id);
 
     /**
+     * 根据主键查询
+     */
+    @MethodName(SELECT_BY_TABLE_AND_ID_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_TABLE_AND_ID_METHOD)
+    <Id extends Serializable, NT> NT selectByTableAndId(
+            @Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_ID) Id id);
+
+    /**
      * 根据主键批量查询
      */
     @MethodName(SELECT_BY_IDS_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_IDS_METHOD)
     <Id extends Serializable, NT> List<NT> selectByIds(
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Id> ids);
+
+    /**
+     * 根据主键批量查询
+     */
+    @MethodName(SELECT_BY_TABLE_AND_IDS_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_TABLE_AND_IDS_METHOD)
+    <Id extends Serializable, NT> List<NT> selectByTableAndIds(
+            @Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
             @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<NT> etType,
             @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<Id> ids);
 
@@ -60,6 +84,24 @@ public interface EzMapper {
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_SQL_METHOD)
     List<Map<String, Object>> selectMapBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
                                              @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+
+    /**
+     * 根据sql查询一条数据并返回对象
+     */
+    @MethodName(SELECT_ONE_OBJECT_BY_SQL_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_SQL_METHOD)
+    <T> T selectOneObjectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_RET) Class<T> clazz,
+                               @Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                               @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+
+    /**
+     * 根据sql查询数据并返回对象列表
+     */
+    @MethodName(SELECT_OBJECT_BY_SQL_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.SELECT_BY_SQL_METHOD)
+    <T> List<T> selectObjectBySql(@Param(EzMybatisConstant.MAPPER_PARAM_RET) Class<T> clazz,
+                                  @Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
+                                  @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     @MethodName(QUERY_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_METHOD)
@@ -156,10 +198,24 @@ public interface EzMapper {
     int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
 
     /**
+     * 更新, 只更新非空字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_BY_TABLE_METHOD)
+    int updateByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
      * 批量更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_METHOD)
     int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+
+    /**
+     * 批量更新, 只更新非空字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_BY_TABLE_METHOD)
+    int batchUpdateByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 更新, 更新所有字段
@@ -168,10 +224,24 @@ public interface EzMapper {
     int replace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
 
     /**
+     * 更新, 更新所有字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.REPLACE_METHOD_BY_TABLE)
+    int replaceByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                       @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
      * 批量更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_METHOD)
     int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+
+    /**
+     * 批量更新, 更新所有字段
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_BY_TABLE_METHOD)
+    int batchReplaceByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 删除
@@ -180,10 +250,24 @@ public interface EzMapper {
     int delete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
 
     /**
+     * 删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_TABLE_METHOD)
+    int deleteByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+
+    /**
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_METHOD)
     int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+
+    /**
+     * 批量删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_TABLE_METHOD)
+    int batchDeleteByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
      * 根据主键删除
@@ -193,9 +277,26 @@ public interface EzMapper {
                                             @Param(EzMybatisConstant.MAPPER_PARAM_ID) T id);
 
     /**
+     * 根据主键删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_TABLE_AND_ID_METHOD)
+    <T extends Serializable> int deleteByTableAndId(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                                                    @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
+                                                    @Param(EzMybatisConstant.MAPPER_PARAM_ID) T id);
+
+    /**
      * 根据主键批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_ID_METHOD)
     <T extends Serializable> int batchDeleteById(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
                                                  @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<T> ids);
+
+    /**
+     * 根据主键批量删除
+     */
+    @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_TABLE_AND_ID_METHOD)
+    <T extends Serializable> int batchDeleteByTableAndId(
+            @Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS) Class<?> etType,
+            @Param(EzMybatisConstant.MAPPER_PARAM_IDS) Collection<T> ids);
 }

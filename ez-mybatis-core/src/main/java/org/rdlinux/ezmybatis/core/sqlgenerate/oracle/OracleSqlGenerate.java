@@ -41,15 +41,15 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return OracleSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, ntClass, id);
+    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return OracleSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                    Collection<?> ids) {
-        return OracleSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, ntClass, ids);
+    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                    Class<?> ntClass, Collection<?> ids) {
+        return OracleSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, table, ntClass, ids);
     }
 
     @Override
@@ -63,16 +63,17 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Object entity,
-                               boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, entity, isReplace);
+    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                               Object entity, boolean isReplace) {
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, table, entity,
+                isReplace);
     }
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Collection<Object> entitys, boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, entitys,
-                isReplace);
+                                    Table table, Collection<Object> entitys, boolean isReplace) {
+        return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table,
+                entitys, isReplace);
     }
 
     @Override
@@ -87,15 +88,16 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                   Object id) {
-        return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, ntClass, id);
+    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                   Class<?> ntClass, Object id) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
     }
 
     @Override
-    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Class<?> ntClass,
-                                        Collection<?> ids) {
-        return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, ntClass, ids);
+    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
+                                        Class<?> ntClass, Collection<?> ids) {
+        return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass,
+                ids);
     }
 
     @Override
@@ -104,7 +106,8 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, Collection<EzDelete> deletes) {
+    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder,
+                               Collection<EzDelete> deletes) {
         return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, deletes);
     }
 }

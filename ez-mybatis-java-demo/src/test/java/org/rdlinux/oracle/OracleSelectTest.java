@@ -59,8 +59,8 @@ public class OracleSelectTest extends OracleBaseTest {
     public void queryTest() {
         EntityTable userTable = EntityTable.of(User.class);
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
-                .select().add("name").done()
-                .groupBy().add("name").done()
+                .select().addField("name").done()
+                .groupBy().addField("name").done()
                 .page(1, 2)
                 .build();
         UserMapper userMapper = OracleBaseTest.sqlSession.getMapper(UserMapper.class);
@@ -73,7 +73,7 @@ public class OracleSelectTest extends OracleBaseTest {
     @Test
     public void groupTest() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-                .select().add("name").done()
+                .select().addField("name").done()
                 .where().addColumnCondition("name", Operator.gt, 1).done()
                 //.groupBy().add("name").done()
                 //.having().conditions().add("name", Operator.more, 1).done().done()
@@ -107,7 +107,7 @@ public class OracleSelectTest extends OracleBaseTest {
     @Test
     public void normalQueryCount() {
         EzQuery<Integer> query = EzQuery.builder(Integer.class).from(EntityTable.of(User.class))
-                .select().addCount("id").done().page(1, 1)
+                .select().addFieldCount("id").done().page(1, 1)
                 .build();
         int count = OracleBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(count));

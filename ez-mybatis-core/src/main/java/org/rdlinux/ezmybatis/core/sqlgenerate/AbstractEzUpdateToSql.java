@@ -1,11 +1,13 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.Update;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.utils.Assert;
 
@@ -65,14 +67,17 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
     protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                       MybatisParamHolder mybatisParamHolder) {
         From from = update.getFrom();
-        return sqlBuilder.append(from.getTable().toSqlStruct(configuration, mybatisParamHolder));
+        Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
+        return converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, from, mybatisParamHolder);
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                        MybatisParamHolder mybatisParamHolder) {
         if (update.getJoins() != null) {
+            Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : update.getJoins()) {
-                sqlBuilder = join.toSqlPart(sqlBuilder, configuration, update, mybatisParamHolder);
+                sqlBuilder = converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, join,
+                        mybatisParamHolder);
             }
         }
         return sqlBuilder;
@@ -81,10 +86,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
     protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                        MybatisParamHolder mybatisParamHolder) {
         Where where = update.getWhere();
-        if (where == null || where.getConditions() == null) {
-            return sqlBuilder;
-        } else {
-            return where.toSqlPart(sqlBuilder, configuration, update, mybatisParamHolder);
-        }
+        Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
+        return converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, where, mybatisParamHolder);
     }
 }

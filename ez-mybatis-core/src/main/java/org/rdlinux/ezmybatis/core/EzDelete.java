@@ -47,6 +47,7 @@ public class EzDelete extends EzParam<Integer> {
             join.setOnConditions(new LinkedList<>());
             join.setJoinType(joinType);
             join.setTable(this.delete.table);
+            join.setSure(true);
             join.setJoinTable(joinTable);
             this.delete.joins.add(join);
             return new Join.JoinBuilder<>(this, join);

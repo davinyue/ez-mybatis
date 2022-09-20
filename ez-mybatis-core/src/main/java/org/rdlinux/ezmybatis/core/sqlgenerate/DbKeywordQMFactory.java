@@ -2,7 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.utils.DbTypeUtils;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class DbKeywordQMFactory {
                     return this.keywordQM;
                 }
                 if (this.ezMybatisConfig.isEscapeKeyword()) {
-                    this.keywordQM = DB_TYPE_MAP_KEYWORD_QM.get(DbTypeUtils
+                    this.keywordQM = DB_TYPE_MAP_KEYWORD_QM.get(EzMybatisContent
                             .getDbType(this.ezMybatisConfig.getConfiguration()));
                 } else {
                     this.keywordQM = "";
