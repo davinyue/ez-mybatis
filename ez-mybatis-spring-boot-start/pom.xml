@@ -62,6 +62,14 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.2.0</version>
         </dependency>
+        <!-- 自动生成配置项元数据, ide可以提示配置项 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>2.5.0</version>
+            <!-- 表示依赖不会传递 -->
+            <optional>true</optional>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

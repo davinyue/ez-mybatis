@@ -37,26 +37,11 @@ public class GroupBy implements SqlPart {
             }
         }
 
-        /**
-         * please use {@link #addField(String)} replace
-         */
-        @Deprecated
-        public GroupBuilder<T> add(String field) {
-            return this.addField(field);
-        }
 
         public GroupBuilder<T> addField(String field) {
             this.checkEntityTable();
             this.groupBy.getItems().add(new FieldGroupItem((EntityTable) this.table, field));
             return this;
-        }
-
-        /**
-         * please use {@link #addField(boolean, String)} replace
-         */
-        @Deprecated
-        public GroupBuilder<T> add(boolean sure, String field) {
-            return this.addField(sure, field);
         }
 
         public GroupBuilder<T> addField(boolean sure, String field) {
