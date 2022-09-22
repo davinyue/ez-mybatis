@@ -21,9 +21,10 @@ public class DbTable extends AbstractTable {
         this(null, tableName, partition);
     }
 
-    private DbTable(String schema, String tableName, Partition partition) {
+    protected DbTable(String schema, String tableName, Partition partition) {
         super(schema, tableName, Alias.getAlias(), partition);
     }
+
 
     public static DbTable of(String tableName) {
         return new DbTable(tableName);
