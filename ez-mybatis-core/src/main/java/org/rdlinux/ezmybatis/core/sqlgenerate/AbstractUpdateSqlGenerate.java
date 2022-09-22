@@ -27,7 +27,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String tableName;
         if (table != null) {
-            Converter<Table> converter = EzMybatisContent.getConverter(configuration, Table.class);
+            Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
             tableName = converter.toSqlPart(Converter.Type.UPDATE, new StringBuilder(), configuration, table,
                     mybatisParamHolder).toString();
         } else {

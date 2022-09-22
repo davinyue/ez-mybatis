@@ -7,7 +7,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 @Getter
 public class DbTable extends AbstractTable {
-    private String tableName;
 
 
     private DbTable(String tableName) {
@@ -23,9 +22,7 @@ public class DbTable extends AbstractTable {
     }
 
     private DbTable(String schema, String tableName, Partition partition) {
-        super(Alias.getAlias(), partition);
-        this.schema = schema;
-        this.tableName = tableName;
+        super(schema, tableName, Alias.getAlias(), partition);
     }
 
     public static DbTable of(String tableName) {

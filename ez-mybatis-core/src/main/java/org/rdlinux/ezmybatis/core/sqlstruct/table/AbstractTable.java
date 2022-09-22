@@ -1,13 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 @Getter
+@Setter
 public abstract class AbstractTable implements Table {
     /**
      * 别名
@@ -21,6 +20,10 @@ public abstract class AbstractTable implements Table {
      * 数据库模式
      */
     protected String schema;
+    /**
+     * 表名
+     */
+    protected String tableName;
 
     public AbstractTable(String alias) {
         this.alias = alias;
@@ -31,27 +34,25 @@ public abstract class AbstractTable implements Table {
         this.partition = partition;
     }
 
-    @Override
-    public Partition getPartition() {
-        return this.partition;
+    public AbstractTable(String tableName, String alias, Partition partition) {
+        this.tableName = tableName;
+        this.alias = alias;
+        this.partition = partition;
     }
 
-    @Override
-    public String toSqlStruct(Converter.Type type, Configuration configuration, MybatisParamHolder paramHolder) {
-        StringBuilder sqlBuilder = new StringBuilder(" ");
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        String dbName = this.getSchema(configuration);
-        if (dbName != null && !dbName.isEmpty()) {
-            sqlBuilder.append(keywordQM).append(dbName).append(keywordQM).append(".");
-        }
-        sqlBuilder.append(keywordQM).append(this.getTableName(configuration)).append(keywordQM);
-        if (this.partition != null) {
-            sqlBuilder.append(this.partition.toSqlStruct(configuration));
-        }
-        if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE || type == Converter.Type.DELETE) {
-            sqlBuilder.append(" ").append(this.alias).append(" ");
-        }
-        return sqlBuilder.toString();
+    public AbstractTable(String schema, String tableName, String alias, Partition partition) {
+        this.schema = schema;
+        this.tableName = tableName;
+        this.alias = alias;
+        this.partition = partition;
+    }
+
+    public String getSchema() {
+        return this.schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
     @Override
