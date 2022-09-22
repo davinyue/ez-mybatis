@@ -43,6 +43,13 @@ public class ReflectionUtils {
      */
     public static Class<?> getGenericSuperclass(Class<?> objClass, int order) {
         Type genType = objClass.getGenericSuperclass();
+        while (!ParameterizedType.class.isAssignableFrom(genType.getClass())) {
+            if (objClass == Object.class) {
+                throw new IllegalArgumentException("Operation of this class is not supported");
+            }
+            objClass = objClass.getSuperclass();
+            genType = objClass.getGenericSuperclass();
+        }
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         return (Class<?>) params[order];
     }
