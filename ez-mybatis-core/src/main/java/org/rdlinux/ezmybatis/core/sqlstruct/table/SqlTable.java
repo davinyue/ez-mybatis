@@ -1,19 +1,16 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-public class SqlTable implements Table {
-    private String alias;
+public class SqlTable extends AbstractTable {
     private String sql;
 
     private SqlTable(String sql) {
+        super(Alias.getAlias());
         Assert.notEmpty(sql, "sql can not be null");
         this.sql = sql;
-        this.alias = Alias.getAlias();
     }
 
     public static SqlTable of(String sql) {
@@ -35,12 +32,11 @@ public class SqlTable implements Table {
         return null;
     }
 
-    @Override
-    public String toSqlStruct(Converter.Type type, Configuration configuration, MybatisParamHolder paramHolder) {
-        if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE) {
-            return " (" + this.sql + ") " + this.alias + " ";
-        } else {
-            return " (" + this.sql + ") ";
-        }
+    public String getSql() {
+        return this.sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 }

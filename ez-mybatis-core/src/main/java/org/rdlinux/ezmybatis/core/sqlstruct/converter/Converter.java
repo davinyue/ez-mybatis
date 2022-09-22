@@ -8,19 +8,19 @@ import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 /**
  * 转换器, 将sql组成部分转换为sql
  *
- * @param <Obj> 被转换对象类型
+ * @param <Sp> 被转换对象类型
  */
-public interface Converter<Obj extends SqlPart> {
+public interface Converter<Sp extends SqlPart> {
     /**
      * 转换为sql
      *
      * @param type               转换类型
      * @param sqlBuilder         当前sql
      * @param configuration      mybatis配置
-     * @param obj                被转换对象
+     * @param sp                 被转换对象
      * @param mybatisParamHolder mybatis参数持有器
      */
-    StringBuilder toSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Obj obj,
+    StringBuilder toSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Object sp,
                             MybatisParamHolder mybatisParamHolder);
 
     /**

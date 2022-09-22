@@ -1,26 +1,29 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-public class EzQueryTable implements Table {
-    private String alias;
+public class EzQueryTable extends AbstractTable implements Table {
     private EzQuery<?> ezQuery;
 
     private EzQueryTable(EzQuery<?> ezQuery) {
+        super(Alias.getAlias(), null);
         Assert.notNull(ezQuery, "ezQuery can not be null");
         this.ezQuery = ezQuery;
-        this.alias = Alias.getAlias();
     }
 
     public static EzQueryTable of(EzQuery<?> ezQuery) {
         return new EzQueryTable(ezQuery);
+    }
+
+    public EzQuery<?> getEzQuery() {
+        return this.ezQuery;
+    }
+
+    public void setEzQuery(EzQuery<?> ezQuery) {
+        this.ezQuery = ezQuery;
     }
 
     @Override
@@ -36,12 +39,5 @@ public class EzQueryTable implements Table {
     @Override
     public String getSchema(Configuration configuration) {
         return null;
-    }
-
-    @Override
-    public String toSqlStruct(Converter.Type type, Configuration configuration, MybatisParamHolder paramHolder) {
-        String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, paramHolder, this.ezQuery);
-        return " (" + querySql + ") " + this.alias + " ";
     }
 }

@@ -1,7 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table.partition;
 
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 
-public interface Partition {
-    String toSqlStruct(Configuration configuration);
+import java.util.List;
+
+/**
+ * 表分区
+ */
+public interface Partition extends SqlPart {
+    List<String> getPartitions();
 }
