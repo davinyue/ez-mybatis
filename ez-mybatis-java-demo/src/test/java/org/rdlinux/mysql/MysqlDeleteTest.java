@@ -217,7 +217,10 @@ public class MysqlDeleteTest extends MysqlBaseTest {
                 .join(uoTable)
                 .addFieldCompareCondition("id", "userId")
                 .done()
-                .where().addFieldCondition("id", "56").done()
+                .where()
+                .addFieldCondition("id", "56")
+                .addFieldCondition("userAge", "56")
+                .done()
                 .build();
         int ret = sqlSession.getMapper(EzMapper.class).ezDelete(delete);
         sqlSession.commit();

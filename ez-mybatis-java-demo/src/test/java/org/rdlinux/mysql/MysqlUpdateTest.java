@@ -20,7 +20,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
-        user.setName("王");
+        user.setName(null);
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).update(user);
@@ -294,7 +294,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     public void updateByEzParam() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .setField("userAge", 1)
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
