@@ -35,7 +35,8 @@ public class SelectCountColumn extends SelectColumn {
         if (this.distinct) {
             distinctStr = " DISTINCT ";
         }
-        String sql = " COUNT(" + distinctStr + this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM + ") ";
+        String sql = " COUNT(" + distinctStr + this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM
+                + ") ";
         String alias = this.getAlias();
         if (alias != null && !alias.isEmpty()) {
             sql = sql + keywordQM + alias + keywordQM + " ";
