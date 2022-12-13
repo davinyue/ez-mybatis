@@ -127,4 +127,14 @@ public class OracleSelectTest extends OracleBaseTest {
                         "where id = '1s'", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
     }
+
+    @Test
+    public void countDistinctTest() {
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("YYY"))
+                .select()
+                .addColumnCount("PRO_ID", "pc", true)
+                .done().build();
+        StringHashMap stringHashMap = OracleBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        System.out.println("sdf");
+    }
 }

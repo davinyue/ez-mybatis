@@ -203,51 +203,95 @@ public class Select implements SqlPart {
         }
 
         public EzSelectBuilder<T> addFieldCount(String field) {
+            return this.addFieldCount(field, false);
+        }
+
+        public EzSelectBuilder<T> addFieldCount(String field, boolean distinct) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectCountField((EntityTable) this.table, field));
+            this.selectFields.add(new SelectCountField((EntityTable) this.table, distinct, field));
             return this;
         }
 
         public EzSelectBuilder<T> addFieldCount(boolean sure, String field) {
             if (sure) {
-                return this.addFieldCount(field);
+                return this.addFieldCount(field, false);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addFieldCount(boolean sure, String field, boolean distinct) {
+            if (sure) {
+                return this.addFieldCount(field, distinct);
             }
             return this;
         }
 
         public EzSelectBuilder<T> addFieldCount(String field, String alias) {
+            return this.addFieldCount(field, alias, false);
+        }
+
+        public EzSelectBuilder<T> addFieldCount(String field, String alias, boolean distinct) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectCountField((EntityTable) this.table, field, alias));
+            this.selectFields.add(new SelectCountField((EntityTable) this.table, distinct, field, alias));
             return this;
         }
 
         public EzSelectBuilder<T> addFieldCount(boolean sure, String field, String alias) {
             if (sure) {
-                return this.addFieldCount(field, alias);
+                return this.addFieldCount(field, alias, false);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addFieldCount(boolean sure, String field, String alias, boolean distinct) {
+            if (sure) {
+                return this.addFieldCount(field, alias, distinct);
             }
             return this;
         }
 
         public EzSelectBuilder<T> addColumnCount(String column) {
-            this.selectFields.add(new SelectCountColumn(this.table, column));
+            return this.addColumnCount(column, false);
+        }
+
+        public EzSelectBuilder<T> addColumnCount(String column, boolean distinct) {
+            this.selectFields.add(new SelectCountColumn(this.table, distinct, column));
             return this;
         }
 
         public EzSelectBuilder<T> addColumnCount(boolean sure, String column) {
             if (sure) {
-                return this.addColumnCount(column);
+                return this.addColumnCount(column, false);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnCount(boolean sure, String column, boolean distinct) {
+            if (sure) {
+                return this.addColumnCount(column, distinct);
             }
             return this;
         }
 
         public EzSelectBuilder<T> addColumnCount(String column, String alias) {
-            this.selectFields.add(new SelectCountColumn(this.table, column, alias));
+            return this.addColumnCount(column, alias, false);
+        }
+
+        public EzSelectBuilder<T> addColumnCount(String column, String alias, boolean distinct) {
+            this.selectFields.add(new SelectCountColumn(this.table, distinct, column, alias));
             return this;
         }
 
         public EzSelectBuilder<T> addColumnCount(boolean sure, String column, String alias) {
             if (sure) {
-                return this.addColumnCount(column, alias);
+                return this.addColumnCount(column, alias, false);
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addColumnCount(boolean sure, String column, String alias, boolean distinct) {
+            if (sure) {
+                return this.addColumnCount(column, alias, distinct);
             }
             return this;
         }
