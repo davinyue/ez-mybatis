@@ -12,9 +12,9 @@ public class OracleDatasourceInit {
         //实例化类
         HikariConfig hikariConfig = new HikariConfig();
         //设置url
-        hikariConfig.setJdbcUrl("jdbc:oracle:thin:@192.168.11.36:1521/ynczdb4");
+        hikariConfig.setJdbcUrl("jdbc:oracle:thin:@192.168.1.7:1521/orclpdb1");
         //数据库帐号
-        hikariConfig.setUsername("pay_ys");
+        hikariConfig.setUsername("yyy");
         //数据库密码
         hikariConfig.setPassword("a");
         hikariConfig.setAutoCommit(false);

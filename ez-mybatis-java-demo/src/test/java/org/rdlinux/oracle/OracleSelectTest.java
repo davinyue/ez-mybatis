@@ -130,11 +130,22 @@ public class OracleSelectTest extends OracleBaseTest {
 
     @Test
     public void countDistinctTest() {
-        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("YYY"))
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("yyy"))
                 .select()
                 .addColumnCount("PRO_ID", "pc", true)
                 .done().build();
         StringHashMap stringHashMap = OracleBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println("sdf");
+    }
+
+    @Test
+    public void selectMapKeyPatternTest() {
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("yyy"))
+                .select()
+                .addAll()
+                .done()
+                .page(1, 1).build();
+        StringHashMap stringHashMap = OracleBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        System.out.println(JacksonUtils.toJsonString(stringHashMap));
     }
 }
