@@ -26,10 +26,13 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
+import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.executor.ResultMapInitLogic;
+import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 
 import java.lang.reflect.Constructor;
 import java.sql.CallableStatement;
@@ -463,6 +466,38 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     /**
+     * 结果列转为结果对象属性
+     */
+    private String retColumnToField(String column, MetaObject metaObject) {
+        String property;
+        //如果是map, 则根据配置规则进行推算map属性
+        if (metaObject.getOriginalObject() instanceof Map) {
+            MapRetKeyPattern mapRetKeyPattern = EzMybatisContent.getContentConfig(this.configuration)
+                    .getEzMybatisConfig().getMapRetKeyPattern();
+            if (mapRetKeyPattern == null) {
+                mapRetKeyPattern = MapRetKeyPattern.HUMP;
+            }
+            if (mapRetKeyPattern == MapRetKeyPattern.HUMP) {
+                property = HumpLineStringUtils.lineToHump(column.toLowerCase());
+            } else if (mapRetKeyPattern == MapRetKeyPattern.LOWER_CASE) {
+                property = column.toLowerCase();
+            } else if (mapRetKeyPattern == MapRetKeyPattern.UPPER_CASE) {
+                property = column.toUpperCase();
+            } else if (mapRetKeyPattern == MapRetKeyPattern.ORIGINAL) {
+                property = column;
+            } else {
+                property = column;
+            }
+        }
+        //如果是实体,则根据实体信息来获取实体属性名称
+        else {
+            property = EzEntityClassInfoFactory.forClass(this.configuration, metaObject.getOriginalObject()
+                    .getClass()).getFieldNameByColumn(column);
+        }
+        return property;
+    }
+
+    /**
      * 次方法将返回列与实体属性的映射以及typeHandle
      * <div>重要, 在此处实现注解映射</div>
      */
@@ -495,17 +530,7 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 //final String property = metaObject.findProperty(skipPfCN, this.configuration
                 //.isMapUnderscoreToCamelCase());
                 //改为调用自定义的查找逻辑
-                String property;
-                //如果是map, 则根据配置规则进行推算map属性
-                if (metaObject.getOriginalObject() instanceof Map) {
-                    property = EzEntityClassInfoFactory.getEntityInfoBuild(this.configuration).computeFieldNameByColumn(
-                            this.configuration, skipPfCN);
-                }
-                //如果是实体,则根据实体信息来获取实体属性名称
-                else {
-                    property = EzEntityClassInfoFactory.forClass(this.configuration, metaObject.getOriginalObject()
-                            .getClass()).getFieldNameByColumn(skipPfCN);
-                }
+                String property = this.retColumnToField(skipPfCN, metaObject);
                 if (property != null && metaObject.hasSetter(property)) {
                     if (resultMap.getMappedProperties().contains(property)) {
                         continue;

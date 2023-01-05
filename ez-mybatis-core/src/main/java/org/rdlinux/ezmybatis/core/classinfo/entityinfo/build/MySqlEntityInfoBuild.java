@@ -5,7 +5,6 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.DefaultEntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityInfoBuildConfig;
-import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 
 public class MySqlEntityInfoBuild implements EntityInfoBuild {
     private static volatile MySqlEntityInfoBuild instance;
@@ -36,13 +35,6 @@ public class MySqlEntityInfoBuild implements EntityInfoBuild {
         return new DefaultEntityClassInfo(ntClass, buildConfig);
     }
 
-    @Override
-    public String computeFieldNameByColumn(Configuration configuration, String column) {
-        if (configuration.isMapUnderscoreToCamelCase()) {
-            return HumpLineStringUtils.lineToHump(column, "_");
-        }
-        return column.toLowerCase();
-    }
 
     @Override
     public DbType getSupportedDbType() {

@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.spring.boot.start;
 
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 //@ConfigurationProperties(prefix = MybatisProperties.MYBATIS_PREFIX)
@@ -15,6 +16,10 @@ public class EzMybatisProperties {
      * 转义关键词
      */
     private boolean escapeKeyword = true;
+    /**
+     * 查询结果使用map接收的key格式
+     */
+    private MapRetKeyPattern mapRetKeyPattern;
 
     public DbType getDbType() {
         return this.dbType;
@@ -30,5 +35,13 @@ public class EzMybatisProperties {
 
     public void setEscapeKeyword(boolean escapeKeyword) {
         this.escapeKeyword = escapeKeyword;
+    }
+
+    public MapRetKeyPattern getMapRetKeyPattern() {
+        return this.mapRetKeyPattern;
+    }
+
+    public void setMapRetKeyPattern(MapRetKeyPattern mapRetKeyPattern) {
+        this.mapRetKeyPattern = mapRetKeyPattern;
     }
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
+import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 
 import java.io.IOException;
@@ -25,7 +26,9 @@ public class OracleBaseTest {
         }
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
-        EzMybatisContent.init(new EzMybatisConfig(configuration));
+        EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
+        ezMybatisConfig.setMapRetKeyPattern(MapRetKeyPattern.HUMP);
+        EzMybatisContent.init(ezMybatisConfig);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         sqlSession = sqlSessionFactory.openSession();
     }

@@ -59,6 +59,9 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
         return configuration -> {
             EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
             ezMybatisConfig.setEscapeKeyword(this.ezMybatisProperties.isEscapeKeyword());
+            if (this.ezMybatisProperties.getMapRetKeyPattern() != null) {
+                ezMybatisConfig.setMapRetKeyPattern(this.ezMybatisProperties.getMapRetKeyPattern());
+            }
             SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
             if (this.ezMybatisProperties.getDbType() != null) {
                 EzMybatisContent.setDbType(configuration, this.ezMybatisProperties.getDbType());
