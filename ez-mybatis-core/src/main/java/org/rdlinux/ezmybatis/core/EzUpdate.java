@@ -1,17 +1,11 @@
 package org.rdlinux.ezmybatis.core;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.From;
-import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Update;
-import org.rdlinux.ezmybatis.core.sqlstruct.Where;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.SyntaxUpdateColumnItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.SyntaxUpdateFieldItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +31,37 @@ public class EzUpdate extends EzParam<Integer> {
             this.update = new EzUpdate();
             this.update.table = table;
             this.update.from = new From(table);
+        }
+
+        public EzUpdateBuilder setColumn(String column, CaseWhen caseWhen) {
+            if (caseWhen == null) {
+                return this;
+            }
+            this.update.set.getItems().add(new CaseWhenUpdateColumnItem(this.update.table, column, caseWhen));
+            return this;
+        }
+
+        public EzUpdateBuilder setColumn(boolean sure, String column, CaseWhen caseWhen) {
+            if (sure) {
+                return this.setColumn(column, caseWhen);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setField(String field, CaseWhen caseWhen) {
+            if (caseWhen == null) {
+                return this;
+            }
+            this.update.set.getItems().add(new CaseWhenUpdateFieldItem((EntityTable) this.update.table, field,
+                    caseWhen));
+            return this;
+        }
+
+        public EzUpdateBuilder setField(boolean sure, String field, CaseWhen caseWhen) {
+            if (sure) {
+                return this.setField(field, caseWhen);
+            }
+            return this;
         }
 
         public EzUpdateBuilder setField(String field, Object value) {
