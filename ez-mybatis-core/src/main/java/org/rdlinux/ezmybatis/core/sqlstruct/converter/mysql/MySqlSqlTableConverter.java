@@ -25,7 +25,7 @@ public class MySqlSqlTableConverter extends AbstractConverter<SqlTable> implemen
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        SqlTable table, MybatisParamHolder mybatisParamHolder) {
         sqlBuilder.append(" (").append(table.getSql()).append(") ");
         if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE) {

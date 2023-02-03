@@ -30,9 +30,9 @@ public class MySqlEntityTableConverter extends AbstractConverter<EntityTable> im
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        EntityTable table, MybatisParamHolder mybatisParamHolder) {
-        return MySqlDbTableConverter.getInstance().dobuildSql(type, sqlBuilder, configuration, table,
+        return MySqlDbTableConverter.getInstance().doBuildSql(type, sqlBuilder, configuration, table,
                 mybatisParamHolder);
     }
 }

@@ -27,7 +27,7 @@ public class MySqlEzQueryTableConverter extends AbstractConverter<EzQueryTable> 
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        EzQueryTable table, MybatisParamHolder mybatisParamHolder) {
         String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQuerySql(configuration, mybatisParamHolder, table.getEzQuery());

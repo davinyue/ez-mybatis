@@ -26,7 +26,7 @@ public class MySqlSelectMaxColumnConverter extends AbstractConverter<SelectMaxCo
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectMaxColumn ojb, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String sql = " MAX(" + ojb.getTable().getAlias() + "." + keywordQM + ojb.getColumn() + keywordQM + ") ";

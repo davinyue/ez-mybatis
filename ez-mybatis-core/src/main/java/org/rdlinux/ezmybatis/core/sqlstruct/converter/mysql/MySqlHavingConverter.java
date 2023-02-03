@@ -25,7 +25,7 @@ public class MySqlHavingConverter extends AbstractConverter<Having> implements C
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Having having,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Having having,
                                        MybatisParamHolder mybatisParamHolder) {
         if (type != Type.SELECT) {
             throw new UnsupportedOperationException(String.format("%s model unsupported", type.name()));

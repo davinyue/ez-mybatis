@@ -29,7 +29,7 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Select select,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Select select,
                                        MybatisParamHolder mybatisParamHolder) {
         if (select == null) {
             return sqlBuilder;

@@ -27,7 +27,7 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
                                        MybatisParamHolder mybatisParamHolder) {
         if (join == null) {
             return sqlBuilder;
@@ -53,7 +53,7 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         sqlBuilder.append(sonSql);
         if (join.getJoins() != null && !join.getJoins().isEmpty()) {
             for (Join sonJoin : join.getJoins()) {
-                sqlBuilder.append(this.dobuildSql(type, new StringBuilder(), configuration, sonJoin,
+                sqlBuilder.append(this.doBuildSql(type, new StringBuilder(), configuration, sonJoin,
                         mybatisParamHolder));
             }
         }

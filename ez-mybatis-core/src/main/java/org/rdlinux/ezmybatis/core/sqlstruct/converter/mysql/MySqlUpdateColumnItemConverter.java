@@ -26,7 +26,7 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        UpdateColumnItem obj, MybatisParamHolder mybatisParamHolder) {
         String paramName = mybatisParamHolder.getParamName(obj.getValue(), true);
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);

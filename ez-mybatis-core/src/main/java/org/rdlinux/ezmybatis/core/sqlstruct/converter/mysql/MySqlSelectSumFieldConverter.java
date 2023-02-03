@@ -28,7 +28,7 @@ public class MySqlSelectSumFieldConverter extends AbstractConverter<SelectSumFie
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectSumField ojb, MybatisParamHolder mybatisParamHolder) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ojb.getTable().getEtType());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);

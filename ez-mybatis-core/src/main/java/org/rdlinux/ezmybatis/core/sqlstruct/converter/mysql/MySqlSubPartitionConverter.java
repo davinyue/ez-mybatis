@@ -25,9 +25,9 @@ public class MySqlSubPartitionConverter extends AbstractConverter<SubPartition> 
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        SubPartition partition, MybatisParamHolder mybatisParamHolder) {
-        return MySqlNormalPartitionConverter.getInstance().dobuildSql(type, sqlBuilder, configuration, partition,
+        return MySqlNormalPartitionConverter.getInstance().doBuildSql(type, sqlBuilder, configuration, partition,
                 mybatisParamHolder);
     }
 

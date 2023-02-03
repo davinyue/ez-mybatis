@@ -25,7 +25,7 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectTableAllItem ojb, MybatisParamHolder mybatisParamHolder) {
         return sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".* ");
     }
