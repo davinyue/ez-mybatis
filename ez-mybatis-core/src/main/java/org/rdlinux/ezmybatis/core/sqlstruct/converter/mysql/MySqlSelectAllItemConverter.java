@@ -25,7 +25,7 @@ public class MySqlSelectAllItemConverter extends AbstractConverter<SelectAllItem
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectAllItem ojb, MybatisParamHolder mybatisParamHolder) {
         return sqlBuilder.append(" * ");
     }

@@ -26,8 +26,8 @@ public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        GroupBy groupBy, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       GroupBy groupBy, MybatisParamHolder mybatisParamHolder) {
         if (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty()) {
             return sqlBuilder;
         } else {

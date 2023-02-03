@@ -28,7 +28,7 @@ public class MySqlSelectFieldConverter extends AbstractConverter<SelectField> im
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectField ojb, MybatisParamHolder mybatisParamHolder) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ojb.getTable().getEtType());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);

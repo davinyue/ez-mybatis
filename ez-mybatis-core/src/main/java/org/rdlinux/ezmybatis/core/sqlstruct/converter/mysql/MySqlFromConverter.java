@@ -27,8 +27,8 @@ public class MySqlFromConverter extends AbstractConverter<From> implements Conve
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, From from,
-                                        MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, From from,
+                                       MybatisParamHolder mybatisParamHolder) {
         Table fromTable = from.getTable();
         if (type == Type.SELECT || type == Type.DELETE) {
             sqlBuilder.append(" FROM ");

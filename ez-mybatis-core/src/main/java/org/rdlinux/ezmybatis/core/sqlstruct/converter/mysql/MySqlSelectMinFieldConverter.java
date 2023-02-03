@@ -28,7 +28,7 @@ public class MySqlSelectMinFieldConverter extends AbstractConverter<SelectMinFie
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectMinField ojb, MybatisParamHolder mybatisParamHolder) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ojb.getTable().getEtType());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
