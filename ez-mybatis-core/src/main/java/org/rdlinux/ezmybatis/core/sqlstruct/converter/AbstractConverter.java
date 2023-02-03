@@ -18,8 +18,8 @@ public abstract class AbstractConverter<Obj extends SqlPart> implements Converte
 
     @Override
     @SuppressWarnings("unchecked")
-    public StringBuilder toSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Object struct,
-                                   MybatisParamHolder mybatisParamHolder) {
+    public StringBuilder buildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Object struct,
+                                  MybatisParamHolder mybatisParamHolder) {
         Assert.notNull(type, "type can not be null");
         Assert.notNull(sqlBuilder, "sqlBuilder can not be null");
         Assert.notNull(configuration, "configuration can not be null");

@@ -45,7 +45,7 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         }
         Converter<?> joinTableConverter = EzMybatisContent.getConverter(configuration, join.getJoinTable().getClass());
         sqlBuilder.append(join.getJoinType().toSqlStruct());
-        sqlBuilder = joinTableConverter.toSqlPart(type, sqlBuilder, configuration, join.getJoinTable(),
+        sqlBuilder = joinTableConverter.buildSql(type, sqlBuilder, configuration, join.getJoinTable(),
                 mybatisParamHolder);
         if (join.getJoinType() != JoinType.CrossJoin) {
             sqlBuilder.append(" ON ");

@@ -28,7 +28,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
                     mybatisParamHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(keywordQM);

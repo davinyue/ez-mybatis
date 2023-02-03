@@ -24,7 +24,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.DELETE, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.DELETE, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
@@ -46,7 +46,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.DELETE, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.DELETE, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);

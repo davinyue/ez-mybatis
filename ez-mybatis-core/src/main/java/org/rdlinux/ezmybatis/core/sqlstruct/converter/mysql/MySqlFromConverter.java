@@ -34,7 +34,7 @@ public class MySqlFromConverter extends AbstractConverter<From> implements Conve
             sqlBuilder.append(" FROM ");
         }
         Converter<?> converter = EzMybatisContent.getConverter(configuration, fromTable.getClass());
-        return converter.toSqlPart(type, sqlBuilder, configuration, fromTable, mybatisParamHolder);
+        return converter.buildSql(type, sqlBuilder, configuration, fromTable, mybatisParamHolder);
     }
 
     @Override

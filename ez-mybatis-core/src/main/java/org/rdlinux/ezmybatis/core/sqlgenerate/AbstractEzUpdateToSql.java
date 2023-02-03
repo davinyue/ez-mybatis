@@ -59,7 +59,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
             UpdateItem updateItem = items.get(i);
             Converter<? extends UpdateItem> converter = EzMybatisContent.getConverter(configuration,
                     updateItem.getClass());
-            sqlBuilder = converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, updateItem,
+            sqlBuilder = converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, updateItem,
                     mybatisParamHolder);
             if (i + 1 < items.size()) {
                 sqlBuilder.append(", ");
@@ -72,7 +72,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
                                       MybatisParamHolder mybatisParamHolder) {
         From from = update.getFrom();
         Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
-        return converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, from, mybatisParamHolder);
+        return converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, from, mybatisParamHolder);
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
@@ -80,7 +80,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
         if (update.getJoins() != null) {
             Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : update.getJoins()) {
-                sqlBuilder = converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, join,
+                sqlBuilder = converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, join,
                         mybatisParamHolder);
             }
         }
@@ -91,6 +91,6 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
                                        MybatisParamHolder mybatisParamHolder) {
         Where where = update.getWhere();
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
-        return converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, where, mybatisParamHolder);
+        return converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, where, mybatisParamHolder);
     }
 }

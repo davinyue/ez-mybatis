@@ -48,7 +48,7 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
     protected StringBuilder partitionToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                                Partition partition, MybatisParamHolder mybatisParamHolder) {
         Converter<?> converter = EzMybatisContent.getConverter(configuration, partition.getClass());
-        return converter.toSqlPart(type, sqlBuilder, configuration, partition, mybatisParamHolder);
+        return converter.buildSql(type, sqlBuilder, configuration, partition, mybatisParamHolder);
     }
 
     @Override
