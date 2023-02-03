@@ -119,7 +119,7 @@ public class CaseWhen implements SqlPart {
         }
 
         /**
-         * else, 构造结束
+         * else, else将会构造结束
          */
         public CaseWhen els(Object value) {
             this.caseWhen.setCaseWhenElse(new CaseWhenElse(value));
@@ -127,9 +127,16 @@ public class CaseWhen implements SqlPart {
         }
 
         /**
-         * 构造结束
+         * 构造结束, 同build
          */
         public CaseWhen done() {
+            return this.caseWhen;
+        }
+
+        /**
+         * 构造结束, 同done
+         */
+        public CaseWhen build() {
             return this.caseWhen;
         }
     }
