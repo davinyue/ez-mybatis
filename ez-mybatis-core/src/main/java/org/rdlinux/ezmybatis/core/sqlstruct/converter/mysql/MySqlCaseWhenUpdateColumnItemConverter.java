@@ -27,7 +27,7 @@ public class MySqlCaseWhenUpdateColumnItemConverter extends AbstractConverter<Ca
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        CaseWhenUpdateColumnItem obj, MybatisParamHolder mybatisParamHolder) {
         Converter<CaseWhen> converter = EzMybatisContent.getConverter(configuration, CaseWhen.class);
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);

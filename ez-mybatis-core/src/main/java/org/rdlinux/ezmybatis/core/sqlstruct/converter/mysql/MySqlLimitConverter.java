@@ -25,7 +25,7 @@ public class MySqlLimitConverter extends AbstractConverter<Limit> implements Con
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
                                        MybatisParamHolder mybatisParamHolder) {
         if (limit == null) {
             return sqlBuilder;

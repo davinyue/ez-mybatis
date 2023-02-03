@@ -25,7 +25,7 @@ public class OracleSubPartitionConverter extends AbstractConverter<SubPartition>
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        SubPartition partition, MybatisParamHolder mybatisParamHolder) {
         if (partition == null || partition.getPartitions() == null || partition.getPartitions().isEmpty()) {
             return sqlBuilder;

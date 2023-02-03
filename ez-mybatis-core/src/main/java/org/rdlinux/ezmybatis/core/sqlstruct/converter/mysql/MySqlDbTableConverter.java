@@ -27,7 +27,7 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        DbTable table, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String schema = table.getSchema(configuration);

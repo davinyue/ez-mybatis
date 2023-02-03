@@ -48,7 +48,7 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Where where,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Where where,
                                        MybatisParamHolder mybatisParamHolder) {
         if (type == Type.INSERT) {
             throw new UnsupportedOperationException("INSERT model unsupported");

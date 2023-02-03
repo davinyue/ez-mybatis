@@ -25,7 +25,7 @@ public class MySqlNormalPartitionConverter extends AbstractConverter<NormalParti
     }
 
     @Override
-    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        NormalPartition partition, MybatisParamHolder mybatisParamHolder) {
         if (partition == null || partition.getPartitions() == null || partition.getPartitions().isEmpty()) {
             return sqlBuilder;
