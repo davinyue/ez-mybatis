@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
 
 /**
  * mysql转换器注册
@@ -45,5 +46,11 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SelectSumColumn.class, MySqlSelectSumColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectSumField.class, MySqlSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectTableAllItem.class, MySqlSelectTableAllItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenUpdateColumnItem.class, MySqlCaseWhenUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenUpdateFieldItem.class, MySqlCaseWhenUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SyntaxUpdateColumnItem.class, MySqlSyntaxUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SyntaxUpdateFieldItem.class, MySqlSyntaxUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, UpdateColumnItem.class, MySqlUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, UpdateFieldItem.class, MySqlUpdateFieldItemConverter.getInstance());
     }
 }

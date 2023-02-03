@@ -56,7 +56,11 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
         List<UpdateItem> items = set.getItems();
         sqlBuilder.append(" ").append("SET ");
         for (int i = 0; i < items.size(); i++) {
-            sqlBuilder.append(items.get(i).toSqlPart(configuration, mybatisParamHolder));
+            UpdateItem updateItem = items.get(i);
+            Converter<? extends UpdateItem> converter = EzMybatisContent.getConverter(configuration,
+                    updateItem.getClass());
+            sqlBuilder = converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, updateItem,
+                    mybatisParamHolder);
             if (i + 1 < items.size()) {
                 sqlBuilder.append(", ");
             }

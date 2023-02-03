@@ -35,7 +35,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setColumn(String column, CaseWhen caseWhen) {
             if (caseWhen == null) {
-                return this;
+                return this.setColumn(column, (Object) null);
             }
             this.update.set.getItems().add(new CaseWhenUpdateColumnItem(this.update.table, column, caseWhen));
             return this;
@@ -50,7 +50,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setField(String field, CaseWhen caseWhen) {
             if (caseWhen == null) {
-                return this;
+                return this.setField(field, (Object) null);
             }
             this.update.set.getItems().add(new CaseWhenUpdateFieldItem((EntityTable) this.update.table, field,
                     caseWhen));
@@ -95,7 +95,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setFieldSyntax(boolean sure, String field, String syntax) {
             if (sure) {
-                this.setFieldSyntax(field, syntax);
+                return this.setFieldSyntax(field, syntax);
             }
             return this;
         }
@@ -119,7 +119,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setField(boolean sure, EntityTable table, String field, Object value) {
             if (sure) {
-                this.setField(table, field, value);
+                return this.setField(table, field, value);
             }
             return this;
         }
@@ -131,7 +131,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setColumn(boolean sure, Table table, String column, Object value) {
             if (sure) {
-                this.setColumn(table, column, value);
+                return this.setColumn(table, column, value);
             }
             return this;
         }
@@ -143,7 +143,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setFieldSyntax(boolean sure, EntityTable table, String field, String syntax) {
             if (sure) {
-                this.setFieldSyntax(table, field, syntax);
+                return this.setFieldSyntax(table, field, syntax);
             }
             return this;
         }
@@ -155,7 +155,7 @@ public class EzUpdate extends EzParam<Integer> {
 
         public EzUpdateBuilder setColumnSyntax(boolean sure, EntityTable table, String field, String syntax) {
             if (sure) {
-                this.setColumnSyntax(table, field, syntax);
+                return this.setColumnSyntax(table, field, syntax);
             }
             return this;
         }

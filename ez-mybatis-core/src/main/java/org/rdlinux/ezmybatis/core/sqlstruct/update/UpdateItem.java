@@ -1,17 +1,16 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.update;
 
 import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
-public abstract class UpdateItem {
+public abstract class UpdateItem implements SqlPart {
     protected Table table;
 
     public UpdateItem(Table table) {
+        Assert.notNull(table, "table can not be null");
         this.table = table;
     }
-
-    public abstract String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder);
 }
