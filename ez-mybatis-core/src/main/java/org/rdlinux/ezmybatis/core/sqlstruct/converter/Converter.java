@@ -28,7 +28,7 @@ public interface Converter<Sp extends SqlPart> {
      */
     DbType getSupportDbType();
 
-    public static enum Type {
+    enum Type {
         SELECT,
         DELETE,
         INSERT,
