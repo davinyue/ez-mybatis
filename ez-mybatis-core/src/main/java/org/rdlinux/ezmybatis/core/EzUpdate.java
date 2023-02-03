@@ -64,6 +64,17 @@ public class EzUpdate extends EzParam<Integer> {
             return this;
         }
 
+        public EzUpdateBuilder setFieldToNull(boolean sure, String field) {
+            if (sure) {
+                return this.setFieldToNull(field);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldToNull(String field) {
+            return this.setField(field, (Object) null);
+        }
+
         public EzUpdateBuilder setField(String field, Object value) {
             this.update.set.getItems().add(new UpdateFieldItem((EntityTable) this.update.table, field, value));
             return this;
@@ -74,6 +85,17 @@ public class EzUpdate extends EzParam<Integer> {
                 this.setField(field, value);
             }
             return this;
+        }
+
+        public EzUpdateBuilder setColumnToNull(boolean sure, String column) {
+            if (sure) {
+                return this.setColumnToNull(column);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnToNull(String column) {
+            return this.setColumn(column, (Object) null);
         }
 
         public EzUpdateBuilder setColumn(String column, Object value) {
