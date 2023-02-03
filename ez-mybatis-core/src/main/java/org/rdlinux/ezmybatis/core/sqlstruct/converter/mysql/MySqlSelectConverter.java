@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -42,7 +43,9 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
         } else {
             List<SelectItem> selectFields = select.getSelectFields();
             for (int i = 0; i < selectFields.size(); i++) {
-                sqlBuilder.append(selectFields.get(i).toSqlPart(configuration));
+                SelectItem selectItem = selectFields.get(i);
+                Converter<?> converter = EzMybatisContent.getConverter(configuration, selectItem.getClass());
+                sqlBuilder = converter.toSqlPart(type, sqlBuilder, configuration, selectItem, mybatisParamHolder);
                 if (i + 1 < selectFields.size()) {
                     sqlBuilder.append(", ");
                 }

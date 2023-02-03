@@ -18,6 +18,10 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.List;
 
+/**
+ * @param <ParentBuilder> 上级构造器, 调用.done时将返回上级构造器
+ * @param <SonBuilder>    本级构造器, 一般定义为继承类
+ */
 public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     protected ParentBuilder parentBuilder;
     protected SonBuilder sonBuilder = null;

@@ -349,13 +349,13 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
             CaseWhen caseWhen = CaseWhen.builder(table)
-                    .caseWhen()
+                    .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
-                    .caseWhen()
+                    .when()
                     .addFieldCondition(User.Fields.name, "王二1").then("李四")
-                    .caseWhen()
+                    .when()
                     .addFieldCondition(User.Fields.name, "王二1").then("李四")
-                    .caseWhenElse("王二");
+                    .els("王二");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .setField(User.Fields.name, caseWhen)

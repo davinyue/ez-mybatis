@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 public class SelectCountColumn extends SelectColumn {
@@ -28,19 +26,7 @@ public class SelectCountColumn extends SelectColumn {
         this.distinct = distinct;
     }
 
-    @Override
-    public String toSqlPart(Configuration configuration) {
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        String distinctStr = "";
-        if (this.distinct) {
-            distinctStr = " DISTINCT ";
-        }
-        String sql = " COUNT(" + distinctStr + this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM
-                + ") ";
-        String alias = this.getAlias();
-        if (alias != null && !alias.isEmpty()) {
-            sql = sql + keywordQM + alias + keywordQM + " ";
-        }
-        return sql;
+    public boolean isDistinct() {
+        return this.distinct;
     }
 }
