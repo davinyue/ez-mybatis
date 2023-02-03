@@ -45,7 +45,7 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
             for (int i = 0; i < selectFields.size(); i++) {
                 SelectItem selectItem = selectFields.get(i);
                 Converter<?> converter = EzMybatisContent.getConverter(configuration, selectItem.getClass());
-                sqlBuilder = converter.toSqlPart(type, sqlBuilder, configuration, selectItem, mybatisParamHolder);
+                sqlBuilder = converter.buildSql(type, sqlBuilder, configuration, selectItem, mybatisParamHolder);
                 if (i + 1 < selectFields.size()) {
                     sqlBuilder.append(", ");
                 }

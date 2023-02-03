@@ -21,7 +21,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
@@ -40,7 +40,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);

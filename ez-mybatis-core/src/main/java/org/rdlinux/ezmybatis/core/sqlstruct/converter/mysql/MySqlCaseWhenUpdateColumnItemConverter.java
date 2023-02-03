@@ -34,7 +34,7 @@ public class MySqlCaseWhenUpdateColumnItemConverter extends AbstractConverter<Ca
 
         sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(obj.getColumn())
                 .append(keywordQM).append(" = ");
-        sqlBuilder = converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, obj.getCaseWhen(),
+        sqlBuilder = converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, obj.getCaseWhen(),
                 mybatisParamHolder);
         return sqlBuilder;
     }

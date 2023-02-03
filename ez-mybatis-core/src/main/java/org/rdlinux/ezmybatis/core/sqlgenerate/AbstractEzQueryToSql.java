@@ -47,49 +47,49 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         Select select = query.getSelect();
         Assert.notNull(select, "select can not be null");
         Converter<Select> converter = EzMybatisContent.getConverter(configuration, Select.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, select, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, select, paramHolder);
     }
 
     protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                       MybatisParamHolder paramHolder) {
         From from = query.getFrom();
         Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, from, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, from, paramHolder);
     }
 
     protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder paramHolder) {
         Limit limit = query.getLimit();
         Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, limit, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, limit, paramHolder);
     }
 
     protected StringBuilder orderByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder paramHolder) {
         OrderBy order = query.getOrderBy();
         Converter<OrderBy> converter = EzMybatisContent.getConverter(configuration, OrderBy.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, order, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, order, paramHolder);
     }
 
     protected StringBuilder groupByToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                          MybatisParamHolder paramHolder) {
         GroupBy group = query.getGroupBy();
         Converter<GroupBy> converter = EzMybatisContent.getConverter(configuration, GroupBy.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, group, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, group, paramHolder);
     }
 
     protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                        MybatisParamHolder paramHolder) {
         Where where = query.getWhere();
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, where, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, where, paramHolder);
     }
 
     protected StringBuilder havingToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                         MybatisParamHolder paramHolder) {
         Having having = query.getHaving();
         Converter<Having> converter = EzMybatisContent.getConverter(configuration, Having.class);
-        return converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, having, paramHolder);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, having, paramHolder);
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
@@ -97,7 +97,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         if (query.getJoins() != null) {
             Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : query.getJoins()) {
-                sqlBuilder = converter.toSqlPart(Converter.Type.SELECT, sqlBuilder, configuration, join,
+                sqlBuilder = converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, join,
                         paramHolder);
             }
         }

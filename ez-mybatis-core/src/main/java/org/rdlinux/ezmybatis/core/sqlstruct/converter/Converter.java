@@ -20,8 +20,8 @@ public interface Converter<Sp extends SqlPart> {
      * @param sp                 被转换对象
      * @param mybatisParamHolder mybatis参数持有器
      */
-    StringBuilder toSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Object sp,
-                            MybatisParamHolder mybatisParamHolder);
+    StringBuilder buildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Object sp,
+                           MybatisParamHolder mybatisParamHolder);
 
     /**
      * 获取支持的数据库
