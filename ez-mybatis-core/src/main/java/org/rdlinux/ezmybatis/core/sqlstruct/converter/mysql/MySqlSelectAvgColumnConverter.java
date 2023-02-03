@@ -26,7 +26,7 @@ public class MySqlSelectAvgColumnConverter extends AbstractConverter<SelectAvgCo
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectAvgColumn ojb, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String sql = " AVG(" + ojb.getTable().getAlias() + "." + keywordQM + ojb.getColumn() + keywordQM + ") ";

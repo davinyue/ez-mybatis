@@ -27,8 +27,8 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        CaseWhen caseWhen, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       CaseWhen caseWhen, MybatisParamHolder mybatisParamHolder) {
         if (caseWhen == null || caseWhen.getCaseWhenData() == null || caseWhen.getCaseWhenData().isEmpty()) {
             return sqlBuilder;
         }

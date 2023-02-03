@@ -26,8 +26,8 @@ public class MySqlOrderByConverter extends AbstractConverter<OrderBy> implements
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        OrderBy orderBy, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       OrderBy orderBy, MybatisParamHolder mybatisParamHolder) {
         if (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty()) {
             return sqlBuilder;
         } else {

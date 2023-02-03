@@ -30,9 +30,9 @@ public abstract class AbstractConverter<Obj extends SqlPart> implements Converte
         if (!this.objClass.isAssignableFrom(struct.getClass())) {
             throw new IllegalArgumentException("Unsupported operation");
         }
-        return this.doToSqlPart(type, sqlBuilder, configuration, (Obj) struct, mybatisParamHolder);
+        return this.dobuildSql(type, sqlBuilder, configuration, (Obj) struct, mybatisParamHolder);
     }
 
-    protected abstract StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                                 Obj ojb, MybatisParamHolder mybatisParamHolder);
+    protected abstract StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                                Obj ojb, MybatisParamHolder mybatisParamHolder);
 }

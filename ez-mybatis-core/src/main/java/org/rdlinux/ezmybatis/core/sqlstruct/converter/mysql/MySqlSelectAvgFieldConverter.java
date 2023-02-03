@@ -28,7 +28,7 @@ public class MySqlSelectAvgFieldConverter extends AbstractConverter<SelectAvgFie
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectAvgField ojb, MybatisParamHolder mybatisParamHolder) {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ojb.getTable().getEtType());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);

@@ -26,7 +26,7 @@ public class MySqlSelectColumnConverter extends AbstractConverter<SelectColumn> 
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectColumn ojb, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String sql = " " + ojb.getTable().getAlias() + "." + keywordQM + ojb.getColumn() + keywordQM + " ";

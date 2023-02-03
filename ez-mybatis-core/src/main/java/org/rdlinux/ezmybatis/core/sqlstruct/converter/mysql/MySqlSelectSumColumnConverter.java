@@ -26,7 +26,7 @@ public class MySqlSelectSumColumnConverter extends AbstractConverter<SelectSumCo
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectSumColumn ojb, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String sql = " SUM(" + ojb.getTable().getAlias() + "." + keywordQM + ojb.getColumn() + keywordQM + ") ";

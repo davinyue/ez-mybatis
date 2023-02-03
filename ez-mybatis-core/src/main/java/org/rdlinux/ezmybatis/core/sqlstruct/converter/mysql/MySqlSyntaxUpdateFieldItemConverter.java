@@ -28,8 +28,8 @@ public class MySqlSyntaxUpdateFieldItemConverter extends AbstractConverter<Synta
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        SyntaxUpdateFieldItem obj, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder dobuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       SyntaxUpdateFieldItem obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
         String column = etInfo.getFieldInfo(obj.getField()).getColumnName();
