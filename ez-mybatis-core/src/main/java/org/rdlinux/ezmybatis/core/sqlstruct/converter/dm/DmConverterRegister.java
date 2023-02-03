@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
@@ -30,5 +31,19 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, EzQueryTable.class, DmEzQueryTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SqlTable.class, DmSqlTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, CaseWhen.class, DmCaseWhenConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectAllItem.class, DmSelectAllItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectAvgColumn.class, DmSelectAvgColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectColumn.class, DmSelectColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectAvgField.class, DmSelectAvgFieldConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectCountField.class, DmSelectCountFieldConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectCountColumn.class, DmSelectCountColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectField.class, DmSelectFieldConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectMaxColumn.class, DmSelectMaxColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectMaxField.class, DmSelectMaxFieldConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectMinColumn.class, DmSelectMinColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectMinField.class, DmSelectMinFieldConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectSumColumn.class, DmSelectSumColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectSumField.class, DmSelectSumFieldConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectTableAllItem.class, DmSelectTableAllItemConverter.getInstance());
     }
 }

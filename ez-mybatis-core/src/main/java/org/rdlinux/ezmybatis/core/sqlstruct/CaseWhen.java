@@ -108,7 +108,7 @@ public class CaseWhen implements SqlPart {
         /**
          * 添加case when条件
          */
-        public CaseWhenData.CaseWhenDataBuilder caseWhen() {
+        public CaseWhenData.CaseWhenDataBuilder when() {
             if (this.caseWhen.getCaseWhenData() == null) {
                 this.caseWhen.setCaseWhenData(new LinkedList<>());
             }
@@ -121,7 +121,7 @@ public class CaseWhen implements SqlPart {
         /**
          * else, 构造结束
          */
-        public CaseWhen caseWhenElse(Object value) {
+        public CaseWhen els(Object value) {
             this.caseWhen.setCaseWhenElse(new CaseWhenElse(value));
             return this.caseWhen;
         }
