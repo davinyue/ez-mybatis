@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
 
 /**
  * mysql转换器注册
@@ -45,5 +46,11 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectSumColumn.class, OracleSelectSumColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectSumField.class, OracleSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectTableAllItem.class, OracleSelectTableAllItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateColumnItem.class, OracleCaseWhenUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateFieldItem.class, OracleCaseWhenUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SyntaxUpdateColumnItem.class, OracleSyntaxUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SyntaxUpdateFieldItem.class, OracleSyntaxUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, UpdateColumnItem.class, OracleUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
     }
 }
