@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -12,7 +13,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
  */
 @Getter
 @Setter
-public class IsNullColumnCondition extends IsNullCondition {
+public class IsNullColumnCondition extends IsNullCondition implements SqlPart {
     protected Table table;
     protected String column;
 

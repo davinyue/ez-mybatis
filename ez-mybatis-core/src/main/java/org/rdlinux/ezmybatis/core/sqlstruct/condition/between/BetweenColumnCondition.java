@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 /**
  * between 条件
  */
-public class BetweenColumnCondition extends BetweenCondition {
+public class BetweenColumnCondition extends BetweenCondition implements SqlPart {
     @Getter
     @Setter
     protected Table table;

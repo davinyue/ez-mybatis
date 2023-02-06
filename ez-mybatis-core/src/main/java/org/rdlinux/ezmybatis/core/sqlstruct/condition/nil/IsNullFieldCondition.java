@@ -6,6 +6,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
@@ -14,7 +15,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
  */
 @Getter
 @Setter
-public class IsNullFieldCondition extends IsNullCondition {
+public class IsNullFieldCondition extends IsNullCondition implements SqlPart {
     protected EntityTable table;
     protected String field;
 

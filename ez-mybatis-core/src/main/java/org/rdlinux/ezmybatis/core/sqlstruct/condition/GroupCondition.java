@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * 条件分组
  */
-public class GroupCondition implements Condition {
+public class GroupCondition implements Condition, SqlPart {
     private List<Condition> conditions;
     private LogicalOperator logicalOperator;
     private boolean sure;
@@ -49,5 +50,9 @@ public class GroupCondition implements Condition {
 
     public List<Condition> getConditions() {
         return this.conditions;
+    }
+
+    public boolean isSure() {
+        return this.sure;
     }
 }

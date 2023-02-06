@@ -7,11 +7,12 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 
 /**
  * 条件
  */
-public interface Condition {
+public interface Condition extends SqlPart {
     static String valueToSqlStruct(Configuration configuration, MybatisParamHolder mybatisParamHolder,
                                    Object value) {
         if (value instanceof EzQuery) {

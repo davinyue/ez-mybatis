@@ -6,13 +6,14 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 /**
  * between 条件
  */
-public class BetweenFieldCondition extends BetweenCondition {
+public class BetweenFieldCondition extends BetweenCondition implements SqlPart {
     @Getter
     @Setter
     protected EntityTable table;

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
@@ -11,7 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 /**
  * between 条件
  */
-public abstract class BetweenCondition implements Condition {
+public abstract class BetweenCondition implements Condition, SqlPart {
     @Getter
     protected Operator operator = Operator.between;
     @Getter
