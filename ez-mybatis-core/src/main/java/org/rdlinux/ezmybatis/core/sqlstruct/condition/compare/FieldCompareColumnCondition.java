@@ -1,11 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.compare;
 
 import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
@@ -49,24 +44,5 @@ public class FieldCompareColumnCondition implements Condition, SqlPart {
     @Override
     public LogicalOperator getLogicalOperator() {
         return this.logicalOperator;
-    }
-
-    @Override
-    public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, this.getLeftTable()
-                .getEtType());
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        return " " + this.getLeftTable().getAlias() + "." +
-                keywordQM +
-                etInfo.getFieldInfo(this.getLeftField()).getColumnName() +
-                keywordQM +
-                " " +
-                this.getOperator().getOperator() +
-                " " +
-                this.getRightTable().getAlias() + "." +
-                keywordQM +
-                this.rightColumn +
-                keywordQM +
-                " ";
     }
 }

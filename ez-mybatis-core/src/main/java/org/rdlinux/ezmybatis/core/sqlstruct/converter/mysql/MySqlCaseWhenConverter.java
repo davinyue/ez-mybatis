@@ -36,7 +36,7 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
         List<CaseWhen.CaseWhenData> caseWhenData = caseWhen.getCaseWhenData();
         for (CaseWhen.CaseWhenData caseWhenDatum : caseWhenData) {
             sqlBuilder.append(" WHEN ");
-            StringBuilder whenSql = MySqlWhereConverter.conditionsToSqlPart(new StringBuilder(), configuration,
+            StringBuilder whenSql = MySqlWhereConverter.conditionsToSqlPart(type, new StringBuilder(), configuration,
                     mybatisParamHolder, caseWhenDatum.getConditions());
             sqlBuilder.append(whenSql).append(" ");
             sqlBuilder.append(" THEN ");
