@@ -1,8 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 
 import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
@@ -21,11 +19,5 @@ public class NormalColumnCondition extends NormalCondition implements SqlPart {
         super(logicalOperator, operator, value);
         this.table = table;
         this.column = column;
-    }
-
-    @Override
-    protected String getSqlField(Configuration configuration) {
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        return this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM;
     }
 }

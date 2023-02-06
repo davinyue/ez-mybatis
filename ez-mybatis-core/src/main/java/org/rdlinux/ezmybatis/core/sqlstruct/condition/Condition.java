@@ -35,6 +35,4 @@ public interface Condition extends SqlPart {
      * 获取逻辑运算符号
      */
     LogicalOperator getLogicalOperator();
-
-    String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder);
 }

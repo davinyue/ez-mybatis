@@ -2,8 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.between;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -24,11 +22,5 @@ public class BetweenColumnCondition extends BetweenCondition implements SqlPart 
         super(logicalOperator, minValue, maxValue);
         this.table = table;
         this.column = column;
-    }
-
-    @Override
-    protected String getSqlField(Configuration configuration) {
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        return this.getTable().getAlias() + "." + keywordQM + this.column + keywordQM;
     }
 }

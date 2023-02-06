@@ -1,8 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 
 import lombok.Getter;
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
@@ -35,10 +33,5 @@ public class SqlCondition implements Condition, SqlPart {
     @Override
     public LogicalOperator getLogicalOperator() {
         return this.logicalOperator;
-    }
-
-    @Override
-    public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        return " " + this.sql + " ";
     }
 }

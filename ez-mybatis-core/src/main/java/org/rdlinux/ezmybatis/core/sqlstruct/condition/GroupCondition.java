@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.utils.Assert;
 
@@ -27,26 +25,6 @@ public class GroupCondition implements Condition, SqlPart {
     public LogicalOperator getLogicalOperator() {
         return this.logicalOperator;
     }
-
-    @Override
-    public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        if (!this.sure || this.conditions == null || this.conditions.isEmpty()) {
-            return " ";
-        } else {
-            StringBuilder sql = new StringBuilder(" ( ");
-            for (int i = 0; i < this.conditions.size(); i++) {
-                Condition condition = this.conditions.get(i);
-                Assert.notNull(condition, "condition can not be null");
-                if (i != 0) {
-                    sql.append(" ").append(condition.getLogicalOperator().name()).append(" ");
-                }
-                sql.append(condition.toSqlPart(configuration, mybatisParamHolder));
-            }
-            sql.append(" ) ");
-            return sql.toString();
-        }
-    }
-
 
     public List<Condition> getConditions() {
         return this.conditions;

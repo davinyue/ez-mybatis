@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
@@ -27,12 +28,14 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
         return instance;
     }
 
-    protected static StringBuilder conditionsToSqlPart(StringBuilder sqlBuilder, Configuration configuration,
+    protected static StringBuilder conditionsToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                                        MybatisParamHolder mybatisParamHolder,
                                                        List<Condition> conditions) {
         boolean lastConditionEmpty = true;
         for (Condition condition : conditions) {
-            String sqlPart = condition.toSqlPart(configuration, mybatisParamHolder);
+            Converter<?> converter = EzMybatisContent.getConverter(configuration, condition.getClass());
+            String sqlPart = converter.buildSql(type, new StringBuilder(), configuration, condition, mybatisParamHolder)
+                    .toString();
             boolean emptySql = sqlPart.trim().isEmpty();
             if (!lastConditionEmpty && !emptySql) {
                 sqlBuilder.append(condition.getLogicalOperator().name()).append(" ");
@@ -57,7 +60,7 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
             return sqlBuilder;
         }
         sqlBuilder.append(" WHERE ");
-        return conditionsToSqlPart(sqlBuilder, configuration, mybatisParamHolder, where.getConditions());
+        return conditionsToSqlPart(type, sqlBuilder, configuration, mybatisParamHolder, where.getConditions());
     }
 
     @Override
