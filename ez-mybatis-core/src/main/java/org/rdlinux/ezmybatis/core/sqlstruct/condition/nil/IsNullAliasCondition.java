@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 
 /**
@@ -11,7 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
  */
 @Getter
 @Setter
-public class IsNullAliasCondition extends IsNullCondition {
+public class IsNullAliasCondition extends IsNullCondition implements SqlPart {
     protected String alias;
 
     public IsNullAliasCondition(LogicalOperator logicalOperator, String alias) {

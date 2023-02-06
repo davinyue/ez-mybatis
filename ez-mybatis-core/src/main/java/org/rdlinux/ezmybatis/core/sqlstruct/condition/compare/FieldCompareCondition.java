@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
@@ -15,7 +16,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
  * 表实体属性对比条件
  */
 @Getter
-public class FieldCompareCondition implements Condition {
+public class FieldCompareCondition implements Condition, SqlPart {
     private LogicalOperator logicalOperator;
     private EntityTable leftTable;
     private String leftField;

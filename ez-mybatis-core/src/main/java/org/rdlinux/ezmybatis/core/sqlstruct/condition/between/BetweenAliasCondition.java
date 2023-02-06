@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 
 /**
  * between 条件
  */
-public class BetweenAliasCondition extends BetweenCondition {
+public class BetweenAliasCondition extends BetweenCondition implements SqlPart {
     @Getter
     @Setter
     protected String alias;
