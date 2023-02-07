@@ -28,9 +28,9 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
         return instance;
     }
 
-    protected static StringBuilder conditionsToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                                       MybatisParamHolder mybatisParamHolder,
-                                                       List<Condition> conditions) {
+    protected static StringBuilder conditionsToSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                                   MybatisParamHolder mybatisParamHolder,
+                                                   List<Condition> conditions) {
         boolean lastConditionEmpty = true;
         for (Condition condition : conditions) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, condition.getClass());
@@ -60,7 +60,7 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
             return sqlBuilder;
         }
         sqlBuilder.append(" WHERE ");
-        return conditionsToSqlPart(type, sqlBuilder, configuration, mybatisParamHolder, where.getConditions());
+        return conditionsToSql(type, sqlBuilder, configuration, mybatisParamHolder, where.getConditions());
     }
 
     @Override

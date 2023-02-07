@@ -34,7 +34,7 @@ public class MySqlHavingConverter extends AbstractConverter<Having> implements C
             return sqlBuilder;
         }
         sqlBuilder.append(" HAVING ");
-        return MySqlWhereConverter.conditionsToSqlPart(type, sqlBuilder, configuration, mybatisParamHolder,
+        return MySqlWhereConverter.conditionsToSql(type, sqlBuilder, configuration, mybatisParamHolder,
                 having.getConditions());
     }
 
