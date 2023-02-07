@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class GroupBy implements SqlPart {
+public class GroupBy implements SqlStruct {
     private List<GroupItem> items;
 
     public GroupBy(List<GroupItem> items) {

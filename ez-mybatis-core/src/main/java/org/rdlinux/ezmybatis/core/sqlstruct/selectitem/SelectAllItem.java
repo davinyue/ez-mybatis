@@ -1,6 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 
-public class SelectAllItem implements SelectItem, SqlPart {
+public class SelectAllItem implements SelectItem, SqlStruct {
 }

@@ -1,6 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 条件分组
  */
-public class GroupCondition implements Condition, SqlPart {
+public class GroupCondition implements Condition, SqlStruct {
     private List<Condition> conditions;
     private LogicalOperator logicalOperator;
     private boolean sure;

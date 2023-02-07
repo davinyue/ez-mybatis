@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -10,7 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
  * 普通列条件
  */
 @Getter
-public class NormalColumnCondition extends NormalCondition implements SqlPart {
+public class NormalColumnCondition extends NormalCondition implements SqlStruct {
     private Table table;
     private String column;
 

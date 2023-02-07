@@ -2,11 +2,11 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
-public abstract class AbstractConverter<Obj extends SqlPart> implements Converter<Obj> {
+public abstract class AbstractConverter<Obj extends SqlStruct> implements Converter<Obj> {
     /**
      * 实体类型
      */

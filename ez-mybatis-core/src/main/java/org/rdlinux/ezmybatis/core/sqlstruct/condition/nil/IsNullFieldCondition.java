@@ -2,7 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.nil;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
@@ -11,7 +11,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
  */
 @Getter
 @Setter
-public class IsNullFieldCondition extends IsNullCondition implements SqlPart {
+public class IsNullFieldCondition extends IsNullCondition implements SqlStruct {
     protected EntityTable table;
     protected String field;
 

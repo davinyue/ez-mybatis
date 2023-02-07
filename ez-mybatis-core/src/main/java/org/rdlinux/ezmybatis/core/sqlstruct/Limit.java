@@ -2,7 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import org.rdlinux.ezmybatis.core.EzQuery;
 
-public class Limit implements SqlPart {
+public class Limit implements SqlStruct {
     private EzQuery<?> query;
     private int skip;
     private int size;

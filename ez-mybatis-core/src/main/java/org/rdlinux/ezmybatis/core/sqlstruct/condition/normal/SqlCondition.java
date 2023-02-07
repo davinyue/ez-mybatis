@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -10,7 +10,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
  * 表列对比条件
  */
 @Getter
-public class SqlCondition implements Condition, SqlPart {
+public class SqlCondition implements Condition, SqlStruct {
     private LogicalOperator logicalOperator;
     private String sql;
 

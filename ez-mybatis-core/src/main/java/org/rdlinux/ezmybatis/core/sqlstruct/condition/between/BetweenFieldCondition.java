@@ -2,14 +2,14 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.between;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 /**
  * between 条件
  */
-public class BetweenFieldCondition extends BetweenCondition implements SqlPart {
+public class BetweenFieldCondition extends BetweenCondition implements SqlStruct {
     @Getter
     @Setter
     protected EntityTable table;

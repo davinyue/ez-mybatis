@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
-public class SelectCountField extends SelectField implements SqlPart {
+public class SelectCountField extends SelectField implements SqlStruct {
     /**
      * 是否去重
      */

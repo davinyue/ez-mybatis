@@ -1,10 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-public class SelectField extends AbstractSelectItem implements SqlPart {
+public class SelectField extends AbstractSelectItem implements SqlStruct {
     protected EntityTable table;
     protected String field;
 

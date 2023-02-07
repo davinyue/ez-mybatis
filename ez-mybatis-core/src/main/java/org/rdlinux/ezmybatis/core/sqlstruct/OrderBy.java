@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrderBy implements SqlPart {
+public class OrderBy implements SqlStruct {
     private List<OrderItem> items;
 
     public OrderBy(List<OrderItem> items) {

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Select implements SqlPart {
+public class Select implements SqlStruct {
     /**
      * 查询
      */

@@ -2,13 +2,13 @@ package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
 @Setter
-public class SelectColumn extends AbstractSelectItem implements SqlPart {
+public class SelectColumn extends AbstractSelectItem implements SqlStruct {
     protected Table table;
     protected String column;
 
