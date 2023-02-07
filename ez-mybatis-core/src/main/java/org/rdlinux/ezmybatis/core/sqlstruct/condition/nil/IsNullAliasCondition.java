@@ -2,7 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition.nil;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 
 /**
@@ -10,7 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
  */
 @Getter
 @Setter
-public class IsNullAliasCondition extends IsNullCondition implements SqlPart {
+public class IsNullAliasCondition extends IsNullCondition implements SqlStruct {
     protected String alias;
 
     public IsNullAliasCondition(LogicalOperator logicalOperator, String alias) {

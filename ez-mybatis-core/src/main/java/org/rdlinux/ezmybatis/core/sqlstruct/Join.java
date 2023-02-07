@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class Join implements SqlPart {
+public class Join implements SqlStruct {
 
     /**
      * 主表

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class Having implements SqlPart {
+public class Having implements SqlStruct {
     /**
      * 条件
      */

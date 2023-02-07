@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class CaseWhen implements SqlPart {
+public class CaseWhen implements SqlStruct {
     /**
      * 表
      */

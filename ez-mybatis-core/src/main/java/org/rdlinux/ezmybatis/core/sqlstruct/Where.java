@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Where implements SqlPart {
+public class Where implements SqlStruct {
     /**
      * 条件
      */

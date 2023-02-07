@@ -15,7 +15,7 @@ import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlPart;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.DmConverterRegister;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlConverterRegister;
@@ -42,7 +42,7 @@ public class EzMybatisContent {
     /**
      * 注册转换器
      */
-    public static <T extends SqlPart> void addConverter(DbType dbType, Class<T> sqlStruct, Converter<T> converter) {
+    public static <T extends SqlStruct> void addConverter(DbType dbType, Class<T> sqlStruct, Converter<T> converter) {
         CONVERT_MAP.putIfAbsent(dbType, new HashMap<>());
         CONVERT_MAP.get(dbType).put(sqlStruct, converter);
     }
@@ -51,7 +51,7 @@ public class EzMybatisContent {
      * 获取转换器
      */
     @SuppressWarnings("unchecked")
-    public static <T extends SqlPart> Converter<T> getConverter(DbType dbType, Class<T> sqlStruct) {
+    public static <T extends SqlStruct> Converter<T> getConverter(DbType dbType, Class<T> sqlStruct) {
         Map<Class<?>, Converter<?>> convertMap = CONVERT_MAP.get(dbType);
         if (convertMap == null) {
             throw new RuntimeException("cannot find the converter of " + dbType.name());
@@ -67,7 +67,7 @@ public class EzMybatisContent {
     /**
      * 获取转换器
      */
-    public static <T extends SqlPart> Converter<T> getConverter(Configuration configuration, Class<T> sqlStruct) {
+    public static <T extends SqlStruct> Converter<T> getConverter(Configuration configuration, Class<T> sqlStruct) {
         DbType dbType = getDbType(configuration);
         return getConverter(dbType, sqlStruct);
     }
