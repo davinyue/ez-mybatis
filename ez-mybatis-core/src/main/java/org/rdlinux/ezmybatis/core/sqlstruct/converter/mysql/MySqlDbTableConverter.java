@@ -36,7 +36,7 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
         }
         sqlBuilder.append(keywordQM).append(table.getTableName(configuration)).append(keywordQM);
         if (table.getPartition() != null) {
-            sqlBuilder.append(this.partitionToSqlPart(type, new StringBuilder(), configuration, table.getPartition(),
+            sqlBuilder.append(this.partitionToSql(type, new StringBuilder(), configuration, table.getPartition(),
                     mybatisParamHolder));
         }
         if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE || type == Converter.Type.DELETE) {
@@ -45,8 +45,8 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
         return sqlBuilder;
     }
 
-    protected StringBuilder partitionToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                               Partition partition, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder partitionToSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                           Partition partition, MybatisParamHolder mybatisParamHolder) {
         Converter<?> converter = EzMybatisContent.getConverter(configuration, partition.getClass());
         return converter.buildSql(type, sqlBuilder, configuration, partition, mybatisParamHolder);
     }

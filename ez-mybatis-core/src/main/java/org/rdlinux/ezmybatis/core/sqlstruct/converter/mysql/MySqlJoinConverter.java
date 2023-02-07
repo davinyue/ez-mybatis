@@ -37,7 +37,7 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         }
         StringBuilder sonSql = new StringBuilder();
         if (join.getJoinType() != JoinType.CrossJoin) {
-            sonSql = MySqlWhereConverter.conditionsToSqlPart(type, new StringBuilder(), configuration,
+            sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
                     mybatisParamHolder, join.getOnConditions());
             if (sonSql.length() == 0) {
                 return sqlBuilder;

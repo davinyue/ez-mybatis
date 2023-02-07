@@ -50,9 +50,9 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         }
     }
 
-    private static StringBuilder inToSqlPart(StringBuilder sqlBuilder, Configuration configuration,
-                                             NormalCondition obj, MybatisParamHolder mybatisParamHolder,
-                                             String column) {
+    private static StringBuilder inToSql(StringBuilder sqlBuilder, Configuration configuration,
+                                         NormalCondition obj, MybatisParamHolder mybatisParamHolder,
+                                         String column) {
         sqlBuilder.append(" ").append(column).append(" ");
         Collection<?> valueCo = valueToCollection(obj);
         if (valueCo.size() == 1) {
@@ -86,15 +86,15 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
                                               String column) {
 
         if (obj.getOperator() == Operator.in || obj.getOperator() == Operator.notIn) {
-            return inToSqlPart(sqlBuilder, configuration, obj, mybatisParamHolder, column);
+            return inToSql(sqlBuilder, configuration, obj, mybatisParamHolder, column);
         } else {
-            return otherToSqlPart(sqlBuilder, configuration, obj, mybatisParamHolder, column);
+            return otherToSql(sqlBuilder, configuration, obj, mybatisParamHolder, column);
         }
     }
 
-    private static StringBuilder otherToSqlPart(StringBuilder sqlBuilder, Configuration configuration,
-                                                NormalCondition obj, MybatisParamHolder mybatisParamHolder,
-                                                String column) {
+    private static StringBuilder otherToSql(StringBuilder sqlBuilder, Configuration configuration,
+                                            NormalCondition obj, MybatisParamHolder mybatisParamHolder,
+                                            String column) {
         sqlBuilder.append(" ").append(column).append(" ").append(obj.getOperator().getOperator()).append(" ")
                 .append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, obj.getValue())).append(" ");
         return sqlBuilder;
