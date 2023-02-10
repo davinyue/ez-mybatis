@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -30,10 +31,13 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        UpdateFieldItem obj, MybatisParamHolder mybatisParamHolder) {
-        String paramName = mybatisParamHolder.getParamName(obj.getValue(), true);
+
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
-        String column = etInfo.getFieldInfo(obj.getField()).getColumnName();
+        EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
+        String column = fieldInfo.getColumnName();
+        String paramName = mybatisParamHolder.getMybatisParamName(fieldInfo.getFieldName(), obj.getValue(),
+                true);
         sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(column)
                 .append(keywordQM).append(" = ").append(paramName);
         return sqlBuilder;

@@ -509,7 +509,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EntityTable table = EntityTable.of(User.class);
-        String[] nameArray = new String[]{"牛儿", "网友"};
+        String[] nameArray = new String[]{"牛儿", "网友", null};
         EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
                 .where()
                 .addFieldCondition(User.Fields.name, Operator.in, "1")

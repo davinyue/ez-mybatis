@@ -42,7 +42,8 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             Method fieldGetMethod = columnMapFieldInfo.get(column).getFieldGetMethod();
             Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
             columnBuilder.append(keywordQM).append(column).append(keywordQM);
-            paramBuilder.append(mybatisParamHolder.getParamName(fieldValue, true));
+            paramBuilder.append(mybatisParamHolder.getMybatisParamName(columnMapFieldInfo.get(column).getFieldName(),
+                    fieldValue, true));
             if (i < columnMapFieldInfo.size()) {
                 columnBuilder.append(", ");
                 paramBuilder.append(", ");

@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -32,10 +33,11 @@ public class MySqlBetweenFieldConditionConverter extends AbstractConverter<Betwe
                                        BetweenFieldCondition obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getTable().getEtType());
-        String column = etInfo.getFieldInfo(obj.getField()).getColumnName();
+        EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
+        String column = fieldInfo.getColumnName();
         String sql = obj.getTable().getAlias() + "." + keywordQM + column + keywordQM;
-        return MySqlBetweenAliasConditionConverter.doBuildSql(sqlBuilder, configuration, obj, mybatisParamHolder,
-                sql);
+        return MySqlBetweenAliasConditionConverter.doBuildSql(fieldInfo.getFieldName(), sqlBuilder, configuration, obj,
+                mybatisParamHolder, sql);
     }
 
     @Override
