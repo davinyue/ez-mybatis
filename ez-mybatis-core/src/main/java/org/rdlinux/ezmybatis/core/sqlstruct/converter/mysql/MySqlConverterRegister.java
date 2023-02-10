@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.*;
@@ -82,5 +83,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, NormalFieldCondition.class, MySqlNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NormalColumnCondition.class, MySqlNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NormalAliasCondition.class, MySqlNormalAliasConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, EzQuery.class, MySqlEzQueryConverter.getInstance());
     }
 }

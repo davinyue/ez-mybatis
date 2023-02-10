@@ -256,7 +256,8 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void ezQueryInTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id")
+                .done().page(1, 2)
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .where().addColumnCondition("id", Operator.in, sonQ).done().build();

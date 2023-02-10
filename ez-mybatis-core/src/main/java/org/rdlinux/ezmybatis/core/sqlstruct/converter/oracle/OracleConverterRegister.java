@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.*;
@@ -82,5 +83,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, NormalFieldCondition.class, OracleNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalColumnCondition.class, OracleNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalAliasCondition.class, OracleNormalAliasConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, EzQuery.class, OracleEzQueryConverter.getInstance());
     }
 }
