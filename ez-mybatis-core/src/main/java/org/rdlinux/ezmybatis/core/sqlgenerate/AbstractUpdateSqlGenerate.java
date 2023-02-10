@@ -48,14 +48,16 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                 continue;
             }
             sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ");
-            sqlBuilder.append(mybatisParamHolder.getParamName(fieldValue, true)).append(", ");
+            sqlBuilder.append(mybatisParamHolder.getMybatisParamName(entityFieldInfo.getFieldName(), fieldValue,
+                    true)).append(", ");
             //有字段更新, sql才有效
             invalidSql = false;
         }
         Assert.isTrue(!invalidSql, "cannot update empty entity");
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
-                .append(" = ").append(mybatisParamHolder.getParamName(idValue, false));
+                .append(" = ").append(mybatisParamHolder.getMybatisParamName(primaryKeyInfo.getFieldName(), idValue,
+                false));
         return sqlBuilder.toString();
     }
 

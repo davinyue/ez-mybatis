@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
-import org.rdlinux.ezmybatis.utils.Assert;
 
 /**
  * 普通条件
@@ -23,7 +22,6 @@ public abstract class NormalCondition implements Condition {
                 operator == Operator.isNotNull) {
             throw new IllegalArgumentException("Unsupported operator");
         }
-        Assert.notNull(value, "value can not be null");
         this.operator = operator;
         this.logicalOperator = logicalOperator;
         this.value = value;

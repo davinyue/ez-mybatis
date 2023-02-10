@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
@@ -50,7 +51,7 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         }
     }
 
-    private static StringBuilder inToSql(StringBuilder sqlBuilder, Configuration configuration,
+    private static StringBuilder inToSql(String filedName, StringBuilder sqlBuilder, Configuration configuration,
                                          NormalCondition obj, MybatisParamHolder mybatisParamHolder,
                                          String column) {
         sqlBuilder.append(" ").append(column).append(" ");
@@ -64,13 +65,14 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
             } else {
                 sqlBuilder.append(Operator.ne.getOperator());
             }
-            sqlBuilder.append(" ").append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, sValue))
+            sqlBuilder.append(" ").append(Condition.valueToSqlStruct(filedName, configuration, mybatisParamHolder,
+                    sValue))
                     .append(" ");
         } else {
             sqlBuilder.append(obj.getOperator().getOperator()).append(" (");
             int i = 0;
             for (Object valueItem : valueCo) {
-                sqlBuilder.append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, valueItem));
+                sqlBuilder.append(Condition.valueToSqlStruct(filedName, configuration, mybatisParamHolder, valueItem));
                 if (i + 1 < valueCo.size()) {
                     sqlBuilder.append(", ");
                 }
@@ -81,22 +83,23 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         return sqlBuilder;
     }
 
-    protected static StringBuilder doBuildSql(StringBuilder sqlBuilder, Configuration configuration,
+    protected static StringBuilder doBuildSql(String filedName, StringBuilder sqlBuilder, Configuration configuration,
                                               NormalCondition obj, MybatisParamHolder mybatisParamHolder,
                                               String column) {
 
         if (obj.getOperator() == Operator.in || obj.getOperator() == Operator.notIn) {
-            return inToSql(sqlBuilder, configuration, obj, mybatisParamHolder, column);
+            return inToSql(filedName, sqlBuilder, configuration, obj, mybatisParamHolder, column);
         } else {
-            return otherToSql(sqlBuilder, configuration, obj, mybatisParamHolder, column);
+            return otherToSql(filedName, sqlBuilder, configuration, obj, mybatisParamHolder, column);
         }
     }
 
-    private static StringBuilder otherToSql(StringBuilder sqlBuilder, Configuration configuration,
+    private static StringBuilder otherToSql(String filedName, StringBuilder sqlBuilder, Configuration configuration,
                                             NormalCondition obj, MybatisParamHolder mybatisParamHolder,
                                             String column) {
         sqlBuilder.append(" ").append(column).append(" ").append(obj.getOperator().getOperator()).append(" ")
-                .append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, obj.getValue())).append(" ");
+                .append(Condition.valueToSqlStruct(filedName, configuration, mybatisParamHolder, obj.getValue()))
+                .append(" ");
         return sqlBuilder;
     }
 
@@ -105,9 +108,10 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
                                        NormalFieldCondition obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getTable().getEtType());
-        String column = etInfo.getFieldInfo(obj.getField()).getColumnName();
+        EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
+        String column = fieldInfo.getColumnName();
         String sql = obj.getTable().getAlias() + "." + keywordQM + column + keywordQM;
-        return doBuildSql(sqlBuilder, configuration, obj, mybatisParamHolder, sql);
+        return this.doBuildSql(fieldInfo.getFieldName(), sqlBuilder, configuration, obj, mybatisParamHolder, sql);
     }
 
     @Override

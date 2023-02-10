@@ -32,7 +32,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
 
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "DELETE FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " + paramHolder
-                .getParamName(id, false);
+                .getMybatisParamName(entityClassInfo.getPrimaryKeyInfo().getFieldName(), id, false);
     }
 
 
@@ -58,7 +58,8 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         int i = 0;
         for (Object id : ids) {
             Assert.notNull(id, String.format("ids[%d] can not be null", i));
-            sqlBuilder.append(paramHolder.getParamName(id, false));
+            sqlBuilder.append(paramHolder.getMybatisParamName(entityClassInfo.getPrimaryKeyInfo().getFieldName(), id,
+                    false));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

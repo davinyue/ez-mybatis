@@ -74,21 +74,22 @@ public class MybatisParamHolder {
     /**
      * 获取一个参数名称
      *
+     * @param paramName  原始参数名称
      * @param paramValue 参数值
      * @param canBeNull  参数值是否可以为空
      */
-    public String getParamName(Object paramValue, boolean canBeNull) {
+    public String getMybatisParamName(String paramName, Object paramValue, boolean canBeNull) {
         if (canBeNull && paramValue == null) {
             return "NULL";
         } else if (!canBeNull && paramValue == null) {
-            throw new IllegalArgumentException("paramValue can not be null");
+            throw new IllegalArgumentException(String.format("The value of %s cannot be null", paramName));
         }
         if (this.currentArray.size() >= ARRAY_MAX_PARAM) {
             this.transposeArray();
         }
         this.currentArray.add(paramValue);
         String escape = getEscapeChar(paramValue);
-        String paramName = this.getCurrentHashKeyName() + "[" + (this.currentArray.size() - 1) + "]";
-        return escape + "{" + paramName + "}";
+        String mybatisParamName = this.getCurrentHashKeyName() + "[" + (this.currentArray.size() - 1) + "]";
+        return escape + "{" + mybatisParamName + "}";
     }
 }

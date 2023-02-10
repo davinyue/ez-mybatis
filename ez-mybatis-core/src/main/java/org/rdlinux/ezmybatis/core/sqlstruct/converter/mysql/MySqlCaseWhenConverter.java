@@ -40,13 +40,15 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
                     mybatisParamHolder, caseWhenDatum.getConditions());
             sqlBuilder.append(whenSql).append(" ");
             sqlBuilder.append(" THEN ");
-            String paramName = mybatisParamHolder.getParamName(caseWhenDatum.getValue(), true);
+            String paramName = mybatisParamHolder.getMybatisParamName("caseWhnThen",
+                    caseWhenDatum.getValue(), true);
             sqlBuilder.append(paramName);
         }
         CaseWhen.CaseWhenElse caseWhenElse = caseWhen.getCaseWhenElse();
         if (caseWhenElse != null) {
             sqlBuilder.append(" ELSE ");
-            String elseValueParamName = mybatisParamHolder.getParamName(caseWhenElse.getValue(), true);
+            String elseValueParamName = mybatisParamHolder.getMybatisParamName("caseWhnThen",
+                    caseWhenElse.getValue(), true);
             sqlBuilder.append(elseValueParamName);
         }
         sqlBuilder.append(" END ");

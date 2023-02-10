@@ -7,13 +7,13 @@ import java.util.HashMap;
 public class MybatisParamHolderTest {
     public static void main(String[] args) {
         MybatisParamHolder paramHolder = new MybatisParamHolder(new HashMap<>());
-        String name = paramHolder.getParamName("a", false);
+        String name = paramHolder.getMybatisParamName("a", "a", false);
         System.out.println(name);
-        name = paramHolder.getParamName("a", false);
+        name = paramHolder.getMybatisParamName("a", "a", false);
         System.out.println(name);
-        name = paramHolder.getParamName("a", false);
+        name = paramHolder.getMybatisParamName("a", "a", false);
         System.out.println(name);
-        name = paramHolder.getParamName("a", false);
+        name = paramHolder.getMybatisParamName("a", "a", false);
         System.out.println(name);
         int oldCount = 10;
         //新容量 = 旧容量>>1 + 旧容量
