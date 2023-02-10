@@ -34,6 +34,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder setColumn(String column, CaseWhen caseWhen) {
+            //解决java重载问题, 如果第二个参数传入null, 将调用这个方法而不是setField(String field, Object value)
             if (caseWhen == null) {
                 return this.setColumn(column, (Object) null);
             }
@@ -49,6 +50,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder setField(String field, CaseWhen caseWhen) {
+            //解决java重载问题, 如果第二个参数传入null, 将调用这个方法而不是setField(String field, Object value)
             if (caseWhen == null) {
                 return this.setField(field, (Object) null);
             }
