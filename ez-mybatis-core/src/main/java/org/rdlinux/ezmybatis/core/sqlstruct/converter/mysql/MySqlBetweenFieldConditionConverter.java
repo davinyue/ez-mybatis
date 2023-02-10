@@ -36,7 +36,7 @@ public class MySqlBetweenFieldConditionConverter extends AbstractConverter<Betwe
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         String column = fieldInfo.getColumnName();
         String sql = obj.getTable().getAlias() + "." + keywordQM + column + keywordQM;
-        return MySqlBetweenAliasConditionConverter.doBuildSql(fieldInfo.getFieldName(), sqlBuilder, configuration, obj,
+        return MySqlBetweenAliasConditionConverter.doBuildSql(sqlBuilder, configuration, obj,
                 mybatisParamHolder, sql);
     }
 

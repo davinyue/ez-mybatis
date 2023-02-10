@@ -14,10 +14,6 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
     @Override
     public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
-        Assert.notNull(id, "id cannot be null");
-        if (id instanceof Collection) {
-            throw new IllegalArgumentException("id can not instanceof Collection");
-        }
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
 
@@ -32,7 +28,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
 
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "DELETE FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " + paramHolder
-                .getMybatisParamName(entityClassInfo.getPrimaryKeyInfo().getFieldName(), id, false);
+                .getMybatisParamName(id);
     }
 
 
@@ -57,9 +53,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {
-            Assert.notNull(id, String.format("ids[%d] can not be null", i));
-            sqlBuilder.append(paramHolder.getMybatisParamName(entityClassInfo.getPrimaryKeyInfo().getFieldName(), id,
-                    false));
+            sqlBuilder.append(paramHolder.getMybatisParamName(id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

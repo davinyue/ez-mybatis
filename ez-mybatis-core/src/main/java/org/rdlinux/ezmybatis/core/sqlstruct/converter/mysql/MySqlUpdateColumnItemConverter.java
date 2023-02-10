@@ -29,7 +29,7 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        UpdateColumnItem obj, MybatisParamHolder mybatisParamHolder) {
         String column = obj.getColumn();
-        String paramName = mybatisParamHolder.getMybatisParamName(column, obj.getValue(), true);
+        String paramName = mybatisParamHolder.getMybatisParamName(obj.getValue());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(column)
                 .append(keywordQM).append(" = ").append(paramName);

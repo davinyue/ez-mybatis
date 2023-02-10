@@ -30,8 +30,8 @@ public class MySqlBetweenColumnConditionConverter extends AbstractConverter<Betw
                                        BetweenColumnCondition obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String column = obj.getTable().getAlias() + "." + keywordQM + obj.getColumn() + keywordQM;
-        return MySqlBetweenAliasConditionConverter.doBuildSql(obj.getColumn(), sqlBuilder, configuration, obj,
-                mybatisParamHolder, column);
+        return MySqlBetweenAliasConditionConverter.doBuildSql(sqlBuilder, configuration, obj, mybatisParamHolder,
+                column);
     }
 
     @Override
