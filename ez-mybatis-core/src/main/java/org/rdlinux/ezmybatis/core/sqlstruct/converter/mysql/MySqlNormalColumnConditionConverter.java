@@ -30,7 +30,7 @@ public class MySqlNormalColumnConditionConverter extends AbstractConverter<Norma
                                        NormalColumnCondition obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String column = obj.getTable().getAlias() + "." + keywordQM + obj.getColumn() + keywordQM;
-        return MySqlNormalFieldConditionConverter.doBuildSql(obj.getColumn(), sqlBuilder, configuration, obj,
+        return MySqlNormalFieldConditionConverter.doBuildSql(sqlBuilder, configuration, obj,
                 mybatisParamHolder, column);
     }
 

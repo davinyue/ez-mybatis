@@ -37,7 +37,6 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         String idColumn = primaryKeyInfo.getColumnName();
         Object idValue = ReflectionUtils.getFieldValue(entity, primaryKeyInfo.getField());
-        Assert.notNull(idValue, primaryKeyInfo.getFieldName() + " cannot be null");
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
         boolean invalidSql = true;
         for (String column : columnMapFieldInfo.keySet()) {
@@ -48,16 +47,15 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                 continue;
             }
             sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ");
-            sqlBuilder.append(mybatisParamHolder.getMybatisParamName(entityFieldInfo.getFieldName(), fieldValue,
-                    true)).append(", ");
+            sqlBuilder.append(mybatisParamHolder.getMybatisParamName(fieldValue))
+                    .append(", ");
             //有字段更新, sql才有效
             invalidSql = false;
         }
         Assert.isTrue(!invalidSql, "cannot update empty entity");
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
-                .append(" = ").append(mybatisParamHolder.getMybatisParamName(primaryKeyInfo.getFieldName(), idValue,
-                false));
+                .append(" = ").append(mybatisParamHolder.getMybatisParamName(idValue));
         return sqlBuilder.toString();
     }
 
