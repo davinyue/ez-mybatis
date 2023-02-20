@@ -491,8 +491,20 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
         //如果是实体,则根据实体信息来获取实体属性名称
         else {
-            property = EzEntityClassInfoFactory.forClass(this.configuration, metaObject.getOriginalObject()
-                    .getClass()).getFieldNameByColumn(column);
+            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(this.configuration,
+                    metaObject.getOriginalObject().getClass());
+            //一般情况下, 默认数据库使用下划线风格进行命名列
+            property = entityClassInfo.getFieldNameByColumn(column);
+            //如果根据下划线风格找不到对应属性, 则认为数据库使用了驼峰风格
+            if (property == null && !column.contains("_")) {
+                //将列转换为下划线风格尝试重新查找
+                column = HumpLineStringUtils.humpToLine(column);
+                property = entityClassInfo.getFieldNameByColumn(column);
+                if (property == null) {
+                    //在下划线风格的基础上转大写重试一次
+                    property = entityClassInfo.getFieldNameByColumn(column.toUpperCase());
+                }
+            }
         }
         return property;
     }
