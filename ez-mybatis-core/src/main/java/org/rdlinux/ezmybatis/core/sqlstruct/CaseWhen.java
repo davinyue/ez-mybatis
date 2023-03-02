@@ -61,9 +61,8 @@ public class CaseWhen implements SqlStruct {
         public static class CaseWhenDataBuilder extends ConditionBuilder<CaseWhenBuilder, CaseWhenDataBuilder> {
             private CaseWhenData caseWhenData;
 
-            public CaseWhenDataBuilder(CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
-                super(caseWhenBuilder, caseWhenData.getConditions(), caseWhenBuilder.getTable(),
-                        caseWhenBuilder.getTable());
+            public CaseWhenDataBuilder(Table table, CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
+                super(caseWhenBuilder, caseWhenData.getConditions(), table, table);
                 this.sonBuilder = this;
                 this.caseWhenData = caseWhenData;
             }
@@ -95,7 +94,6 @@ public class CaseWhen implements SqlStruct {
     /**
      * CaseWhen构造器
      */
-    @Getter
     public static class CaseWhenBuilder {
         protected Table table;
         protected CaseWhen caseWhen;
@@ -115,7 +113,7 @@ public class CaseWhen implements SqlStruct {
             CaseWhenData caseWhenData = new CaseWhenData();
             caseWhenData.setConditions(new LinkedList<>());
             this.caseWhen.getCaseWhenData().add(caseWhenData);
-            return new CaseWhenData.CaseWhenDataBuilder(this, caseWhenData);
+            return new CaseWhenData.CaseWhenDataBuilder(this.table, this, caseWhenData);
         }
 
         /**
