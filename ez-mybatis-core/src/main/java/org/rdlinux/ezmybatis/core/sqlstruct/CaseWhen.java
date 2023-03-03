@@ -125,14 +125,7 @@ public class CaseWhen implements SqlStruct {
         }
 
         /**
-         * 构造结束, 同build
-         */
-        public CaseWhen done() {
-            return this.caseWhen;
-        }
-
-        /**
-         * 构造结束, 同done
+         * 构造结束
          */
         public CaseWhen build() {
             return this.caseWhen;
