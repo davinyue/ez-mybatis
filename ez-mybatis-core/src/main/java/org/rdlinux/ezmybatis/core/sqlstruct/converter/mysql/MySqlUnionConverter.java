@@ -9,7 +9,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Union;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
-@SuppressWarnings("rawtypes")
 public class MySqlUnionConverter extends AbstractConverter<Union> implements Converter<Union> {
     private static volatile MySqlUnionConverter instance;
 
