@@ -574,4 +574,45 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(mapper.query(query));
         sqlSession.close();
     }
+
+    @Test
+    public void unionQuery() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> liSiQuery = EzQuery.builder(User.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.name, "李四")
+                .done()
+                .build();
+
+        EzQuery<User> wangErSongQuery = EzQuery.builder(User.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.name, "王小二")
+                .done()
+                .build();
+
+        EzQuery<User> wangErQuery = EzQuery.builder(User.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.name, "王二")
+                .done()
+                .union(wangErSongQuery)
+                .build();
+
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select()
+                .addAll()
+                .done()
+                .where()
+                .addFieldCondition(User.Fields.name, "张三")
+                .done()
+                .union(liSiQuery)
+                .unionAll(wangErQuery)
+                .build();
+        System.out.println(mapper.query(query));
+        System.out.println(mapper.queryCount(query));
+        sqlSession.close();
+    }
 }
