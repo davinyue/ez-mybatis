@@ -1,11 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
-@Setter
 public class ValueFormulaElement extends AbstractFormulaElement {
     private Object value;
 

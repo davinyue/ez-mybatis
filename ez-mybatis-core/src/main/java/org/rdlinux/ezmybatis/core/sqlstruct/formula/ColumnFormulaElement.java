@@ -1,12 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
-@Setter
 public class ColumnFormulaElement extends AbstractFormulaElement {
     private Table table;
     private String column;
