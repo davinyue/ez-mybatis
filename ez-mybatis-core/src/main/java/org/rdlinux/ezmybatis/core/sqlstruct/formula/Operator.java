@@ -5,6 +5,10 @@ package org.rdlinux.ezmybatis.core.sqlstruct.formula;
  */
 public enum Operator {
     /**
+     * 空操作符, 用户公式开始
+     */
+    EMPTY(""),
+    /**
      * 加
      */
     ADD("+"),
