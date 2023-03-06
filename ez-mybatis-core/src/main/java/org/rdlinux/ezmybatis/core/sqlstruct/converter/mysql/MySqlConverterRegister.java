@@ -91,5 +91,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, FieldFormulaElement.class, MySqlFieldFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FunFormulaElement.class, MySqlFunFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ValueFormulaElement.class, MySqlValueFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Union.class, MySqlUnionConverter.getInstance());
     }
 }

@@ -16,6 +16,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements SqlStruct {
     private OrderBy orderBy;
     private Having having;
     private Limit limit;
+    private List<Union> unions;
 
     private EzQuery(Class<Rt> retType) {
         super(retType);
@@ -128,6 +129,28 @@ public class EzQuery<Rt> extends EzParam<Rt> implements SqlStruct {
          */
         public EzQueryBuilder<Rt> page(int currentPage, int pageSize) {
             this.query.limit = new Limit(this.query, (currentPage - 1) * pageSize, pageSize);
+            return this;
+        }
+
+        /**
+         * 联合查询
+         */
+        public EzQueryBuilder<Rt> union(EzQuery<?> query) {
+            if (this.query.unions == null) {
+                this.query.unions = new LinkedList<>();
+            }
+            this.query.unions.add(new Union(false, query));
+            return this;
+        }
+
+        /**
+         * 联合查询
+         */
+        public EzQueryBuilder<Rt> unionAll(EzQuery<?> query) {
+            if (this.query.unions == null) {
+                this.query.unions = new LinkedList<>();
+            }
+            this.query.unions.add(new Union(true, query));
             return this;
         }
 

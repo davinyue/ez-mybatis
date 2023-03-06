@@ -7,6 +7,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+import java.util.List;
+
 public abstract class AbstractEzQueryToSql implements EzQueryToSql {
     @Override
     public String toSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
@@ -20,6 +22,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.limitToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.unionToSql(sqlBuilder, configuration, query, paramHolder);
         return sqlBuilder.toString();
     }
 
@@ -55,6 +58,19 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         From from = query.getFrom();
         Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
         return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, from, paramHolder);
+    }
+
+    protected StringBuilder unionToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
+                                       MybatisParamHolder paramHolder) {
+        List<Union> unions = query.getUnions();
+        if (unions == null || unions.isEmpty()) {
+            return sqlBuilder;
+        }
+        Converter<Union> converter = EzMybatisContent.getConverter(configuration, Union.class);
+        for (Union union : unions) {
+            sqlBuilder = converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, union, paramHolder);
+        }
+        return sqlBuilder;
     }
 
     protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
