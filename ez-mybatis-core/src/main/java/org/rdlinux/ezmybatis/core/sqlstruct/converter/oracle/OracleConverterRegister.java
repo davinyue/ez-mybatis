@@ -12,7 +12,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.DmValueFormulaElementConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -91,6 +90,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, ColumnFormulaElement.class, OracleColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FieldFormulaElement.class, OracleFieldFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FunFormulaElement.class, OracleFunFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, ValueFormulaElement.class, DmValueFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, ValueFormulaElement.class, OracleValueFormulaElementConverter.getInstance());
     }
 }

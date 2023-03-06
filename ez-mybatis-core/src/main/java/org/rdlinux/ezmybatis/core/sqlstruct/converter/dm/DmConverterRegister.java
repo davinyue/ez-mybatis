@@ -23,7 +23,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
 
 /**
- * mysql转换器注册
+ * 达梦转换器注册
  */
 public class DmConverterRegister {
     public static void register() {
