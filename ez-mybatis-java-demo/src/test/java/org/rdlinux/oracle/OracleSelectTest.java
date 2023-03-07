@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
@@ -186,6 +187,36 @@ public class OracleSelectTest extends OracleBaseTest {
                 .build();
         System.out.println(mapper.query(query));
         System.out.println(mapper.queryCount(query));
+        OracleBaseTest.sqlSession.close();
+    }
+
+    @Test
+    public void unionQuery2() {
+        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        DbTable table = DbTable.of("aaa");
+        EzQuery<StringHashMap> liSiQuery = EzQuery.builder(StringHashMap.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addColumnCondition("ID", "1")
+                .done()
+                .build();
+
+        EzQuery<StringHashMap> wangErSongQuery = EzQuery.builder(StringHashMap.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addColumnCondition("ID", "2")
+                .done()
+                .union(liSiQuery)
+                .build();
+
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EzQueryTable.of(wangErSongQuery))
+                .select()
+                .addAll()
+                .done()
+                .page(2, 1)
+                .build();
+        System.out.println(mapper.query(query));
+        //System.out.println(mapper.queryCount(query));
         OracleBaseTest.sqlSession.close();
     }
 }
