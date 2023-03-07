@@ -191,7 +191,7 @@ public class OracleSelectTest extends OracleBaseTest {
     }
 
     @Test
-    public void unionQuery2() {
+    public void unionSonQuery() {
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
         DbTable table = DbTable.of("aaa");
         EzQuery<StringHashMap> liSiQuery = EzQuery.builder(StringHashMap.class).from(table).select()
@@ -216,7 +216,7 @@ public class OracleSelectTest extends OracleBaseTest {
                 .page(2, 1)
                 .build();
         System.out.println(mapper.query(query));
-        //System.out.println(mapper.queryCount(query));
+        System.out.println(mapper.queryCount(query));
         OracleBaseTest.sqlSession.close();
     }
 }
