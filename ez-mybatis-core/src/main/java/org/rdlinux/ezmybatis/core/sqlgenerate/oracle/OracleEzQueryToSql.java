@@ -51,7 +51,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
         OrderBy orderBy = query.getOrderBy();
         if (limit != null && (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
                 && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
-            if (sql.indexOf("WHERE") == -1) {
+            if (query.getWhere() == null) {
                 sql.append(" WHERE ");
             } else {
                 sql.append(" AND ");
