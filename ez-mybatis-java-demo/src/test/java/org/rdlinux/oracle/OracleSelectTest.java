@@ -148,4 +148,44 @@ public class OracleSelectTest extends OracleBaseTest {
         StringHashMap stringHashMap = OracleBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(stringHashMap));
     }
+
+    @Test
+    public void unionQuery() {
+        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        DbTable table = DbTable.of("aaa");
+        EzQuery<StringHashMap> liSiQuery = EzQuery.builder(StringHashMap.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addColumnCondition("ID", "1")
+                .done()
+                .build();
+
+        EzQuery<StringHashMap> wangErSongQuery = EzQuery.builder(StringHashMap.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addColumnCondition("ID", "2")
+                .done()
+                .build();
+
+        EzQuery<StringHashMap> wangErQuery = EzQuery.builder(StringHashMap.class).from(table).select()
+                .addAll().done()
+                .where()
+                .addColumnCondition("ID", "3")
+                .done()
+                .union(wangErSongQuery)
+                .build();
+
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table).select()
+                .addAll()
+                .done()
+                .where()
+                .addColumnCondition("ID", "4")
+                .done()
+                .union(liSiQuery)
+                .unionAll(wangErQuery)
+                .build();
+        System.out.println(mapper.query(query));
+        System.out.println(mapper.queryCount(query));
+        OracleBaseTest.sqlSession.close();
+    }
 }
