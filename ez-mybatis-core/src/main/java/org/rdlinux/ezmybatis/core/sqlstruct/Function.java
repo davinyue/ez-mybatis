@@ -167,6 +167,20 @@ public class Function implements SqlStruct {
             return this.addValueArg(true, argValue);
         }
 
+        public FunctionBuilder addKeywordsArg(boolean sure, String keywords) {
+            if (!sure) {
+                return this;
+            }
+            FunArg arg = new FunArg().setArgType(ArgType.KEYWORDS).setArgValue(keywords);
+            this.function.funArgs.add(arg);
+            return this;
+        }
+
+
+        public FunctionBuilder addKeywordsArg(String keywords) {
+            return this.addKeywordsArg(true, keywords);
+        }
+
         public FunctionBuilder addCaseWhenArg(boolean sure, CaseWhen caseWhen) {
             if (!sure) {
                 return this;

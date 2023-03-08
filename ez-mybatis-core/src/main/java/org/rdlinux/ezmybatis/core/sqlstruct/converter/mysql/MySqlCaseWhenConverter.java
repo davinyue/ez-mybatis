@@ -59,6 +59,8 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
             this.doBuildSql(type, sqlBuilder, configuration, (CaseWhen) caseWhenDatum.getValue(), mybatisParamHolder);
         } else if (argType == ArgType.VALUE) {
             sqlBuilder.append(mybatisParamHolder.getMybatisParamName(caseWhenDatum.getValue()));
+        } else if (argType == ArgType.KEYWORDS) {
+            sqlBuilder.append(caseWhenDatum.getValue());
         }
     }
 

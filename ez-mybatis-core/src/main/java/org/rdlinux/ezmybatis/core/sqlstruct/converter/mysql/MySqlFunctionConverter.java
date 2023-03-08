@@ -64,6 +64,8 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
                     converter.buildSql(type, sqlBuilder, configuration, arg.getArgValue(), mybatisParamHolder);
                 } else if (arg.getArgType() == ArgType.VALUE) {
                     sqlBuilder.append(mybatisParamHolder.getMybatisParamName(arg.getArgValue()));
+                } else if (arg.getArgType() == ArgType.KEYWORDS) {
+                    sqlBuilder.append(arg.getArgValue());
                 }
                 if (i + 1 < funArgs.size()) {
                     sqlBuilder.append(", ");

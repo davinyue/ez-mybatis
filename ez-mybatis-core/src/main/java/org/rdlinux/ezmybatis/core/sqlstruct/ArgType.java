@@ -27,5 +27,9 @@ public enum ArgType {
     /**
      * 普通值
      */
-    VALUE
+    VALUE,
+    /**
+     * 关键词
+     */
+    KEYWORDS;
 }
