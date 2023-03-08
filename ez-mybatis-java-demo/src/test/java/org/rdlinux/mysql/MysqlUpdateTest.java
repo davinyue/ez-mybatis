@@ -299,7 +299,9 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-                .setField("userAge", 1)
+                .setField(User.Fields.userAge, 1)
+                .setFieldKeywords(User.Fields.userAge, "age")
+                .setColumnKeywords("age", "age")
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
