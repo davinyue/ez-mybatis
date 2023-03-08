@@ -132,7 +132,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void ordeByTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-                .select().addAll().done()
+                .select().addKeywords("age").done()
                 .orderBy()
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name, OrderType.DESC)
