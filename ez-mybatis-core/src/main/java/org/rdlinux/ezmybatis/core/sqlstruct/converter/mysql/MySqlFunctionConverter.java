@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -55,6 +56,10 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
                 } else if (arg.getArgType() == Function.FunArgType.FORMULA) {
                     Converter<? extends Formula> converter = EzMybatisContent.getConverter(configuration,
                             ((Formula) arg.getArgValue()).getClass());
+                    converter.buildSql(type, sqlBuilder, configuration, arg.getArgValue(), mybatisParamHolder);
+                } else if (arg.getArgType() == Function.FunArgType.CASE_WHEN) {
+                    Converter<? extends CaseWhen> converter = EzMybatisContent.getConverter(configuration,
+                            ((CaseWhen) arg.getArgValue()).getClass());
                     converter.buildSql(type, sqlBuilder, configuration, arg.getArgValue(), mybatisParamHolder);
                 } else if (arg.getArgType() == Function.FunArgType.VALUE) {
                     sqlBuilder.append(mybatisParamHolder.getMybatisParamName(arg.getArgValue()));
