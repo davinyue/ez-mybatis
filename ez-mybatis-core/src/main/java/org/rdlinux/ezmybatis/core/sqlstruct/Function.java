@@ -3,7 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -161,7 +160,7 @@ public class Function implements SqlStruct {
             return this.addFunArg(true, function);
         }
 
-        public FunctionBuilder addFormulaArg(boolean sure, Formula formula) {
+        public FunctionBuilder addFormulaArg(boolean sure, org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula formula) {
             if (!sure) {
                 return this;
             }
@@ -172,7 +171,7 @@ public class Function implements SqlStruct {
         }
 
 
-        public FunctionBuilder addFormulaArg(Formula formula) {
+        public FunctionBuilder addFormulaArg(org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula formula) {
             return this.addFormulaArg(true, formula);
         }
 

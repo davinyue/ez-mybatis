@@ -3,7 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 import lombok.Getter;
 import lombok.Setter;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -449,14 +448,14 @@ public class Select implements SqlStruct {
             return this;
         }
 
-        public EzSelectBuilder<T> addFormula(boolean sure, Formula formula, String alias) {
+        public EzSelectBuilder<T> addFormula(boolean sure, org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula formula, String alias) {
             if (sure) {
                 this.selectFields.add(new SelectFormula(formula, alias));
             }
             return this;
         }
 
-        public EzSelectBuilder<T> addFormula(Formula formula, String alias) {
+        public EzSelectBuilder<T> addFormula(org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula formula, String alias) {
             return this.addFormula(true, formula, alias);
         }
 

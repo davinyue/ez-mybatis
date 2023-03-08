@@ -17,9 +17,9 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.DmConverterRegister;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlConverterRegister;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.DmConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.MySqlConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.OracleConverterRegister;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 

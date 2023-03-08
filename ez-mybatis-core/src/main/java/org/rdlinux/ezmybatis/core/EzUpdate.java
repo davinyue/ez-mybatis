@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core;
 
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -33,6 +34,12 @@ public class EzUpdate extends EzParam<Integer> {
             this.update.from = new From(table);
         }
 
+        private void checkEntityTable() {
+            if (!(this.update.table instanceof EntityTable)) {
+                throw new IllegalArgumentException("Only EntityTable is supported");
+            }
+        }
+
         public EzUpdateBuilder setColumn(String column, CaseWhen caseWhen) {
             //解决java重载问题, 如果第二个参数传入null, 将调用这个方法而不是setField(String field, Object value)
             if (caseWhen == null) {
@@ -50,6 +57,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder setField(String field, CaseWhen caseWhen) {
+            this.checkEntityTable();
             //解决java重载问题, 如果第二个参数传入null, 将调用这个方法而不是setField(String field, Object value)
             if (caseWhen == null) {
                 return this.setField(field, (Object) null);
@@ -78,6 +86,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder setField(String field, Object value) {
+            this.checkEntityTable();
             this.update.set.getItems().add(new UpdateFieldItem((EntityTable) this.update.table, field, value));
             return this;
         }
@@ -113,6 +122,7 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
         public EzUpdateBuilder setFieldSyntax(String field, String syntax) {
+            this.checkEntityTable();
             this.update.set.getItems().add(new SyntaxUpdateFieldItem((EntityTable) this.update.table, field, syntax));
             return this;
         }
@@ -182,6 +192,82 @@ public class EzUpdate extends EzParam<Integer> {
                 return this.setColumnSyntax(table, field, syntax);
             }
             return this;
+        }
+
+        public EzUpdateBuilder setFieldFormula(boolean sure, EntityTable table, String field, Formula formula) {
+            if (sure) {
+                this.update.set.getItems().add(new FormulaUpdateFieldItem(table, field, formula));
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldFormula(boolean sure, String field, Formula formula) {
+            if (sure) {
+                this.checkEntityTable();
+                return this.setFieldFormula(sure, (EntityTable) this.update.table, field, formula);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldFormula(String field, Formula formula) {
+            this.checkEntityTable();
+            return this.setFieldFormula(true, field, formula);
+        }
+
+        public EzUpdateBuilder setFieldFunction(boolean sure, EntityTable table, String field, Function function) {
+            if (sure) {
+                this.update.set.getItems().add(new FunctionUpdateFieldItem(table, field, function));
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldFunction(boolean sure, String field, Function function) {
+            if (sure) {
+                this.checkEntityTable();
+                return this.setFieldFunction(sure, (EntityTable) this.update.table, field, function);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldFunction(String field, Function function) {
+            this.checkEntityTable();
+            return this.setFieldFunction(true, field, function);
+        }
+
+        public EzUpdateBuilder setColumnFormula(boolean sure, Table table, String column, Formula formula) {
+            if (sure) {
+                this.update.set.getItems().add(new FormulaUpdateColumnItem(table, column, formula));
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnFormula(boolean sure, String column, Formula formula) {
+            if (sure) {
+                return this.setColumnFormula(sure, this.update.table, column, formula);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnFormula(String column, Formula formula) {
+            return this.setColumnFormula(true, column, formula);
+        }
+
+        public EzUpdateBuilder setColumnFunction(boolean sure, Table table, String column, Function function) {
+            if (sure) {
+                this.update.set.getItems().add(new FunctionUpdateColumnItem(table, column, function));
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnFunction(boolean sure, String column, Function function) {
+            if (sure) {
+                return this.setColumnFunction(sure, this.update.table, column, function);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnFunction(String column, Function function) {
+            return this.setColumnFunction(true, column, function);
         }
 
         public Join.JoinBuilder<EzUpdateBuilder> join(JoinType joinType, Table joinTable) {
