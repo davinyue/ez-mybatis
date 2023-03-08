@@ -34,5 +34,5 @@ public abstract class AbstractConverter<Obj extends SqlStruct> implements Conver
     }
 
     protected abstract StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                                Obj ojb, MybatisParamHolder mybatisParamHolder);
+                                                Obj obj, MybatisParamHolder mybatisParamHolder);
 }

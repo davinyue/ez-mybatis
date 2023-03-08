@@ -6,21 +6,22 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.FormulaElement;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.GroupFormulaElement;
 
-public class MySqlGroupFormulaElementConverter extends AbstractConverter<GroupFormulaElement>
-        implements Converter<GroupFormulaElement> {
-    private static volatile MySqlGroupFormulaElementConverter instance;
+import java.util.List;
 
-    protected MySqlGroupFormulaElementConverter() {
+public class MySqlFormulaConverter extends AbstractConverter<Formula> implements Converter<Formula> {
+    private static volatile MySqlFormulaConverter instance;
+
+    protected MySqlFormulaConverter() {
     }
 
-    public static MySqlGroupFormulaElementConverter getInstance() {
+    public static MySqlFormulaConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlGroupFormulaElementConverter.class) {
+            synchronized (MySqlFormulaConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlGroupFormulaElementConverter();
+                    instance = new MySqlFormulaConverter();
                 }
             }
         }
@@ -28,11 +29,14 @@ public class MySqlGroupFormulaElementConverter extends AbstractConverter<GroupFo
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       GroupFormulaElement obj,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Formula obj,
                                        MybatisParamHolder mybatisParamHolder) {
-        sqlBuilder.append(" ").append(obj.getOperator().getSymbol()).append(" (");
-        for (FormulaElement element : obj.getElements()) {
+        List<FormulaElement> elements = obj.getElements();
+        if (elements == null) {
+            return sqlBuilder;
+        }
+        sqlBuilder.append(" (");
+        for (FormulaElement element : elements) {
             Converter<? extends FormulaElement> converter = EzMybatisContent.getConverter(configuration,
                     element.getClass());
             converter.buildSql(type, sqlBuilder, configuration, element, mybatisParamHolder);

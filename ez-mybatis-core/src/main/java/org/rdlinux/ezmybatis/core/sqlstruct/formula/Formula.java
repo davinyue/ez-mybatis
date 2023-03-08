@@ -26,7 +26,7 @@ public class Formula implements SqlStruct {
     public static FormulaEleBuilder<FormulaBuilder> builder(Table table) {
         List<FormulaElement> elements = new LinkedList<>();
         FormulaBuilder formulaBuilder = new FormulaBuilder(table, elements);
-        return new FormulaEleBuilder<>(formulaBuilder, table, new LinkedList<>());
+        return new FormulaEleBuilder<>(formulaBuilder, table, elements);
     }
 
     public static class FormulaBuilder {
@@ -137,6 +137,19 @@ public class Formula implements SqlStruct {
         }
 
         /**
+         * 以自公式开始, 构建计算公式
+         */
+        public FormulaEleBuilder<ParentBuilder> withFormula(Formula formula) {
+            FormulaElement element = new FormulaFormulaElement(Operator.EMPTY, formula);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return this;
+        }
+
+        /**
          * 以()开始, 构建计算公式
          */
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> withGroup() {
@@ -197,6 +210,15 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> addValue(Object ojb) {
             FormulaElement element = new ValueFormulaElement(Operator.ADD, ojb);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
+         * 加公式
+         */
+        public FormulaEleBuilder<ParentBuilder> addFormula(Formula formula) {
+            FormulaElement element = new FormulaFormulaElement(Operator.ADD, formula);
             this.elements.add(element);
             return this;
         }
@@ -263,6 +285,15 @@ public class Formula implements SqlStruct {
         }
 
         /**
+         * 减公式
+         */
+        public FormulaEleBuilder<ParentBuilder> subtractFormula(Formula formula) {
+            FormulaElement element = new FormulaFormulaElement(Operator.SUBTRACT, formula);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 减()
          */
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> subtractGroup() {
@@ -324,6 +355,15 @@ public class Formula implements SqlStruct {
         }
 
         /**
+         * 乘公式
+         */
+        public FormulaEleBuilder<ParentBuilder> multiplyFormula(Formula formula) {
+            FormulaElement element = new FormulaFormulaElement(Operator.MULTIPLY, formula);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 乘()
          */
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> multiplyGroup() {
@@ -380,6 +420,15 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> divideValue(Object ojb) {
             FormulaElement element = new ValueFormulaElement(Operator.DIVIDE, ojb);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
+         * 除以公式
+         */
+        public FormulaEleBuilder<ParentBuilder> divideFormula(Formula formula) {
+            FormulaElement element = new FormulaFormulaElement(Operator.DIVIDE, formula);
             this.elements.add(element);
             return this;
         }

@@ -86,11 +86,15 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, NormalAliasCondition.class, MySqlNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, EzQuery.class, MySqlEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Function.class, MySqlFunctionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Formula.class, MySqlFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, GroupFormulaElement.class, MySqlGroupFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ColumnFormulaElement.class, MySqlColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FieldFormulaElement.class, MySqlFieldFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FunFormulaElement.class, MySqlFunFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, FormulaFormulaElement.class, MySqlFormulaFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ValueFormulaElement.class, MySqlValueFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Union.class, MySqlUnionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SelectFormula.class, MySqlSelectFormulaConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());
     }
 }

@@ -86,11 +86,15 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, NormalAliasCondition.class, DmNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, GroupFormulaElement.class, DmGroupFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ColumnFormulaElement.class, DmColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FieldFormulaElement.class, DmFieldFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FunFormulaElement.class, DmFunFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FormulaFormulaElement.class, DmFormulaFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ValueFormulaElement.class, DmValueFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Union.class, DmUnionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectFormula.class, DmSelectFormulaConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SelectFunction.class, DmSelectFunctionConverter.getInstance());
     }
 }

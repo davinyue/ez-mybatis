@@ -27,9 +27,10 @@ public class MySqlValueFormulaElementConverter extends AbstractConverter<ValueFo
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       ValueFormulaElement ojb,
+                                       ValueFormulaElement obj,
                                        MybatisParamHolder mybatisParamHolder) {
-        sqlBuilder.append(mybatisParamHolder.getMybatisParamName(ojb.getValue()));
+        sqlBuilder.append(" ").append(obj.getOperator().getSymbol()).append(" ");
+        sqlBuilder.append(mybatisParamHolder.getMybatisParamName(obj.getValue())).append(" ");
         return sqlBuilder;
     }
 
