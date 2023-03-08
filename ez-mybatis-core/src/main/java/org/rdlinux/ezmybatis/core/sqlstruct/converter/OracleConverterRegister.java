@@ -98,6 +98,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, FieldFormulaElement.class, OracleFieldFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FunFormulaElement.class, OracleFunFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FormulaFormulaElement.class, OracleFormulaFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenFormulaElement.class, OracleCaseWhenFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ValueFormulaElement.class, OracleValueFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Union.class, OracleUnionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFormula.class, OracleSelectFormulaConverter.getInstance());
