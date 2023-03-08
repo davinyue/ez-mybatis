@@ -357,7 +357,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .addFieldCondition(User.Fields.name, "王二1").then("李四")
                     .when()
                     .addFieldCondition(User.Fields.name, "王二1").then("李四")
-                    .els("王二");
+                    .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .setField(User.Fields.name, caseWhen)

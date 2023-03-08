@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
@@ -665,6 +666,22 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         List<StringHashMap> ret = mapper.query(query);
         System.out.println(JacksonUtils.toJsonString(ret));
+        sqlSession.close();
+    }
+
+    @Test
+    public void caseWhenSelectTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        CaseWhen caseWhen = CaseWhen.builder(table).when().addFieldCondition(User.Fields.name, "张三")
+                .then("1").els("2");
+        EzQuery<User> query = EzQuery.builder(User.class).from(table)
+                .select()
+                .addCaseWhen(caseWhen, User.Fields.name).done()
+                .page(1, 2)
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();
     }
 }

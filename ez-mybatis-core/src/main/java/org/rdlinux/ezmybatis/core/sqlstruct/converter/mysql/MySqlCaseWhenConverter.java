@@ -32,7 +32,7 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
         if (caseWhen == null || caseWhen.getCaseWhenData() == null || caseWhen.getCaseWhenData().isEmpty()) {
             return sqlBuilder;
         }
-        sqlBuilder.append(" CASE ");
+        sqlBuilder.append(" (CASE ");
         List<CaseWhen.CaseWhenData> caseWhenData = caseWhen.getCaseWhenData();
         for (CaseWhen.CaseWhenData caseWhenDatum : caseWhenData) {
             sqlBuilder.append(" WHEN ");
@@ -49,7 +49,7 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
             String elseValueParamName = mybatisParamHolder.getMybatisParamName(caseWhenElse.getValue());
             sqlBuilder.append(elseValueParamName);
         }
-        sqlBuilder.append(" END ");
+        sqlBuilder.append(" END) ");
         return sqlBuilder;
     }
 

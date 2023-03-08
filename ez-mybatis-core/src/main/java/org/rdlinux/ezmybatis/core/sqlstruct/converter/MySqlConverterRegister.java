@@ -43,6 +43,7 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, EzQueryTable.class, MySqlEzQueryTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SqlTable.class, MySqlSqlTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, CaseWhen.class, MySqlCaseWhenConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SelectCaseWhen.class, MySqlSelectCaseWhenConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectAllItem.class, MySqlSelectAllItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectAvgColumn.class, MySqlSelectAvgColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectColumn.class, MySqlSelectColumnConverter.getInstance());
@@ -91,7 +92,7 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, NormalAliasCondition.class, MySqlNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, EzQuery.class, MySqlEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Function.class, MySqlFunctionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.class, MySqlFormulaConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Formula.class, MySqlFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, GroupFormulaElement.class, MySqlGroupFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ColumnFormulaElement.class, MySqlColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FieldFormulaElement.class, MySqlFieldFormulaElementConverter.getInstance());

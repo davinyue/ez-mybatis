@@ -19,15 +19,15 @@ public class CaseWhen implements SqlStruct {
     /**
      * 表
      */
-    protected Table table;
+    private Table table;
     /**
      * CaseWhen条件数据
      */
-    protected List<CaseWhenData> caseWhenData;
+    private List<CaseWhenData> caseWhenData;
     /**
      * CaseWhen条件else数据
      */
-    protected CaseWhenElse caseWhenElse;
+    private CaseWhenElse caseWhenElse;
 
     private CaseWhen(Table table) {
         this.table = table;
