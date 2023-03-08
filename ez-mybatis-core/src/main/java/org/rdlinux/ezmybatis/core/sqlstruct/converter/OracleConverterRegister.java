@@ -58,6 +58,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectSumColumn.class, OracleSelectSumColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectSumField.class, OracleSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectTableAllItem.class, OracleSelectTableAllItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SelectKeywords.class, OracleSelectKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateColumnItem.class, OracleCaseWhenUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateFieldItem.class, OracleCaseWhenUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SyntaxUpdateColumnItem.class, OracleSyntaxUpdateColumnItemConverter.getInstance());
@@ -68,6 +69,8 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, FunctionUpdateColumnItem.class, OracleFunctionUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FormulaUpdateFieldItem.class, OracleFormulaUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FormulaUpdateColumnItem.class, OracleFormulaUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, KeywordsUpdateFieldItem.class, OracleKeywordsUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, KeywordsUpdateColumnItem.class, OracleKeywordsUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, BetweenAliasCondition.class, OracleBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NotBetweenAliasCondition.class, OracleNotBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, BetweenColumnCondition.class, OracleBetweenColumnConditionConverter.getInstance());
