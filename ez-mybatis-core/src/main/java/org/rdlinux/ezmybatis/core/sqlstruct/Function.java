@@ -37,36 +37,6 @@ public class Function implements SqlStruct {
     }
 
     /**
-     * 函数参数类型
-     */
-    public enum FunArgType {
-        /**
-         * 列
-         */
-        COLUMN,
-        /**
-         * 属性
-         */
-        FILED,
-        /**
-         * 函数
-         */
-        FUNC,
-        /**
-         * 公式
-         */
-        FORMULA,
-        /**
-         * CASE WHEN表达式
-         */
-        CASE_WHEN,
-        /**
-         * 普通值
-         */
-        VALUE
-    }
-
-    /**
      * 函数参数
      */
     @Getter
@@ -80,7 +50,7 @@ public class Function implements SqlStruct {
         /**
          * 参数类型
          */
-        private FunArgType argType;
+        private ArgType argType;
         /**
          * 参数值
          */
@@ -111,7 +81,7 @@ public class Function implements SqlStruct {
             }
             Assert.notNull(table, "table can not be null");
             Assert.notEmpty(column, "column can not be null");
-            FunArg arg = new FunArg().setArgType(FunArgType.COLUMN).setTable(table).setArgValue(column);
+            FunArg arg = new FunArg().setArgType(ArgType.COLUMN).setTable(table).setArgValue(column);
             this.function.funArgs.add(arg);
             return this;
         }
@@ -137,7 +107,7 @@ public class Function implements SqlStruct {
             if (!(table instanceof EntityTable)) {
                 throw new IllegalArgumentException("Only EntityTable is supported");
             }
-            FunArg arg = new FunArg().setArgType(FunArgType.FILED).setTable(table).setArgValue(field);
+            FunArg arg = new FunArg().setArgType(ArgType.FILED).setTable(table).setArgValue(field);
             this.function.funArgs.add(arg);
             return this;
         }
@@ -159,7 +129,7 @@ public class Function implements SqlStruct {
                 return this;
             }
             Assert.notNull(function, "function can not be null");
-            FunArg arg = new FunArg().setArgType(FunArgType.FUNC).setArgValue(function);
+            FunArg arg = new FunArg().setArgType(ArgType.FUNC).setArgValue(function);
             this.function.funArgs.add(arg);
             return this;
         }
@@ -173,7 +143,7 @@ public class Function implements SqlStruct {
                 return this;
             }
             Assert.notNull(formula, "formula can not be null");
-            FunArg arg = new FunArg().setArgType(FunArgType.FORMULA).setArgValue(formula);
+            FunArg arg = new FunArg().setArgType(ArgType.FORMULA).setArgValue(formula);
             this.function.funArgs.add(arg);
             return this;
         }
@@ -187,7 +157,7 @@ public class Function implements SqlStruct {
             if (!sure) {
                 return this;
             }
-            FunArg arg = new FunArg().setArgType(FunArgType.VALUE).setArgValue(argValue);
+            FunArg arg = new FunArg().setArgType(ArgType.VALUE).setArgValue(argValue);
             this.function.funArgs.add(arg);
             return this;
         }
@@ -201,7 +171,7 @@ public class Function implements SqlStruct {
             if (!sure) {
                 return this;
             }
-            FunArg arg = new FunArg().setArgType(FunArgType.CASE_WHEN).setArgValue(caseWhen);
+            FunArg arg = new FunArg().setArgType(ArgType.CASE_WHEN).setArgValue(caseWhen);
             this.function.funArgs.add(arg);
             return this;
         }

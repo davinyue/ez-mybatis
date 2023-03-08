@@ -1,11 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +30,7 @@ public class CaseWhen implements SqlStruct {
     /**
      * CaseWhen条件else数据
      */
-    private CaseWhenElse caseWhenElse;
+    private CaseWhenData els;
 
     private CaseWhen(Table table) {
         this.table = table;
@@ -45,11 +48,20 @@ public class CaseWhen implements SqlStruct {
      */
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class CaseWhenData {
         /**
          * 条件
          */
         private List<Condition> conditions;
+        /**
+         * 表
+         */
+        private Table table;
+        /**
+         * 值类型
+         */
+        private ArgType argType;
         /**
          * 值
          */
@@ -71,24 +83,73 @@ public class CaseWhen implements SqlStruct {
              * 条件匹配时的值
              */
             public CaseWhenBuilder then(Object value) {
-                this.caseWhenData.setValue(value);
+                this.caseWhenData.setArgType(ArgType.VALUE).setValue(value);
+                return this.parentBuilder;
+            }
+
+            /**
+             * 条件匹配时的值, 返回列
+             */
+            public CaseWhenBuilder thenColumn(Table table, String column) {
+                Assert.notNull(table, "table can not be null");
+                Assert.notEmpty(column, "column can not be null");
+                this.caseWhenData.setTable(table).setArgType(ArgType.COLUMN).setValue(column);
+                return this.parentBuilder;
+            }
+
+            /**
+             * 条件匹配时的值, 返回列
+             */
+            public CaseWhenBuilder thenColumn(String column) {
+                return this.thenColumn(this.table, column);
+            }
+
+            /**
+             * 条件匹配时的值, 返回实体属性对应列
+             */
+            public CaseWhenBuilder thenField(EntityTable table, String field) {
+                Assert.notNull(table, "table can not be null");
+                Assert.notEmpty(field, "field can not be null");
+                this.caseWhenData.setTable(table).setArgType(ArgType.FILED).setValue(field);
+                return this.parentBuilder;
+            }
+
+            /**
+             * 条件匹配时的值, 返回实体属性对应列
+             */
+            public CaseWhenBuilder thenField(String field) {
+                this.checkEntityTable();
+                return this.thenField((EntityTable) this.table, field);
+            }
+
+            /**
+             * 条件匹配时的值, 返回函数
+             */
+            public CaseWhenBuilder thenFunc(Function function) {
+                Assert.notNull(function, "function can not be null");
+                this.caseWhenData.setArgType(ArgType.FUNC).setValue(function);
+                return this.parentBuilder;
+            }
+
+            /**
+             * 条件匹配时的值, 返回计算公式
+             */
+            public CaseWhenBuilder thenFormula(Formula formula) {
+                Assert.notNull(formula, "formula can not be null");
+                this.caseWhenData.setArgType(ArgType.FORMULA).setValue(formula);
+                return this.parentBuilder;
+            }
+
+            /**
+             * 条件匹配时的值, 返回case when
+             */
+            public CaseWhenBuilder thenCaseWhen(CaseWhen caseWhen) {
+                Assert.notNull(caseWhen, "caseWhen can not be null");
+                this.caseWhenData.setArgType(ArgType.CASE_WHEN).setValue(caseWhen);
                 return this.parentBuilder;
             }
         }
 
-    }
-
-    /**
-     * CaseWhen条件else数据
-     */
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    public static class CaseWhenElse {
-        /**
-         * 值
-         */
-        private Object value;
     }
 
     /**
@@ -120,8 +181,76 @@ public class CaseWhen implements SqlStruct {
          * else, else将会构造结束
          */
         public CaseWhen els(Object value) {
-            this.caseWhen.setCaseWhenElse(new CaseWhenElse(value));
+            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.VALUE).setValue(value));
             return this.caseWhen;
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsColumn(Table table, String column) {
+            Assert.notNull(table, "table can not be null");
+            Assert.notEmpty(column, "column can not be null");
+            this.caseWhen.setEls(new CaseWhenData().setTable(table).setArgType(ArgType.COLUMN).setValue(column));
+            return this.caseWhen;
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsColumn(String column) {
+            return this.elsColumn(this.table, column);
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsField(EntityTable table, String field) {
+            Assert.notNull(table, "table can not be null");
+            Assert.notEmpty(field, "field can not be null");
+            this.caseWhen.setEls(new CaseWhenData().setTable(table).setArgType(ArgType.COLUMN).setValue(field));
+            return this.caseWhen;
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsField(String field) {
+            this.checkEntityTable();
+            return this.elsField((EntityTable) this.table, field);
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsFunc(Function function) {
+            Assert.notNull(function, "function can not be null");
+            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.FUNC).setValue(function));
+            return this.caseWhen;
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsFormula(Formula formula) {
+            Assert.notNull(formula, "formula can not be null");
+            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.FORMULA).setValue(formula));
+            return this.caseWhen;
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsCaseWhen(CaseWhen caseWhen) {
+            Assert.notNull(caseWhen, "caseWhen can not be null");
+            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.CASE_WHEN).setValue(caseWhen));
+            return this.caseWhen;
+        }
+
+        private void checkEntityTable() {
+            if (!(this.table instanceof EntityTable)) {
+                throw new IllegalArgumentException("Only EntityTable is supported");
+            }
         }
 
         /**
