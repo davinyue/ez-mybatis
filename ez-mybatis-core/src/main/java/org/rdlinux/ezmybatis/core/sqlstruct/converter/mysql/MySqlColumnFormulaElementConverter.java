@@ -28,11 +28,12 @@ public class MySqlColumnFormulaElementConverter extends AbstractConverter<Column
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       ColumnFormulaElement ojb,
+                                       ColumnFormulaElement obj,
                                        MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        sqlBuilder.append(ojb.getTable().getAlias()).append(".").append(keywordQM)
-                .append(ojb.getColumn()).append(keywordQM);
+        sqlBuilder.append(" ").append(obj.getOperator().getSymbol()).append(" ")
+                .append(obj.getTable().getAlias()).append(".").append(keywordQM)
+                .append(obj.getColumn()).append(keywordQM).append(" ");
         return sqlBuilder;
     }
 

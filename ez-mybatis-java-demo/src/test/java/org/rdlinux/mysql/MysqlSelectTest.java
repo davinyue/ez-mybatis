@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -613,6 +615,57 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .build();
         System.out.println(mapper.query(query));
         System.out.println(mapper.queryCount(query));
+        sqlSession.close();
+    }
+
+    @Test
+    public void functionQueryTest() {
+        EntityTable table = EntityTable.of(User.class);
+        Formula formula = Formula.builder(table).withField(User.Fields.userAge).addField(User.Fields.userAge)
+                .done().build();
+        Function sonFun = Function.builder(table).setFunName("CONCAT").addFieldArg(User.Fields.name)
+                .addFieldArg(User.Fields.userAge).addValueArg("-").addFormulaArg(formula).build();
+        Function function = Function.builder(table).setFunName("CONCAT").addValueArg("test-")
+                .addFunArg(sonFun).build();
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addFunc(function, "nameAge")
+                .done()
+                .page(1, 2)
+                .build();
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        List<StringHashMap> ret = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(ret));
+        sqlSession.close();
+    }
+
+    @Test
+    public void formulaQueryTest() {
+        EntityTable table = EntityTable.of(User.class);
+        Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
+
+        Formula sonFormula = Formula.builder(table).withField(User.Fields.userAge).subtractField(User.Fields.userAge)
+                .done().build();
+
+        Formula formula = Formula.builder(table).withValue(100).subtractFun(function).addFormula(sonFormula)
+                .addGroup()
+                .withValue(100).multiplyValue(4).divideValue(2)
+                .multiplyGroup()
+                .withValue(1).addValue(2)
+                .done()
+                .done()
+                .done().build();
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addFormula(formula, "nameAge")
+                .done()
+                .page(1, 2)
+                .build();
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        List<StringHashMap> ret = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(ret));
         sqlSession.close();
     }
 }

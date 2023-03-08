@@ -31,13 +31,15 @@ public class MySqlFieldFormulaElementConverter extends AbstractConverter<FieldFo
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       FieldFormulaElement ojb,
+                                       FieldFormulaElement obj,
                                        MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration,
-                ((EntityTable) ojb.getTable()).getEtType());
-        String columnName = entityClassInfo.getFieldInfo(ojb.getFiled()).getColumnName();
-        sqlBuilder.append(ojb.getTable().getAlias()).append(".").append(keywordQM).append(columnName).append(keywordQM);
+                ((EntityTable) obj.getTable()).getEtType());
+        String columnName = entityClassInfo.getFieldInfo(obj.getFiled()).getColumnName();
+        sqlBuilder.append(" ").append(obj.getOperator().getSymbol()).append(" ")
+                .append(obj.getTable().getAlias()).append(".")
+                .append(keywordQM).append(columnName).append(keywordQM).append(" ");
         return sqlBuilder;
     }
 
