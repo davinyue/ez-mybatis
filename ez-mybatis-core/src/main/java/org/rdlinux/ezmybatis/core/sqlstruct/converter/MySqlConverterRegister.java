@@ -100,6 +100,7 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, FormulaFormulaElement.class, MySqlFormulaFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenFormulaElement.class, MySqlCaseWhenFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ValueFormulaElement.class, MySqlValueFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, KeywordsFormulaElement.class, MySqlKeywordsFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Union.class, MySqlUnionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectFormula.class, MySqlSelectFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());

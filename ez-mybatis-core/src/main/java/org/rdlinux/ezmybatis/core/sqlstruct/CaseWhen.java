@@ -88,6 +88,15 @@ public class CaseWhen implements SqlStruct {
             }
 
             /**
+             * 条件匹配时的值
+             */
+            public CaseWhenBuilder thenKeywords(String keywords) {
+                Assert.notEmpty(keywords, keywords);
+                this.caseWhenData.setArgType(ArgType.KEYWORDS).setValue(keywords);
+                return this.parentBuilder;
+            }
+
+            /**
              * 条件匹配时的值, 返回列
              */
             public CaseWhenBuilder thenColumn(Table table, String column) {
@@ -182,6 +191,14 @@ public class CaseWhen implements SqlStruct {
          */
         public CaseWhen els(Object value) {
             this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.VALUE).setValue(value));
+            return this.caseWhen;
+        }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen elsKeywords(Object keywords) {
+            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.KEYWORDS).setValue(keywords));
             return this.caseWhen;
         }
 

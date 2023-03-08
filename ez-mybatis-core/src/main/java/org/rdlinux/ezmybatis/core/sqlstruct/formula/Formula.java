@@ -140,10 +140,23 @@ public class Formula implements SqlStruct {
         }
 
         /**
-         * 以自公式开始, 构建计算公式
+         * 以计算公式开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withFormula(Formula formula) {
             FormulaElement element = new FormulaFormulaElement(Operator.EMPTY, formula);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return this;
+        }
+
+        /**
+         * 以关键词开始, 构建计算公式
+         */
+        public FormulaEleBuilder<ParentBuilder> withKeywords(String keywords) {
+            FormulaElement element = new KeywordsFormulaElement(Operator.EMPTY, keywords);
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
@@ -227,6 +240,15 @@ public class Formula implements SqlStruct {
         }
 
         /**
+         * 加关键字
+         */
+        public FormulaEleBuilder<ParentBuilder> addKeywords(String keywords) {
+            FormulaElement element = new KeywordsFormulaElement(Operator.ADD, keywords);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 加()
          */
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> addGroup() {
@@ -292,6 +314,15 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> subtractFormula(Formula formula) {
             FormulaElement element = new FormulaFormulaElement(Operator.SUBTRACT, formula);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
+         * 减关键字
+         */
+        public FormulaEleBuilder<ParentBuilder> subtractKeywords(String keywords) {
+            FormulaElement element = new KeywordsFormulaElement(Operator.SUBTRACT, keywords);
             this.elements.add(element);
             return this;
         }
@@ -367,6 +398,15 @@ public class Formula implements SqlStruct {
         }
 
         /**
+         * 乘关键字
+         */
+        public FormulaEleBuilder<ParentBuilder> multiplyKeywords(String keywords) {
+            FormulaElement element = new KeywordsFormulaElement(Operator.MULTIPLY, keywords);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 乘()
          */
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> multiplyGroup() {
@@ -432,6 +472,15 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> divideFormula(Formula formula) {
             FormulaElement element = new FormulaFormulaElement(Operator.DIVIDE, formula);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
+         * 除以键字
+         */
+        public FormulaEleBuilder<ParentBuilder> divideKeywords(String keywords) {
+            FormulaElement element = new KeywordsFormulaElement(Operator.DIVIDE, keywords);
             this.elements.add(element);
             return this;
         }
