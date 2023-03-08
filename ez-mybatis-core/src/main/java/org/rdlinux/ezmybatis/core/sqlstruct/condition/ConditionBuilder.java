@@ -40,7 +40,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         return this.parentBuilder;
     }
 
-    private void checkEntityTable() {
+    protected void checkEntityTable() {
         if (!(this.table instanceof EntityTable)) {
             throw new IllegalArgumentException("Only EntityTable is supported");
         }

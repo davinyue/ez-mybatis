@@ -350,13 +350,23 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
+            Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
+            Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
+
+            CaseWhen sonCaseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .els("王二1");
+
             CaseWhen caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then("李四")
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then("李四")
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
@@ -364,6 +374,87 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsCaseWhen(sonCaseWhen);
+            ezUpdate = EzUpdate.update(table)
+                    .setField(User.Fields.name, caseWhen)
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsFormula(formula);
+            ezUpdate = EzUpdate.update(table)
+                    .setField(User.Fields.name, caseWhen)
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsFunc(function);
+            ezUpdate = EzUpdate.update(table)
+                    .setField(User.Fields.name, caseWhen)
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsColumn("name");
+            ezUpdate = EzUpdate.update(table)
+                    .setField(User.Fields.name, caseWhen)
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsField(User.Fields.name);
+            ezUpdate = EzUpdate.update(table)
+                    .setField(User.Fields.name, caseWhen)
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
             sqlSession.commit();
         } catch (Exception e) {
             sqlSession.rollback();
