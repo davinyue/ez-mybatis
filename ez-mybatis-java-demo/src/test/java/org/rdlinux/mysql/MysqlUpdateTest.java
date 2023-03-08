@@ -494,8 +494,11 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             EntityTable table = EntityTable.of(User.class);
             Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
                     .addValueArg(100).build();
+
+            Function updateTimeFunction = Function.builder(table).setFunName("now").build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .setFieldFunction(User.Fields.userAge, function)
+                    .setFieldFunction(BaseEntity.Fields.updateTime, updateTimeFunction)
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
                     .build();
