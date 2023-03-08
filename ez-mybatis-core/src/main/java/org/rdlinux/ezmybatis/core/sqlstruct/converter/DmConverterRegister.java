@@ -98,6 +98,7 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, FieldFormulaElement.class, DmFieldFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FunFormulaElement.class, DmFunFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FormulaFormulaElement.class, DmFormulaFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, CaseWhenFormulaElement.class, DmCaseWhenFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ValueFormulaElement.class, DmValueFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Union.class, DmUnionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SelectFormula.class, DmSelectFormulaConverter.getInstance());
