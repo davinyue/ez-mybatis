@@ -32,7 +32,7 @@ public class MySqlSelectFormulaConverter extends AbstractConverter<SelectFormula
         Converter<? extends Formula> converter = EzMybatisContent.getConverter(configuration, obj.getFormula()
                 .getClass());
         converter.buildSql(type, sqlBuilder, configuration, obj.getFormula(), mybatisParamHolder);
-        sqlBuilder.append(" ").append(obj.getAlias());
+        sqlBuilder.append(" ").append(obj.getAlias()).append(" ");
         return sqlBuilder;
     }
 

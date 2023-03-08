@@ -43,6 +43,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, EzQueryTable.class, OracleEzQueryTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SqlTable.class, OracleSqlTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, CaseWhen.class, OracleCaseWhenConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SelectCaseWhen.class, OracleSelectCaseWhenConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectAllItem.class, OracleSelectAllItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectAvgColumn.class, OracleSelectAvgColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectColumn.class, OracleSelectColumnConverter.getInstance());
@@ -91,7 +92,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, NormalAliasCondition.class, OracleNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EzQuery.class, OracleEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Function.class, OracleFunctionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.class, OracleFormulaConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Formula.class, OracleFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, GroupFormulaElement.class, OracleGroupFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ColumnFormulaElement.class, OracleColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FieldFormulaElement.class, OracleFieldFormulaElementConverter.getInstance());
