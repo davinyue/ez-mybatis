@@ -29,6 +29,9 @@ public class Function implements SqlStruct {
      */
     private List<FunArg> funArgs;
 
+    private Function() {
+    }
+
     public static FunctionBuilder builder(Table table) {
         return new FunctionBuilder(table);
     }
@@ -53,6 +56,10 @@ public class Function implements SqlStruct {
          * 公式
          */
         FORMULA,
+        /**
+         * CASE WHEN表达式
+         */
+        CASE_WHEN,
         /**
          * 普通值
          */
@@ -188,6 +195,20 @@ public class Function implements SqlStruct {
 
         public FunctionBuilder addValueArg(Object argValue) {
             return this.addValueArg(true, argValue);
+        }
+
+        public FunctionBuilder addCaseWhenArg(boolean sure, CaseWhen caseWhen) {
+            if (!sure) {
+                return this;
+            }
+            FunArg arg = new FunArg().setArgType(FunArgType.CASE_WHEN).setArgValue(caseWhen);
+            this.function.funArgs.add(arg);
+            return this;
+        }
+
+
+        public FunctionBuilder addCaseWhenArg(CaseWhen caseWhen) {
+            return this.addCaseWhenArg(true, caseWhen);
         }
 
         public Function build() {

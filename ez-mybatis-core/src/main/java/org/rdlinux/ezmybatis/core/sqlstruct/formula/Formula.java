@@ -23,6 +23,9 @@ public class Formula implements SqlStruct {
      */
     private List<FormulaElement> elements;
 
+    private Formula() {
+    }
+
     public static FormulaEleBuilder<FormulaBuilder> builder(Table table) {
         List<FormulaElement> elements = new LinkedList<>();
         FormulaBuilder formulaBuilder = new FormulaBuilder(table, elements);
