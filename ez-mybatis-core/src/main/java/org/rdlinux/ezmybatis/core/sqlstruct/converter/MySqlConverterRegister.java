@@ -58,6 +58,7 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SelectSumColumn.class, MySqlSelectSumColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectSumField.class, MySqlSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectTableAllItem.class, MySqlSelectTableAllItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SelectKeywords.class, MySqlSelectKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenUpdateColumnItem.class, MySqlCaseWhenUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenUpdateFieldItem.class, MySqlCaseWhenUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SyntaxUpdateColumnItem.class, MySqlSyntaxUpdateColumnItemConverter.getInstance());
@@ -68,6 +69,8 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, FunctionUpdateColumnItem.class, MySqlFunctionUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FormulaUpdateFieldItem.class, MySqlFormulaUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FormulaUpdateColumnItem.class, MySqlFormulaUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, KeywordsUpdateFieldItem.class, MySqlKeywordsUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, KeywordsUpdateColumnItem.class, MySqlKeywordsUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, BetweenAliasCondition.class, MySqlBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NotBetweenAliasCondition.class, MySqlNotBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, BetweenColumnCondition.class, MySqlBetweenColumnConditionConverter.getInstance());

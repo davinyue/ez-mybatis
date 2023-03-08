@@ -481,5 +481,24 @@ public class Select implements SqlStruct {
         public EzSelectBuilder<T> addCaseWhen(CaseWhen caseWhen, String alias) {
             return this.addCaseWhen(true, caseWhen, alias);
         }
+
+        public EzSelectBuilder<T> addKeywords(boolean sure, String keywords, String alias) {
+            if (sure) {
+                this.selectFields.add(new SelectKeywords(keywords, alias));
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addKeywords(boolean sure, String keywords) {
+            return this.addKeywords(sure, keywords, null);
+        }
+
+        public EzSelectBuilder<T> addKeywords(String keywords, String alias) {
+            return this.addKeywords(true, keywords, alias);
+        }
+
+        public EzSelectBuilder<T> addKeywords(String keywords) {
+            return this.addKeywords(true, keywords, null);
+        }
     }
 }

@@ -270,6 +270,43 @@ public class EzUpdate extends EzParam<Integer> {
             return this.setColumnFunction(true, column, function);
         }
 
+        public EzUpdateBuilder setColumnKeywords(boolean sure, Table table, String column, String keywords) {
+            if (sure) {
+                this.update.set.getItems().add(new KeywordsUpdateColumnItem(table, column, keywords));
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnKeywords(boolean sure, String column, String keywords) {
+            if (sure) {
+                return this.setColumnKeywords(sure, this.update.table, column, keywords);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setColumnKeywords(String column, String keywords) {
+            return this.setColumnKeywords(true, column, keywords);
+        }
+
+        public EzUpdateBuilder setFieldKeywords(boolean sure, EntityTable table, String field, String keywords) {
+            if (sure) {
+                this.update.set.getItems().add(new KeywordsUpdateFieldItem(table, field, keywords));
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldKeywords(boolean sure, String field, String keywords) {
+            if (sure) {
+                this.checkEntityTable();
+                return this.setFieldKeywords(sure, (EntityTable) this.update.table, field, keywords);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder setFieldKeywords(String field, String keywords) {
+            return this.setFieldKeywords(true, field, keywords);
+        }
+
         public Join.JoinBuilder<EzUpdateBuilder> join(JoinType joinType, Table joinTable) {
             if (this.update.getJoins() == null) {
                 this.update.joins = new LinkedList<>();
