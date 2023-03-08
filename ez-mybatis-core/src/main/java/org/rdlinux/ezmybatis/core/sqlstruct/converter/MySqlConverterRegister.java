@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -62,6 +63,10 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SyntaxUpdateFieldItem.class, MySqlSyntaxUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, UpdateColumnItem.class, MySqlUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, UpdateFieldItem.class, MySqlUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, FunctionUpdateFieldItem.class, MySqlFunctionUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, FunctionUpdateColumnItem.class, MySqlFunctionUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, FormulaUpdateFieldItem.class, MySqlFormulaUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, FormulaUpdateColumnItem.class, MySqlFormulaUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, BetweenAliasCondition.class, MySqlBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NotBetweenAliasCondition.class, MySqlNotBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, BetweenColumnCondition.class, MySqlBetweenColumnConditionConverter.getInstance());
@@ -86,7 +91,7 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, NormalAliasCondition.class, MySqlNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, EzQuery.class, MySqlEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Function.class, MySqlFunctionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, Formula.class, MySqlFormulaConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.class, MySqlFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, GroupFormulaElement.class, MySqlGroupFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ColumnFormulaElement.class, MySqlColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FieldFormulaElement.class, MySqlFieldFormulaElementConverter.getInstance());

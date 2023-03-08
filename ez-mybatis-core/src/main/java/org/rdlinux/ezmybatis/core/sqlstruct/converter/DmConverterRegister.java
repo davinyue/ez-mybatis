@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -62,6 +63,10 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SyntaxUpdateFieldItem.class, DmSyntaxUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, UpdateColumnItem.class, DmUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, UpdateFieldItem.class, DmUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FunctionUpdateFieldItem.class, DmFunctionUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FunctionUpdateColumnItem.class, DmFunctionUpdateColumnItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FormulaUpdateFieldItem.class, DmFormulaUpdateFieldItemConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FormulaUpdateColumnItem.class, DmFormulaUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, BetweenAliasCondition.class, DmBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NotBetweenAliasCondition.class, DmNotBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, BetweenColumnCondition.class, DmBetweenColumnConditionConverter.getInstance());
@@ -86,7 +91,7 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, NormalAliasCondition.class, DmNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.class, DmFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, GroupFormulaElement.class, DmGroupFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ColumnFormulaElement.class, DmColumnFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FieldFormulaElement.class, DmFieldFormulaElementConverter.getInstance());

@@ -9,7 +9,6 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 import java.util.List;
@@ -53,8 +52,8 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
                 } else if (arg.getArgType() == Function.FunArgType.FUNC) {
                     this.doBuildSql(type, sqlBuilder, configuration, (Function) arg.getArgValue(), mybatisParamHolder);
                 } else if (arg.getArgType() == Function.FunArgType.FORMULA) {
-                    Converter<? extends Formula> converter = EzMybatisContent.getConverter(configuration,
-                            ((Formula) arg.getArgValue()).getClass());
+                    Converter<? extends org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula> converter = EzMybatisContent.getConverter(configuration,
+                            ((org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula) arg.getArgValue()).getClass());
                     converter.buildSql(type, sqlBuilder, configuration, arg.getArgValue(), mybatisParamHolder);
                 } else if (arg.getArgType() == Function.FunArgType.VALUE) {
                     sqlBuilder.append(mybatisParamHolder.getMybatisParamName(arg.getArgValue()));

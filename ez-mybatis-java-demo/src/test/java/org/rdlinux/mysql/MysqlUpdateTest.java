@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
+import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.User;
@@ -360,6 +362,51 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .setField(User.Fields.name, caseWhen)
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void formulaUpdateTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EntityTable table = EntityTable.of(User.class);
+            Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+            EzUpdate ezUpdate = EzUpdate.update(table)
+                    .setFieldFormula(User.Fields.userAge, formula)
+                    .where()
+                    .addFieldCondition(BaseEntity.Fields.id, "1").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void functionUpdateTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EntityTable table = EntityTable.of(User.class);
+            Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
+                    .addValueArg(100).build();
+            EzUpdate ezUpdate = EzUpdate.update(table)
+                    .setFieldFunction(User.Fields.userAge, function)
+                    .where()
+                    .addFieldCondition(BaseEntity.Fields.id, "1").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
             sqlSession.commit();

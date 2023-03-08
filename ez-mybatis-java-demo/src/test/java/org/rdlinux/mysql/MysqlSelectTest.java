@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -621,7 +620,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void functionQueryTest() {
         EntityTable table = EntityTable.of(User.class);
-        Formula formula = Formula.builder(table).withField(User.Fields.userAge).addField(User.Fields.userAge)
+        org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula formula = org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.builder(table).withField(User.Fields.userAge).addField(User.Fields.userAge)
                 .done().build();
         Function sonFun = Function.builder(table).setFunName("CONCAT").addFieldArg(User.Fields.name)
                 .addFieldArg(User.Fields.userAge).addValueArg("-").addFormulaArg(formula).build();
@@ -645,10 +644,10 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
         Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
 
-        Formula sonFormula = Formula.builder(table).withField(User.Fields.userAge).subtractField(User.Fields.userAge)
+        org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula sonFormula = org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.builder(table).withField(User.Fields.userAge).subtractField(User.Fields.userAge)
                 .done().build();
 
-        Formula formula = Formula.builder(table).withValue(100).subtractFun(function).addFormula(sonFormula)
+        org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula formula = org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula.builder(table).withValue(100).subtractFun(function).addFormula(sonFormula)
                 .addGroup()
                 .withValue(100).multiplyValue(4).divideValue(2)
                 .multiplyGroup()
