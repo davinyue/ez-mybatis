@@ -500,5 +500,39 @@ public class Select implements SqlStruct {
         public EzSelectBuilder<T> addKeywords(String keywords) {
             return this.addKeywords(true, keywords, null);
         }
+
+        /**
+         * 添加一个自定义值, 并指定别名
+         */
+        public EzSelectBuilder<T> addValue(boolean sure, String value, String alias) {
+            if (sure) {
+                this.selectFields.add(new SelectValue(value, alias));
+            }
+            return this;
+        }
+
+        /**
+         * 添加一个自定义值, 并指定别名
+         */
+        public EzSelectBuilder<T> addValue(String value, String alias) {
+            return this.addValue(true, value, alias);
+        }
+
+        /**
+         * 添加一个自定义值, 并指定别名
+         */
+        public EzSelectBuilder<T> addValue(boolean sure, Number value, String alias) {
+            if (sure) {
+                this.selectFields.add(new SelectValue(value, alias));
+            }
+            return this;
+        }
+
+        /**
+         * 添加一个自定义值, 并指定别名
+         */
+        public EzSelectBuilder<T> addValue(Number value, String alias) {
+            return this.addValue(true, value, alias);
+        }
     }
 }

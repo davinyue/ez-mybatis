@@ -107,5 +107,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, Union.class, OracleUnionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFormula.class, OracleSelectFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFunction.class, OracleSelectFunctionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SelectValue.class, OracleSelectValueConverter.getInstance());
     }
 }
