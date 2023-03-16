@@ -107,5 +107,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, Union.class, MySqlUnionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectFormula.class, MySqlSelectFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SelectValue.class, MySqlSelectValueConverter.getInstance());
     }
 }

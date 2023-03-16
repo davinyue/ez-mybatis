@@ -147,10 +147,12 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void groupByTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
                 .select()
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name)
+                .addValue("二三班", "class")
+                .addValue(123.12, "balance")
                 .done()
                 .groupBy()
                 .addField(User.Fields.userAge)
@@ -158,7 +160,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .page(1, 5)
                 .build();
-        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        List<StringHashMap> users = sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
         sqlSession.close();
     }
