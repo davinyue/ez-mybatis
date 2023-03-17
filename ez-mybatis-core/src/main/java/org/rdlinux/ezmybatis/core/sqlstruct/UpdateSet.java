@@ -1,16 +1,16 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import lombok.Getter;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class Update {
+public class UpdateSet {
     private List<UpdateItem> items;
 
-    public Update() {
+    public UpdateSet() {
         this.items = new LinkedList<>();
     }
 }

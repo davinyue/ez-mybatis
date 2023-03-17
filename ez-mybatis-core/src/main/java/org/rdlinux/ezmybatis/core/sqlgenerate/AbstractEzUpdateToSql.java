@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Update;
+import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
@@ -49,7 +49,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
 
     protected StringBuilder setToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                      MybatisParamHolder mybatisParamHolder) {
-        Update set = update.getSet();
+        UpdateSet set = update.getSet();
         if (set == null || set.getItems() == null || set.getItems().isEmpty()) {
             throw new IllegalArgumentException("update items can not be null");
         }
