@@ -67,6 +67,9 @@ public class Merge implements SqlExpand {
         }
 
         public MergeOnBuilder<MergeBuilder> on(Table table) {
+            if (this.merge.useTable == null) {
+                throw new IllegalArgumentException("Please use the 'using' method to initialize the table being used first.");
+            }
             if (this.merge.on == null) {
                 this.merge.on = new LinkedList<>();
             }
