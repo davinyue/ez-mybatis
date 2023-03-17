@@ -102,4 +102,8 @@ public abstract class EzMybatisConstant {
      * mapper参数, 返回结果类型
      */
     public static final String MAPPER_PARAM_RET = "mp_ret";
+    /**
+     * mapper参数, 自定义更新扩展
+     */
+    public static final String MAPPER_PARAM_UPDATE_EXPAND = "mp_update_expand";
 }

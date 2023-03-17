@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzUpdateProvider;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.io.Serializable;
@@ -136,6 +137,12 @@ public interface EzMapper {
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_BY_SQL_METHOD)
     Integer updateBySql(@Param(EzMybatisConstant.MAPPER_PARAM_SQL) String sql,
                         @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
+
+    /**
+     * 扩展更新
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.EXPAND_UPDATE_METHOD)
+    Integer expandUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_UPDATE_EXPAND) SqlExpand expand);
 
     /**
      * 批量删除
