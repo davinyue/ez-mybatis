@@ -884,12 +884,53 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     /**
      * 添对比条件
      */
+    public SonBuilder addFieldCompareCondition(boolean sure, LogicalOperator logicalOperator, EntityTable leftTable,
+                                               String leftField, Operator operator, EntityTable rightTable,
+                                               String rightField) {
+        if (sure) {
+            this.conditions.add(new FieldCompareCondition(logicalOperator, leftTable, leftField, operator, rightTable,
+                    rightField));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCompareCondition(boolean sure, EntityTable leftTable,
+                                               String leftField, Operator operator, EntityTable rightTable,
+                                               String rightField) {
+        return this.addFieldCompareCondition(sure, LogicalOperator.AND, leftTable, leftField, operator,
+                rightTable, rightField);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCompareCondition(LogicalOperator logicalOperator, EntityTable leftTable,
+                                               String leftField, Operator operator, EntityTable rightTable,
+                                               String rightField) {
+        return this.addFieldCompareCondition(true, logicalOperator, leftTable, leftField, operator,
+                rightTable, rightField);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addFieldCompareCondition(EntityTable leftTable, String leftField, Operator operator,
+                                               EntityTable rightTable, String rightField) {
+        return this.addFieldCompareCondition(true, LogicalOperator.AND, leftTable, leftField, operator,
+                rightTable, rightField);
+    }
+
+    /**
+     * 添对比条件
+     */
     public SonBuilder addFieldCompareCondition(LogicalOperator logicalOperator, String leftField, Operator operator,
                                                String rightField) {
         this.checkAllEntityTable();
-        this.conditions.add(new FieldCompareCondition(logicalOperator, (EntityTable) this.table, leftField,
-                operator, (EntityTable) this.otherTable, rightField));
-        return this.sonBuilder;
+        return this.addFieldCompareCondition(true, logicalOperator, (EntityTable) this.table, leftField,
+                operator, (EntityTable) this.otherTable, rightField);
     }
 
     /**
@@ -960,11 +1001,51 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     /**
      * 添对比条件
      */
+    public SonBuilder addColumnCompareCondition(boolean sure, LogicalOperator logicalOperator, Table leftTable,
+                                                String leftColumn, Operator operator,
+                                                Table rightTable, String rightColumn) {
+        if (sure) {
+            this.conditions.add(new ColumnCompareCondition(logicalOperator, leftTable, leftColumn, operator,
+                    rightTable, rightColumn));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCompareCondition(LogicalOperator logicalOperator, Table leftTable, String leftColumn,
+                                                Operator operator,
+                                                Table rightTable, String rightColumn) {
+        return this.addColumnCompareCondition(true, logicalOperator, leftTable, leftColumn, operator, rightTable,
+                rightColumn);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCompareCondition(boolean sure, Table leftTable, String leftColumn, Operator operator,
+                                                Table rightTable, String rightColumn) {
+        return this.addColumnCompareCondition(sure, LogicalOperator.AND, leftTable, leftColumn, operator,
+                rightTable, rightColumn);
+    }
+
+    /**
+     * 添对比条件
+     */
+    public SonBuilder addColumnCompareCondition(Table leftTable, String leftColumn, Operator operator,
+                                                Table rightTable, String rightColumn) {
+        return this.addColumnCompareCondition(true, LogicalOperator.AND, leftTable, leftColumn, operator,
+                rightTable, rightColumn);
+    }
+
+    /**
+     * 添对比条件
+     */
     public SonBuilder addColumnCompareCondition(LogicalOperator logicalOperator, String leftColumn, Operator operator,
                                                 String rightColumn) {
-        this.conditions.add(new ColumnCompareCondition(logicalOperator, this.table, leftColumn, operator,
-                this.otherTable, rightColumn));
-        return this.sonBuilder;
+        return this.addColumnCompareCondition(logicalOperator, this.table, leftColumn, operator, this.otherTable,
+                rightColumn);
     }
 
     /**

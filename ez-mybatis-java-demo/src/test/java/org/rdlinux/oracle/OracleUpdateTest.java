@@ -5,9 +5,11 @@ import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
+import org.rdlinux.ezmybatis.expand.oracle.update.Merge;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 import org.rdlinux.ezmybatis.utils.StringHashMap;
@@ -123,5 +125,44 @@ public class OracleUpdateTest extends OracleBaseTest {
                 .build();
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
         mapper.ezUpdate(ezUpdate);
+    }
+
+    @Test
+    public void mergeUpdate() {
+        DbTable mergeTable = DbTable.of("PYA_INFO");
+        DbTable recordTable = DbTable.of("PAY_RECORD");
+        EzQuery<StringHashMap> useQuery = EzQuery.builder(StringHashMap.class)
+                .from(mergeTable)
+                .select()
+                .addColumnMax("ID", "ID")
+                .done()
+
+                .select(recordTable)
+                .addColumnSum("AMT", "AMT")
+                .done()
+
+                .join(recordTable)
+                .addColumnCompareCondition("CODE", "CODE")
+                .done()
+                .where()
+                .addColumnCondition("CODE", "1")
+                .done()
+
+                .groupBy(recordTable)
+                .addColumn("CODE")
+                .done()
+
+                .build();
+        EzQueryTable useTable = EzQueryTable.of(useQuery);
+        Merge merge = Merge.into(mergeTable).using(useTable)
+                .on()
+                .addColumnCompareCondition("ID", "ID")
+                .done()
+                .set()
+                .setColumnFormula("PAY_AMT", Formula.builder(useTable).withColumn("PAY_AMT").done().build())
+                .done().build();
+        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        Integer integer = mapper.expandUpdate(merge);
+        System.out.println(integer);
     }
 }

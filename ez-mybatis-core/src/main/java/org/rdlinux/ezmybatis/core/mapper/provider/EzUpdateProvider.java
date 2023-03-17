@@ -7,6 +7,8 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -24,6 +26,7 @@ public class EzUpdateProvider {
     public static final String UPDATE_BY_EZ_UPDATE_METHOD = "updateByEzUpdate";
     public static final String BATCH_UPDATE_BY_EZ_UPDATE_METHOD = "batchUpdateByEzUpdate";
     public static final String UPDATE_BY_SQL_METHOD = "updateBySql";
+    public static final String EXPAND_UPDATE_METHOD = "expandUpdate";
 
     @MethodName(UPDATE_METHOD)
     public String update(Map<String, Object> param) {
@@ -128,5 +131,16 @@ public class EzUpdateProvider {
         Map<String, Object> sqlParam = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
         param.putAll(sqlParam);
         return sql;
+    }
+
+    @MethodName(EXPAND_UPDATE_METHOD)
+    public String expandUpdate(Map<String, Object> param) {
+        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        SqlExpand expand = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_UPDATE_EXPAND);
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Converter<? extends SqlExpand> converter = EzMybatisContent.getConverter(configuration, expand.getClass());
+        StringBuilder sqlB = converter.buildSql(Converter.Type.UPDATE, new StringBuilder(), configuration, expand,
+                paramHolder);
+        return sqlB.toString();
     }
 }
