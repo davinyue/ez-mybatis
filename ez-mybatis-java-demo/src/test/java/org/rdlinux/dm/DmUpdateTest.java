@@ -77,7 +77,8 @@ public class DmUpdateTest extends DmBaseTest {
     @Test
     public void updateByEzParam() {
         EzMapper mapper = DmBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("userAge", 1).done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.update(ezUpdate);
@@ -89,11 +90,13 @@ public class DmUpdateTest extends DmBaseTest {
     public void batchUpdateByEzParam() {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = DmBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("userAge", 1).done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 2)
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("userAge", 2).done()
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);

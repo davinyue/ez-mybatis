@@ -299,9 +299,11 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set()
                 .setField(User.Fields.userAge, 1)
                 .setFieldKeywords(User.Fields.userAge, "age")
                 .setColumnKeywords("age", "age")
+                .done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
@@ -315,11 +317,13 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "张碧澄")
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("name", "张碧澄").done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", "1")
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("name", "1").done()
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
@@ -333,7 +337,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-            EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("name", null)
+            EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                    .set().setField("name", null).done()
                     .where().addFieldCondition("id", "1").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -372,7 +377,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .setField(User.Fields.name, caseWhen)
+                    .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -388,7 +393,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsCaseWhen(sonCaseWhen);
             ezUpdate = EzUpdate.update(table)
-                    .setField(User.Fields.name, caseWhen)
+                    .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -404,7 +409,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsFormula(formula);
             ezUpdate = EzUpdate.update(table)
-                    .setField(User.Fields.name, caseWhen)
+                    .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -420,7 +425,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsFunc(function);
             ezUpdate = EzUpdate.update(table)
-                    .setField(User.Fields.name, caseWhen)
+                    .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -436,7 +441,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsColumn("name");
             ezUpdate = EzUpdate.update(table)
-                    .setField(User.Fields.name, caseWhen)
+                    .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -452,7 +457,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsField(User.Fields.name);
             ezUpdate = EzUpdate.update(table)
-                    .setField(User.Fields.name, caseWhen)
+                    .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -474,7 +479,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             EntityTable table = EntityTable.of(User.class);
             Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .setFieldFormula(User.Fields.userAge, formula)
+                    .set().setFieldFormula(User.Fields.userAge, formula).done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
                     .build();
@@ -499,8 +504,9 @@ public class MysqlUpdateTest extends MysqlBaseTest {
 
             Function updateTimeFunction = Function.builder(table).setFunName("now").build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .setFieldFunction(User.Fields.userAge, function)
+                    .set().setFieldFunction(User.Fields.userAge, function)
                     .setFieldFunction(BaseEntity.Fields.updateTime, updateTimeFunction)
+                    .done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
                     .build();

@@ -2,12 +2,15 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ez-mybatis</artifactId>
+        <groupId>org.rdlinux</groupId>
+        <version>0.3.8.RS</version>
+    </parent>
+    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis</artifactId>
-    <packaging>pom</packaging>
-    <version>0.3.8.RS</version>
-    <name>ez-mybatis</name>
+    <artifactId>ez-mybatis-expand</artifactId>
+    <name>ez-mybatis-expand</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
     <description>ez-mybatis</description>
     <licenses>
@@ -32,22 +35,35 @@
     </scm>
     <distributionManagement>
         <repository>
-            <id>ossrh</id>
+            <id>oss-release</id>
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>oss-snapshot</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    <modules>
-        <module>ez-mybatis-core</module>
-        <module>ez-mybatis-annotation</module>
-        <module>ez-mybatis-spring</module>
-        <module>ez-mybatis-spring-boot-start</module>
-		<module>ez-mybatis-expand</module>
-        <module>ez-mybatis-java-demo</module>
-    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.rdlinux</groupId>
+            <artifactId>ez-mybatis-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <!-- 指定编译器版本 -->

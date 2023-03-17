@@ -4,7 +4,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Update;
+import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.utils.Assert;
 
@@ -38,7 +38,7 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
     @Override
     protected StringBuilder setToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                      MybatisParamHolder mybatisParamHolder) {
-        Update set = update.getSet();
+        UpdateSet set = update.getSet();
         if (set != null && set.getItems() != null) {
             List<UpdateItem> items = set.getItems().stream().filter(e -> e.getTable() == update.getTable())
                     .collect(Collectors.toList());

@@ -81,7 +81,8 @@ public class OracleUpdateTest extends OracleBaseTest {
     @Test
     public void updateByEzParam() {
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("userAge", 1).done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
@@ -93,11 +94,13 @@ public class OracleUpdateTest extends OracleBaseTest {
     public void batchUpdateByEzParam() {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 1)
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("userAge", 1).done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
-        ezUpdate = EzUpdate.update(EntityTable.of(User.class)).setField("userAge", 2)
+        ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("userAge", 2).done()
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
@@ -115,7 +118,9 @@ public class OracleUpdateTest extends OracleBaseTest {
                 .addColumnCompareCondition("SO_CODE", "SO_CODE").done().build();
         EzQueryTable queryTable = EzQueryTable.of(query);
         EzUpdate ezUpdate = EzUpdate.update(queryTable)
-                .setColumnSyntax("T2PN", queryTable.getAlias() + "." + "T1PN").build();
+                .set().setColumnSyntax("T2PN", queryTable.getAlias() + "." + "T1PN")
+                .done()
+                .build();
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
         mapper.ezUpdate(ezUpdate);
     }
