@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -32,7 +33,11 @@ public class MySqlSelectFormulaConverter extends AbstractConverter<SelectFormula
         Converter<? extends Formula> converter = EzMybatisContent.getConverter(configuration, obj.getFormula()
                 .getClass());
         converter.buildSql(type, sqlBuilder, configuration, obj.getFormula(), mybatisParamHolder);
-        sqlBuilder.append(" ").append(obj.getAlias()).append(" ");
+        String alias = obj.getAlias();
+        if (StringUtils.isNotBlank(alias)) {
+            String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+            sqlBuilder.append(" ").append(keywordQM).append(alias).append(keywordQM).append(" ");
+        }
         return sqlBuilder;
     }
 
