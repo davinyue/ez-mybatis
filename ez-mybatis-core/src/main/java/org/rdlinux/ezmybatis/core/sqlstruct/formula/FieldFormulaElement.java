@@ -9,7 +9,7 @@ public class FieldFormulaElement extends AbstractFormulaElement {
     private EntityTable table;
     private String filed;
 
-    public FieldFormulaElement(Operator operator, EntityTable table, String filed) {
+    public FieldFormulaElement(FormulaOperator operator, EntityTable table, String filed) {
         super(operator);
         Assert.notNull(table, "table can not be null");
         Assert.notEmpty(filed, "filed can not be null");

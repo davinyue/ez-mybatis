@@ -8,7 +8,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 public class CaseWhenFormulaElement extends AbstractFormulaElement {
     private CaseWhen caseWhen;
 
-    public CaseWhenFormulaElement(Operator operator, CaseWhen caseWhen) {
+    public CaseWhenFormulaElement(FormulaOperator operator, CaseWhen caseWhen) {
         super(operator);
         Assert.notNull(caseWhen, "caseWhen can not be null");
         this.caseWhen = caseWhen;

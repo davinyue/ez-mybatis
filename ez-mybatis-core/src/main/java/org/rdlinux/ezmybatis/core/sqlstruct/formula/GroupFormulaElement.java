@@ -12,7 +12,7 @@ public class GroupFormulaElement extends AbstractFormulaElement {
      */
     private List<FormulaElement> elements;
 
-    public GroupFormulaElement(Operator operator, List<FormulaElement> elements) {
+    public GroupFormulaElement(FormulaOperator operator, List<FormulaElement> elements) {
         super(operator);
         Assert.notNull(elements, "elements can not be null");
         this.elements = elements;

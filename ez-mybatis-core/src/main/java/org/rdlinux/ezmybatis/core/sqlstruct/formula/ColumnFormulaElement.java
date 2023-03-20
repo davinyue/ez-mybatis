@@ -9,7 +9,7 @@ public class ColumnFormulaElement extends AbstractFormulaElement {
     private Table table;
     private String column;
 
-    public ColumnFormulaElement(Operator operator, Table table, String column) {
+    public ColumnFormulaElement(FormulaOperator operator, Table table, String column) {
         super(operator);
         Assert.notNull(table, "table can not be null");
         Assert.notEmpty(column, "column can not be null");
