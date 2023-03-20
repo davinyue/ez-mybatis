@@ -5,15 +5,15 @@ import org.rdlinux.ezmybatis.utils.Assert;
 
 @NoArgsConstructor
 public class AbstractFormulaElement implements FormulaElement {
-    private Operator operator;
+    private FormulaOperator operator;
 
-    public AbstractFormulaElement(Operator operator) {
+    public AbstractFormulaElement(FormulaOperator operator) {
         Assert.notNull(operator, "operator can not be null");
         this.operator = operator;
     }
 
     @Override
-    public Operator getOperator() {
+    public FormulaOperator getOperator() {
         return this.operator;
     }
 }

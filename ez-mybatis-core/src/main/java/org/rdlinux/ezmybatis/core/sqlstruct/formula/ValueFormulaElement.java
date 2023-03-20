@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 public class ValueFormulaElement extends AbstractFormulaElement {
     private Object value;
 
-    public ValueFormulaElement(Operator operator, Object value) {
+    public ValueFormulaElement(FormulaOperator operator, Object value) {
         super(operator);
         Assert.notNull(value, "value can not be null");
         this.value = value;

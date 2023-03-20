@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 public class KeywordsFormulaElement extends AbstractFormulaElement {
     private String keywords;
 
-    public KeywordsFormulaElement(Operator operator, String keywords) {
+    public KeywordsFormulaElement(FormulaOperator operator, String keywords) {
         super(operator);
         Assert.notEmpty(keywords, "keywords can not be null");
         this.keywords = keywords;
