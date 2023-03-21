@@ -61,8 +61,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectKeywords.class, OracleSelectKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateColumnItem.class, OracleCaseWhenUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateFieldItem.class, OracleCaseWhenUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SyntaxUpdateColumnItem.class, OracleSyntaxUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SyntaxUpdateFieldItem.class, OracleSyntaxUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateColumnItem.class, OracleUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FunctionUpdateFieldItem.class, OracleFunctionUpdateFieldItemConverter.getInstance());
