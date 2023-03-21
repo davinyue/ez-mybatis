@@ -112,31 +112,6 @@ public class UpdateSetBuilder<ParentBuilder> {
         return this;
     }
 
-    public UpdateSetBuilder<ParentBuilder> setFieldSyntax(String field, String syntax) {
-        this.checkEntityTable();
-        this.set.getItems().add(new SyntaxUpdateFieldItem((EntityTable) this.table, field, syntax));
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setFieldSyntax(boolean sure, String field, String syntax) {
-        if (sure) {
-            return this.setFieldSyntax(field, syntax);
-        }
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setColumnSyntax(String column, String syntax) {
-        this.set.getItems().add(new SyntaxUpdateColumnItem(this.table, column, syntax));
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setColumnSyntax(boolean sure, String column, String syntax) {
-        if (sure) {
-            return this.setColumnSyntax(column, syntax);
-        }
-        return this;
-    }
-
     public UpdateSetBuilder<ParentBuilder> setField(EntityTable table, String field, Object value) {
         this.set.getItems().add(new UpdateFieldItem(table, field, value));
         return this;
@@ -157,30 +132,6 @@ public class UpdateSetBuilder<ParentBuilder> {
     public UpdateSetBuilder<ParentBuilder> setColumn(boolean sure, Table table, String column, Object value) {
         if (sure) {
             return this.setColumn(table, column, value);
-        }
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setFieldSyntax(EntityTable table, String field, String syntax) {
-        this.set.getItems().add(new SyntaxUpdateFieldItem(table, field, syntax));
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setFieldSyntax(boolean sure, EntityTable table, String field, String syntax) {
-        if (sure) {
-            return this.setFieldSyntax(table, field, syntax);
-        }
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setColumnSyntax(EntityTable table, String field, String syntax) {
-        this.set.getItems().add(new SyntaxUpdateColumnItem(table, field, syntax));
-        return this;
-    }
-
-    public UpdateSetBuilder<ParentBuilder> setColumnSyntax(boolean sure, EntityTable table, String field, String syntax) {
-        if (sure) {
-            return this.setColumnSyntax(table, field, syntax);
         }
         return this;
     }

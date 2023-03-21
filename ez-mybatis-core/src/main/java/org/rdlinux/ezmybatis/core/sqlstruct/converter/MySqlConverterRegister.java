@@ -61,8 +61,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SelectKeywords.class, MySqlSelectKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenUpdateColumnItem.class, MySqlCaseWhenUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenUpdateFieldItem.class, MySqlCaseWhenUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, SyntaxUpdateColumnItem.class, MySqlSyntaxUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, SyntaxUpdateFieldItem.class, MySqlSyntaxUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, UpdateColumnItem.class, MySqlUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, UpdateFieldItem.class, MySqlUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FunctionUpdateFieldItem.class, MySqlFunctionUpdateFieldItemConverter.getInstance());

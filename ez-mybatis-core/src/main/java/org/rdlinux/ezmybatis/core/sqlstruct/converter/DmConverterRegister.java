@@ -61,8 +61,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SelectKeywords.class, DmSelectKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, CaseWhenUpdateColumnItem.class, DmCaseWhenUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, CaseWhenUpdateFieldItem.class, DmCaseWhenUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, SyntaxUpdateColumnItem.class, DmSyntaxUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, SyntaxUpdateFieldItem.class, DmSyntaxUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, UpdateColumnItem.class, DmUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, UpdateFieldItem.class, DmUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FunctionUpdateFieldItem.class, DmFunctionUpdateFieldItemConverter.getInstance());

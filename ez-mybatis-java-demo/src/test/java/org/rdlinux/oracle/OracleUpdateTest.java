@@ -114,13 +114,13 @@ public class OracleUpdateTest extends OracleBaseTest {
     public void unionUpdate() {
         DbTable listTable = DbTable.of("A");
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("B"))
-                .select().addColumn("PRO_NAME", "T1PN").done()
-                .select(listTable).addColumn("PRO_NAME", "T2PN").done()
+                .select().addColumn("NAME", "T1PN").done()
+                .select(listTable).addColumn("NAME", "T2PN").done()
                 .join(listTable)
-                .addColumnCompareCondition("SO_CODE", "SO_CODE").done().build();
+                .addColumnCompareCondition("CODE", "CODE").done().build();
         EzQueryTable queryTable = EzQueryTable.of(query);
         EzUpdate ezUpdate = EzUpdate.update(queryTable)
-                .set().setColumnSyntax("T2PN", queryTable.getAlias() + "." + "T1PN")
+                .set().setColumn("T2PN", "T1PN")
                 .done()
                 .build();
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
