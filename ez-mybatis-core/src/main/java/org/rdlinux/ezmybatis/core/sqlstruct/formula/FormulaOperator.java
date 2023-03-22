@@ -21,7 +21,7 @@ public class FormulaOperator {
      */
     public static FormulaOperator DIVIDE = new FormulaOperator("/");
     /**
-     * 空操作符, 用户公式开始
+     * 空操作符, 用于公式开始, 不对外开放使用
      */
     protected static FormulaOperator EMPTY = new FormulaOperator("");
     private String symbol;
