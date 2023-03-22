@@ -77,19 +77,8 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> withColumn(FormulaOperator operator, Table table, String column) {
             FormulaElement element = new ColumnFormulaElement(operator, table, column);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
+            this.elements.add(element);
             return this;
-        }
-
-        /**
-         * 以列开始, 构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withColumn(Table table, String column) {
-            return this.withColumn(FormulaOperator.EMPTY, table, column);
         }
 
         /**
@@ -102,15 +91,8 @@ public class Formula implements SqlStruct {
         /**
          * 以列开始, 构建计算公式
          */
-        public FormulaEleBuilder<ParentBuilder> withColumn(String column) {
-            return this.withColumn(FormulaOperator.EMPTY, this.table, column);
-        }
-
-        /**
-         * 指定运算符并以实体属性构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withField(FormulaOperator operator, EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(operator, table, field);
+        public FormulaEleBuilder<ParentBuilder> withColumn(Table table, String column) {
+            FormulaElement element = new ColumnFormulaElement(FormulaOperator.EMPTY, table, column);
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
@@ -119,11 +101,21 @@ public class Formula implements SqlStruct {
             return this;
         }
 
+
         /**
-         * 以实体属性开始, 构建计算公式
+         * 以列开始, 构建计算公式
          */
-        public FormulaEleBuilder<ParentBuilder> withField(EntityTable table, String field) {
-            return this.withField(FormulaOperator.EMPTY, table, field);
+        public FormulaEleBuilder<ParentBuilder> withColumn(String column) {
+            return this.withColumn(this.table, column);
+        }
+
+        /**
+         * 指定运算符并以实体属性构建计算公式
+         */
+        public FormulaEleBuilder<ParentBuilder> withField(FormulaOperator operator, EntityTable table, String field) {
+            FormulaElement element = new FieldFormulaElement(operator, table, field);
+            this.elements.add(element);
+            return this;
         }
 
         /**
@@ -137,9 +129,22 @@ public class Formula implements SqlStruct {
         /**
          * 以实体属性开始, 构建计算公式
          */
+        public FormulaEleBuilder<ParentBuilder> withField(EntityTable table, String field) {
+            FormulaElement element = new FieldFormulaElement(FormulaOperator.EMPTY, table, field);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return this;
+        }
+
+        /**
+         * 以实体属性开始, 构建计算公式
+         */
         public FormulaEleBuilder<ParentBuilder> withField(String field) {
             this.checkEntityTable();
-            return this.withField(FormulaOperator.EMPTY, (EntityTable) this.table, field);
+            return this.withField((EntityTable) this.table, field);
         }
 
         /**
@@ -147,11 +152,7 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> withFun(FormulaOperator operator, Function fun) {
             FormulaElement element = new FunFormulaElement(operator, fun);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
+            this.elements.add(element);
             return this;
         }
 
@@ -159,7 +160,13 @@ public class Formula implements SqlStruct {
          * 以函数开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withFun(Function fun) {
-            return this.withFun(FormulaOperator.EMPTY, fun);
+            FormulaElement element = new FunFormulaElement(FormulaOperator.EMPTY, fun);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return this;
         }
 
         /**
@@ -167,11 +174,7 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> withValue(FormulaOperator operator, Object ojb) {
             FormulaElement element = new ValueFormulaElement(operator, ojb);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
+            this.elements.add(element);
             return this;
         }
 
@@ -179,7 +182,13 @@ public class Formula implements SqlStruct {
          * 以自定义值开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withValue(Object ojb) {
-            return this.withValue(FormulaOperator.EMPTY, ojb);
+            FormulaElement element = new ValueFormulaElement(FormulaOperator.EMPTY, ojb);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return this;
         }
 
         /**
@@ -187,11 +196,7 @@ public class Formula implements SqlStruct {
          */
         public FormulaEleBuilder<ParentBuilder> withFormula(FormulaOperator operator, Formula formula) {
             FormulaElement element = new FormulaFormulaElement(operator, formula);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
+            this.elements.add(element);
             return this;
         }
 
@@ -199,14 +204,7 @@ public class Formula implements SqlStruct {
          * 以计算公式开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withFormula(Formula formula) {
-            return this.withFormula(FormulaOperator.EMPTY, formula);
-        }
-
-        /**
-         * 指定运算符并以关键词构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withKeywords(FormulaOperator operator, String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(operator, keywords);
+            FormulaElement element = new FormulaFormulaElement(FormulaOperator.EMPTY, formula);
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
@@ -216,10 +214,25 @@ public class Formula implements SqlStruct {
         }
 
         /**
+         * 指定运算符并以关键词构建计算公式
+         */
+        public FormulaEleBuilder<ParentBuilder> withKeywords(FormulaOperator operator, String keywords) {
+            FormulaElement element = new KeywordsFormulaElement(operator, keywords);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 以关键词开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withKeywords(String keywords) {
-            return this.withKeywords(FormulaOperator.EMPTY, keywords);
+            FormulaElement element = new KeywordsFormulaElement(FormulaOperator.EMPTY, keywords);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return this;
         }
 
         /**
@@ -228,11 +241,7 @@ public class Formula implements SqlStruct {
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> withGroup(FormulaOperator operator) {
             List<FormulaElement> elements = new LinkedList<>();
             GroupFormulaElement element = new GroupFormulaElement(operator, elements);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
+            this.elements.add(element);
             return new FormulaEleBuilder<>(this, this.table, elements);
         }
 
@@ -240,7 +249,14 @@ public class Formula implements SqlStruct {
          * 以()开始, 构建计算公式
          */
         public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> withGroup() {
-            return this.withGroup(FormulaOperator.EMPTY);
+            List<FormulaElement> elements = new LinkedList<>();
+            GroupFormulaElement element = new GroupFormulaElement(FormulaOperator.EMPTY, elements);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
+            return new FormulaEleBuilder<>(this, this.table, elements);
         }
 
         /**
