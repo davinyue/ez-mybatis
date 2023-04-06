@@ -225,7 +225,7 @@ public class CaseWhen implements SqlStruct {
         public CaseWhen elsField(EntityTable table, String field) {
             Assert.notNull(table, "table can not be null");
             Assert.notEmpty(field, "field can not be null");
-            this.caseWhen.setEls(new CaseWhenData().setTable(table).setArgType(ArgType.COLUMN).setValue(field));
+            this.caseWhen.setEls(new CaseWhenData().setTable(table).setArgType(ArgType.FILED).setValue(field));
             return this.caseWhen;
         }
 
