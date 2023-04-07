@@ -448,7 +448,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void normalQueryCount() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<Integer> query = EzQuery.builder(int.class).from(EntityTable.of(User.class))
-                .select().addFieldCount("id").done().page(1, 1)
+                .select().addFieldCount("id", "idc").done().page(1, 1)
                 .build();
         Integer count = sqlSession.getMapper(EzMapper.class).queryOne(query);
         sqlSession.close();

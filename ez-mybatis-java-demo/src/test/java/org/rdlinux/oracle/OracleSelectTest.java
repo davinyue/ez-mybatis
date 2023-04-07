@@ -108,7 +108,7 @@ public class OracleSelectTest extends OracleBaseTest {
     @Test
     public void normalQueryCount() {
         EzQuery<Integer> query = EzQuery.builder(Integer.class).from(EntityTable.of(User.class))
-                .select().addFieldCount("id").done().page(1, 1)
+                .select().addFieldCount("id", "idc").done().page(1, 1)
                 .build();
         int count = OracleBaseTest.sqlSession.getMapper(EzMapper.class).queryOne(query);
         System.out.println(JacksonUtils.toJsonString(count));
