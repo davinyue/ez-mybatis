@@ -2,11 +2,17 @@ package org.rdlinux.mysql;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
+import org.linuxprobe.luava.json.JacksonUtils;
+import org.rdlinux.ezmybatis.core.dao.JdbcBatchInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.java.entity.SaveTest;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 public class MysqlInsertTest extends MysqlBaseTest {
@@ -198,5 +204,133 @@ public class MysqlInsertTest extends MysqlBaseTest {
                 new HashMap<>());
         System.out.println(integer);
         sqlSession.close();
+    }
+
+    /**
+     * 预热
+     */
+    private void preheat(EzMapper ezMapper) {
+        for (int i = 0; i < 10; i++) {
+            ezMapper.selectMapBySql("select 1", new HashMap<>());
+        }
+    }
+
+    @Test
+    public void loopInsertPerformanceTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        this.preheat(mapper);
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            SaveTest entity = new SaveTest().setA(UUID.randomUUID().toString().replaceAll("-", ""));
+            entity.setB(entity.getA());
+            entity.setC(entity.getA());
+            entity.setD(entity.getA());
+            entity.setE(entity.getA());
+            entity.setF(entity.getA());
+            entity.setG(entity.getA());
+            entity.setH(entity.getA());
+            entity.setI(entity.getA());
+            entity.setJ(entity.getA());
+            mapper.insert(entity);
+        }
+        long end = System.currentTimeMillis();
+        sqlSession.commit();
+        sqlSession.close();
+        //循环插入耗时:13459
+        System.out.println("循环插入耗时:" + (end - start));
+    }
+
+    @Test
+    public void batchInsertPerformanceTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        this.preheat(mapper);
+        long start = System.currentTimeMillis();
+        for (int h = 0; h < 200; h++) {
+            List<SaveTest> entitys = new ArrayList<>(100);
+            for (int i = 0; i < 500; i++) {
+                SaveTest entity = new SaveTest().setA(UUID.randomUUID().toString().replaceAll("-", ""));
+                entity.setB(entity.getA());
+                entity.setC(entity.getA());
+                entity.setD(entity.getA());
+                entity.setE(entity.getA());
+                entity.setF(entity.getA());
+                entity.setG(entity.getA());
+                entity.setH(entity.getA());
+                entity.setI(entity.getA());
+                entity.setJ(entity.getA());
+                entitys.add(entity);
+            }
+            mapper.batchInsert(entitys);
+        }
+        long end = System.currentTimeMillis();
+        sqlSession.commit();
+        sqlSession.close();
+        //批量插入耗时:1669， 1578, 7093
+        System.out.println("批量插入耗时:" + (end - start));
+    }
+
+    @Test
+    public void jdbcBatchInsertPerformanceTest() throws SQLException {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        Connection connection = sqlSession.getConnection();
+        String sql = "INSERT INTO save_test ( `a`, `b`, `c`, `d`, `e`, `f`, `g`, `h`, `i`, `j` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        long start = System.currentTimeMillis();
+        for (int h = 0; h < 10; h++) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            this.preheat(mapper);
+            for (int i = 0; i < 10000; i++) {
+                String id = UUID.randomUUID().toString().replaceAll("-", "");
+                statement.setString(1, id);
+                statement.setString(2, id);
+                statement.setString(3, id);
+                statement.setString(4, id);
+                statement.setString(5, id);
+                statement.setString(6, id);
+                statement.setString(7, id);
+                statement.setString(8, id);
+                statement.setString(9, id);
+                statement.setString(10, id);
+                statement.addBatch();
+            }
+            statement.executeBatch();
+            statement.close();
+        }
+        connection.commit();
+        connection.close();
+        long end = System.currentTimeMillis();
+        sqlSession.commit();
+        sqlSession.close();
+        //批量插入耗时:1669， 1578, 7093
+        System.out.println("批量插入耗时:" + (end - start));
+    }
+
+    @Test
+    public void jdbcBatchInsertTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        this.preheat(mapper);
+        long start = System.currentTimeMillis();
+        JdbcBatchInsertDao jdbcBatchInsertDao = new JdbcBatchInsertDao(sqlSession);
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setUpdateTime(new Date());
+            user.setCreateTime(new Date());
+            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            user.setName("芳" + (i + 1));
+            user.setUserAge(27 + i);
+            user.setSex(User.Sex.MAN);
+            users.add(user);
+        }
+        int insert = jdbcBatchInsertDao.batchInsert(users);
+        System.out.println(insert);
+        sqlSession.commit();
+        sqlSession.close();
+        long end = System.currentTimeMillis();
+        System.out.println("jdbc批量插入耗时:" + (end - start));
+        System.out.println(JacksonUtils.toJsonString(users));
     }
 }
