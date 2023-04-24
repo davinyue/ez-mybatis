@@ -2,7 +2,6 @@ package org.rdlinux.mysql;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
-import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.dao.JdbcBatchInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -314,23 +313,26 @@ public class MysqlInsertTest extends MysqlBaseTest {
         this.preheat(mapper);
         long start = System.currentTimeMillis();
         JdbcBatchInsertDao jdbcBatchInsertDao = new JdbcBatchInsertDao(sqlSession);
-        List<User> users = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
-            User user = new User();
-            user.setUpdateTime(new Date());
-            user.setCreateTime(new Date());
-            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-            user.setName("芳" + (i + 1));
-            user.setUserAge(27 + i);
-            user.setSex(User.Sex.MAN);
-            users.add(user);
+        for (int h = 0; h < 200; h++) {
+            List<SaveTest> models = new LinkedList<>();
+            for (int i = 0; i < 500; i++) {
+                SaveTest entity = new SaveTest().setA(UUID.randomUUID().toString().replaceAll("-", ""));
+                entity.setB(entity.getA());
+                entity.setC(entity.getA());
+                entity.setD(entity.getA());
+                entity.setE(entity.getA());
+                entity.setF(entity.getA());
+                entity.setG(entity.getA());
+                entity.setH(entity.getA());
+                entity.setI(entity.getA());
+                entity.setJ(entity.getA());
+                models.add(entity);
+            }
+            jdbcBatchInsertDao.batchInsert(models);
         }
-        int insert = jdbcBatchInsertDao.batchInsert(users);
-        System.out.println(insert);
         sqlSession.commit();
         sqlSession.close();
         long end = System.currentTimeMillis();
         System.out.println("jdbc批量插入耗时:" + (end - start));
-        System.out.println(JacksonUtils.toJsonString(users));
     }
 }
