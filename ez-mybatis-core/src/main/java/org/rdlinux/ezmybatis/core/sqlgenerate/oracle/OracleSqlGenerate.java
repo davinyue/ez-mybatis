@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
@@ -38,6 +39,11 @@ public class OracleSqlGenerate implements SqlGenerate {
                                     Table table, Collection<Object> entitys) {
         return OracleInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
                 entitys);
+    }
+
+    @Override
+    public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
+        return OracleInsertSqlGenerate.getInstance().getJdbcBatchInsertSql(configuration, table, models);
     }
 
     @Override

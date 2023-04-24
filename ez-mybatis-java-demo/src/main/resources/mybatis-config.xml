@@ -48,7 +48,7 @@
                 <!-- 配置连接信息 -->
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url"
-                          value="jdbc:mysql://192.168.163.3:3306/ez_mybatis?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;allowMultiQueries=true"/>
+                          value="jdbc:mysql://192.168.163.3:3306/ez_mybatis?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;allowMultiQueries=true&amp;rewriteBatchedStatements=true"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>

@@ -179,13 +179,13 @@ public interface EzMapper {
                       @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
 
     /**
-     * 批量插入
+     * 批量插入, 实体总属性控制在5000个以下, 一个批次保存效率最高
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
     int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
 
     /**
-     * 批量插入, 指定表
+     * 批量插入, 指定表, 实体总属性控制在5000个以下, 一个批次保存效率最高
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_BY_TABLE_METHOD)
     int batchInsertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
