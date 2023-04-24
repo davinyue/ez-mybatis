@@ -27,10 +27,10 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys) {
-        Assert.notEmpty(entitys, "entitys cannot be empty");
+                                    Table table, Collection<Object> models) {
+        Assert.notEmpty(models, "models cannot be empty");
         StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
-        for (Object entity : entitys) {
+        for (Object entity : models) {
             String insertSql = this.getInsertSql(configuration, mybatisParamHolder, table, entity);
             sqlBuilder.append(insertSql).append(";\n");
         }

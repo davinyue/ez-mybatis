@@ -169,27 +169,27 @@ public interface EzMapper {
      * 插入, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_METHOD)
-    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object model);
 
     /**
      * 插入,指定表, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_TABLE_METHOD)
     int insertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object model);
 
     /**
      * 批量插入, 实体总属性控制在5000个以下, 一个批次保存效率最高
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
-    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> models);
 
     /**
      * 批量插入, 指定表, 实体总属性控制在5000个以下, 一个批次保存效率最高
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_BY_TABLE_METHOD)
     int batchInsertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> models);
 
     /**
      * 根据sql插入记录
@@ -202,7 +202,7 @@ public interface EzMapper {
      * 更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_METHOD)
-    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object model);
 
     /**
      * 更新, 只更新非空字段

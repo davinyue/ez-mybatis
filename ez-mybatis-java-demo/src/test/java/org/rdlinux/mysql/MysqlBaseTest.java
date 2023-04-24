@@ -43,8 +43,8 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchInsert(Collection<Object> entitys) {
-                entitys.forEach(this::onInsert);
+            public void onBatchInsert(Collection<?> models) {
+                models.forEach(this::onInsert);
             }
         });
         EzMybatisContent.addDeleteListener(ezMybatisConfig, new EzMybatisDeleteListener() {
@@ -55,8 +55,8 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchDelete(Collection<Object> entitys) {
-                entitys.forEach(this::onDelete);
+            public void onBatchDelete(Collection<Object> models) {
+                models.forEach(this::onDelete);
             }
 
             @Override
@@ -78,7 +78,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchUpdate(Collection<Object> entitys) {
+            public void onBatchUpdate(Collection<Object> models) {
                 System.out.println("更新事件");
             }
 
@@ -88,7 +88,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchReplace(Collection<Object> entitys) {
+            public void onBatchReplace(Collection<Object> models) {
                 System.out.println("替换事件");
             }
         });

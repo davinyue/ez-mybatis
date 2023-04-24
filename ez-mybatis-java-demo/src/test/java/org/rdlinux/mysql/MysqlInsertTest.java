@@ -247,7 +247,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         this.preheat(mapper);
         long start = System.currentTimeMillis();
         for (int h = 0; h < 200; h++) {
-            List<SaveTest> entitys = new ArrayList<>(100);
+            List<SaveTest> models = new ArrayList<>(100);
             for (int i = 0; i < 500; i++) {
                 SaveTest entity = new SaveTest().setA(UUID.randomUUID().toString().replaceAll("-", ""));
                 entity.setB(entity.getA());
@@ -259,9 +259,9 @@ public class MysqlInsertTest extends MysqlBaseTest {
                 entity.setH(entity.getA());
                 entity.setI(entity.getA());
                 entity.setJ(entity.getA());
-                entitys.add(entity);
+                models.add(entity);
             }
-            mapper.batchInsert(entitys);
+            mapper.batchInsert(models);
         }
         long end = System.currentTimeMillis();
         sqlSession.commit();

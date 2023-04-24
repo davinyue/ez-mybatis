@@ -9,12 +9,17 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
+import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collection;
+import java.util.Date;
 
 public class OracleBaseTest {
     public static SqlSession sqlSession;
+    public static SqlSessionFactory sqlSessionFactory;
 
     static {
         String resource = "mybatis-config-oracle.xml";
@@ -28,8 +33,24 @@ public class OracleBaseTest {
         Configuration configuration = parser.parse();
         EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
         ezMybatisConfig.setMapRetKeyPattern(MapRetKeyPattern.HUMP);
+        ezMybatisConfig.setEscapeKeyword(false);
         EzMybatisContent.init(ezMybatisConfig);
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
+            @Override
+            public void onInsert(Object model) {
+                if (model instanceof BaseEntity) {
+                    System.out.println("插入事件");
+                    ((BaseEntity) model).setUpdateTime(new Date());
+                    ((BaseEntity) model).setCreateTime(new Date());
+                }
+            }
+
+            @Override
+            public void onBatchInsert(Collection<?> models) {
+                models.forEach(this::onInsert);
+            }
+        });
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         sqlSession = sqlSessionFactory.openSession();
     }
 }

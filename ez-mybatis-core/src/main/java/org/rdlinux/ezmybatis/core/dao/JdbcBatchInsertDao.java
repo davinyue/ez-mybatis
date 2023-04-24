@@ -8,6 +8,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -49,6 +50,12 @@ public class JdbcBatchInsertDao {
     public int batchInsertByTable(Table table, Collection<?> models) {
         Connection connection = this.sqlSession.getConnection();
         Configuration configuration = this.sqlSession.getConfiguration();
+        List<EzMybatisInsertListener> listeners = EzMybatisContent.getInsertListeners(configuration);
+        if (listeners != null) {
+            for (EzMybatisInsertListener listener : listeners) {
+                listener.onBatchInsert(models);
+            }
+        }
         long start = System.currentTimeMillis();
         EzJdbcBatchSql jdbcBatchSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getJdbcBatchInsertSql(configuration, table, models);

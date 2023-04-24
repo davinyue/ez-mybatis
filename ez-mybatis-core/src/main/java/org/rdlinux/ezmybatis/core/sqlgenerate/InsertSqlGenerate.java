@@ -11,7 +11,7 @@ public interface InsertSqlGenerate {
                         Object entity);
 
     String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                             Table table, Collection<Object> entitys);
+                             Table table, Collection<Object> models);
 
     /**
      * 获取jdbc批量插入sql

@@ -15,7 +15,7 @@ public interface EzMybatisUpdateListener {
     /**
      * 批量更新
      */
-    default void onBatchUpdate(Collection<Object> entitys) {
+    default void onBatchUpdate(Collection<Object> models) {
     }
 
     /**
@@ -27,7 +27,7 @@ public interface EzMybatisUpdateListener {
     /**
      * 批量替换
      */
-    default void onBatchReplace(Collection<Object> entitys) {
+    default void onBatchReplace(Collection<Object> models) {
     }
 
     default int order() {

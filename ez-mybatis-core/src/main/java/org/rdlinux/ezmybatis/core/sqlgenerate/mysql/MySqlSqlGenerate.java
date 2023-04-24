@@ -37,9 +37,9 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys) {
+                                    Table table, Collection<Object> models) {
         return MySqlInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
-                entitys);
+                models);
     }
 
     @Override
@@ -78,8 +78,8 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys, boolean isReplace) {
-        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table, entitys,
+                                    Table table, Collection<Object> models, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table, models,
                 isReplace);
     }
 

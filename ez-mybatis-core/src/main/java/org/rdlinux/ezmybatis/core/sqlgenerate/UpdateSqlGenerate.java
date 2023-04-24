@@ -11,7 +11,7 @@ public interface UpdateSqlGenerate {
                         boolean isReplace);
 
     String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                             Table table, Collection<Object> entitys, boolean isReplace);
+                             Table table, Collection<Object> models, boolean isReplace);
 
     String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, EzUpdate update);
 

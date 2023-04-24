@@ -27,11 +27,11 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys) {
-        Assert.notEmpty(entitys, "entitys cannot be empty");
+                                    Table table, Collection<Object> models) {
+        Assert.notEmpty(models, "models cannot be empty");
         StringBuilder sqlBuilder = new StringBuilder();
         int i = 0;
-        for (Object entity : entitys) {
+        for (Object entity : models) {
             String insertSql = this.getInsertSql(configuration, mybatisParamHolder, table, entity);
             String flag = "VALUES ";
             int vIndex = insertSql.indexOf(flag);
@@ -41,7 +41,7 @@ public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
                 sqlBuilder.append(prefix);
             }
             sqlBuilder.append(valve);
-            if (i + 1 < entitys.size()) {
+            if (i + 1 < models.size()) {
                 sqlBuilder.append(", \n");
             }
             i++;

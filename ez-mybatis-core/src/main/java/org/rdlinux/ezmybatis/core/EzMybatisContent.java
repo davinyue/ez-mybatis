@@ -25,6 +25,8 @@ import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -105,6 +107,7 @@ public class EzMybatisContent {
         configurationConfig.setConfiguration(config.getConfiguration());
         configurationConfig.setDbKeywordQMFactory(new DbKeywordQMFactory(config));
         configurationConfig.setEzMybatisConfig(config);
+        configurationConfig.setInsertListeners(new LinkedList<>());
         CFG_CONFIG_MAP.put(config.getConfiguration(), configurationConfig);
         initMapper(config);
         initInterceptor(config);
@@ -123,11 +126,22 @@ public class EzMybatisContent {
     }
 
     /**
+     * 获取插入监听器
+     */
+    public static List<EzMybatisInsertListener> getInsertListeners(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        return configurationConfig.getInsertListeners();
+    }
+
+    /**
      * 添加插入监听器
      */
     public static void addInsertListener(EzMybatisConfig config, EzMybatisInsertListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        configurationConfig.getInsertListeners().add(listener);
         configurationConfig.getUpdateInterceptor().addInsertListener(listener);
     }
 

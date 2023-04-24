@@ -13,7 +13,8 @@
         <setting name="aggressiveLazyLoading" value="false"/>
         <!--开启二级缓存 -->
         <setting name="cacheEnabled" value="true"/>
-        <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>
+        <!--<setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl"/>-->
+        <setting name="logImpl" value="org.apache.ibatis.logging.nologging.NoLoggingImpl"/>
         <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
@@ -35,8 +36,8 @@
             <dataSource type="POOLED">
                 <!-- 配置连接信息 -->
                 <property name="driver" value="oracle.jdbc.OracleDriver"/>
-                <property name="url" value="jdbc:oracle:thin:@192.168.1.6:1521/orclpdb1"/>
-                <property name="username" value="yyy"/>
+                <property name="url" value="jdbc:oracle:thin:@192.168.163.3:1521/orclpdb"/>
+                <property name="username" value="ez_mybatis"/>
                 <property name="password" value="a"/>
             </dataSource>
         </environment>
