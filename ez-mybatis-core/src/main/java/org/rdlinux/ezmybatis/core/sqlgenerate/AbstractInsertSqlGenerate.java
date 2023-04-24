@@ -1,7 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
+import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
@@ -65,6 +70,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
         Assert.notEmpty(models, "models can not be empty");
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
@@ -78,7 +84,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EzJdbcBatchSql ret = new EzJdbcBatchSql();
         int i = 1;
-        List<List<Object>> params = new ArrayList<>(models.size());
+        List<List<EzJdbcSqlParam>> params = new ArrayList<>(models.size());
         for (Object ignored : models) {
             params.add(new ArrayList<>(columnMapFieldInfo.size()));
         }
@@ -92,18 +98,38 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
                 columnBuilder.append(" )");
                 paramBuilder.append(" )");
             }
-            Method fieldGetMethod = columnMapFieldInfo.get(column).getFieldGetMethod();
+            EntityFieldInfo fieldInfo = columnMapFieldInfo.get(column);
+            TypeHandler typeHandler = null;
+            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+            if (fieldInfo.getField().isAnnotationPresent(ColumnHandler.class)) {
+                ColumnHandler annotation = fieldInfo.getField().getAnnotation(ColumnHandler.class);
+                typeHandler = typeHandlerRegistry.getMappingTypeHandler(
+                        (Class<? extends TypeHandler<?>>) annotation.value());
+            }
+            Method fieldGetMethod = fieldInfo.getFieldGetMethod();
             int eti = 0;
             for (Object entity : models) {
                 Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
-                params.get(eti).add(fieldValue);
+                JdbcType jdbcType = null;
+                if (fieldValue == null) {
+                    if (typeHandler == null) {
+                        typeHandler = typeHandlerRegistry.getUnknownTypeHandler();
+                    }
+                    jdbcType = JdbcType.NULL;
+                } else {
+                    if (typeHandler == null) {
+                        typeHandler = typeHandlerRegistry.getTypeHandler(fieldValue.getClass());
+                    }
+                }
+                EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
+                params.get(eti).add(param);
                 eti++;
             }
             i++;
         }
         sqlBuilder.append(columnBuilder).append(" VALUES ").append(paramBuilder);
         ret.setSql(sqlBuilder.toString());
-        ret.setParams(params);
+        ret.setBatchParams(params);
         return ret;
     }
 }
