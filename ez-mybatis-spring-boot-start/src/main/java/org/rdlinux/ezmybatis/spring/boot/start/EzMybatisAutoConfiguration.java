@@ -50,12 +50,12 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
     private ApplicationContext applicationContext;
     @Resource
     private EzMybatisProperties ezMybatisProperties;
-    @Resource
-    private SqlSessionTemplate sqlSessionTemplate;
 
     @Bean
     public JdbcBatchInsertDao jdbcBatchInsertDao() {
-        return new JdbcBatchInsertDao(this.sqlSessionTemplate);
+        SqlSessionTemplate sqlSessionTemplate = this.applicationContext.getBean("sqlSessionTemplate",
+                SqlSessionTemplate.class);
+        return new JdbcBatchInsertDao(sqlSessionTemplate);
     }
 
     @Override
