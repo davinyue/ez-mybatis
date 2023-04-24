@@ -36,9 +36,9 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys) {
+                                    Table table, Collection<Object> models) {
         return OracleInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
-                entitys);
+                models);
     }
 
     @Override
@@ -77,9 +77,9 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys, boolean isReplace) {
+                                    Table table, Collection<Object> models, boolean isReplace) {
         return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table,
-                entitys, isReplace);
+                models, isReplace);
     }
 
     @Override

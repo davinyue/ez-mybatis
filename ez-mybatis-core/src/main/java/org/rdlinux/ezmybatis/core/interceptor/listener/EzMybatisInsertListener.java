@@ -6,10 +6,19 @@ import java.util.Collection;
  * 插入事件监听器
  */
 public interface EzMybatisInsertListener {
-    void onInsert(Object entity);
+    /**
+     * 当执行插入时
+     */
+    void onInsert(Object model);
 
-    void onBatchInsert(Collection<Object> entitys);
+    /**
+     * 当执行批量插入时
+     */
+    void onBatchInsert(Collection<?> models);
 
+    /**
+     * 拦截器顺序
+     */
     default int order() {
         return 1;
     }

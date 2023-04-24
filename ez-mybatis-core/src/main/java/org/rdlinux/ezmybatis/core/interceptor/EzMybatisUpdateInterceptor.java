@@ -62,36 +62,36 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
         this.deleteListeners.add(deleteListener);
     }
 
-    protected void onInsert(Object entity) {
-        this.insertListeners.forEach(e -> e.onInsert(entity));
+    protected void onInsert(Object model) {
+        this.insertListeners.forEach(e -> e.onInsert(model));
     }
 
-    protected void onBatchInsert(Collection<Object> entitys) {
-        this.insertListeners.forEach(e -> e.onBatchInsert(entitys));
+    protected void onBatchInsert(Collection<Object> models) {
+        this.insertListeners.forEach(e -> e.onBatchInsert(models));
     }
 
-    protected void onUpdate(Object entity) {
-        this.updateListeners.forEach(e -> e.onUpdate(entity));
+    protected void onUpdate(Object model) {
+        this.updateListeners.forEach(e -> e.onUpdate(model));
     }
 
-    protected void onBatchUpdate(Collection<Object> entitys) {
-        this.updateListeners.forEach(e -> e.onBatchUpdate(entitys));
+    protected void onBatchUpdate(Collection<Object> models) {
+        this.updateListeners.forEach(e -> e.onBatchUpdate(models));
     }
 
     protected void onReplace(Object entity) {
         this.updateListeners.forEach(e -> e.onReplace(entity));
     }
 
-    protected void onBatchReplace(Collection<Object> entitys) {
-        this.updateListeners.forEach(e -> e.onBatchReplace(entitys));
+    protected void onBatchReplace(Collection<Object> models) {
+        this.updateListeners.forEach(e -> e.onBatchReplace(models));
     }
 
     protected void onDelete(Object entity) {
         this.deleteListeners.forEach(e -> e.onDelete(entity));
     }
 
-    protected void onBatchDelete(Collection<Object> entitys) {
-        this.deleteListeners.forEach(e -> e.onBatchDelete(entitys));
+    protected void onBatchDelete(Collection<Object> models) {
+        this.deleteListeners.forEach(e -> e.onBatchDelete(models));
     }
 
     protected void onDeleteById(Object id, Class<?> ntClass) {

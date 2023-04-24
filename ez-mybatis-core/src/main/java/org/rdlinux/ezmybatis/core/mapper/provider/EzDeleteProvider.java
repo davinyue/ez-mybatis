@@ -64,9 +64,9 @@ public class EzDeleteProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        Collection<Object> ids = new ArrayList<>(entitys.size());
-        for (Object entity : entitys) {
+        Collection<Object> models = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Collection<Object> ids = new ArrayList<>(models.size());
+        for (Object entity : models) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
             Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
             Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
@@ -82,9 +82,9 @@ public class EzDeleteProvider {
         MybatisParamHolder paramHolder = new MybatisParamHolder(param);
         Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        Collection<Object> ids = new ArrayList<>(entitys.size());
-        for (Object entity : entitys) {
+        Collection<Object> models = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Collection<Object> ids = new ArrayList<>(models.size());
+        for (Object entity : models) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
             Method fieldGetMethod = entityClassInfo.getPrimaryKeyInfo().getFieldGetMethod();
             Object id = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
