@@ -23,11 +23,7 @@ import java.util.List;
  * 使用jdbc批量插入
  */
 public class JdbcBatchInsertDao {
-    private static Log log;
-
-    static {
-        log = LogFactory.getLog(JdbcBatchInsertDao.class);
-    }
+    private static final Log log = LogFactory.getLog(JdbcBatchInsertDao.class);
 
     private SqlSession sqlSession;
 
