@@ -6,8 +6,14 @@ import java.util.List;
  * jdbc批量执行sql
  */
 public class EzJdbcBatchSql {
+    /**
+     * sql
+     */
     private String sql;
-    private List<List<Object>> params;
+    /**
+     * 批量参数
+     */
+    private List<List<EzJdbcSqlParam>> batchParams;
 
     public String getSql() {
         return this.sql;
@@ -17,11 +23,11 @@ public class EzJdbcBatchSql {
         this.sql = sql;
     }
 
-    public List<List<Object>> getParams() {
-        return this.params;
+    public List<List<EzJdbcSqlParam>> getBatchParams() {
+        return this.batchParams;
     }
 
-    public void setParams(List<List<Object>> params) {
-        this.params = params;
+    public void setBatchParams(List<List<EzJdbcSqlParam>> batchParams) {
+        this.batchParams = batchParams;
     }
 }

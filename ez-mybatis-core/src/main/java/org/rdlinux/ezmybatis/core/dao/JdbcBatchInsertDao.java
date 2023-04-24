@@ -4,10 +4,9 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
+import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -60,17 +59,11 @@ public class JdbcBatchInsertDao {
         try {
             PreparedStatement statement = connection.prepareStatement(jdbcBatchSql.getSql());
             start = System.currentTimeMillis();
-            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            for (List<Object> paramList : jdbcBatchSql.getParams()) {
-                for (int i = 0; i < paramList.size(); i++) {
-                    TypeHandler typeHandler;
-                    Object param = paramList.get(i);
-                    if (param == null) {
-                        typeHandler = typeHandlerRegistry.getUnknownTypeHandler();
-                    } else {
-                        typeHandler = typeHandlerRegistry.getTypeHandler(param.getClass());
-                    }
-                    typeHandler.setParameter(statement, i + 1, param, JdbcType.NULL);
+            for (List<EzJdbcSqlParam> batchParam : jdbcBatchSql.getBatchParams()) {
+                for (int i = 0; i < batchParam.size(); i++) {
+                    EzJdbcSqlParam param = batchParam.get(i);
+                    TypeHandler typeHandler = param.getTypeHandler();
+                    typeHandler.setParameter(statement, i + 1, param.getValue(), param.getJdbcType());
                 }
                 statement.addBatch();
             }
