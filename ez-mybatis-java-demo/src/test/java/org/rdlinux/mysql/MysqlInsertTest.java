@@ -2,7 +2,7 @@ package org.rdlinux.mysql;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
-import org.rdlinux.ezmybatis.core.dao.JdbcBatchInsertDao;
+import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.SaveTest;
@@ -312,7 +312,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();
-        JdbcBatchInsertDao jdbcBatchInsertDao = new JdbcBatchInsertDao(sqlSession);
+        JdbcInsertDao jdbcBatchInsertDao = new JdbcInsertDao(sqlSession);
         for (int h = 0; h < 200; h++) {
             List<SaveTest> models = new LinkedList<>();
             for (int i = 0; i < 500; i++) {

@@ -17,19 +17,34 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * 使用jdbc批量插入
  */
-public class JdbcBatchInsertDao {
-    private static final Log log = LogFactory.getLog(JdbcBatchInsertDao.class);
+public class JdbcInsertDao {
+    private static final Log log = LogFactory.getLog(JdbcInsertDao.class);
 
     private SqlSession sqlSession;
 
-    public JdbcBatchInsertDao(SqlSession sqlSession) {
+    public JdbcInsertDao(SqlSession sqlSession) {
         Assert.notNull(sqlSession, "sqlSession can not be null");
         this.sqlSession = sqlSession;
+    }
+
+    /**
+     * 单条插入
+     */
+    public int insert(Object model) {
+        return this.insertByTable(null, model);
+    }
+
+    /**
+     * 单条插入, 指定表
+     */
+    public int insertByTable(Table table, Object model) {
+        return this.batchInsertByTable(table, Collections.singleton(model));
     }
 
     /**
