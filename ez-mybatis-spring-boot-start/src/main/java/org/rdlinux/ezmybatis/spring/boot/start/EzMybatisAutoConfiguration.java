@@ -6,7 +6,7 @@ import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.dao.JdbcBatchInsertDao;
+import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
 import org.rdlinux.ezmybatis.spring.SpringEzMybatisInit;
@@ -52,10 +52,10 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
     private EzMybatisProperties ezMybatisProperties;
 
     @Bean
-    public JdbcBatchInsertDao jdbcBatchInsertDao() {
+    public JdbcInsertDao jdbcInsertDao() {
         SqlSessionTemplate sqlSessionTemplate = this.applicationContext.getBean("sqlSessionTemplate",
                 SqlSessionTemplate.class);
-        return new JdbcBatchInsertDao(sqlSessionTemplate);
+        return new JdbcInsertDao(sqlSessionTemplate);
     }
 
     @Override
