@@ -74,8 +74,7 @@ public class JdbcInsertDao {
         if (log.isDebugEnabled()) {
             log.debug("SQL construction takes: " + (end - start) + "ms");
         }
-        try {
-            PreparedStatement statement = connection.prepareStatement(jdbcBatchSql.getSql());
+        try (PreparedStatement statement = connection.prepareStatement(jdbcBatchSql.getSql())) {
             start = System.currentTimeMillis();
             for (List<EzJdbcSqlParam> batchParam : jdbcBatchSql.getBatchParams()) {
                 for (int i = 0; i < batchParam.size(); i++) {
