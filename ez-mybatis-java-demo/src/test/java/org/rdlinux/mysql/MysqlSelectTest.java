@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
@@ -274,7 +275,8 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void normalEzQueryInTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id").done()
+        EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select()
+                .addField("id").done().page(1, 5)
                 .build();
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
                 .where().addColumnCondition("id", Operator.in, sonQ).done().build();
@@ -538,7 +540,9 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .addFieldCondition(User.Fields.name, Operator.notIn, Collections.singletonList("张三"))
                 .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
                 .addFieldCondition(User.Fields.name, Operator.notIn, nameArray)
-                .done().build();
+                .done()
+                .page(1, 5)
+                .build();
         System.out.println(mapper.query(query));
         sqlSession.close();
     }
@@ -685,6 +689,25 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .page(1, 2)
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+        sqlSession.close();
+    }
+
+    @Test
+    public void groupConditionSelectTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.userAge, 1)
+                .groupCondition(true, LogicalOperator.AND)
+                .addFieldCondition(User.Fields.name, "1")
+                .done()
+                .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
+                .done()
+                .page(1, 1)
+                .build();
+        System.out.println(mapper.query(query));
         sqlSession.close();
     }
 }

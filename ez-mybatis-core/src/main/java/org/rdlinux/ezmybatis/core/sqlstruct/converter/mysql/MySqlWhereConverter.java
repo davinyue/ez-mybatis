@@ -31,20 +31,20 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
     protected static StringBuilder conditionsToSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                                    MybatisParamHolder mybatisParamHolder,
                                                    List<Condition> conditions) {
-        boolean lastConditionEmpty = true;
+        //循环中当前条件的前面是否已经有其它条件
+        boolean beforeHasCondition = false;
         for (Condition condition : conditions) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, condition.getClass());
             String sqlPart = converter.buildSql(type, new StringBuilder(), configuration, condition, mybatisParamHolder)
                     .toString();
             boolean emptySql = sqlPart.trim().isEmpty();
-            if (!lastConditionEmpty && !emptySql) {
-                sqlBuilder.append(condition.getLogicalOperator().name()).append(" ");
-            }
             if (!emptySql) {
-                lastConditionEmpty = false;
+                if (beforeHasCondition) {
+                    sqlBuilder.append(condition.getLogicalOperator().name()).append(" ");
+                }
                 sqlBuilder.append(sqlPart);
-            } else {
-                lastConditionEmpty = true;
+                //如果当前条件不为空, 则将后续循环的“循环中当前条件的前面是否已经有其它条件”设置为true
+                beforeHasCondition = true;
             }
         }
         return sqlBuilder;
