@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -35,11 +36,11 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         if (!join.isSure()) {
             return sqlBuilder;
         }
-        StringBuilder sonSql = new StringBuilder();
+        String sonSql = "";
         if (join.getJoinType() != JoinType.CrossJoin) {
             sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
-                    mybatisParamHolder, join.getOnConditions());
-            if (sonSql.length() == 0) {
+                    mybatisParamHolder, join.getOnConditions()).toString();
+            if (StringUtils.isBlank(sonSql)) {
                 return sqlBuilder;
             }
         }

@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -59,8 +60,12 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
         if (where == null || where.getConditions() == null || where.getConditions().isEmpty()) {
             return sqlBuilder;
         }
-        sqlBuilder.append(" WHERE ");
-        return conditionsToSql(type, sqlBuilder, configuration, mybatisParamHolder, where.getConditions());
+        String sonSql = conditionsToSql(type, new StringBuilder(), configuration, mybatisParamHolder,
+                where.getConditions()).toString();
+        if (StringUtils.isNoneBlank(sonSql)) {
+            sqlBuilder.append(" WHERE ").append(sonSql);
+        }
+        return sqlBuilder;
     }
 
     @Override

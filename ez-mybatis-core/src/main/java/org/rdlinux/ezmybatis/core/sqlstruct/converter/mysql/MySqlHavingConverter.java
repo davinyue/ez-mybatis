@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
@@ -33,9 +34,12 @@ public class MySqlHavingConverter extends AbstractConverter<Having> implements C
         if (having == null || having.getConditions() == null || having.getConditions().isEmpty()) {
             return sqlBuilder;
         }
-        sqlBuilder.append(" HAVING ");
-        return MySqlWhereConverter.conditionsToSql(type, sqlBuilder, configuration, mybatisParamHolder,
-                having.getConditions());
+        String sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
+                mybatisParamHolder, having.getConditions()).toString();
+        if (StringUtils.isNoneBlank(sonSql)) {
+            sqlBuilder.append(" HAVING ").append(sonSql);
+        }
+        return sqlBuilder;
     }
 
     @Override
