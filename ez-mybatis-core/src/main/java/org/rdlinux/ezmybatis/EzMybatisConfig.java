@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.constant.TableNamePattern;
 
 /**
  * 配置
@@ -16,6 +17,10 @@ public class EzMybatisConfig {
      * 查询结果使用map接收的key格式
      */
     private MapRetKeyPattern mapRetKeyPattern;
+    /**
+     * 表名转换格式
+     */
+    private TableNamePattern tableNamePattern = TableNamePattern.ORIGINAL;
 
     public EzMybatisConfig(Configuration configuration) {
         if (configuration == null) {
@@ -43,5 +48,13 @@ public class EzMybatisConfig {
 
     public void setMapRetKeyPattern(MapRetKeyPattern mapRetKeyPattern) {
         this.mapRetKeyPattern = mapRetKeyPattern;
+    }
+
+    public TableNamePattern getTableNamePattern() {
+        return this.tableNamePattern;
+    }
+
+    public void setTableNamePattern(TableNamePattern tableNamePattern) {
+        this.tableNamePattern = tableNamePattern;
     }
 }

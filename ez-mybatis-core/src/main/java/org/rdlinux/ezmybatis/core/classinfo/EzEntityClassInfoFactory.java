@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.classinfo;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzContentConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.DmEntityInfoBuild;
@@ -47,7 +48,8 @@ public class EzEntityClassInfoFactory {
         if (entityInfoBuild != null) {
             infoBuild = entityInfoBuild;
         }
-        EntityClassInfo entityClassInfo = infoBuild.buildInfo(configuration, ntClass);
+        EzContentConfig ezContentConfig = EzMybatisContent.getContentConfig(configuration);
+        EntityClassInfo entityClassInfo = infoBuild.buildInfo(ezContentConfig, ntClass);
         Map<String, EntityClassInfo> entityInfo;
         if (ENTITY_INFO_MAP.get(configuration) == null) {
             entityInfo = new HashMap<>();
