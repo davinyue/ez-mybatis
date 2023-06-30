@@ -48,9 +48,9 @@ public class EntityFieldInfo {
         this.fieldName = field.getName();
         this.columnName = field.getName();
         this.buildConfig = buildConfig;
-        if (buildConfig.getColumnHandle() == EntityInfoBuildConfig.ColumnHandle.ToUnder) {
+        if (buildConfig.getColumnHandle() == EntityInfoBuildConfig.ColumnHandle.TO_UNDER) {
             this.columnName = HumpLineStringUtils.humpToLine(field.getName());
-        } else if (buildConfig.getColumnHandle() == EntityInfoBuildConfig.ColumnHandle.ToUnderAndUpper) {
+        } else if (buildConfig.getColumnHandle() == EntityInfoBuildConfig.ColumnHandle.TO_UNDER_AND_UPPER) {
             this.columnName = HumpLineStringUtils.humpToLine(field.getName()).toUpperCase();
         }
         if (field.isAnnotationPresent(Column.class)) {

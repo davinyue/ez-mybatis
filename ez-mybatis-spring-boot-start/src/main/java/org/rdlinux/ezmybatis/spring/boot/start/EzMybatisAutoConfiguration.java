@@ -5,6 +5,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
+import org.rdlinux.ezmybatis.constant.TableNamePattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -70,6 +71,10 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
             ezMybatisConfig.setEscapeKeyword(this.ezMybatisProperties.isEscapeKeyword());
             if (this.ezMybatisProperties.getMapRetKeyPattern() != null) {
                 ezMybatisConfig.setMapRetKeyPattern(this.ezMybatisProperties.getMapRetKeyPattern());
+            }
+            ezMybatisConfig.setTableNamePattern(TableNamePattern.ORIGINAL);
+            if (this.ezMybatisProperties.getTableNamePattern() != null) {
+                ezMybatisConfig.setTableNamePattern(this.ezMybatisProperties.getTableNamePattern());
             }
             SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
             if (this.ezMybatisProperties.getDbType() != null) {
