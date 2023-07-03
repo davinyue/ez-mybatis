@@ -57,14 +57,18 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
         if (type == Type.INSERT) {
             throw new UnsupportedOperationException("INSERT model unsupported");
         }
-        if (where == null || where.getConditions() == null || where.getConditions().isEmpty()) {
+        if (where == null) {
             return sqlBuilder;
+        }
+        if (where.getConditions() == null || where.getConditions().isEmpty()) {
+            return sqlBuilder.append(" WHERE 1 = 1 ");
         }
         String sonSql = conditionsToSql(type, new StringBuilder(), configuration, mybatisParamHolder,
                 where.getConditions()).toString();
-        if (StringUtils.isNoneBlank(sonSql)) {
-            sqlBuilder.append(" WHERE ").append(sonSql);
+        if (StringUtils.isBlank(sonSql)) {
+            sonSql = " 1 = 1 ";
         }
+        sqlBuilder.append(" WHERE ").append(sonSql);
         return sqlBuilder;
     }
 
