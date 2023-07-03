@@ -31,14 +31,18 @@ public class MySqlHavingConverter extends AbstractConverter<Having> implements C
         if (type != Type.SELECT) {
             throw new UnsupportedOperationException(String.format("%s model unsupported", type.name()));
         }
-        if (having == null || having.getConditions() == null || having.getConditions().isEmpty()) {
+        if (having == null) {
             return sqlBuilder;
+        }
+        if (having.getConditions() == null || having.getConditions().isEmpty()) {
+            return sqlBuilder.append(" HAVING 1 = 1 ");
         }
         String sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
                 mybatisParamHolder, having.getConditions()).toString();
-        if (StringUtils.isNoneBlank(sonSql)) {
-            sqlBuilder.append(" HAVING ").append(sonSql);
+        if (StringUtils.isBlank(sonSql)) {
+            sonSql = " 1 = 1 ";
         }
+        sqlBuilder.append(" HAVING ").append(sonSql);
         return sqlBuilder;
     }
 
