@@ -43,6 +43,9 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
                 Function.FunArg arg = funArgs.get(i);
                 if (arg.getArgType() == ArgType.COLUMN) {
                     String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+                    if (arg.isDistinct()) {
+                        sqlBuilder.append(" DISTINCT ");
+                    }
                     sqlBuilder.append(arg.getTable().getAlias()).append(".").append(keywordQM)
                             .append(arg.getArgValue()).append(keywordQM);
                 } else if (arg.getArgType() == ArgType.FILED) {
@@ -50,6 +53,9 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
                             ((EntityTable) arg.getTable()).getEtType());
                     String columnName = entityClassInfo.getFieldInfo((String) arg.getArgValue()).getColumnName();
                     String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+                    if (arg.isDistinct()) {
+                        sqlBuilder.append(" DISTINCT ");
+                    }
                     sqlBuilder.append(arg.getTable().getAlias()).append(".").append(keywordQM)
                             .append(columnName).append(keywordQM);
                 } else if (arg.getArgType() == ArgType.FUNC) {
