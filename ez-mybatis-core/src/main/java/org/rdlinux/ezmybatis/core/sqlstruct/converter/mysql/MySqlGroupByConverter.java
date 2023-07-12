@@ -2,11 +2,12 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.GroupItem;
+
 
 public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements Converter<GroupBy> {
     private static volatile MySqlGroupByConverter instance;
@@ -32,9 +33,11 @@ public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" GROUP BY ");
+            Converter<GroupBy.GroupItem> converter = EzMybatisContent.getConverter(configuration,
+                    GroupBy.GroupItem.class);
             for (int i = 0; i < groupBy.getItems().size(); i++) {
-                GroupItem groupItem = groupBy.getItems().get(i);
-                sql.append(groupItem.toSqlStruct(configuration));
+                GroupBy.GroupItem groupItem = groupBy.getItems().get(i);
+                converter.buildSql(type, sql, configuration, groupItem, mybatisParamHolder);
                 if (i + 1 < groupBy.getItems().size()) {
                     sql.append(", ");
                 } else {

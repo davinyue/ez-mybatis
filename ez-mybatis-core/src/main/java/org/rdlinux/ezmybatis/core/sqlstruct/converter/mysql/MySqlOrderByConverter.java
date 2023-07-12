@@ -2,11 +2,11 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderItem;
 
 public class MySqlOrderByConverter extends AbstractConverter<OrderBy> implements Converter<OrderBy> {
     private static volatile MySqlOrderByConverter instance;
@@ -32,9 +32,11 @@ public class MySqlOrderByConverter extends AbstractConverter<OrderBy> implements
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" ORDER BY ");
+            Converter<OrderBy.OrderItem> converter = EzMybatisContent.getConverter(configuration,
+                    OrderBy.OrderItem.class);
             for (int i = 0; i < orderBy.getItems().size(); i++) {
-                OrderItem orderItem = orderBy.getItems().get(i);
-                sql.append(orderItem.toSqlStruct(configuration));
+                OrderBy.OrderItem orderItem = orderBy.getItems().get(i);
+                converter.buildSql(type, sql, configuration, orderItem, mybatisParamHolder);
                 if (i + 1 < orderBy.getItems().size()) {
                     sql.append(", ");
                 } else {

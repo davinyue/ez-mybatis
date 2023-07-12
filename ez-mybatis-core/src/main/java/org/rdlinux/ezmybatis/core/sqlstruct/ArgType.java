@@ -29,6 +29,10 @@ public enum ArgType {
      */
     VALUE,
     /**
+     * 别名
+     */
+    ALIAS,
+    /**
      * 关键词
      */
     KEYWORDS;
