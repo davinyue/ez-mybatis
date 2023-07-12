@@ -677,6 +677,24 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
+    public void functionTest() {
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+                .from(table)
+                .select()
+                .addFunc(Function.builder(table).setFunName("COUNT").addDistinctFieldArg(User.Fields.name).build(),
+                        "nameCount")
+                .done()
+                .page(1, 10)
+                .build();
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        List<StringHashMap> ret = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(ret));
+        sqlSession.close();
+    }
+
+    @Test
     public void caseWhenSelectTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
