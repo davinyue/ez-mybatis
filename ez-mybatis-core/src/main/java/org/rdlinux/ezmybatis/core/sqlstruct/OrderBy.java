@@ -19,7 +19,7 @@ public class OrderBy implements SqlStruct {
     }
 
     /**
-     * 分组项
+     * 排序项
      */
     @Getter
     @Setter
