@@ -44,6 +44,10 @@ public class Function implements SqlStruct {
     @Accessors(chain = true)
     public static class FunArg {
         /**
+         * 添加类属性或者列的时候是否添加去重关键词
+         */
+        private boolean distinct;
+        /**
          * 表
          */
         private Table table;
@@ -75,30 +79,51 @@ public class Function implements SqlStruct {
             return this;
         }
 
-        public FunctionBuilder addColumnArg(boolean sure, Table table, String column) {
+        private FunctionBuilder addColumnArg(boolean sure, boolean distinct, Table table, String column) {
             if (!sure) {
                 return this;
             }
             Assert.notNull(table, "table can not be null");
             Assert.notEmpty(column, "column can not be null");
-            FunArg arg = new FunArg().setArgType(ArgType.COLUMN).setTable(table).setArgValue(column);
+            FunArg arg = new FunArg().setArgType(ArgType.COLUMN).setTable(table).setArgValue(column)
+                    .setDistinct(distinct);
             this.function.funArgs.add(arg);
             return this;
+        }
+
+        public FunctionBuilder addColumnArg(boolean sure, Table table, String column) {
+            return this.addColumnArg(sure, false, table, column);
+        }
+
+        public FunctionBuilder addDistinctColumnArg(boolean sure, Table table, String column) {
+            return this.addColumnArg(sure, true, table, column);
         }
 
         public FunctionBuilder addColumnArg(Table table, String column) {
             return this.addColumnArg(true, table, column);
         }
 
+        public FunctionBuilder addDistinctColumnArg(Table table, String column) {
+            return this.addDistinctColumnArg(true, table, column);
+        }
+
         public FunctionBuilder addColumnArg(String column) {
             return this.addColumnArg(this.function.table, column);
+        }
+
+        public FunctionBuilder addDistinctColumnArg(String column) {
+            return this.addDistinctColumnArg(this.function.table, column);
         }
 
         public FunctionBuilder addColumnArg(boolean sure, String column) {
             return this.addColumnArg(sure, this.function.table, column);
         }
 
-        public FunctionBuilder addFieldArg(boolean sure, Table table, String field) {
+        public FunctionBuilder addDistinctColumnArg(boolean sure, String column) {
+            return this.addDistinctColumnArg(sure, this.function.table, column);
+        }
+
+        private FunctionBuilder addFieldArg(boolean sure, boolean distinct, Table table, String field) {
             if (!sure) {
                 return this;
             }
@@ -107,21 +132,42 @@ public class Function implements SqlStruct {
             if (!(table instanceof EntityTable)) {
                 throw new IllegalArgumentException("Only EntityTable is supported");
             }
-            FunArg arg = new FunArg().setArgType(ArgType.FILED).setTable(table).setArgValue(field);
+            FunArg arg = new FunArg().setArgType(ArgType.FILED).setTable(table).setArgValue(field)
+                    .setDistinct(distinct);
             this.function.funArgs.add(arg);
             return this;
+        }
+
+        public FunctionBuilder addFieldArg(boolean sure, Table table, String field) {
+            return this.addFieldArg(sure, false, table, field);
+        }
+
+        public FunctionBuilder addDistinctFieldArg(boolean sure, Table table, String field) {
+            return this.addFieldArg(sure, true, table, field);
         }
 
         public FunctionBuilder addFieldArg(Table table, String field) {
             return this.addFieldArg(true, table, field);
         }
 
+        public FunctionBuilder addDistinctFieldArg(Table table, String field) {
+            return this.addDistinctFieldArg(true, table, field);
+        }
+
         public FunctionBuilder addFieldArg(String field) {
             return this.addFieldArg(this.function.table, field);
         }
 
+        public FunctionBuilder addDistinctFieldArg(String field) {
+            return this.addDistinctFieldArg(this.function.table, field);
+        }
+
         public FunctionBuilder addFieldArg(boolean sure, String field) {
             return this.addFieldArg(sure, this.function.table, field);
+        }
+
+        public FunctionBuilder addDistinctFieldArg(boolean sure, String field) {
+            return this.addDistinctFieldArg(sure, this.function.table, field);
         }
 
         public FunctionBuilder addFunArg(boolean sure, Function function) {
