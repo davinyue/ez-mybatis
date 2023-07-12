@@ -743,7 +743,8 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .groupBy()
                 .addAlias("us")
-                .addAlias("uc")
+                .addFormula(Formula.builder(table).withField(User.Fields.userAge)
+                        .subtractField(User.Fields.sex).done().build())
                 .done()
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
@@ -764,6 +765,45 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .groupBy()
                 .addColumn("age")
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+        sqlSession.close();
+    }
+
+    @Test
+    public void orderTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addAll()
+                .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .addFormula(Formula.builder(table).withField(User.Fields.userAge)
+                        .subtractField(User.Fields.sex).done().build())
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addAll()
+                .done()
+                .orderBy()
+                .addField(User.Fields.userAge)
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addAll()
+                .done()
+                .orderBy()
+                .addColumn("age", OrderType.DESC)
                 .done()
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
