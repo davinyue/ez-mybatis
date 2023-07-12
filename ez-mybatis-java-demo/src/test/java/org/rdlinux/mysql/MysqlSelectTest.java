@@ -8,10 +8,10 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
-import org.rdlinux.ezmybatis.core.sqlstruct.order.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
@@ -413,7 +413,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
-    public void normalQueryMap() throws InterruptedException {
+    public void normalQueryMap() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
@@ -677,7 +677,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
-    public void functionTest() {
+    public void functionDistinctTest() {
         EntityTable table = EntityTable.of(User.class);
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
                 .from(table)
@@ -726,6 +726,47 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .page(1, 1)
                 .build();
         System.out.println(mapper.query(query));
+        sqlSession.close();
+    }
+
+    @Test
+    public void groupTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addFormula(Formula.builder(table).withField(User.Fields.userAge)
+                        .subtractField(User.Fields.sex).done().build(), "us")
+                .addFormula(Formula.builder(table).withField(User.Fields.userAge)
+                        .subtractField(User.Fields.sex).done().build(), "uc")
+                .done()
+                .groupBy()
+                .addAlias("us")
+                .addAlias("uc")
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addField(User.Fields.userAge)
+                .done()
+                .groupBy()
+                .addField(User.Fields.userAge)
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addField(User.Fields.userAge)
+                .done()
+                .groupBy()
+                .addColumn("age")
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();
     }
 }

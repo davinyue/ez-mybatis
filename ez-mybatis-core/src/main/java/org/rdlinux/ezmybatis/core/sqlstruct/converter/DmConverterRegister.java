@@ -33,8 +33,10 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, Join.class, DmJoinConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, From.class, DmFromConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, OrderBy.class, DmOrderByConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, OrderBy.OrderItem.class, DmOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Select.class, DmSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, GroupBy.class, DmGroupByConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, GroupBy.GroupItem.class, DmGroupItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Limit.class, DmLimitConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalPartition.class, DmNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SubPartition.class, DmSubPartitionConverter.getInstance());

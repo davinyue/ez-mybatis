@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.order;
+package org.rdlinux.ezmybatis.core.sqlstruct;
 
 /**
  * 排序类型

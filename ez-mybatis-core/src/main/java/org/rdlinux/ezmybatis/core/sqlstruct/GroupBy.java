@@ -2,9 +2,8 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.ColumnGroupItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.FieldGroupItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.GroupItem;
+import lombok.experimental.Accessors;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -19,6 +18,26 @@ public class GroupBy implements SqlStruct {
         this.items = items;
     }
 
+    /**
+     * 分组项
+     */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class GroupItem implements SqlStruct {
+        /**
+         * 表
+         */
+        private Table table;
+        /**
+         * 值类型
+         */
+        private ArgType argType;
+        /**
+         * 值
+         */
+        private Object value;
+    }
 
     public static class GroupBuilder<T> {
         private T target;
@@ -40,7 +59,8 @@ public class GroupBy implements SqlStruct {
 
         public GroupBuilder<T> addField(String field) {
             this.checkEntityTable();
-            this.groupBy.getItems().add(new FieldGroupItem((EntityTable) this.table, field));
+            this.groupBy.getItems().add(new GroupItem().setTable(this.table).setValue(field)
+                    .setArgType(ArgType.FILED));
             return this;
         }
 
@@ -52,7 +72,8 @@ public class GroupBy implements SqlStruct {
         }
 
         public GroupBuilder<T> addColumn(String column) {
-            this.groupBy.getItems().add(new ColumnGroupItem(this.table, column));
+            this.groupBy.getItems().add(new GroupItem().setTable(this.table).setValue(column)
+                    .setArgType(ArgType.COLUMN));
             return this;
         }
 
@@ -61,6 +82,50 @@ public class GroupBy implements SqlStruct {
                 return this.addColumn(column);
             }
             return this;
+        }
+
+        public GroupBuilder<T> addAlias(boolean sure, String alias) {
+            if (sure) {
+                this.groupBy.getItems().add(new GroupItem().setValue(alias).setArgType(ArgType.ALIAS));
+            }
+            return this;
+        }
+
+        public GroupBuilder<T> addAlias(String alias) {
+            return this.addAlias(true, alias);
+        }
+
+        public GroupBuilder<T> addFormula(boolean sure, Formula formula) {
+            if (sure) {
+                this.groupBy.getItems().add(new GroupItem().setValue(formula).setArgType(ArgType.FORMULA));
+            }
+            return this;
+        }
+
+        public GroupBuilder<T> addFormula(Formula formula) {
+            return this.addFormula(true, formula);
+        }
+
+        public GroupBuilder<T> addFunc(boolean sure, Function function) {
+            if (sure) {
+                this.groupBy.getItems().add(new GroupItem().setValue(function).setArgType(ArgType.FUNC));
+            }
+            return this;
+        }
+
+        public GroupBuilder<T> addFunc(Function function) {
+            return this.addFunc(true, function);
+        }
+
+        public GroupBuilder<T> addCaseWhen(boolean sure, CaseWhen caseWhen) {
+            if (sure) {
+                this.groupBy.getItems().add(new GroupItem().setValue(caseWhen).setArgType(ArgType.CASE_WHEN));
+            }
+            return this;
+        }
+
+        public GroupBuilder<T> addCaseWhen(CaseWhen caseWhen) {
+            return this.addCaseWhen(true, caseWhen);
         }
 
         public T done() {
