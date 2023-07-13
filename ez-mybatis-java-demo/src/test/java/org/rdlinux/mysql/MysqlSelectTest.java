@@ -768,6 +768,21 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addField(User.Fields.userAge)
+                .done()
+                .groupBy()
+                .addField(User.Fields.userAge)
+                .done()
+                .having()
+                .addFuncCompareValueCondition(
+                        Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
+                        Operator.ge, 1)
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();
     }
 

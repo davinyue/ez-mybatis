@@ -93,6 +93,8 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, NormalFieldCondition.class, DmNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalColumnCondition.class, DmNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalAliasCondition.class, DmNormalAliasConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FunctionCompareValueCondition.class, DmFunctionCompareValueConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FormulaCompareValueCondition.class, DmFormulaCompareValueConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());

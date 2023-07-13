@@ -39,7 +39,6 @@ public class ColumnCompareCondition implements Condition, SqlStruct {
         this.rightColumn = rightColumn;
     }
 
-
     @Override
     public LogicalOperator getLogicalOperator() {
         return this.logicalOperator;
