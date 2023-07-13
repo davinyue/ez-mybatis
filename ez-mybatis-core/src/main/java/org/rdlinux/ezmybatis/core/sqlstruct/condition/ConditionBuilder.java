@@ -1,11 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.ColumnCompareCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FieldCompareCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareValueCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FunctionCompareValueCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullFiledCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullColumnCondition;
@@ -13,6 +16,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -1145,5 +1149,131 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addSqlCondition(String sql) {
         return this.addSqlCondition(true, sql);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                                   Operator operator, Object value) {
+        if (sure) {
+            this.conditions.add(new FunctionCompareValueCondition(logicalOperator, function, operator, value));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(LogicalOperator logicalOperator, Function function,
+                                                   Operator operator, Object value) {
+        return this.addFuncCompareValueCondition(true, logicalOperator, function, operator, value);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                                   Object value) {
+        return this.addFuncCompareValueCondition(sure, logicalOperator, function, Operator.eq, value);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(LogicalOperator logicalOperator, Function function,
+                                                   Object value) {
+        return this.addFuncCompareValueCondition(true, logicalOperator, function, Operator.eq, value);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(boolean sure, Function function, Operator operator, Object value) {
+        return this.addFuncCompareValueCondition(sure, LogicalOperator.AND, function, operator, value);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(Function function, Operator operator, Object value) {
+        return this.addFuncCompareValueCondition(true, LogicalOperator.AND, function, operator, value);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(boolean sure, Function function, Object value) {
+        return this.addFuncCompareValueCondition(sure, LogicalOperator.AND, function, Operator.eq, value);
+    }
+
+    /**
+     * 添函数对比值条件
+     */
+    public SonBuilder addFuncCompareValueCondition(Function function, Object value) {
+        return this.addFuncCompareValueCondition(true, LogicalOperator.AND, function, Operator.eq, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                                      Operator operator, Object value) {
+        if (sure) {
+            this.conditions.add(new FormulaCompareValueCondition(logicalOperator, formula, operator, value));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(LogicalOperator logicalOperator, Formula formula,
+                                                      Operator operator, Object value) {
+        return this.addFormulaCompareValueCondition(true, logicalOperator, formula, operator, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                                      Object value) {
+        return this.addFormulaCompareValueCondition(sure, logicalOperator, formula, Operator.eq, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(LogicalOperator logicalOperator, Formula formula,
+                                                      Object value) {
+        return this.addFormulaCompareValueCondition(true, logicalOperator, formula, Operator.eq, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(boolean sure, Formula formula, Operator operator, Object value) {
+        return this.addFormulaCompareValueCondition(sure, LogicalOperator.AND, formula, operator, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(Formula formula, Operator operator, Object value) {
+        return this.addFormulaCompareValueCondition(true, LogicalOperator.AND, formula, operator, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(boolean sure, Formula formula, Object value) {
+        return this.addFormulaCompareValueCondition(sure, LogicalOperator.AND, formula, Operator.eq, value);
+    }
+
+    /**
+     * 添公式对比值条件
+     */
+    public SonBuilder addFormulaCompareValueCondition(Formula formula, Object value) {
+        return this.addFormulaCompareValueCondition(true, LogicalOperator.AND, formula, Operator.eq, value);
     }
 }
