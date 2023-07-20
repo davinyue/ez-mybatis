@@ -44,7 +44,8 @@ public class EzMybatisContent {
     /**
      * 注册转换器
      */
-    public static <T extends SqlStruct> void addConverter(DbType dbType, Class<T> sqlStruct, Converter<T> converter) {
+    public synchronized static <T extends SqlStruct> void addConverter(DbType dbType, Class<T> sqlStruct,
+                                                                       Converter<T> converter) {
         CONVERT_MAP.putIfAbsent(dbType, new HashMap<>());
         CONVERT_MAP.get(dbType).put(sqlStruct, converter);
     }
