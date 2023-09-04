@@ -27,7 +27,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         }
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "SELECT * FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " +
-                paramHolder.getMybatisParamName(id);
+                paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(), id);
     }
 
     @Override
@@ -49,7 +49,8 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {
-            sqlBuilder.append(paramHolder.getMybatisParamName(id));
+            sqlBuilder.append(paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(),
+                    id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

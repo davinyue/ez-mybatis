@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -69,6 +70,15 @@ public class MybatisParamHolder {
     @SuppressWarnings(value = {"unchecked"})
     public <T> T get(String param) {
         return (T) this.mybatisParam.get(param);
+    }
+
+    /**
+     * 获取一个参数名称
+     *
+     * @param paramValue 参数值
+     */
+    public String getMybatisParamName(Class<?> modelType, Field field, Object paramValue) {
+        return this.getMybatisParamName(paramValue);
     }
 
     /**

@@ -52,10 +52,12 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         StringBuilder paramBuilder = new StringBuilder("( ");
         int i = 1;
         for (String column : columnMapFieldInfo.keySet()) {
-            Method fieldGetMethod = columnMapFieldInfo.get(column).getFieldGetMethod();
+            EntityFieldInfo fieldInfo = columnMapFieldInfo.get(column);
+            Method fieldGetMethod = fieldInfo.getFieldGetMethod();
             Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
             columnBuilder.append(keywordQM).append(column).append(keywordQM);
-            paramBuilder.append(mybatisParamHolder.getMybatisParamName(fieldValue));
+            paramBuilder.append(mybatisParamHolder.getMybatisParamName(entity.getClass(), fieldInfo.getField(),
+                    fieldValue));
             if (i < columnMapFieldInfo.size()) {
                 columnBuilder.append(", ");
                 paramBuilder.append(", ");
