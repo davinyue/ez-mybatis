@@ -30,8 +30,8 @@ public class MySqlNormalAliasConditionConverter extends AbstractConverter<Normal
                                        NormalAliasCondition obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String column = keywordQM + obj.getAlias() + keywordQM;
-        return MySqlNormalFieldConditionConverter.doBuildSql(sqlBuilder, configuration, obj,
-                mybatisParamHolder, column);
+        return MySqlNormalFieldConditionConverter.doBuildSql(null, null, sqlBuilder, configuration,
+                obj, mybatisParamHolder, column);
     }
 
     @Override

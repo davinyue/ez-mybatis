@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
@@ -16,6 +15,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,56 +51,69 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         }
     }
 
-    private static StringBuilder inToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                         NormalCondition obj, MybatisParamHolder mybatisParamHolder,
-                                         String column) {
+    private static StringBuilder inToSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
+                                         Configuration configuration, NormalCondition obj,
+                                         MybatisParamHolder mybatisParamHolder, String column) {
         sqlBuilder.append(" ").append(column).append(" ");
         Collection<?> valueCo = valueToCollection(obj);
-        if (valueCo.size() == 1) {
-            Object sValue = valueCo.iterator().next();
-            if (sValue instanceof EzQuery) {
-                sqlBuilder.append(obj.getOperator().getOperator());
-            } else if (obj.getOperator() == Operator.in) {
-                sqlBuilder.append(Operator.eq.getOperator());
-            } else {
-                sqlBuilder.append(Operator.ne.getOperator());
-            }
-            sqlBuilder.append(" ").append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, sValue))
-                    .append(" ");
+        Converter<?> ezQueryConverter = EzMybatisContent.getConverter(configuration, EzQuery.class);
+        boolean isSingleValue = false;
+        if (valueCo.size() == 1 && !(valueCo.iterator().next() instanceof EzQuery)) {
+            isSingleValue = true;
+        }
+        if (!isSingleValue) {
+            sqlBuilder.append(obj.getOperator().getOperator()).append(" ( ");
         } else {
-            sqlBuilder.append(obj.getOperator().getOperator()).append(" (");
-            int i = 0;
-            for (Object valueItem : valueCo) {
-                sqlBuilder.append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, valueItem));
-                if (i + 1 < valueCo.size()) {
-                    sqlBuilder.append(", ");
-                }
-                i++;
+            if (obj.getOperator() == Operator.in) {
+                sqlBuilder.append(Operator.eq.getOperator()).append(" ");
+            } else {
+                sqlBuilder.append(Operator.ne.getOperator()).append(" ");
             }
+        }
+        int i = 0;
+        for (Object valueItem : valueCo) {
+            if (valueItem instanceof EzQuery) {
+                sqlBuilder.append(ezQueryConverter.buildSql(Converter.Type.SELECT, new StringBuilder()
+                        , configuration, valueItem, mybatisParamHolder)).append(" ");
+            } else {
+                sqlBuilder.append(mybatisParamHolder.getMybatisParamName(modelType, field, valueItem)).append(" ");
+            }
+            if (i + 1 < valueCo.size()) {
+                sqlBuilder.append(", ");
+            }
+            i++;
+        }
+        if (!isSingleValue) {
             sqlBuilder.append(" ) ");
         }
         return sqlBuilder;
     }
 
-    protected static StringBuilder doBuildSql(StringBuilder sqlBuilder, Configuration configuration,
-                                              NormalCondition obj, MybatisParamHolder mybatisParamHolder,
-                                              String column) {
-
-        if (obj.getOperator() == Operator.in || obj.getOperator() == Operator.notIn) {
-            return inToSql(sqlBuilder, configuration, obj, mybatisParamHolder, column);
+    private static StringBuilder otherToSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
+                                            Configuration configuration, NormalCondition obj,
+                                            MybatisParamHolder mybatisParamHolder, String column) {
+        sqlBuilder.append(" ").append(column).append(" ").append(obj.getOperator().getOperator()).append(" ");
+        if (obj.getValue() instanceof EzQuery) {
+            Converter<?> ezQueryConverter = EzMybatisContent.getConverter(configuration, EzQuery.class);
+            sqlBuilder.append(ezQueryConverter.buildSql(Converter.Type.SELECT, new StringBuilder(),
+                    configuration, obj.getValue(), mybatisParamHolder));
         } else {
-            return otherToSql(sqlBuilder, configuration, obj, mybatisParamHolder, column);
+            sqlBuilder.append(mybatisParamHolder.getMybatisParamName(modelType, field, obj.getValue()));
+        }
+        sqlBuilder.append(" ");
+        return sqlBuilder;
+    }
+
+    protected static StringBuilder doBuildSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
+                                              Configuration configuration, NormalCondition obj,
+                                              MybatisParamHolder mybatisParamHolder, String column) {
+        if (obj.getOperator() == Operator.in || obj.getOperator() == Operator.notIn) {
+            return inToSql(modelType, field, sqlBuilder, configuration, obj, mybatisParamHolder, column);
+        } else {
+            return otherToSql(modelType, field, sqlBuilder, configuration, obj, mybatisParamHolder, column);
         }
     }
 
-    private static StringBuilder otherToSql(StringBuilder sqlBuilder, Configuration configuration,
-                                            NormalCondition obj, MybatisParamHolder mybatisParamHolder,
-                                            String column) {
-        sqlBuilder.append(" ").append(column).append(" ").append(obj.getOperator().getOperator()).append(" ")
-                .append(Condition.valueToSqlStruct(configuration, mybatisParamHolder, obj.getValue()))
-                .append(" ");
-        return sqlBuilder;
-    }
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
@@ -110,7 +123,8 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         String column = fieldInfo.getColumnName();
         String sql = obj.getTable().getAlias() + "." + keywordQM + column + keywordQM;
-        return doBuildSql(sqlBuilder, configuration, obj, mybatisParamHolder, sql);
+        return doBuildSql(etInfo.getEntityClass(), fieldInfo.getField(), sqlBuilder, configuration, obj,
+                mybatisParamHolder, sql);
     }
 
     @Override

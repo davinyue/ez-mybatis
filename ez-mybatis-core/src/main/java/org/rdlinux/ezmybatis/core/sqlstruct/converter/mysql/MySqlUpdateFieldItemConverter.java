@@ -36,7 +36,8 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         String column = fieldInfo.getColumnName();
-        String paramName = mybatisParamHolder.getMybatisParamName(obj.getValue());
+        String paramName = mybatisParamHolder.getMybatisParamName(etInfo.getEntityClass(), fieldInfo.getField(),
+                obj.getValue());
         sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(column)
                 .append(keywordQM).append(" = ").append(paramName);
         return sqlBuilder;
