@@ -23,8 +23,8 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_ID_METHOD)
     public String selectById(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
         return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
@@ -33,8 +33,8 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_TABLE_AND_ID_METHOD)
     public String selectByTableAndId(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
         Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
@@ -44,8 +44,8 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_IDS_METHOD)
     public String selectByIds(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
         return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
@@ -54,8 +54,9 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_TABLE_AND_IDS_METHOD)
     public String selectByTableAndIds(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
         Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
@@ -65,7 +66,8 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_SQL_METHOD)
     public String selectBySql(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         String sql = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQL);
         Map<String, Object> sqlParam = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
         param.putAll(sqlParam);
@@ -74,8 +76,8 @@ public class EzSelectProvider {
 
     @MethodName(QUERY_METHOD)
     public String query(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQuerySql(configuration, paramHolder, query);
@@ -83,8 +85,8 @@ public class EzSelectProvider {
 
     @MethodName(QUERY_COUNT_METHOD)
     public String queryCount(Map<String, Object> param) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(param);
-        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQueryCountSql(configuration, paramHolder, query);

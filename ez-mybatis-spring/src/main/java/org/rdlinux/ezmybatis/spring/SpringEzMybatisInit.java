@@ -2,10 +2,7 @@ package org.rdlinux.ezmybatis.spring;
 
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisFieldSetListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.springframework.context.ApplicationContext;
 
@@ -35,6 +32,11 @@ public class SpringEzMybatisInit {
                 EzMybatisFieldSetListener.class);
         fieldSetListenerMap.values().stream().sorted(Comparator.comparingInt(EzMybatisFieldSetListener::order))
                 .forEach(e -> EzMybatisContent.addFieldSetListener(ezMybatisConfig, e));
+        Map<String, EzMybatisOnBuildSqlGetFieldListener> buildSqlGetFieldListenerMap = applicationContext
+                .getBeansOfType(EzMybatisOnBuildSqlGetFieldListener.class);
+        buildSqlGetFieldListenerMap.values().stream()
+                .sorted(Comparator.comparingInt(EzMybatisOnBuildSqlGetFieldListener::order))
+                .forEach(e -> EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, e));
         //调用初始监听器
         Map<String, EzMybatisInitListener> initListenerMap = applicationContext.getBeansOfType(
                 EzMybatisInitListener.class);
