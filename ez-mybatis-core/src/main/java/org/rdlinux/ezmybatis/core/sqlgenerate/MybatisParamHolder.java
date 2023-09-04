@@ -1,6 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.lang.reflect.Field;
@@ -29,9 +31,11 @@ public class MybatisParamHolder {
      * 原始mybatis参数映射
      */
     private Map<String, Object> mybatisParam;
+    private Configuration configuration;
 
-    public MybatisParamHolder(Map<String, Object> mybatisParam) {
+    public MybatisParamHolder(Configuration configuration, Map<String, Object> mybatisParam) {
         Assert.notNull(mybatisParam, "mybatisParam can not be null");
+        this.configuration = configuration;
         this.mybatisParam = mybatisParam;
         this.transposeArray();
     }
@@ -78,6 +82,9 @@ public class MybatisParamHolder {
      * @param paramValue 参数值
      */
     public String getMybatisParamName(Class<?> modelType, Field field, Object paramValue) {
+        if (this.configuration != null && modelType != null && field != null) {
+            paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, modelType, field, paramValue);
+        }
         return this.getMybatisParamName(paramValue);
     }
 

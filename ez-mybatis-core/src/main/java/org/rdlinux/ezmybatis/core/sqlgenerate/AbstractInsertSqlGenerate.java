@@ -76,7 +76,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
         Assert.notEmpty(models, "models can not be empty");
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(new HashMap<>());
+        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         Object firstEntity = models.iterator().next();
         String tableName = this.getTableName(configuration, mybatisParamHolder, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");

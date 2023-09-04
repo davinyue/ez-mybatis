@@ -7,13 +7,13 @@ import org.apache.ibatis.plugin.InterceptorChain;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisFieldSetListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
@@ -25,6 +25,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -174,6 +175,15 @@ public class EzMybatisContent {
         configurationConfig.addFieldSetListener(listener);
     }
 
+    /**
+     * 添加当构建sql获取属性时的监听器
+     */
+    public static void addOnBuildSqlGetFieldListener(EzMybatisConfig config, EzMybatisOnBuildSqlGetFieldListener listener) {
+        checkInit(config);
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        configurationConfig.addOnBuildSqlGetFieldListener(listener);
+    }
+
     private static void checkInit(EzMybatisConfig config) {
         if (CFG_CONFIG_MAP.get(config.getConfiguration()) == null) {
             init(config);
@@ -275,10 +285,34 @@ public class EzMybatisContent {
      */
     public static Object onFieldSet(Configuration configuration, Object obj, String field, Object value) {
         EzContentConfig contentConfig = getContentConfig(configuration);
-        List<EzMybatisFieldSetListener> fieldSetListeners = contentConfig.getFieldSetListeners();
-        if (fieldSetListeners != null) {
-            for (EzMybatisFieldSetListener fieldSetListener : fieldSetListeners) {
-                value = fieldSetListener.onSet(obj, field, value);
+        List<EzMybatisFieldSetListener> listeners = contentConfig.getFieldSetListeners();
+        if (listeners != null) {
+            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getClass());
+            EntityFieldInfo fieldInfo = entityClassInfo.getFieldInfo(field);
+            if (fieldInfo != null) {
+                for (EzMybatisFieldSetListener listener : listeners) {
+                    value = listener.onSet(obj, fieldInfo.getField(), value);
+                }
+            }
+        }
+        return value;
+    }
+
+    /**
+     * 当调用set方法时
+     *
+     * @param configuration mybatis配置对象
+     * @param ntType        实体对象类型
+     * @param field         设置属性
+     * @param value         设置值
+     * @return 返回新的设置值
+     */
+    public static Object onBuildSqlGetField(Configuration configuration, Class<?> ntType, Field field, Object value) {
+        EzContentConfig contentConfig = getContentConfig(configuration);
+        List<EzMybatisOnBuildSqlGetFieldListener> listeners = contentConfig.getOnBuildSqlGetFieldListeners();
+        if (listeners != null) {
+            for (EzMybatisOnBuildSqlGetFieldListener listener : listeners) {
+                value = listener.onGet(ntType, field, value);
             }
         }
         return value;

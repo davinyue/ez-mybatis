@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class MybatisParamHolderTest {
     public static void main(String[] args) {
-        MybatisParamHolder paramHolder = new MybatisParamHolder(new HashMap<>());
+        MybatisParamHolder paramHolder = new MybatisParamHolder(null, new HashMap<>());
         String name = paramHolder.getMybatisParamName("a");
         System.out.println(name);
         name = paramHolder.getMybatisParamName("a");
