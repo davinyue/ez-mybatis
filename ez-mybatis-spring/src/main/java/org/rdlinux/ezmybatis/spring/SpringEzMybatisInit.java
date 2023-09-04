@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.spring;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisFieldSetListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -30,6 +31,10 @@ public class SpringEzMybatisInit {
                 EzMybatisDeleteListener.class);
         deleteListenerMap.values().stream().sorted(Comparator.comparingInt(EzMybatisDeleteListener::order))
                 .forEach(e -> EzMybatisContent.addDeleteListener(ezMybatisConfig, e));
+        Map<String, EzMybatisFieldSetListener> fieldSetListenerMap = applicationContext.getBeansOfType(
+                EzMybatisFieldSetListener.class);
+        fieldSetListenerMap.values().stream().sorted(Comparator.comparingInt(EzMybatisFieldSetListener::order))
+                .forEach(e -> EzMybatisContent.addFieldSetListener(ezMybatisConfig, e));
         //调用初始监听器
         Map<String, EzMybatisInitListener> initListenerMap = applicationContext.getBeansOfType(
                 EzMybatisInitListener.class);

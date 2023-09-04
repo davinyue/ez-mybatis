@@ -92,6 +92,10 @@ public class MysqlBaseTest {
                 System.out.println("替换事件");
             }
         });
+        EzMybatisContent.addFieldSetListener(ezMybatisConfig, (obj, field, value) -> {
+            System.out.println("设置" + obj.getClass().getSimpleName() + "类的" + field + "属性值为" + value);
+            return value;
+        });
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 }
