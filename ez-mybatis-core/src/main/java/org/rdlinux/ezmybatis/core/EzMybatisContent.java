@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisFieldSetListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -164,6 +165,15 @@ public class EzMybatisContent {
         configurationConfig.getUpdateInterceptor().addDeleteListener(listener);
     }
 
+    /**
+     * 添加删除监听器
+     */
+    public static void addFieldSetListener(EzMybatisConfig config, EzMybatisFieldSetListener listener) {
+        checkInit(config);
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        configurationConfig.addFieldSetListener(listener);
+    }
+
     private static void checkInit(EzMybatisConfig config) {
         if (CFG_CONFIG_MAP.get(config.getConfiguration()) == null) {
             init(config);
@@ -252,5 +262,25 @@ public class EzMybatisContent {
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
         Assert.notNull(configurationConfig, "configurationConfig non-existent");
         return configurationConfig;
+    }
+
+    /**
+     * 当调用set方法时
+     *
+     * @param configuration mybatis配置对象
+     * @param obj           被设置对象
+     * @param field         设置属性
+     * @param value         设置值
+     * @return 返回新的设置值
+     */
+    public static Object onFieldSet(Configuration configuration, Object obj, String field, Object value) {
+        EzContentConfig contentConfig = getContentConfig(configuration);
+        List<EzMybatisFieldSetListener> fieldSetListeners = contentConfig.getFieldSetListeners();
+        if (fieldSetListeners != null) {
+            for (EzMybatisFieldSetListener fieldSetListener : fieldSetListeners) {
+                value = fieldSetListener.onSet(obj, field, value);
+            }
+        }
+        return value;
     }
 }

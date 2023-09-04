@@ -587,13 +587,18 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         boolean foundValues = false;
         if (!autoMapping.isEmpty()) {
             for (EzResultSetHandler.UnMappedColumnAutoMapping mapping : autoMapping) {
-                final Object value = mapping.typeHandler.getResult(rsw.getResultSet(), mapping.column);
+                Object value = mapping.typeHandler.getResult(rsw.getResultSet(), mapping.column);
                 if (value != null) {
                     foundValues = true;
                 }
                 if (value != null || (this.configuration.isCallSettersOnNulls() && !mapping.primitive)) {
                     // gcode issue #377, call setter on nulls (value is not 'found')
-                    metaObject.setValue(mapping.property, value);
+                    // set事件处理
+                    Object originalObject = metaObject.getOriginalObject();
+                    value = EzMybatisContent.onFieldSet(this.configuration, originalObject, mapping.property, value);
+                    if (value != null) {
+                        metaObject.setValue(mapping.property, value);
+                    }
                 }
             }
         }
