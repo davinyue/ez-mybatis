@@ -7,9 +7,6 @@ import org.apache.ibatis.plugin.InterceptorChain;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
@@ -275,7 +272,7 @@ public class EzMybatisContent {
     }
 
     /**
-     * 当调用set方法时
+     * 当调用set方法或者map的put方法时
      *
      * @param configuration mybatis配置对象
      * @param obj           被设置对象
@@ -287,12 +284,8 @@ public class EzMybatisContent {
         EzContentConfig contentConfig = getContentConfig(configuration);
         List<EzMybatisFieldSetListener> listeners = contentConfig.getFieldSetListeners();
         if (listeners != null) {
-            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getClass());
-            EntityFieldInfo fieldInfo = entityClassInfo.getFieldInfo(field);
-            if (fieldInfo != null) {
-                for (EzMybatisFieldSetListener listener : listeners) {
-                    value = listener.onSet(obj, fieldInfo.getField(), value);
-                }
+            for (EzMybatisFieldSetListener listener : listeners) {
+                value = listener.onSet(obj, field, value);
             }
         }
         return value;
