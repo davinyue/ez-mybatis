@@ -824,4 +824,24 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();
     }
+
+    @Test
+    public void btQueryTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addAll()
+                .done()
+                .where()
+                .addFieldBtCondition(User.Fields.userAge, 1, 7)
+                .addFieldNotBtCondition(User.Fields.userAge, 3, 4)
+                .addColumnBtCondition(User.Fields.name, "1", "7")
+                .addColumnNotBtCondition(User.Fields.name, "3", "4")
+                .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+        sqlSession.close();
+    }
 }
