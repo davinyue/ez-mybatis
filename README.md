@@ -170,7 +170,7 @@ public void functionUpdateTest() {
 ```
 
 ## 条件更新之设置某列的值为casewhen表达式返回值
-这个列子稍微负责一些，他对前面提到的表达式以及函数进行了嵌套，在当前示例中, 将id在列表"1,2,3,4"的数据name字段根据casewhen进行更新, 当名字等于"张三1"时, 设置为"李四"； 当名字等于"张2"时, 设置为"function"函数的返回值"2"； 当名字等于"王二1"时, 设置为"formula"表达式的返回值"101"； 当名字等于"王二2"时, 设置为"sonCaseWhen"表达式的返回值"王二1"。
+这个列子稍微复杂一些，它对前面提到的表达式以及函数进行了嵌套。在当前示例中, 将id在列表"1,2,3,4"的数据name字段根据casewhen进行更新, 当名字等于"张三1"时, 设置为"李四"； 当名字等于"张2"时, 设置为"function"函数的返回值"2"； 当名字等于"王二1"时, 设置为"formula"表达式的返回值"101"； 当名字等于"王二2"时, 设置为"sonCaseWhen"表达式的返回值"王二1"。
 ```java
 @Resource
 private EzMapper ezMapper;
@@ -204,5 +204,187 @@ public void functionUpdateTest() {
             .done()
             .build();
     this.mapper.ezUpdate(ezUpdate);
+}
+```
+
+# 删除实体
+## 根据实体删除
+```java
+@Resource
+private EzMapper ezMapper;
+
+User user = new User();
+user.setId("016cdcdd76f94879ab3d24850514812b");
+this.ezMapper.delete(user);
+```
+
+## 根据id删除
+```java
+@Resource
+private EzMapper ezMapper;
+
+this.ezMapper.deleteById(User.class, "016cdcdd76f94879ab3d24850514812b");
+```
+
+
+## 根据id批量删除
+```java
+@Resource
+private EzMapper ezMapper;
+
+List<String> userIds = new LinkedList<>();
+for (int i = 0; i < 2; i++) {
+    userIds.add("016cdcdd76f94879ab3d24850514812b" + i);
+}
+this.ezMapper.batchDeleteById(User.class, userIds);
+```
+
+## 条件删除
+该示例中, 我们将删除名字为"张三", 并且年龄为55或者78岁的数据, 等价于sql "where name = '张三' and (age = 55 or age = 78)";
+
+对于or条件, 可以使用groupCondition将其作为一个条件组, 为其加上括号
+```java
+@Resource
+private EzMapper ezMapper;
+
+EntityTable userTable = EntityTable.of(User.class);
+EzDelete delete = EzDelete.delete(userTable)
+        .where()
+        .addFieldCondition(User.Fields.name, "张三")
+        .groupCondition()
+        .addFieldCondition(User.Fields.userAge, 55)
+        .addFieldCondition(LogicalOperator.OR, User.Fields.userAge, 78)
+        .done()
+        .done()
+        .build();
+this.ezDelete(delete);
+```
+
+# 查询
+## 根据id查询
+```java
+@Resource
+private EzMapper ezMapper;
+
+//单条查询
+User user = this.ezMapper.selectById(User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
+
+//批量查询
+List<String> ids = new LinkedList<>();
+ids.add("04b7abcf2c454e56b1bc85f6599e19a5");
+ids.add("085491774b2240688edb1b31772ff629");
+List<User> users = this.ezMapper.selectByIds(User.class, ids);
+```
+
+## 高级查询
+
+### 指定查询内容
+在当前查询中, 只查询用户的age列, name列, "二三班"作为class列, 123.12作为balance列
+```java
+@Resource
+private EzMapper ezMapper;
+
+@Test
+public void test() {
+    EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+            .select()
+            .addField(User.Fields.userAge)
+            .addField(User.Fields.name)
+            .addValue("二三班", "class")
+            .addValue(123.12, "balance")
+            .done()
+            .build();
+    List<StringHashMap> users = this.ezMapper.query(query);
+}
+```
+
+### 分页查询
+在当前查询中, 查询user表所有列, 并且分页取第一页的5条数据
+```java
+@Resource
+private EzMapper ezMapper;
+
+@Test
+public void test() {
+    EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+            .select()
+            .addAll()
+            .done()
+            .page(1, 5)
+            .build();
+    List<StringHashMap> users = this.ezMapper.query(query);
+}
+```
+
+### group查询
+在当前查询中, 首先构建了一个count(*) 函数, 来查询分组后每组数据的总数；在指定查询列时, 为count(*)函数的结果指定别名为ct; group时, 根据age列和name列进行group， 并且having指定了分组后总数大于1的结果
+```java
+@Resource
+private EzMapper ezMapper;
+
+@Test
+public void test() {
+    EntityTable table = EntityTable.of(User.class);
+    Function countFunc = Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build();
+    EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+            .select()
+            .addField(User.Fields.userAge)
+            .addField(User.Fields.name)
+            .addFunc(countFunc, "ct")
+            .done()
+            .groupBy()
+            .addField(User.Fields.userAge)
+            .addField(User.Fields.name)
+            .done()
+            .having()
+            .addFuncCompareValueCondition(countFunc, Operator.gt, 1)
+            .done()
+            .build();
+    List<StringHashMap> users = this.ezMapper.query(query);
+}
+```
+
+### 排序查询
+在当前查询中, 从user表查询结果，返回类型指定为User实体类, 同时分页，并根据age列和name列进行排序, 其中name列指定使用倒排序
+```java
+@Resource
+private EzMapper ezMapper;
+
+@Test
+public void test() {
+    EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+            .select()
+            .addAll()
+            .done()
+            .orderBy()
+            .addField(User.Fields.userAge)
+            .addField(User.Fields.name, OrderType.DESC)
+            .done()
+            .page(1, 5)
+            .build();
+    List<User> users = this.ezMapper.query(query);
+}
+```
+
+### 指定条件查询
+在当前查询中, 从user表查询结果，返回类型指定为User实体类, 同时分页，并且条件为name不在指定值内
+```java
+@Resource
+private EzMapper ezMapper;
+
+@Test
+public void test() {
+    EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+            .select()
+            .addAll()
+            .done()
+            .where()
+            .addFieldCondition(User.Fields.name, Operator.notIn, "1")
+            .addFieldCondition(User.Fields.name, Operator.notIn, Collections.singletonList("张三"))
+            .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
+            .done()
+            .page(1, 5)
+            .build();
+    List<User> users = this.ezMapper.query(query);
 }
 ```
