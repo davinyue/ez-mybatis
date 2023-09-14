@@ -388,3 +388,32 @@ public void test() {
     List<User> users = this.ezMapper.query(query);
 }
 ```
+
+### 连表查询
+在当前查询中, user表和user_org表进行inner join查询, on条件为user表的id等于user_org表的user_id, 对于查询结果集, select在默认情况下是取from表的结果, 如果select指定了表, 则从指定表过去结果; 这样可以实现select查询任何一个表的列；addFieldCompareCondition指定了两个表的关联条件, addFieldCondition(User.Fields.name,  "张三")指定了user表name必须等于"张三的数据才参与连接"; joinTableCondition将条件切换到被关联表，接着添加的条件是user_org表的org_id列必须等于2；masterTableCondition又将条件切换回了主表, 并指定user表的age列等于22。
+```java
+@Resource
+private EzMapper ezMapper;
+
+@Test
+public void test() {
+    EntityTable userOrgTable = EntityTable.of(UserOrg.class);
+    EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+            .select()
+            .addAll().done()
+            .select(userOrgTable)
+            .addField(UserOrg.Fields.orgId)
+            .done()
+            .join(userOrgTable)
+            .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)
+            .addFieldCondition(User.Fields.name,  "张三")
+            .joinTableCondition()
+            .addFieldCondition(UserOrg.Fields.orgId, "2")
+            .masterTableCondition()
+            .addFieldCondition(User.Fields.userAge,  22)
+            .done()
+            .page(1, 5)
+            .build();
+    List<User> users = this.ezMapper.query(query);
+}
+```

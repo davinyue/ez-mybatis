@@ -320,9 +320,10 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
                 .join(EntityTable.of(UserOrg.class))
-                .addFieldCompareCondition("id", "userId")
+                .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.orgId)
                 .joinTableCondition()
-                .addFieldCondition("orgId", "2")
+                .addFieldCondition(UserOrg.Fields.orgId, "2")
+                .masterTableCondition()
                 .done()
                 .page(1, 2)
                 .build();
