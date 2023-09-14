@@ -148,18 +148,21 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void groupByTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+        EntityTable table = EntityTable.of(User.class);
+        Function countFunc = Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build();
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name)
-                .addValue("二三班", "class")
-                .addValue(123.12, "balance")
+                .addFunc(countFunc, "ct")
                 .done()
                 .groupBy()
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name)
                 .done()
-                .page(1, 5)
+                .having()
+                .addFuncCompareValueCondition(countFunc, Operator.gt, 1)
+                .done()
                 .build();
         List<StringHashMap> users = sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
