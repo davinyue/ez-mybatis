@@ -417,6 +417,17 @@ public class MysqlSelectTest extends MysqlBaseTest {
     }
 
     @Test
+    public void normalExcludeFieldQuery() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll(User.Fields.name).done()
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        sqlSession.close();
+        System.out.println(JacksonUtils.toJsonString(users));
+    }
+
+    @Test
     public void normalQueryMap() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))

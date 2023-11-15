@@ -89,14 +89,20 @@ public class Select implements SqlStruct {
             return this;
         }
 
-        public EzSelectBuilder<T> addAll() {
-            this.selectFields.add(new SelectTableAllItem(this.table));
+        /**
+         * @param excludeField 排除的查询项, 只支持entityTable
+         */
+        public EzSelectBuilder<T> addAll(String... excludeField) {
+            this.selectFields.add(new SelectTableAllItem(this.table, excludeField));
             return this;
         }
 
-        public EzSelectBuilder<T> addAll(boolean sure) {
+        /**
+         * @param excludeField 排除的查询项, 只支持entityTable
+         */
+        public EzSelectBuilder<T> addAll(boolean sure, String... excludeField) {
             if (sure) {
-                return this.addAll();
+                return this.addAll(excludeField);
             }
             return this;
         }

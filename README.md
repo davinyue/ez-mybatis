@@ -6,7 +6,7 @@ ez-mybatis通过mybatis拦截器机制, 实现数据的增删查改并支持部�
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.5.4.RS</version>
+    <version>0.5.5.RS</version>
 </dependency>
 ```
 
