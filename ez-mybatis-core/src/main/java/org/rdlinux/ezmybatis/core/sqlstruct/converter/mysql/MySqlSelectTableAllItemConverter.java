@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
@@ -48,11 +49,15 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
             fieldInfos = fieldInfos.stream().filter(e -> !ojb.getExcludeField().contains(e.getFieldName()))
                     .collect(Collectors.toList());
             Assert.notEmpty(fieldInfos, "No valid select item");
+            String keywordQM = EzMybatisContent.getKeywordQM(configuration);
             for (int i = 0; i < fieldInfos.size(); i++) {
                 EntityFieldInfo fieldInfo = fieldInfos.get(i);
-                sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".").append(fieldInfo.getColumnName());
+                sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".").append(keywordQM)
+                        .append(fieldInfo.getColumnName()).append(keywordQM);
                 if (i + 1 < fieldInfos.size()) {
                     sqlBuilder.append(", ");
+                } else {
+                    sqlBuilder.append(" ");
                 }
             }
             return sqlBuilder;
