@@ -6,17 +6,17 @@ import org.rdlinux.ezmybatis.core.classinfo.entityinfo.DefaultEntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityInfoBuildConfig;
 
-public class OracleEntityInfoBuild implements EntityInfoBuild {
-    private static volatile OracleEntityInfoBuild instance;
+public class OracleEntityInfoBuilder implements EntityInfoBuilder {
+    private static volatile OracleEntityInfoBuilder instance;
 
-    protected OracleEntityInfoBuild() {
+    protected OracleEntityInfoBuilder() {
     }
 
-    public static OracleEntityInfoBuild getInstance() {
+    public static OracleEntityInfoBuilder getInstance() {
         if (instance == null) {
-            synchronized (OracleEntityInfoBuild.class) {
+            synchronized (OracleEntityInfoBuilder.class) {
                 if (instance == null) {
-                    instance = new OracleEntityInfoBuild();
+                    instance = new OracleEntityInfoBuilder();
                 }
             }
         }

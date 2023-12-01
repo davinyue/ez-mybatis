@@ -6,17 +6,17 @@ import org.rdlinux.ezmybatis.core.classinfo.entityinfo.DefaultEntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityInfoBuildConfig;
 
-public class MySqlEntityInfoBuild implements EntityInfoBuild {
-    private static volatile MySqlEntityInfoBuild instance;
+public class MySqlEntityInfoBuilder implements EntityInfoBuilder {
+    private static volatile MySqlEntityInfoBuilder instance;
 
-    private MySqlEntityInfoBuild() {
+    private MySqlEntityInfoBuilder() {
     }
 
-    public static MySqlEntityInfoBuild getInstance() {
+    public static MySqlEntityInfoBuilder getInstance() {
         if (instance == null) {
-            synchronized (MySqlEntityInfoBuild.class) {
+            synchronized (MySqlEntityInfoBuilder.class) {
                 if (instance == null) {
-                    instance = new MySqlEntityInfoBuild();
+                    instance = new MySqlEntityInfoBuilder();
                 }
             }
         }
