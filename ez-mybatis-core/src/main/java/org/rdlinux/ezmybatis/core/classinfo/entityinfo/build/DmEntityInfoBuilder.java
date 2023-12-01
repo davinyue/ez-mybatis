@@ -2,17 +2,17 @@ package org.rdlinux.ezmybatis.core.classinfo.entityinfo.build;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 
-public class DmEntityInfoBuild extends OracleEntityInfoBuild {
-    private static volatile DmEntityInfoBuild instance;
+public class DmEntityInfoBuilder extends OracleEntityInfoBuilder {
+    private static volatile DmEntityInfoBuilder instance;
 
-    private DmEntityInfoBuild() {
+    private DmEntityInfoBuilder() {
     }
 
-    public static DmEntityInfoBuild getInstance() {
+    public static DmEntityInfoBuilder getInstance() {
         if (instance == null) {
-            synchronized (DmEntityInfoBuild.class) {
+            synchronized (DmEntityInfoBuilder.class) {
                 if (instance == null) {
-                    instance = new DmEntityInfoBuild();
+                    instance = new DmEntityInfoBuilder();
                 }
             }
         }
