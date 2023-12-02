@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +36,22 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
     protected void initClassFileChangeWatch() {
         URL classLocation = DefaultEzMybatisEntityInfoCache.class.getResource("/");
         if (classLocation.toString().startsWith("jar:file:")) {
+            if (log.isDebugEnabled()) {
+                log.debug("Disable hot reloading of class information.");
+            }
             return;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Enable hot reloading of class information.");
+            log.debug("Hot reloading of class information is only supported for the built artifact directories " +
+                    "in the project's \"target/classes\" and \"target/test-classes\".");
+        }
+        Path classPath = Paths.get("target/classes").toAbsolutePath();
+        String classPathStr = classPath.toString();
+        Path testClassPath = Paths.get("target/test-classes").toAbsolutePath();
+        String testClassPathStr = testClassPath.toString();
         Thread cleanThread = new Thread(() -> {
             try {
-                //需要监视的文件目录（注意：只能监听目录）
-                Path start = Paths.get(classLocation.toURI());
                 //创建监视服务类
                 WatchService ws = FileSystems.getDefault().newWatchService();
                 // 删除和修改事件
@@ -48,27 +59,32 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
                         StandardWatchEventKinds.ENTRY_DELETE,
                         StandardWatchEventKinds.ENTRY_MODIFY};
                 Map<WatchKey, Path> keys = new HashMap<>(16);
-                // 注册子目录到监视服务。
-                Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir,
-                                                             BasicFileAttributes attrs) throws IOException {
-                        keys.put(dir.register(ws, kinds), dir);
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+                // 注册子目录到监视服务
+                for (Path path : Arrays.asList(classPath, testClassPath)) {
+                    Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir,
+                                                                 BasicFileAttributes attrs) throws IOException {
+                            keys.put(dir.register(ws, kinds), dir);
+                            return FileVisitResult.CONTINUE;
+                        }
+                    });
+                }
                 while (true) {
                     WatchKey watchKey = ws.take();
                     Path path = keys.get(watchKey);
                     String pathStr = path.toString();
                     List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
-                    String separator = String.valueOf(File.separatorChar);
-                    String classSubPath = "classes";
-                    String splitStr = separator + "target" + separator + classSubPath + separator;
                     for (WatchEvent<?> event : watchEvents) {
-                        if (pathStr.contains(splitStr) && event.context().toString().endsWith(".class")) {
-                            String packageStr = pathStr.substring(pathStr.indexOf(splitStr) + splitStr.length())
-                                    .replace(separator, ".");
+                        if (event.context().toString().endsWith(".class")) {
+                            String packageStr;
+                            if (pathStr.startsWith(classPathStr)) {
+                                packageStr = pathStr.substring(classPathStr.length() + 1).replace(File.separator,
+                                        ".");
+                            } else {
+                                packageStr = pathStr.substring(testClassPathStr.length() + 1).replace(File.separator,
+                                        ".");
+                            }
                             String className = event.context().toString().split("\\.")[0];
                             String key = packageStr + "." + className;
                             for (ConcurrentMap<String, EntityClassInfo> cache : ENTITY_INFO_MAP.values()) {
