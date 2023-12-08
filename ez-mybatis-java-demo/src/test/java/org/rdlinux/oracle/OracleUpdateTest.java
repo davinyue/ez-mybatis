@@ -159,7 +159,7 @@ public class OracleUpdateTest extends OracleBaseTest {
                 .addColumnCompareCondition("ID", "ID")
                 .done()
                 .set()
-                .setColumnFormula("PAY_AMT", Formula.builder(useTable).withColumn("PAY_AMT").done().build())
+                .setColumn("PAY_AMT", Formula.builder(useTable).withColumn("PAY_AMT").done().build())
                 .done().build();
         EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
         Integer integer = mapper.expandUpdate(merge);

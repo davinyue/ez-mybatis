@@ -1,13 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.update;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 public class KeywordsUpdateColumnItem extends UpdateItem {
     private String column;
-    private String keywords;
+    private Keywords keywords;
 
-    public KeywordsUpdateColumnItem(Table table, String column, String keywords) {
+    public KeywordsUpdateColumnItem(Table table, String column, Keywords keywords) {
         super(table);
         Assert.notEmpty(column, "column can not be null");
         Assert.notNull(keywords, "keywords can not be null");
@@ -19,7 +20,7 @@ public class KeywordsUpdateColumnItem extends UpdateItem {
         return this.column;
     }
 
-    public String getKeywords() {
+    public Keywords getKeywords() {
         return this.keywords;
     }
 }

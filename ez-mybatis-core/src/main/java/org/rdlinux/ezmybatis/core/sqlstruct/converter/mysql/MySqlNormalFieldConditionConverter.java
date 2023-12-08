@@ -40,11 +40,11 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
     private static Collection<?> valueToCollection(NormalCondition obj) {
         if (obj.getValue() instanceof Collection) {
             Assert.isTrue(((Collection<?>) obj.getValue()).size() > 0,
-                    "When using in query, the data cannot be empty");
+                    "When using 'IN' query, the data cannot be empty");
             return (Collection<?>) obj.getValue();
         } else if (obj.getValue().getClass().isArray()) {
             Assert.isTrue(((Object[]) obj.getValue()).length > 0,
-                    "When using in query, the data cannot be empty");
+                    "When using 'IN' query, the data cannot be empty");
             return Arrays.asList((Object[]) obj.getValue());
         } else {
             return Collections.singleton(obj.getValue());

@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
@@ -301,8 +302,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
                 .set()
                 .setField(User.Fields.userAge, 1)
-                .setFieldKeywords(User.Fields.userAge, "age")
-                .setColumnKeywords("age", "age")
+                .setField(User.Fields.userAge, Keywords.of("age"))
+                .setColumn("age", Keywords.of("age"))
                 .done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
@@ -479,7 +480,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             EntityTable table = EntityTable.of(User.class);
             Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().setFieldFormula(User.Fields.userAge, formula).done()
+                    .set().setField(User.Fields.userAge, formula).done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
                     .build();
@@ -504,8 +505,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
 
             Function updateTimeFunction = Function.builder(table).setFunName("now").build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().setFieldFunction(User.Fields.userAge, function)
-                    .setFieldFunction(BaseEntity.Fields.updateTime, updateTimeFunction)
+                    .set().setField(User.Fields.userAge, function)
+                    .setField(BaseEntity.Fields.updateTime, updateTimeFunction)
                     .done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
