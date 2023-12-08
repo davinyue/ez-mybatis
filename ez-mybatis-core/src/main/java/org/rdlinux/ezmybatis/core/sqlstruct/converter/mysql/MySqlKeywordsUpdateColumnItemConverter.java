@@ -32,7 +32,7 @@ public class MySqlKeywordsUpdateColumnItemConverter extends AbstractConverter<Ke
                                        MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(obj.getColumn())
-                .append(keywordQM).append(" = ").append(obj.getKeywords());
+                .append(keywordQM).append(" = ").append(obj.getKeywords().getKeywords());
         return sqlBuilder;
     }
 

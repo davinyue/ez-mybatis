@@ -39,7 +39,7 @@ public class MySqlKeywordsUpdateFieldItemConverter extends AbstractConverter<Key
                 .getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(fieldInfo.getColumnName())
-                .append(keywordQM).append(" = ").append(obj.getKeywords());
+                .append(keywordQM).append(" = ").append(obj.getKeywords().getKeywords());
         return sqlBuilder;
     }
 
