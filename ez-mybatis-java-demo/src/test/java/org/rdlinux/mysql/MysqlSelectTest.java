@@ -795,6 +795,12 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .addFuncCompareValueCondition(
                         Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.ge, 1)
+                .addFuncCompareValueCondition(
+                        Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
+                        Operator.lt, 10)
+                .addFuncCompareValueCondition(
+                        Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
+                        Operator.le, 10)
                 .done()
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
@@ -854,6 +860,9 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .addFieldNotBtCondition(User.Fields.userAge, 3, 4)
                 .addColumnBtCondition(User.Fields.name, "1", "7")
                 .addColumnNotBtCondition(User.Fields.name, "3", "4")
+                .addColumnCondition(User.Fields.name, Operator.like, "%张三%")
+                .addColumnCondition(User.Fields.name, Operator.unlike, "%李四%")
+                .addColumnCondition(User.Fields.name, Operator.regexp, "%李四%")
                 .done()
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
