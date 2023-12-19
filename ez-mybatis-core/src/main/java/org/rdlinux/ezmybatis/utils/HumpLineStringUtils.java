@@ -63,4 +63,11 @@ public class HumpLineStringUtils {
     public static String lineToHump(String str) {
         return lineToHump(str, "_");
     }
+
+    /**
+     * 判断字符串是否是驼峰格式, 注意以小写字符开头, 包含大写字母或数字, 则认为是驼峰
+     */
+    public static boolean isHump(String str) {
+        return str.matches("^[a-z]+([A-Z0-9][a-zA-Z0-9]*)*$");
+    }
 }

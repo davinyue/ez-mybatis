@@ -5,7 +5,7 @@ package org.rdlinux.ezmybatis.constant;
  */
 public enum MapRetKeyPattern {
     /**
-     * 驼峰, 该模式先把结果列转换为小写, 再转换为驼峰
+     * 驼峰, 该模式先把结果列转换为小写, 再转换为驼峰; 如果结果列被认证为驼峰格式, 则不转换
      */
     HUMP,
     /**
