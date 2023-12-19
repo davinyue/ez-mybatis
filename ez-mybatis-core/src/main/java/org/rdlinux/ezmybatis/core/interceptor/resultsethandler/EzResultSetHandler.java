@@ -478,7 +478,11 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 mapRetKeyPattern = MapRetKeyPattern.HUMP;
             }
             if (mapRetKeyPattern == MapRetKeyPattern.HUMP) {
-                property = HumpLineStringUtils.lineToHump(column.toLowerCase());
+                if (HumpLineStringUtils.isHump(column)) {
+                    property = column;
+                } else {
+                    property = HumpLineStringUtils.lineToHump(column.toLowerCase());
+                }
             } else if (mapRetKeyPattern == MapRetKeyPattern.LOWER_CASE) {
                 property = column.toLowerCase();
             } else if (mapRetKeyPattern == MapRetKeyPattern.UPPER_CASE) {
