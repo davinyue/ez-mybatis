@@ -1,5 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.dm;
 
+import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.oracle.OracleSqlGenerate;
 
 public class DmSqlGenerate extends OracleSqlGenerate {
@@ -17,5 +20,10 @@ public class DmSqlGenerate extends OracleSqlGenerate {
             }
         }
         return instance;
+    }
+
+    @Override
+    public String getQuerySql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
+        return DmEzQueryToSql.getInstance().toSql(configuration, paramHolder, query);
     }
 }

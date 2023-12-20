@@ -6,9 +6,11 @@ import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
+import org.rdlinux.ezmybatis.utils.StringHashMap;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -74,6 +76,51 @@ public class DmSelectTest extends DmBaseTest {
         List<User> users = DmBaseTest.sqlSession.getMapper(UserMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
         int i = DmBaseTest.sqlSession.getMapper(UserMapper.class).queryCount(query);
+        System.out.println("总数" + i);
+    }
+
+    @Test
+    public void pageTest() {
+        DbTable table = DbTable.of("BAS_MOF_DIV");
+        String orderColumn = "MOF_DIV_CODE";
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .page(1, 5)
+                .build();
+        EzMapper mapper = DmBaseTest.sqlSession.getMapper(EzMapper.class);
+        List<StringHashMap> data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        int i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .page(2, 5)
+                .build();
+        data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .orderBy()
+                .addColumn(orderColumn)
+                .done()
+                .page(1, 5)
+                .build();
+        data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .orderBy()
+                .addColumn(orderColumn)
+                .done()
+                .page(2, 5)
+                .build();
+        data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        DmBaseTest.sqlSession.clearCache();
+        i = mapper.queryCount(query);
         System.out.println("总数" + i);
     }
 

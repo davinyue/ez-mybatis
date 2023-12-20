@@ -36,7 +36,11 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.whereToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
-        return sqlBuilder.toString();
+        if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
+            return "SELECT COUNT(*) FROM ( " + sqlBuilder.toString() + " ) " + Alias.getAlias();
+        } else {
+            return sqlBuilder.toString();
+        }
     }
 
     protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,

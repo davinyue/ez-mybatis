@@ -4,7 +4,6 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
@@ -24,22 +23,6 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
             }
         }
         return instance;
-    }
-
-    @Override
-    public String toCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = super.whereToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
-        if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
-            return "SELECT COUNT(*) FROM ( " + sqlBuilder.toString() + ") " + Alias.getAlias();
-        } else {
-            return sqlBuilder.toString();
-        }
     }
 
     @Override
