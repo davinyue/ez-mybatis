@@ -76,6 +76,9 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
             if (this.ezMybatisProperties.getTableNamePattern() != null) {
                 ezMybatisConfig.setTableNamePattern(this.ezMybatisProperties.getTableNamePattern());
             }
+            if (this.ezMybatisProperties.getEnableOracleOffsetFetchPage() != null) {
+                ezMybatisConfig.setEnableOracleOffsetFetchPage(this.ezMybatisProperties.getEnableOracleOffsetFetchPage());
+            }
             SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
             if (this.ezMybatisProperties.getDbType() != null) {
                 EzMybatisContent.setDbType(configuration, this.ezMybatisProperties.getDbType());

@@ -1,6 +1,7 @@
 package org.rdlinux.oracle;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -21,19 +22,21 @@ import java.util.List;
 public class OracleUpdateTest extends OracleBaseTest {
     @Test
     public void update() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).update(user);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).update(user);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchUpdate() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -46,23 +49,25 @@ public class OracleUpdateTest extends OracleBaseTest {
             }
             users.add(user);
         }
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchUpdate(users);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).batchUpdate(users);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void replace() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).replace(user);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).replace(user);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchReplace() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -75,27 +80,29 @@ public class OracleUpdateTest extends OracleBaseTest {
             }
             users.add(user);
         }
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchReplace(users);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).batchReplace(users);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void updateByEzParam() {
-        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
                 .set().setField("userAge", 1).done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
-        OracleBaseTest.sqlSession.commit();
+        sqlSession.commit();
         log.info("更新条数{}", ret);
     }
 
     @Test
     public void batchUpdateByEzParam() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<EzUpdate> updates = new LinkedList<>();
-        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
                 .set().setField("userAge", 1).done()
                 .where().addFieldCondition("id", "1").done()
@@ -107,11 +114,12 @@ public class OracleUpdateTest extends OracleBaseTest {
                 .build();
         updates.add(ezUpdate);
         mapper.batchUpdate(updates);
-        OracleBaseTest.sqlSession.commit();
+        sqlSession.commit();
     }
 
     @Test
     public void unionUpdate() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         DbTable listTable = DbTable.of("A");
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(DbTable.of("B"))
                 .select().addColumn("NAME", "T1PN").done()
@@ -123,12 +131,13 @@ public class OracleUpdateTest extends OracleBaseTest {
                 .set().setColumn("T2PN", "T1PN")
                 .done()
                 .build();
-        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         mapper.ezUpdate(ezUpdate);
     }
 
     @Test
     public void mergeUpdate() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         DbTable mergeTable = DbTable.of("PYA_INFO");
         DbTable recordTable = DbTable.of("PAY_RECORD");
         EzQuery<StringHashMap> useQuery = EzQuery.builder(StringHashMap.class)
@@ -161,7 +170,7 @@ public class OracleUpdateTest extends OracleBaseTest {
                 .set()
                 .setColumn("PAY_AMT", Formula.builder(useTable).withColumn("PAY_AMT").done().build())
                 .done().build();
-        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         Integer integer = mapper.expandUpdate(merge);
         System.out.println(integer);
     }

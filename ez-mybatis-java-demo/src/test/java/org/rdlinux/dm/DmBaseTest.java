@@ -3,7 +3,6 @@ package org.rdlinux.dm;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
@@ -13,7 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class DmBaseTest {
-    public static SqlSession sqlSession;
+    public static SqlSessionFactory sqlSessionFactory;
 
     static {
         String resource = "mybatis-config-dm.xml";
@@ -26,7 +25,6 @@ public class DmBaseTest {
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
         EzMybatisContent.init(new EzMybatisConfig(configuration));
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        sqlSession = sqlSessionFactory.openSession();
+        sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 }
