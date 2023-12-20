@@ -1,8 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
@@ -41,6 +43,11 @@ public class OracleLimitConverter extends AbstractConverter<Limit> implements Co
         if (query != null) {
             groupBy = query.getGroupBy();
             orderBy = query.getOrderBy();
+        }
+        EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();
+        if (ezMybatisConfig.isEnableOracleOffsetFetchPage()) {
+            return sqlBuilder.append(" OFFSET ").append(limit.getSkip()).append(" ROWS FETCH NEXT ")
+                    .append(limit.getSize()).append(" ROWS ONLY ");
         }
         //不排序, 不分组时
         if ((groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())

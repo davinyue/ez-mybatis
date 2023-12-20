@@ -25,6 +25,10 @@ public class EzMybatisProperties {
      * 表名转换格式
      */
     private TableNamePattern tableNamePattern = TableNamePattern.ORIGINAL;
+    /**
+     * 启用oracle offset fetch分页
+     */
+    private Boolean enableOracleOffsetFetchPage = false;
 
     public DbType getDbType() {
         return this.dbType;
@@ -56,5 +60,13 @@ public class EzMybatisProperties {
 
     public void setTableNamePattern(TableNamePattern tableNamePattern) {
         this.tableNamePattern = tableNamePattern;
+    }
+
+    public Boolean getEnableOracleOffsetFetchPage() {
+        return this.enableOracleOffsetFetchPage;
+    }
+
+    public void setEnableOracleOffsetFetchPage(Boolean enableOracleOffsetFetchPage) {
+        this.enableOracleOffsetFetchPage = enableOracleOffsetFetchPage;
     }
 }

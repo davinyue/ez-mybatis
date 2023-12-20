@@ -3,7 +3,6 @@ package org.rdlinux.oracle;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
@@ -18,7 +17,6 @@ import java.util.Collection;
 import java.util.Date;
 
 public class OracleBaseTest {
-    public static SqlSession sqlSession;
     public static SqlSessionFactory sqlSessionFactory;
 
     static {
@@ -34,6 +32,7 @@ public class OracleBaseTest {
         EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
         ezMybatisConfig.setMapRetKeyPattern(MapRetKeyPattern.HUMP);
         ezMybatisConfig.setEscapeKeyword(false);
+        ezMybatisConfig.setEnableOracleOffsetFetchPage(true);
         EzMybatisContent.init(ezMybatisConfig);
         EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
             @Override
@@ -51,6 +50,5 @@ public class OracleBaseTest {
             }
         });
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        sqlSession = sqlSessionFactory.openSession();
     }
 }

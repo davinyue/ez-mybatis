@@ -1,6 +1,7 @@
 package org.rdlinux.oracle;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -16,56 +17,62 @@ public class OracleDeleteTest extends OracleBaseTest {
 
     @Test
     public void delete() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        int delete = OracleBaseTest.sqlSession.getMapper(UserMapper.class).delete(user);
+        int delete = sqlSession.getMapper(UserMapper.class).delete(user);
         System.out.println(delete);
     }
 
     @Test
     public void batchDelete() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
             user.setId("016cdcdd76f94879ab3d24850514812b");
             users.add(user);
         }
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchDelete(users);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).batchDelete(users);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void deleteById() {
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class)
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        int insert = sqlSession.getMapper(UserMapper.class)
                 .deleteById("016cdcdd76f94879ab3d24850514812b");
-        OracleBaseTest.sqlSession.commit();
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchDeleteById() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<String> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             users.add("016cdcdd76f94879ab3d24850514812b");
         }
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchDeleteById(users);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).batchDeleteById(users);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void deleteByParam() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
                 .where().addFieldCondition("id", "56").done()
                 .build();
-        int ret = OracleBaseTest.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
-        OracleBaseTest.sqlSession.commit();
+        int ret = sqlSession.getMapper(EzMapper.class).ezDelete(delete);
+        sqlSession.commit();
         log.info("删除{}条", ret);
     }
 
     @Test
     public void batchDeleteByParam() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<EzDelete> deletes = new LinkedList<>();
         EzDelete delete = EzDelete.delete(EntityTable.of(User.class))
                 .where().addFieldCondition("id", "56").done()
@@ -75,7 +82,7 @@ public class OracleDeleteTest extends OracleBaseTest {
                 .where().addFieldCondition("id", "23").done()
                 .build();
         deletes.add(delete);
-        OracleBaseTest.sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
-        OracleBaseTest.sqlSession.commit();
+        sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
+        sqlSession.commit();
     }
 }

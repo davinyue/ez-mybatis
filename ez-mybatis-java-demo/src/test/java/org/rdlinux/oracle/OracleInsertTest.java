@@ -13,19 +13,21 @@ import java.util.*;
 public class OracleInsertTest extends OracleBaseTest {
     @Test
     public void insert() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
         //user.setFirstName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).insert(user);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).insert(user);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchInsert() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -40,14 +42,15 @@ public class OracleInsertTest extends OracleBaseTest {
             user.setSex(User.Sex.MAN);
             users.add(user);
         }
-        int insert = OracleBaseTest.sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        OracleBaseTest.sqlSession.commit();
+        int insert = sqlSession.getMapper(UserMapper.class).batchInsert(users);
+        sqlSession.commit();
         System.out.println(insert);
     }
 
     @Test
     public void batchInsertTUT() {
-        UserMapper userMapper = OracleBaseTest.sqlSession.getMapper(UserMapper.class);
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         userMapper.selectById("1s");
         long start = System.currentTimeMillis();
         List<User> users = new LinkedList<>();
@@ -61,7 +64,7 @@ public class OracleInsertTest extends OracleBaseTest {
             users.add(user);
         }
         int insert = userMapper.batchInsert(users);
-        OracleBaseTest.sqlSession.commit();
+        sqlSession.commit();
         long end = System.currentTimeMillis();
         System.out.println("耗时" + (end - start));
     }
