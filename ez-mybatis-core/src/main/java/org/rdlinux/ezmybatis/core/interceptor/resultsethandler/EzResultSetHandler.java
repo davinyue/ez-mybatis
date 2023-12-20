@@ -26,6 +26,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
@@ -469,6 +470,9 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
      * 结果列转为结果对象属性
      */
     private String retColumnToField(String column, MetaObject metaObject) {
+        if (EzMybatisConstant.ORACLE_ROW_NUM_ALIAS.equals(column)) {
+            return null;
+        }
         String property;
         //如果是map, 则根据配置规则进行推算map属性
         if (metaObject.getOriginalObject() instanceof Map) {

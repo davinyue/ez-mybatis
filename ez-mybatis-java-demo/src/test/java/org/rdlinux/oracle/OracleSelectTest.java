@@ -88,6 +88,50 @@ public class OracleSelectTest extends OracleBaseTest {
     }
 
     @Test
+    public void pageTest() {
+        DbTable table = DbTable.of("USER");
+        String orderColumn = "AGE";
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .page(1, 5)
+                .build();
+        EzMapper mapper = OracleBaseTest.sqlSession.getMapper(EzMapper.class);
+        List<StringHashMap> data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        int i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .page(2, 5)
+                .build();
+        data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .orderBy()
+                .addColumn(orderColumn)
+                .done()
+                .page(1, 5)
+                .build();
+        data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+
+        query = EzQuery.builder(StringHashMap.class).from(table)
+                .orderBy()
+                .addColumn(orderColumn)
+                .done()
+                .page(2, 5)
+                .build();
+        data = mapper.query(query);
+        System.out.println(JacksonUtils.toJsonString(data));
+        i = mapper.queryCount(query);
+        System.out.println("总数" + i);
+    }
+
+    @Test
     public void normalQuery() {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
