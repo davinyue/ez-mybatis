@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleSelectConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlSelectConverter;
 
-public class DmSelectConverter extends OracleSelectConverter {
+public class DmSelectConverter extends MySqlSelectConverter {
     private static volatile DmSelectConverter instance;
 
     protected DmSelectConverter() {

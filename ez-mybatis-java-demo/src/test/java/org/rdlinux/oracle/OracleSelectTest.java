@@ -89,8 +89,8 @@ public class OracleSelectTest extends OracleBaseTest {
 
     @Test
     public void pageTest() {
-        DbTable table = DbTable.of("USER");
-        String orderColumn = "AGE";
+        DbTable table = DbTable.of("BAS_MOF_DIV");
+        String orderColumn = "MOF_DIV_CODE";
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .page(1, 5)
                 .build();

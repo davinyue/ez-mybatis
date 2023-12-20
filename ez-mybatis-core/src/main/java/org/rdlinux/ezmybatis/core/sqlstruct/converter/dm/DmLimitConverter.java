@@ -1,9 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleLimitConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlLimitConverter;
 
-public class DmLimitConverter extends OracleLimitConverter {
+public class DmLimitConverter extends MySqlLimitConverter {
     private static volatile DmLimitConverter instance;
 
     protected DmLimitConverter() {
