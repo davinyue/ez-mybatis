@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -39,7 +40,10 @@ public class MySqlNormalColumnConditionConverter extends AbstractConverter<Norma
         if (obj.getTable() instanceof EntityTable) {
             etType = ((EntityTable) obj.getTable()).getEtType();
             EntityClassInfo classInfo = EzEntityClassInfoFactory.forClass(configuration, etType);
-            field = classInfo.getColumnMapFieldInfo().get(obj.getColumn()).getField();
+            EntityFieldInfo entityFieldInfo = classInfo.getColumnMapFieldInfo().get(obj.getColumn());
+            if (entityFieldInfo != null) {
+                field = entityFieldInfo.getField();
+            }
             if (field == null) {
                 etType = null;
             }

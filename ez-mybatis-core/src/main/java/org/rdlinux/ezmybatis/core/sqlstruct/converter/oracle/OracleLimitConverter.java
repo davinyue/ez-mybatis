@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
@@ -12,7 +13,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
 public class OracleLimitConverter extends AbstractConverter<Limit> implements Converter<Limit> {
-    public static final String ROW_NUM_ALIAS = "ORA_ROWNUM";
     private static volatile OracleLimitConverter instance;
 
     protected OracleLimitConverter() {
@@ -42,24 +42,43 @@ public class OracleLimitConverter extends AbstractConverter<Limit> implements Co
             groupBy = query.getGroupBy();
             orderBy = query.getOrderBy();
         }
+        //不排序, 不分组时
         if ((groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
                 && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
+            //如果查询第一页, 不需要判断rownum > 0的问题
+            if (limit.getSkip() == 0) {
+                return sqlBuilder;
+            }
+            //需要判断rownum > 0的问题
+            else {
+                String bodyAlias = Alias.getAlias();
+                return new StringBuilder("SELECT ").append(bodyAlias).append(".* ")
+                        .append(" FROM ( ").append(sqlBuilder).append(" ) ").append(bodyAlias)
+                        .append(" WHERE ").append(bodyAlias).append(".\"")
+                        .append(EzMybatisConstant.ORACLE_ROW_NUM_ALIAS)
+                        .append("\" > ")
+                        .append(limit.getSkip());
+            }
+        }
+        //排序和分组时, 需要将原始查询嵌套为子查询后再进行分页操作
+        else {
             String bodyAlias = Alias.getAlias();
-            return new StringBuilder("SELECT ").append(bodyAlias).append(".* ")
-                    .append(" FROM ( ").append(sqlBuilder).append(" ) ").append(bodyAlias)
-                    .append(" WHERE ").append(bodyAlias).append(".").append(ROW_NUM_ALIAS)
-                    .append(" > ")
-                    .append(limit.getSkip());
-        } else {
-            String bodyAlias = Alias.getAlias();
-            String outSqlBody = "SELECT " + bodyAlias + ".*, ROWNUM " + ROW_NUM_ALIAS +
-                    " FROM (" + sqlBuilder + ") " + bodyAlias + " WHERE ROWNUM <= " +
-                    (limit.getSkip() + limit.getSize()) + " ";
+            StringBuilder outSqlBuilder = new StringBuilder("SELECT ").append(bodyAlias).append(".*");
+            //当不查询第一页是, 才查询出rownum
+            if (limit.getSkip() > 0) {
+                outSqlBuilder.append(", ROWNUM \"").append(EzMybatisConstant.ORACLE_ROW_NUM_ALIAS).append("\"");
+            }
+            outSqlBuilder.append(" FROM (").append(sqlBuilder).append(") ").append(bodyAlias)
+                    .append(" WHERE ROWNUM <= ").append(limit.getSkip() + limit.getSize()).append(" ");
             String outAlias = Alias.getAlias();
-            String outSqlHead = "SELECT " + outAlias + ".* FROM ( ";
-            String outSqlTail = " ) " + outAlias + " WHERE " + outAlias + "." + ROW_NUM_ALIAS + " > " +
-                    limit.getSkip();
-            return new StringBuilder().append(outSqlHead).append(outSqlBody).append(outSqlTail);
+            String outSqlHead = "";
+            String outSqlTail = "";
+            if (limit.getSkip() > 0) {
+                outSqlHead = "SELECT " + outAlias + ".* FROM ( ";
+                outSqlTail = " ) " + outAlias + " WHERE " + outAlias + ".\""
+                        + EzMybatisConstant.ORACLE_ROW_NUM_ALIAS + "\" > " + limit.getSkip();
+            }
+            return new StringBuilder().append(outSqlHead).append(outSqlBuilder).append(outSqlTail);
         }
     }
 

@@ -106,4 +106,8 @@ public abstract class EzMybatisConstant {
      * mapper参数, 自定义更新扩展
      */
     public static final String MAPPER_PARAM_UPDATE_EXPAND = "mp_update_expand";
+    /**
+     * oracle行数别名
+     */
+    public static final String ORACLE_ROW_NUM_ALIAS = "ORA_ROWNUM__$";
 }
