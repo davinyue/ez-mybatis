@@ -17,6 +17,7 @@ public class DbKeywordQMFactory {
         DB_TYPE_MAP_KEYWORD_QM.put(DbType.MYSQL, "`");
         DB_TYPE_MAP_KEYWORD_QM.put(DbType.ORACLE, "\"");
         DB_TYPE_MAP_KEYWORD_QM.put(DbType.DM, "\"");
+        DB_TYPE_MAP_KEYWORD_QM.put(DbType.POSTGRE_SQL, "\"");
     }
 
     private EzMybatisConfig ezMybatisConfig;

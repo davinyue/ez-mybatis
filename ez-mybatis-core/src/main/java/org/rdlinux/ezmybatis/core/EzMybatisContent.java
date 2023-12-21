@@ -14,10 +14,7 @@ import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.DmConverterRegister;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.MySqlConverterRegister;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.OracleConverterRegister;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.*;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
@@ -224,6 +221,8 @@ public class EzMybatisContent {
             dbType = DbType.ORACLE;
         } else if (driver.toLowerCase().contains("dmdriver")) {
             dbType = DbType.DM;
+        } else if (driver.toLowerCase().contains("postgresql")) {
+            dbType = DbType.POSTGRE_SQL;
         }
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.setDbType(dbType);
@@ -243,6 +242,8 @@ public class EzMybatisContent {
             OracleConverterRegister.register();
         } else if (dbType == DbType.DM) {
             DmConverterRegister.register();
+        } else if (dbType == DbType.POSTGRE_SQL) {
+            PostgreSqlConverterRegister.register();
         }
     }
 

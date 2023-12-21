@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.pg;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -14,10 +14,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
-public class MysqlInsertTest extends MysqlBaseTest {
+public class PgInsertTest extends PgBaseTest {
     @Test
     public void insert() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
@@ -31,7 +31,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void ezInsert() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
@@ -45,7 +45,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void insertByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
@@ -59,7 +59,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void ezInsertByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName("王二");
@@ -73,7 +73,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void batchInsert() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
 
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
@@ -98,7 +98,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void ezBatchInsert() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
             List<User> users = new LinkedList<>();
@@ -122,7 +122,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void batchInsertByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
 
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
@@ -148,7 +148,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void ezBatchInsertByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
 
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
@@ -174,7 +174,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void batchInsert1() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -194,8 +194,8 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void insertBySql() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        String sql = "INSERT INTO `ez_user` (`id`, `create_time`, `update_time`, `name`, `sex`, `age`) " +
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
+        String sql = "INSERT INTO ez_user (id, create_time, update_time, name, sex, age) " +
                 "VALUES ('#id', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
                 "'王二', 1, 27);\n";
         sql = sql.replace("#id", UUID.randomUUID().toString().replace("-", ""));
@@ -216,11 +216,11 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void loopInsertPerformanceTest() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 10; i++) {
             SaveTest entity = new SaveTest().setA(UUID.randomUUID().toString().replaceAll("-", ""));
             entity.setB(entity.getA());
             entity.setC(entity.getA());
@@ -242,11 +242,11 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void batchInsertPerformanceTest() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();
-        for (int h = 0; h < 2; h++) {
+        for (int h = 0; h < 20; h++) {
             List<SaveTest> models = new ArrayList<>(100);
             for (int i = 0; i < 5; i++) {
                 SaveTest entity = new SaveTest().setA(UUID.randomUUID().toString().replaceAll("-", ""));
@@ -272,15 +272,15 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void jdbcBatchInsertPerformanceTest() throws SQLException {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         Connection connection = sqlSession.getConnection();
-        String sql = "INSERT INTO save_test ( `a`, `b`, `c`, `d`, `e`, `f`, `g`, `h`, `i`, `j` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        String sql = "INSERT INTO save_test ( a, b, c, d, e, f, g, h, i, j ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
         long start = System.currentTimeMillis();
-        for (int h = 0; h < 1; h++) {
+        for (int h = 0; h < 10; h++) {
             PreparedStatement statement = connection.prepareStatement(sql);
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             this.preheat(mapper);
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 10000; i++) {
                 String id = UUID.randomUUID().toString().replaceAll("-", "");
                 statement.setString(1, id);
                 statement.setString(2, id);
@@ -308,7 +308,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
 
     @Test
     public void jdbcBatchInsertTest() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();

@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
@@ -14,17 +14,17 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 import java.lang.reflect.Field;
 
-public class MySqlNormalColumnConditionConverter extends AbstractConverter<NormalColumnCondition> implements Converter<NormalColumnCondition> {
-    private static volatile MySqlNormalColumnConditionConverter instance;
+public class PostgreSqlNormalColumnConditionConverter extends AbstractConverter<NormalColumnCondition> implements Converter<NormalColumnCondition> {
+    private static volatile PostgreSqlNormalColumnConditionConverter instance;
 
-    protected MySqlNormalColumnConditionConverter() {
+    protected PostgreSqlNormalColumnConditionConverter() {
     }
 
-    public static MySqlNormalColumnConditionConverter getInstance() {
+    public static PostgreSqlNormalColumnConditionConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlNormalColumnConditionConverter.class) {
+            synchronized (PostgreSqlNormalColumnConditionConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlNormalColumnConditionConverter();
+                    instance = new PostgreSqlNormalColumnConditionConverter();
                 }
             }
         }
@@ -49,12 +49,12 @@ public class MySqlNormalColumnConditionConverter extends AbstractConverter<Norma
             }
         }
         String column = obj.getTable().getAlias() + "." + keywordQM + obj.getColumn() + keywordQM;
-        return MySqlNormalFieldConditionConverter.getInstance().doBuildSql(etType, field, sqlBuilder, configuration,
+        return PostgreSqlNormalFieldConditionConverter.getInstance().doBuildSql(etType, field, sqlBuilder, configuration,
                 obj, mybatisParamHolder, column);
     }
 
     @Override
     public DbType getSupportDbType() {
-        return DbType.MYSQL;
+        return DbType.POSTGRE_SQL;
     }
 }

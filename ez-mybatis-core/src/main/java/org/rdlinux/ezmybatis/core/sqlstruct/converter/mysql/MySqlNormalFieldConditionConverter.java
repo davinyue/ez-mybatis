@@ -89,10 +89,14 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         return sqlBuilder;
     }
 
-    private static StringBuilder otherToSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
-                                            Configuration configuration, NormalCondition obj,
-                                            MybatisParamHolder mybatisParamHolder, String column) {
-        sqlBuilder.append(" ").append(column).append(" ").append(obj.getOperator().getOperator()).append(" ");
+    protected String getOperatorStr(Operator operator) {
+        return operator.getOperator();
+    }
+
+    private StringBuilder otherToSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
+                                     Configuration configuration, NormalCondition obj,
+                                     MybatisParamHolder mybatisParamHolder, String column) {
+        sqlBuilder.append(" ").append(column).append(" ").append(this.getOperatorStr(obj.getOperator())).append(" ");
         if (obj.getValue() instanceof EzQuery) {
             Converter<?> ezQueryConverter = EzMybatisContent.getConverter(configuration, EzQuery.class);
             sqlBuilder.append(ezQueryConverter.buildSql(Converter.Type.SELECT, new StringBuilder(),
@@ -104,13 +108,13 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         return sqlBuilder;
     }
 
-    protected static StringBuilder doBuildSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
-                                              Configuration configuration, NormalCondition obj,
-                                              MybatisParamHolder mybatisParamHolder, String column) {
+    public StringBuilder doBuildSql(Class<?> modelType, Field field, StringBuilder sqlBuilder,
+                                    Configuration configuration, NormalCondition obj,
+                                    MybatisParamHolder mybatisParamHolder, String column) {
         if (obj.getOperator() == Operator.in || obj.getOperator() == Operator.notIn) {
             return inToSql(modelType, field, sqlBuilder, configuration, obj, mybatisParamHolder, column);
         } else {
-            return otherToSql(modelType, field, sqlBuilder, configuration, obj, mybatisParamHolder, column);
+            return this.otherToSql(modelType, field, sqlBuilder, configuration, obj, mybatisParamHolder, column);
         }
     }
 
@@ -123,7 +127,7 @@ public class MySqlNormalFieldConditionConverter extends AbstractConverter<Normal
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         String column = fieldInfo.getColumnName();
         String sql = obj.getTable().getAlias() + "." + keywordQM + column + keywordQM;
-        return doBuildSql(etInfo.getEntityClass(), fieldInfo.getField(), sqlBuilder, configuration, obj,
+        return this.doBuildSql(etInfo.getEntityClass(), fieldInfo.getField(), sqlBuilder, configuration, obj,
                 mybatisParamHolder, sql);
     }
 

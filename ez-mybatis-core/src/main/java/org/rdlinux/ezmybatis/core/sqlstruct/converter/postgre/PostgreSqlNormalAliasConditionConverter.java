@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
@@ -8,17 +8,17 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
-public class MySqlNormalAliasConditionConverter extends AbstractConverter<NormalAliasCondition> implements Converter<NormalAliasCondition> {
-    private static volatile MySqlNormalAliasConditionConverter instance;
+public class PostgreSqlNormalAliasConditionConverter extends AbstractConverter<NormalAliasCondition> implements Converter<NormalAliasCondition> {
+    private static volatile PostgreSqlNormalAliasConditionConverter instance;
 
-    protected MySqlNormalAliasConditionConverter() {
+    protected PostgreSqlNormalAliasConditionConverter() {
     }
 
-    public static MySqlNormalAliasConditionConverter getInstance() {
+    public static PostgreSqlNormalAliasConditionConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlNormalAliasConditionConverter.class) {
+            synchronized (PostgreSqlNormalAliasConditionConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlNormalAliasConditionConverter();
+                    instance = new PostgreSqlNormalAliasConditionConverter();
                 }
             }
         }
@@ -30,12 +30,12 @@ public class MySqlNormalAliasConditionConverter extends AbstractConverter<Normal
                                        NormalAliasCondition obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String column = keywordQM + obj.getAlias() + keywordQM;
-        return MySqlNormalFieldConditionConverter.getInstance().doBuildSql(null, null, sqlBuilder,
-                configuration, obj, mybatisParamHolder, column);
+        return PostgreSqlNormalFieldConditionConverter.getInstance().doBuildSql(null, null,
+                sqlBuilder, configuration, obj, mybatisParamHolder, column);
     }
 
     @Override
     public DbType getSupportDbType() {
-        return DbType.MYSQL;
+        return DbType.POSTGRE_SQL;
     }
 }

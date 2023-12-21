@@ -15,5 +15,9 @@ public enum DbType {
     /**
      * 达梦数据库
      */
-    DM;
+    DM,
+    /**
+     * PostgreSql数据库
+     */
+    POSTGRE_SQL;
 }
