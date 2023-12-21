@@ -32,6 +32,7 @@ public class EzEntityClassInfoFactory {
         ENTITY_INFO_BUILD_MAP.put(oracleEntityInfoBuild.getSupportedDbType(), oracleEntityInfoBuild);
         DmEntityInfoBuilder dmEntityInfoBuild = DmEntityInfoBuilder.getInstance();
         ENTITY_INFO_BUILD_MAP.put(dmEntityInfoBuild.getSupportedDbType(), dmEntityInfoBuild);
+        ENTITY_INFO_BUILD_MAP.put(DbType.POSTGRE_SQL, mySqlEntityInfoBuild);
     }
 
     private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass) {

@@ -14,7 +14,7 @@ import java.util.Collection;
 public class MySqlSqlGenerate implements SqlGenerate {
     private static volatile MySqlSqlGenerate instance;
 
-    private MySqlSqlGenerate() {
+    protected MySqlSqlGenerate() {
     }
 
     public static MySqlSqlGenerate getInstance() {
