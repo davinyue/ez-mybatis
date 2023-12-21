@@ -26,4 +26,9 @@ public class DmSqlGenerate extends OracleSqlGenerate {
     public String getQuerySql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
         return DmEzQueryToSql.getInstance().toSql(configuration, paramHolder, query);
     }
+
+    @Override
+    public String getQueryCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
+        return DmEzQueryToSql.getInstance().toCountSql(configuration, paramHolder, query);
+    }
 }

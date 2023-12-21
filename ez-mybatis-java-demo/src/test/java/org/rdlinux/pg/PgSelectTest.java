@@ -138,7 +138,7 @@ public class PgSelectTest extends PgBaseTest {
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name, OrderType.DESC)
                 .done()
-                .page(1, 5)
+                .page(2, 5)
                 .build();
         List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
