@@ -4,6 +4,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.*;
@@ -13,6 +14,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnConditi
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -94,7 +97,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, NormalColumnCondition.class, DmNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalAliasCondition.class, DmNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FunctionCompareValueCondition.class, DmFunctionCompareValueConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, FormulaCompareValueCondition.class, DmFormulaCompareValueConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());
@@ -110,5 +112,17 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SelectFormula.class, DmSelectFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SelectFunction.class, DmSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SelectValue.class, DmSelectValueConverter.getInstance());
+        //argConverter
+        EzMybatisContent.addConverter(DbType.DM, AliasArg.class, MySqlAliasArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, CaseWhenArg.class, MySqlCaseWhenArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, ColumnArg.class, MySqlColumnArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FieldArg.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FormulaArg.class, MySqlFormulaArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FunctionArg.class, MySqlFunctionArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, KeywordsArg.class, MySqlKeywordsArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, ObjArg.class, MySqlObjArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SqlArg.class, MySqlSqlArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
     }
 }

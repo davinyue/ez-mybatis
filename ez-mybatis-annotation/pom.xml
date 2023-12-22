@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ez-mybatis</artifactId>
         <groupId>org.rdlinux</groupId>
-        <version>0.6.5.RS</version>
+        <version>0.6.6.RS</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
