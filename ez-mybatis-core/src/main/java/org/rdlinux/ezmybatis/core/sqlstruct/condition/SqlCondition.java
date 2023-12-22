@@ -1,9 +1,7 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.condition.normal;
+package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 /**

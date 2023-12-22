@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Date;
 
 public class MysqlBaseTest {
-    public static SqlSessionFactory sqlSessionFactory;
+    protected static SqlSessionFactory sqlSessionFactory;
 
     static {
         String resource = "mybatis-config.xml";
