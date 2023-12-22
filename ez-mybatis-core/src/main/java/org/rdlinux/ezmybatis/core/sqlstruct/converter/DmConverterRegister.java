@@ -6,14 +6,17 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenColumnCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenColumnCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlAliasCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlCaseWhenCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFunctionCompareArgConditionConverter;
@@ -76,8 +79,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, FormulaUpdateColumnItem.class, DmFormulaUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, KeywordsUpdateFieldItem.class, DmKeywordsUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, KeywordsUpdateColumnItem.class, DmKeywordsUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, BetweenAliasCondition.class, DmBetweenAliasConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, NotBetweenAliasCondition.class, DmNotBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, BetweenColumnCondition.class, DmBetweenColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NotBetweenColumnCondition.class, DmNotBetweenColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, BetweenFieldCondition.class, DmBetweenFieldConditionConverter.getInstance());
@@ -97,7 +98,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, IsNotNullColumnCondition.class, DmIsNotNullColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalFieldCondition.class, DmNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalColumnCondition.class, DmNormalColumnConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, NormalAliasCondition.class, DmNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());
@@ -127,5 +127,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, CaseWhenCompareArgCondition.class, MySqlCaseWhenCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, AliasCompareArgCondition.class, MySqlAliasCompareArgConditionConverter.getInstance());
     }
 }

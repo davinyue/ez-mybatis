@@ -6,10 +6,12 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenColumnCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenColumnCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
@@ -74,8 +76,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaUpdateColumnItem.class, PostgreSqlFormulaUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, KeywordsUpdateFieldItem.class, PostgreSqlKeywordsUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, KeywordsUpdateColumnItem.class, PostgreSqlKeywordsUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, BetweenAliasCondition.class, MySqlBetweenAliasConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NotBetweenAliasCondition.class, MySqlNotBetweenAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, BetweenColumnCondition.class, MySqlBetweenColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NotBetweenColumnCondition.class, MySqlNotBetweenColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, BetweenFieldCondition.class, MySqlBetweenFieldConditionConverter.getInstance());
@@ -95,7 +95,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, IsNotNullColumnCondition.class, MySqlIsNotNullColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NormalFieldCondition.class, PostgreSqlNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NormalColumnCondition.class, PostgreSqlNormalColumnConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NormalAliasCondition.class, PostgreSqlNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, EzQuery.class, MySqlEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Function.class, MySqlFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Formula.class, MySqlFormulaConverter.getInstance());
@@ -125,5 +124,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaCompareArgCondition.class, PostgreSqlFormulaCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, CaseWhenCompareArgCondition.class, PostgreSqlCaseWhenCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, AliasCompareArgCondition.class, PostgreSqlAliasCompareArgConditionConverter.getInstance());
     }
 }

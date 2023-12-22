@@ -42,7 +42,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         this.otherTable = otherTable;
     }
 
-    private static List<?> valueToCollection(Object obj) {
+    protected static List<?> valueToCollection(Object obj) {
         if (obj instanceof Collection) {
             return new ArrayList<>((Collection<?>) obj);
         } else if (obj.getClass().isArray()) {
@@ -52,7 +52,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         }
     }
 
-    private static List<Arg> valueToArgList(Object value) {
+    protected static List<Arg> valueToArgList(Object value) {
         List<?> objects = valueToCollection(value);
         List<Arg> args = new ArrayList<>(objects.size());
         for (Object datum : objects) {
