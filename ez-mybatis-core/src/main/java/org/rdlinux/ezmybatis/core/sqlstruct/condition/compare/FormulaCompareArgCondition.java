@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,10 +35,11 @@ public class FormulaCompareArgCondition implements Condition, SqlStruct {
         Assert.notNull(formula, "logicalOperator can not be null");
         Assert.notNull(operator, "operator can not be null");
         Assert.notNull(value, "value can not be null");
-        if (operator == Operator.in || operator == Operator.notIn
-                || operator == Operator.isNull || operator == Operator.isNotNull
-                || operator == Operator.between || operator == Operator.notBetween) {
+        if (operator == Operator.between || operator == Operator.notBetween) {
             throw new IllegalArgumentException("Unsupported relational operator");
+        }
+        if (operator == Operator.in || operator == Operator.notIn) {
+            this.values = Collections.singletonList(value);
         }
         this.logicalOperator = logicalOperator;
         this.formula = formula;

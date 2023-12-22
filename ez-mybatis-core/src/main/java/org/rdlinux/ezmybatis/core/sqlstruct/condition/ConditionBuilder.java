@@ -1233,12 +1233,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
             if (value == null) {
                 this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.isNull));
             } else {
-                if (operator == Operator.in || operator == Operator.notIn) {
-                    this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator,
-                            Collections.singletonList(value)));
-                } else {
-                    this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, value));
-                }
+                this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, value));
             }
         }
         return this.sonBuilder;
