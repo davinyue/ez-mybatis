@@ -4,25 +4,25 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareArgCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FunctionCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 
-public class MySqlFormulaCompareArgConditionConverter extends AbstractConverter<FormulaCompareArgCondition>
-        implements Converter<FormulaCompareArgCondition> {
-    private static volatile MySqlFormulaCompareArgConditionConverter instance;
+public class MySqlFunctionCompareArgConditionConverter extends AbstractConverter<FunctionCompareArgCondition>
+        implements Converter<FunctionCompareArgCondition> {
+    private static volatile MySqlFunctionCompareArgConditionConverter instance;
 
-    protected MySqlFormulaCompareArgConditionConverter() {
+    protected MySqlFunctionCompareArgConditionConverter() {
     }
 
-    public static MySqlFormulaCompareArgConditionConverter getInstance() {
+    public static MySqlFunctionCompareArgConditionConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlFormulaCompareArgConditionConverter.class) {
+            synchronized (MySqlFunctionCompareArgConditionConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlFormulaCompareArgConditionConverter();
+                    instance = new MySqlFunctionCompareArgConditionConverter();
                 }
             }
         }
@@ -35,18 +35,18 @@ public class MySqlFormulaCompareArgConditionConverter extends AbstractConverter<
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       FormulaCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
-        Formula formula = obj.getFormula();
-        Converter<? extends Formula> formulaConverter = EzMybatisContent.getConverter(configuration,
-                formula.getClass());
+                                       FunctionCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
+        Function function = obj.getFunction();
+        Converter<? extends Function> formulaConverter = EzMybatisContent.getConverter(configuration,
+                function.getClass());
         StringBuilder leftSql = new StringBuilder();
-        leftSql.append(" ").append(formulaConverter.buildSql(type, new StringBuilder(), configuration, formula,
+        leftSql.append(" ").append(formulaConverter.buildSql(type, new StringBuilder(), configuration, function,
                 mybatisParamHolder)).append(" ");
         return this.doBuildSql(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
     }
 
     protected StringBuilder doBuildSql(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                       Configuration configuration, FormulaCompareArgCondition obj,
+                                       Configuration configuration, FunctionCompareArgCondition obj,
                                        MybatisParamHolder mybatisParamHolder) {
         Operator operator = obj.getOperator();
         if (operator == Operator.isNull || operator == Operator.isNotNull) {
@@ -61,22 +61,23 @@ public class MySqlFormulaCompareArgConditionConverter extends AbstractConverter<
     }
 
     private StringBuilder normalBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                      Configuration configuration, FormulaCompareArgCondition obj,
+                                      Configuration configuration, FunctionCompareArgCondition obj,
                                       MybatisParamHolder mybatisParamHolder) {
+        Operator operator = obj.getOperator();
         Arg value = obj.getValue();
         Converter<? extends Arg> argConverter = EzMybatisContent.getConverter(configuration,
                 value.getClass());
         return sqlBuilder.append(" ")
                 .append(leftSql)
                 .append(" ")
-                .append(this.getOperatorStr(obj.getOperator()))
+                .append(this.getOperatorStr(operator))
                 .append(" ")
                 .append(argConverter.buildSql(type, new StringBuilder(), configuration, value, mybatisParamHolder))
                 .append(" ");
     }
 
     private StringBuilder inBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                  Configuration configuration, FormulaCompareArgCondition obj,
+                                  Configuration configuration, FunctionCompareArgCondition obj,
                                   MybatisParamHolder mybatisParamHolder) {
         Operator operator = obj.getOperator();
         if (obj.getValues().size() == 1) {
@@ -112,8 +113,9 @@ public class MySqlFormulaCompareArgConditionConverter extends AbstractConverter<
     }
 
     private StringBuilder isBetweenBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                         Configuration configuration, FormulaCompareArgCondition obj,
+                                         Configuration configuration, FunctionCompareArgCondition obj,
                                          MybatisParamHolder mybatisParamHolder) {
+        Operator operator = obj.getOperator();
         Converter<? extends Arg> minArgConverter = EzMybatisContent.getConverter(configuration,
                 obj.getMinValue().getClass());
         Converter<? extends Arg> maxArgConverter = EzMybatisContent.getConverter(configuration,
@@ -121,7 +123,7 @@ public class MySqlFormulaCompareArgConditionConverter extends AbstractConverter<
         return sqlBuilder.append(" ")
                 .append(leftSql)
                 .append(" ")
-                .append(this.getOperatorStr(obj.getOperator()))
+                .append(this.getOperatorStr(operator))
                 .append(" ")
                 .append(minArgConverter.buildSql(type, new StringBuilder(), configuration, obj.getMinValue(),
                         mybatisParamHolder))
@@ -130,7 +132,7 @@ public class MySqlFormulaCompareArgConditionConverter extends AbstractConverter<
                         mybatisParamHolder)).append(" ");
     }
 
-    private StringBuilder isNullBuild(StringBuilder leftSql, StringBuilder sqlBuilder, FormulaCompareArgCondition obj) {
+    private StringBuilder isNullBuild(StringBuilder leftSql, StringBuilder sqlBuilder, FunctionCompareArgCondition obj) {
         Operator operator = obj.getOperator();
         return sqlBuilder.append(" ")
                 .append(leftSql)

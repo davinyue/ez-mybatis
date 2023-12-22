@@ -12,7 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCon
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.ColumnCompareCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FieldCompareCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareArgCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FunctionCompareValueCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FunctionCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullFiledCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullColumnCondition;
@@ -52,6 +52,21 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         } else {
             return Collections.singletonList(obj);
         }
+    }
+
+    private static List<Arg> valueToArgList(Object value) {
+        List<?> objects = valueToCollection(value);
+        List<Arg> args = new ArrayList<>(objects.size());
+        for (Object datum : objects) {
+            if (datum instanceof Arg) {
+                args.add((Arg) datum);
+            } else if (datum instanceof EzQuery) {
+                args.add(EzQueryArg.of((EzQuery<?>) datum));
+            } else {
+                args.add(ObjArg.of(datum));
+            }
+        }
+        return args;
     }
 
     public ParentBuilder done() {
@@ -1162,69 +1177,6 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Function function,
-                                                   Operator operator, Object value) {
-        if (sure) {
-            this.conditions.add(new FunctionCompareValueCondition(logicalOperator, function, operator, value));
-        }
-        return this.sonBuilder;
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(LogicalOperator logicalOperator, Function function,
-                                                   Operator operator, Object value) {
-        return this.addFuncCompareValueCondition(true, logicalOperator, function, operator, value);
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Function function,
-                                                   Object value) {
-        return this.addFuncCompareValueCondition(sure, logicalOperator, function, Operator.eq, value);
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(LogicalOperator logicalOperator, Function function,
-                                                   Object value) {
-        return this.addFuncCompareValueCondition(true, logicalOperator, function, Operator.eq, value);
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(boolean sure, Function function, Operator operator, Object value) {
-        return this.addFuncCompareValueCondition(sure, LogicalOperator.AND, function, operator, value);
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(Function function, Operator operator, Object value) {
-        return this.addFuncCompareValueCondition(true, LogicalOperator.AND, function, operator, value);
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(boolean sure, Function function, Object value) {
-        return this.addFuncCompareValueCondition(sure, LogicalOperator.AND, function, Operator.eq, value);
-    }
-
-    /**
-     * 添函数对比值条件
-     */
-    public SonBuilder addFuncCompareValueCondition(Function function, Object value) {
-        return this.addFuncCompareValueCondition(true, LogicalOperator.AND, function, Operator.eq, value);
-    }
-
-    /**
      * 添加公式条件
      */
     public SonBuilder addFormulaCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
@@ -1294,17 +1246,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
                 this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, (Arg) value));
             } else {
                 if (operator == Operator.in || operator == Operator.notIn) {
-                    List<?> objects = valueToCollection(value);
-                    List<Arg> args = new ArrayList<>(((Collection<?>) value).size());
-                    for (Object datum : objects) {
-                        if (datum instanceof Arg) {
-                            args.add((Arg) datum);
-                        } else if (datum instanceof EzQuery) {
-                            args.add(EzQueryArg.of((EzQuery<?>) datum));
-                        } else {
-                            args.add(ObjArg.of(datum));
-                        }
-                    }
+                    List<Arg> args = valueToArgList(value);
                     this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, args));
                 } else {
                     this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator,
@@ -1487,5 +1429,261 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addFormulaNotBetweenCondition(Formula formula, Arg minValue, Arg maxValue) {
         return this.addFormulaNotBetweenCondition(true, LogicalOperator.AND, formula, minValue, maxValue);
+    }
+    //////////////////
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                       Operator operator, Arg value) {
+        if (sure) {
+            if (value == null) {
+                this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, Operator.isNull));
+            } else {
+                this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, operator, value));
+            }
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(LogicalOperator logicalOperator, Function function, Operator operator,
+                                       Arg value) {
+        return this.addFuncCondition(true, logicalOperator, function, operator, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(boolean sure, LogicalOperator logicalOperator, Function function, Arg value) {
+        return this.addFuncCondition(sure, logicalOperator, function, Operator.eq, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(LogicalOperator logicalOperator, Function function, Arg value) {
+        return this.addFuncCondition(true, logicalOperator, function, Operator.eq, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(boolean sure, Function function, Operator operator, Arg value) {
+        return this.addFuncCondition(sure, LogicalOperator.AND, function, operator, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(Function function, Operator operator, Arg value) {
+        return this.addFuncCondition(true, function, operator, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(Function function, Arg value) {
+        return this.addFuncCondition(function, Operator.eq, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                       Operator operator, Object value) {
+        if (sure) {
+            if (value == null) {
+                this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, Operator.isNull));
+            } else if (value instanceof Arg) {
+                this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, operator, (Arg) value));
+            } else {
+                if (operator == Operator.in || operator == Operator.notIn) {
+                    List<Arg> args = valueToArgList(value);
+                    this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, operator, args));
+                } else {
+                    this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, operator,
+                            ObjArg.of(value)));
+                }
+            }
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(LogicalOperator logicalOperator, Function function, Operator operator,
+                                       Object value) {
+        return this.addFuncCondition(true, logicalOperator, function, operator, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                       Object value) {
+        return this.addFuncCondition(sure, logicalOperator, function, Operator.eq, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(LogicalOperator logicalOperator, Function function, Object value) {
+        return this.addFuncCondition(true, logicalOperator, function, Operator.eq, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(boolean sure, Function function, Operator operator, Object value) {
+        return this.addFuncCondition(sure, LogicalOperator.AND, function, operator, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(Function function, Operator operator, Object value) {
+        return this.addFuncCondition(true, function, operator, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncCondition(Function function, Object value) {
+        return this.addFuncCondition(function, Operator.eq, value);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNullCondition(boolean sure, LogicalOperator logicalOperator, Function function) {
+        if (sure) {
+            this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, Operator.isNull));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNullCondition(boolean sure, Function function) {
+        return this.addFormulaIsNullCondition(sure, LogicalOperator.AND, function);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNullCondition(LogicalOperator logicalOperator, Function function) {
+        return this.addFormulaIsNullCondition(true, logicalOperator, function);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNullCondition(Function function) {
+        return this.addFormulaIsNullCondition(true, LogicalOperator.AND, function);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(boolean sure, LogicalOperator logicalOperator, Function function) {
+        if (sure) {
+            this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, Operator.isNotNull));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(boolean sure, Function function) {
+        return this.addFormulaIsNotNullCondition(sure, LogicalOperator.AND, function);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(LogicalOperator logicalOperator, Function function) {
+        return this.addFormulaIsNotNullCondition(true, logicalOperator, function);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(Function function) {
+        return this.addFormulaIsNotNullCondition(true, LogicalOperator.AND, function);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncBetweenCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                              Arg minValue, Arg maxValue) {
+        if (sure) {
+            this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, Operator.between, minValue,
+                    maxValue));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncBetweenCondition(boolean sure, Function function, Arg minValue, Arg maxValue) {
+        return this.addFuncBetweenCondition(sure, LogicalOperator.AND, function, minValue, maxValue);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncBetweenCondition(LogicalOperator logicalOperator, Function function, Arg minValue,
+                                              Arg maxValue) {
+        return this.addFuncBetweenCondition(true, logicalOperator, function, minValue, maxValue);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncBetweenCondition(Function function, Arg minValue, Arg maxValue) {
+        return this.addFuncBetweenCondition(true, LogicalOperator.AND, function, minValue, maxValue);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncNotBetweenCondition(boolean sure, LogicalOperator logicalOperator, Function function,
+                                                 Arg minValue, Arg maxValue) {
+        if (sure) {
+            this.conditions.add(new FunctionCompareArgCondition(logicalOperator, function, Operator.notBetween,
+                    minValue, maxValue));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncNotBetweenCondition(boolean sure, Function function, Arg minValue, Arg maxValue) {
+        return this.addFuncNotBetweenCondition(sure, LogicalOperator.AND, function, minValue, maxValue);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncNotBetweenCondition(LogicalOperator logicalOperator, Function function, Arg minValue,
+                                                 Arg maxValue) {
+        return this.addFuncNotBetweenCondition(true, logicalOperator, function, minValue, maxValue);
+    }
+
+    /**
+     * 添加函数条件
+     */
+    public SonBuilder addFuncNotBetweenCondition(Function function, Arg minValue, Arg maxValue) {
+        return this.addFuncNotBetweenCondition(true, LogicalOperator.AND, function, minValue, maxValue);
     }
 }
