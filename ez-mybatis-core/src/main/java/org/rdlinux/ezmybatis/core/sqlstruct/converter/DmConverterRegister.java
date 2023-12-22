@@ -15,6 +15,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFunctionCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
@@ -96,7 +97,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, NormalFieldCondition.class, DmNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalColumnCondition.class, DmNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalAliasCondition.class, DmNormalAliasConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, FunctionCompareValueCondition.class, DmFunctionCompareValueConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());
@@ -124,5 +124,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SqlArg.class, MySqlSqlArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
     }
 }

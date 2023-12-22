@@ -14,6 +14,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnConditi
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFunctionCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
@@ -96,7 +97,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, NormalFieldCondition.class, OracleNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalColumnCondition.class, OracleNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalAliasCondition.class, OracleNormalAliasConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FunctionCompareValueCondition.class, OracleFunctionCompareValueConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EzQuery.class, OracleEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Function.class, OracleFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Formula.class, OracleFormulaConverter.getInstance());
@@ -124,5 +124,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SqlArg.class, MySqlSqlArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
     }
 }

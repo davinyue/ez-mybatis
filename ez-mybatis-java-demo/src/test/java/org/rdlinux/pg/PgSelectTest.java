@@ -162,7 +162,7 @@ public class PgSelectTest extends PgBaseTest {
                 .addField(User.Fields.name)
                 .done()
                 .having()
-                .addFuncCompareValueCondition(countFunc, Operator.gt, 1)
+                .addFuncCondition(countFunc, Operator.gt, 1)
                 .done()
                 .build();
         List<StringHashMap> users = sqlSession.getMapper(EzMapper.class).query(query);
@@ -796,13 +796,13 @@ public class PgSelectTest extends PgBaseTest {
                 .addField(User.Fields.userAge)
                 .done()
                 .having()
-                .addFuncCompareValueCondition(
+                .addFuncCondition(
                         Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.ge, 1)
-                .addFuncCompareValueCondition(
+                .addFuncCondition(
                         Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.lt, 10)
-                .addFuncCompareValueCondition(
+                .addFuncCondition(
                         Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.le, 10)
                 .done()

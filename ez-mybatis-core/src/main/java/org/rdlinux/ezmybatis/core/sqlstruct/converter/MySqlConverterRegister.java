@@ -95,7 +95,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, NormalFieldCondition.class, MySqlNormalFieldConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NormalColumnCondition.class, MySqlNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NormalAliasCondition.class, MySqlNormalAliasConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, FunctionCompareValueCondition.class, MySqlFunctionCompareValueConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, EzQuery.class, MySqlEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Function.class, MySqlFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Formula.class, MySqlFormulaConverter.getInstance());
@@ -123,5 +122,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SqlArg.class, MySqlSqlArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
     }
 }
