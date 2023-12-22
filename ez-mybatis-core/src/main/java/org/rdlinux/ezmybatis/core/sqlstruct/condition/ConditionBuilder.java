@@ -1,13 +1,17 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.EzQueryArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.ColumnCompareCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FieldCompareCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareValueCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FunctionCompareValueCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullFiledCondition;
@@ -20,7 +24,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @param <ParentBuilder> 上级构造器, 调用.done时将返回上级构造器
@@ -38,6 +42,16 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         this.conditions = conditions;
         this.table = table;
         this.otherTable = otherTable;
+    }
+
+    private static List<?> valueToCollection(Object obj) {
+        if (obj instanceof Collection) {
+            return new ArrayList<>((Collection<?>) obj);
+        } else if (obj.getClass().isArray()) {
+            return Arrays.asList((Object[]) obj);
+        } else {
+            return Collections.singletonList(obj);
+        }
     }
 
     public ParentBuilder done() {
@@ -216,7 +230,6 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         return this.sonBuilder;
     }
 
-
     public SonBuilder addFieldCondition(String field, Object value) {
         return this.addFieldCondition(LogicalOperator.AND, field, Operator.eq, value);
     }
@@ -335,7 +348,6 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         }
         return this.sonBuilder;
     }
-
 
     /**
      * 添加is null条件
@@ -979,7 +991,6 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         return this.sonBuilder;
     }
 
-
     /**
      * 添对比条件
      */
@@ -989,7 +1000,6 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         }
         return this.sonBuilder;
     }
-
 
     /**
      * 添对比条件
@@ -1215,65 +1225,272 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
-                                                      Operator operator, Object value) {
+    public SonBuilder addFormulaCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                          Operator operator, Arg value) {
         if (sure) {
-            this.conditions.add(new FormulaCompareValueCondition(logicalOperator, formula, operator, value));
+            if (value == null) {
+                this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.isNull));
+            } else {
+                if (operator == Operator.in || operator == Operator.notIn) {
+                    this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator,
+                            Collections.singletonList(value)));
+                } else {
+                    this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, value));
+                }
+            }
         }
         return this.sonBuilder;
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(LogicalOperator logicalOperator, Formula formula,
-                                                      Operator operator, Object value) {
-        return this.addFormulaCompareValueCondition(true, logicalOperator, formula, operator, value);
+    public SonBuilder addFormulaCondition(LogicalOperator logicalOperator, Formula formula, Operator operator,
+                                          Arg value) {
+        return this.addFormulaCondition(true, logicalOperator, formula, operator, value);
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
-                                                      Object value) {
-        return this.addFormulaCompareValueCondition(sure, logicalOperator, formula, Operator.eq, value);
+    public SonBuilder addFormulaCondition(boolean sure, LogicalOperator logicalOperator, Formula formula, Arg value) {
+        return this.addFormulaCondition(sure, logicalOperator, formula, Operator.eq, value);
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(LogicalOperator logicalOperator, Formula formula,
-                                                      Object value) {
-        return this.addFormulaCompareValueCondition(true, logicalOperator, formula, Operator.eq, value);
+    public SonBuilder addFormulaCondition(LogicalOperator logicalOperator, Formula formula, Arg value) {
+        return this.addFormulaCondition(true, logicalOperator, formula, Operator.eq, value);
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(boolean sure, Formula formula, Operator operator, Object value) {
-        return this.addFormulaCompareValueCondition(sure, LogicalOperator.AND, formula, operator, value);
+    public SonBuilder addFormulaCondition(boolean sure, Formula formula, Operator operator, Arg value) {
+        return this.addFormulaCondition(sure, LogicalOperator.AND, formula, operator, value);
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(Formula formula, Operator operator, Object value) {
-        return this.addFormulaCompareValueCondition(true, LogicalOperator.AND, formula, operator, value);
+    public SonBuilder addFormulaCondition(Formula formula, Operator operator, Arg value) {
+        return this.addFormulaCondition(true, formula, operator, value);
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(boolean sure, Formula formula, Object value) {
-        return this.addFormulaCompareValueCondition(sure, LogicalOperator.AND, formula, Operator.eq, value);
+    public SonBuilder addFormulaCondition(Formula formula, Arg value) {
+        return this.addFormulaCondition(formula, Operator.eq, value);
     }
 
     /**
-     * 添公式对比值条件
+     * 添加公式条件
      */
-    public SonBuilder addFormulaCompareValueCondition(Formula formula, Object value) {
-        return this.addFormulaCompareValueCondition(true, LogicalOperator.AND, formula, Operator.eq, value);
+    public SonBuilder addFormulaCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                          Operator operator, Object value) {
+        if (sure) {
+            if (value == null) {
+                this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.isNull));
+            } else if (value instanceof Arg) {
+                this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, (Arg) value));
+            } else {
+                if (operator == Operator.in || operator == Operator.notIn) {
+                    List<?> objects = valueToCollection(value);
+                    List<Arg> args = new ArrayList<>(((Collection<?>) value).size());
+                    for (Object datum : objects) {
+                        if (datum instanceof Arg) {
+                            args.add((Arg) datum);
+                        } else if (datum instanceof EzQuery) {
+                            args.add(EzQueryArg.of((EzQuery<?>) datum));
+                        } else {
+                            args.add(ObjArg.of(datum));
+                        }
+                    }
+                    this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator, args));
+                } else {
+                    this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, operator,
+                            ObjArg.of(value)));
+                }
+            }
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaCondition(LogicalOperator logicalOperator, Formula formula, Operator operator,
+                                          Object value) {
+        return this.addFormulaCondition(true, logicalOperator, formula, operator, value);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                          Object value) {
+        return this.addFormulaCondition(sure, logicalOperator, formula, Operator.eq, value);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaCondition(LogicalOperator logicalOperator, Formula formula, Object value) {
+        return this.addFormulaCondition(true, logicalOperator, formula, Operator.eq, value);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaCondition(boolean sure, Formula formula, Operator operator, Object value) {
+        return this.addFormulaCondition(sure, LogicalOperator.AND, formula, operator, value);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaCondition(Formula formula, Operator operator, Object value) {
+        return this.addFormulaCondition(true, formula, operator, value);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaCondition(Formula formula, Object value) {
+        return this.addFormulaCondition(formula, Operator.eq, value);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNullCondition(boolean sure, LogicalOperator logicalOperator, Formula formula) {
+        if (sure) {
+            this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.isNull));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNullCondition(boolean sure, Formula formula) {
+        return this.addFormulaIsNullCondition(sure, LogicalOperator.AND, formula);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNullCondition(LogicalOperator logicalOperator, Formula formula) {
+        return this.addFormulaIsNullCondition(true, logicalOperator, formula);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNullCondition(Formula formula) {
+        return this.addFormulaIsNullCondition(true, LogicalOperator.AND, formula);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(boolean sure, LogicalOperator logicalOperator, Formula formula) {
+        if (sure) {
+            this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.isNotNull));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(boolean sure, Formula formula) {
+        return this.addFormulaIsNotNullCondition(sure, LogicalOperator.AND, formula);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(LogicalOperator logicalOperator, Formula formula) {
+        return this.addFormulaIsNotNullCondition(true, logicalOperator, formula);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaIsNotNullCondition(Formula formula) {
+        return this.addFormulaIsNotNullCondition(true, LogicalOperator.AND, formula);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaBetweenCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                                 Arg minValue, Arg maxValue) {
+        if (sure) {
+            this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.between, minValue,
+                    maxValue));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaBetweenCondition(boolean sure, Formula formula, Arg minValue, Arg maxValue) {
+        return this.addFormulaBetweenCondition(sure, LogicalOperator.AND, formula, minValue, maxValue);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaBetweenCondition(LogicalOperator logicalOperator, Formula formula, Arg minValue,
+                                                 Arg maxValue) {
+        return this.addFormulaBetweenCondition(true, logicalOperator, formula, minValue, maxValue);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaBetweenCondition(Formula formula, Arg minValue, Arg maxValue) {
+        return this.addFormulaBetweenCondition(true, LogicalOperator.AND, formula, minValue, maxValue);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaNotBetweenCondition(boolean sure, LogicalOperator logicalOperator, Formula formula,
+                                                    Arg minValue, Arg maxValue) {
+        if (sure) {
+            this.conditions.add(new FormulaCompareArgCondition(logicalOperator, formula, Operator.notBetween, minValue,
+                    maxValue));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaNotBetweenCondition(boolean sure, Formula formula, Arg minValue, Arg maxValue) {
+        return this.addFormulaNotBetweenCondition(sure, LogicalOperator.AND, formula, minValue, maxValue);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaNotBetweenCondition(LogicalOperator logicalOperator, Formula formula, Arg minValue,
+                                                    Arg maxValue) {
+        return this.addFormulaNotBetweenCondition(true, logicalOperator, formula, minValue, maxValue);
+    }
+
+    /**
+     * 添加公式条件
+     */
+    public SonBuilder addFormulaNotBetweenCondition(Formula formula, Arg minValue, Arg maxValue) {
+        return this.addFormulaNotBetweenCondition(true, LogicalOperator.AND, formula, minValue, maxValue);
     }
 }

@@ -4,6 +4,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.*;
@@ -12,6 +13,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasConditio
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
@@ -94,7 +97,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, NormalColumnCondition.class, OracleNormalColumnConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalAliasCondition.class, OracleNormalAliasConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, FunctionCompareValueCondition.class, OracleFunctionCompareValueConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FormulaCompareValueCondition.class, OracleFormulaCompareValueConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EzQuery.class, OracleEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Function.class, OracleFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Formula.class, OracleFormulaConverter.getInstance());
@@ -110,5 +112,17 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFormula.class, OracleSelectFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFunction.class, OracleSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectValue.class, OracleSelectValueConverter.getInstance());
+        //argConverter
+        EzMybatisContent.addConverter(DbType.ORACLE, AliasArg.class, MySqlAliasArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenArg.class, MySqlCaseWhenArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, ColumnArg.class, MySqlColumnArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, FieldArg.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, FormulaArg.class, MySqlFormulaArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, FunctionArg.class, MySqlFunctionArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, KeywordsArg.class, MySqlKeywordsArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, ObjArg.class, MySqlObjArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SqlArg.class, MySqlSqlArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
     }
 }

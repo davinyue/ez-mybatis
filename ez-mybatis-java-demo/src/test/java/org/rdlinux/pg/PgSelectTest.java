@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderType;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
@@ -867,6 +868,46 @@ public class PgSelectTest extends PgBaseTest {
                 .addColumnCondition(User.Fields.name, Operator.unlike, "%李四%")
                 .addColumnCondition(User.Fields.name, Operator.regexp, "%李四%")
                 .done()
+                .build();
+        System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
+        sqlSession.close();
+    }
+
+    @Test
+    public void formulaConditionTest() {
+        SqlSession sqlSession = PgBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+        CaseWhen caseWhen = CaseWhen.builder(table).when().addFieldCondition(User.Fields.userAge, 10)
+                .then(10).els(20);
+        Function function = Function.builder(table).setFunName("GREATEST").addValueArg(10).addValueArg(20).build();
+
+        EzQuery<StringHashMap> sonQuery = EzQuery.builder(StringHashMap.class)
+                .from(EntityTable.of(User.class))
+                .select()
+                .addField(User.Fields.userAge)
+                .done()
+                .page(1, 1)
+                .build();
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addAll()
+                .done()
+                .where()
+                .addFormulaCondition(formula, Operator.ne, ObjArg.of(10))
+                .addFormulaCondition(LogicalOperator.OR, formula, Operator.eq, AliasArg.of("age"))
+                .addFormulaCondition(formula, Operator.eq, CaseWhenArg.of(caseWhen))
+                .addFormulaCondition(formula, Operator.eq, ColumnArg.of(table, "age"))
+                .addFormulaCondition(formula, Operator.eq, FieldArg.of(table, User.Fields.userAge))
+                .addFormulaCondition(formula, Operator.eq, FormulaArg.of(formula))
+                .addFormulaCondition(formula, Operator.eq, KeywordsArg.of("age"))
+                .addFormulaCondition(formula, Operator.eq, FunctionArg.of(function))
+                .addFormulaCondition(formula, Operator.eq, FunctionArg.of(function))
+                .addFormulaCondition(formula, Operator.eq, EzQueryArg.of(sonQuery))
+                .addFormulaCondition(formula, Operator.eq, SqlArg.of("1 + 1"))
+                .done()
+                .page(1, 1)
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();
