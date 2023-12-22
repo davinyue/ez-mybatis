@@ -571,6 +571,135 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, LogicalOperator logicalOperator, EntityTable table, String field,
+                                        Operator operator, Arg value) {
+        return this.addCondition(sure, logicalOperator, FieldArg.of(table, field), operator, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(LogicalOperator logicalOperator, EntityTable table, String field,
+                                        Operator operator, Arg value) {
+        return this.addFieldCondition(true, logicalOperator, table, field, operator, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(LogicalOperator logicalOperator, String field, Operator operator,
+                                        Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(true, logicalOperator, (EntityTable) this.table, field, operator, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, LogicalOperator logicalOperator, String field, Operator operator,
+                                        Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(sure, logicalOperator, (EntityTable) this.table, field, operator, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(LogicalOperator logicalOperator, String field, Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(true, logicalOperator, (EntityTable) this.table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(LogicalOperator logicalOperator, EntityTable table, String field,
+                                        Arg value) {
+        return this.addFieldCondition(true, logicalOperator, table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, LogicalOperator logicalOperator, String field, Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(sure, logicalOperator, (EntityTable) this.table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, LogicalOperator logicalOperator, EntityTable table, String field,
+                                        Arg value) {
+        return this.addFieldCondition(sure, logicalOperator, table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(String field, Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(true, LogicalOperator.AND, (EntityTable) this.table, field, Operator.eq,
+                value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(EntityTable table, String field, Arg value) {
+        return this.addFieldCondition(true, LogicalOperator.AND, table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, String field, Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(sure, LogicalOperator.AND, (EntityTable) this.table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, EntityTable table, String field, Arg value) {
+        return this.addFieldCondition(sure, LogicalOperator.AND, table, field, Operator.eq, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(String field, Operator operator, Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(true, LogicalOperator.AND, (EntityTable) this.table, field, operator,
+                value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(EntityTable table, String field, Operator operator, Arg value) {
+        return this.addFieldCondition(true, LogicalOperator.AND, table, field, operator, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, String field, Operator operator, Arg value) {
+        this.checkEntityTable();
+        return this.addFieldCondition(sure, LogicalOperator.AND, (EntityTable) this.table, field, operator, value);
+    }
+
+    /**
+     * 添加field条件
+     */
+    public SonBuilder addFieldCondition(boolean sure, EntityTable table, String field, Operator operator,
+                                        Arg value) {
+        return this.addFieldCondition(sure, LogicalOperator.AND, table, field, operator, value);
+    }
+
+    /**
      * 添加column条件
      */
     public SonBuilder addColumnCondition(boolean sure, LogicalOperator logicalOperator, Table table, String column,
@@ -685,6 +814,124 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addColumnCondition(boolean sure, Table table, String column, Operator operator,
                                          Object value) {
+        return this.addColumnCondition(sure, LogicalOperator.AND, table, column, operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, LogicalOperator logicalOperator, Table table, String column,
+                                         Operator operator, Arg value) {
+        return this.addCondition(sure, logicalOperator, ColumnArg.of(table, column), operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(LogicalOperator logicalOperator, Table table, String column,
+                                         Operator operator, Arg value) {
+        return this.addColumnCondition(true, logicalOperator, table, column, operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(LogicalOperator logicalOperator, String column, Operator operator,
+                                         Arg value) {
+        return this.addColumnCondition(true, logicalOperator, this.table, column, operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, LogicalOperator logicalOperator, String column, Operator operator,
+                                         Arg value) {
+        return this.addColumnCondition(sure, logicalOperator, this.table, column, operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(LogicalOperator logicalOperator, String column, Arg value) {
+        return this.addColumnCondition(true, logicalOperator, this.table, column, Operator.eq, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(LogicalOperator logicalOperator, Table table, String column,
+                                         Arg value) {
+        return this.addColumnCondition(true, logicalOperator, table, column, Operator.eq, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, LogicalOperator logicalOperator, String column, Arg value) {
+        return this.addColumnCondition(sure, logicalOperator, this.table, column, Operator.eq, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, LogicalOperator logicalOperator, Table table, String column,
+                                         Arg value) {
+        return this.addColumnCondition(sure, logicalOperator, table, column, Operator.eq, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(String column, Arg value) {
+        return this.addColumnCondition(true, LogicalOperator.AND, this.table, column, Operator.eq,
+                value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(Table table, String column, Arg value) {
+        return this.addColumnCondition(true, LogicalOperator.AND, table, column, Operator.eq, value);
+    }
+
+    public SonBuilder addColumnCondition(boolean sure, String column, Arg value) {
+        return this.addColumnCondition(sure, LogicalOperator.AND, this.table, column, Operator.eq, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, Table table, String column, Arg value) {
+        return this.addColumnCondition(sure, LogicalOperator.AND, table, column, Operator.eq, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(String column, Operator operator, Arg value) {
+        return this.addColumnCondition(true, LogicalOperator.AND, this.table, column, operator,
+                value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(Table table, String column, Operator operator, Arg value) {
+        return this.addColumnCondition(true, LogicalOperator.AND, table, column, operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, String column, Operator operator, Arg value) {
+        return this.addColumnCondition(sure, LogicalOperator.AND, this.table, column, operator, value);
+    }
+
+    /**
+     * 添加column条件
+     */
+    public SonBuilder addColumnCondition(boolean sure, Table table, String column, Operator operator,
+                                         Arg value) {
         return this.addColumnCondition(sure, LogicalOperator.AND, table, column, operator, value);
     }
 
@@ -819,6 +1066,75 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(boolean sure, LogicalOperator logicalOperator, EntityTable table,
+                                          String field, Arg minValue, Arg maxValue) {
+        return this.addBtCondition(sure, logicalOperator, FieldArg.of(table, field), valueToArg(minValue),
+                valueToArg(maxValue));
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(LogicalOperator logicalOperator, String field, Arg minValue,
+                                          Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldBtCondition(true, logicalOperator, (EntityTable) this.table, field, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(LogicalOperator logicalOperator, EntityTable table, String field,
+                                          Arg minValue, Arg maxValue) {
+        return this.addFieldBtCondition(true, logicalOperator, table, field, minValue, maxValue);
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(boolean sure, LogicalOperator logicalOperator, String field, Arg minValue,
+                                          Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldBtCondition(sure, logicalOperator, (EntityTable) this.table, field, minValue, maxValue);
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(String field, Arg minValue, Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldBtCondition(true, LogicalOperator.AND, (EntityTable) this.table, field, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(EntityTable table, String field, Arg minValue, Arg maxValue) {
+        return this.addFieldBtCondition(true, LogicalOperator.AND, table, field, minValue, maxValue);
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(boolean sure, String field, Arg minValue, Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldBtCondition(sure, LogicalOperator.AND, (EntityTable) this.table, field, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加field between on条件
+     */
+    public SonBuilder addFieldBtCondition(boolean sure, EntityTable table, String field, Arg minValue,
+                                          Arg maxValue) {
+        return this.addFieldBtCondition(sure, LogicalOperator.AND, table, field, minValue, maxValue);
+    }
+
+    /**
      * 添加field not between on条件
      */
     public SonBuilder addFieldNotBtCondition(boolean sure, LogicalOperator logicalOperator, EntityTable table,
@@ -888,6 +1204,75 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(boolean sure, LogicalOperator logicalOperator, EntityTable table,
+                                             String field, Arg minValue, Arg maxValue) {
+        return this.addNotBtCondition(sure, logicalOperator, FieldArg.of(table, field), valueToArg(minValue),
+                valueToArg(maxValue));
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(LogicalOperator logicalOperator, String field, Arg minValue,
+                                             Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldNotBtCondition(true, logicalOperator, (EntityTable) this.table, field, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(LogicalOperator logicalOperator, EntityTable table, String field,
+                                             Arg minValue, Arg maxValue) {
+        return this.addFieldNotBtCondition(true, logicalOperator, table, field, minValue, maxValue);
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(boolean sure, LogicalOperator logicalOperator, String field, Arg minValue,
+                                             Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldNotBtCondition(sure, logicalOperator, (EntityTable) this.table, field, minValue, maxValue);
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(String field, Arg minValue, Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldNotBtCondition(true, LogicalOperator.AND, (EntityTable) this.table, field, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(EntityTable table, String field, Arg minValue, Arg maxValue) {
+        return this.addFieldNotBtCondition(true, LogicalOperator.AND, table, field, minValue, maxValue);
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(boolean sure, String field, Arg minValue, Arg maxValue) {
+        this.checkEntityTable();
+        return this.addFieldNotBtCondition(sure, LogicalOperator.AND, (EntityTable) this.table, field, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加field not between on条件
+     */
+    public SonBuilder addFieldNotBtCondition(boolean sure, EntityTable table, String field, Arg minValue,
+                                             Arg maxValue) {
+        return this.addFieldNotBtCondition(sure, LogicalOperator.AND, table, field, minValue, maxValue);
+    }
+
+    /**
      * 添加column between on条件
      */
     public SonBuilder addColumnBtCondition(boolean sure, LogicalOperator logicalOperator, Table table,
@@ -953,6 +1338,71 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(boolean sure, LogicalOperator logicalOperator, Table table,
+                                           String column, Arg minValue, Arg maxValue) {
+        return this.addBtCondition(sure, logicalOperator, ColumnArg.of(table, column), valueToArg(minValue),
+                valueToArg(maxValue));
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(LogicalOperator logicalOperator, String column, Arg minValue,
+                                           Arg maxValue) {
+        return this.addColumnBtCondition(true, logicalOperator, this.table, column, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(LogicalOperator logicalOperator, Table table, String column,
+                                           Arg minValue, Arg maxValue) {
+        return this.addColumnBtCondition(true, logicalOperator, table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(boolean sure, LogicalOperator logicalOperator, String column, Arg minValue,
+                                           Arg maxValue) {
+        return this.addColumnBtCondition(sure, logicalOperator, this.table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(String column, Arg minValue, Arg maxValue) {
+        return this.addColumnBtCondition(true, LogicalOperator.AND, this.table, column, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(Table table, String column, Arg minValue, Arg maxValue) {
+        return this.addColumnBtCondition(true, LogicalOperator.AND, table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(boolean sure, String column, Arg minValue, Arg maxValue) {
+        return this.addColumnBtCondition(sure, LogicalOperator.AND, this.table, column, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加column between on条件
+     */
+    public SonBuilder addColumnBtCondition(boolean sure, Table table, String column, Arg minValue,
+                                           Arg maxValue) {
+        return this.addColumnBtCondition(sure, LogicalOperator.AND, table, column, minValue, maxValue);
+    }
+
+    /**
      * 添加column not between on条件
      */
     public SonBuilder addColumnNotBtCondition(boolean sure, LogicalOperator logicalOperator, Table table,
@@ -1014,6 +1464,62 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addColumnNotBtCondition(boolean sure, Table table, String column, Object minValue,
                                               Object maxValue) {
+        return this.addColumnNotBtCondition(sure, LogicalOperator.AND, table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(LogicalOperator logicalOperator, String column, Arg minValue,
+                                              Arg maxValue) {
+        return this.addColumnNotBtCondition(true, logicalOperator, this.table, column, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(LogicalOperator logicalOperator, Table table, String column,
+                                              Arg minValue, Arg maxValue) {
+        return this.addColumnNotBtCondition(true, logicalOperator, table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(boolean sure, LogicalOperator logicalOperator, String column, Arg minValue,
+                                              Arg maxValue) {
+        return this.addColumnNotBtCondition(sure, logicalOperator, this.table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(String column, Arg minValue, Arg maxValue) {
+        return this.addColumnNotBtCondition(true, LogicalOperator.AND, this.table, column, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(Table table, String column, Arg minValue, Arg maxValue) {
+        return this.addColumnNotBtCondition(true, LogicalOperator.AND, table, column, minValue, maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(boolean sure, String column, Arg minValue, Arg maxValue) {
+        return this.addColumnNotBtCondition(sure, LogicalOperator.AND, this.table, column, minValue,
+                maxValue);
+    }
+
+    /**
+     * 添加column not between on条件
+     */
+    public SonBuilder addColumnNotBtCondition(boolean sure, Table table, String column, Arg minValue,
+                                              Arg maxValue) {
         return this.addColumnNotBtCondition(sure, LogicalOperator.AND, table, column, minValue, maxValue);
     }
 
