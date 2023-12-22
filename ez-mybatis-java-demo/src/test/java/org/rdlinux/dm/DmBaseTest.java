@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class DmBaseTest {
-    public static SqlSessionFactory sqlSessionFactory;
+    protected static SqlSessionFactory sqlSessionFactory;
 
     static {
         String resource = "mybatis-config-dm.xml";
