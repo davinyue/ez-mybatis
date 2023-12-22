@@ -1,12 +1,15 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareArgCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 
-public class PostgreSqlFormulaCompareArgConditionConverter extends MySqlFormulaCompareArgConditionConverter
+public class PostgreSqlFormulaCompareArgConditionConverter extends AbstractConverter<FormulaCompareArgCondition>
         implements Converter<FormulaCompareArgCondition> {
     private static volatile PostgreSqlFormulaCompareArgConditionConverter instance;
 
@@ -25,11 +28,16 @@ public class PostgreSqlFormulaCompareArgConditionConverter extends MySqlFormulaC
     }
 
     @Override
-    protected String getOperatorStr(Operator operator) {
-        if (Operator.regexp == operator) {
-            return "~";
-        }
-        return super.getOperatorStr(operator);
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       FormulaCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
+        Formula formula = obj.getFormula();
+        Converter<? extends Formula> formulaConverter = EzMybatisContent.getConverter(configuration,
+                formula.getClass());
+        StringBuilder leftSql = new StringBuilder();
+        leftSql.append(" ").append(formulaConverter.buildSql(type, new StringBuilder(), configuration, formula,
+                mybatisParamHolder)).append(" ");
+        return PostgreSqlFunctionCompareArgConditionConverter.getInstance()
+                .doBuildSql(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
     }
 
     @Override

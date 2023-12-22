@@ -124,5 +124,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaCompareArgCondition.class, PostgreSqlFormulaCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, CaseWhenCompareArgCondition.class, PostgreSqlCaseWhenCompareArgConditionConverter.getInstance());
     }
 }

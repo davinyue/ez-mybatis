@@ -14,6 +14,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalColumnConditi
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlCaseWhenCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFunctionCompareArgConditionConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
@@ -125,5 +126,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, CaseWhenCompareArgCondition.class, MySqlCaseWhenCompareArgConditionConverter.getInstance());
     }
 }

@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
 import org.rdlinux.ezmybatis.core.sqlstruct.arg.EzQueryArg;
@@ -9,10 +10,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenColumnCondi
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenFieldCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenFieldCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.ColumnCompareCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FieldCompareCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FormulaCompareArgCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.FunctionCompareArgCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullColumnCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullFiledCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullColumnCondition;
@@ -1430,7 +1428,6 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     public SonBuilder addFormulaNotBetweenCondition(Formula formula, Arg minValue, Arg maxValue) {
         return this.addFormulaNotBetweenCondition(true, LogicalOperator.AND, formula, minValue, maxValue);
     }
-    //////////////////
 
     /**
      * 添加函数条件
@@ -1685,5 +1682,260 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addFuncNotBetweenCondition(Function function, Arg minValue, Arg maxValue) {
         return this.addFuncNotBetweenCondition(true, LogicalOperator.AND, function, minValue, maxValue);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen,
+                                           Operator operator, Arg value) {
+        if (sure) {
+            if (value == null) {
+                this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, Operator.isNull));
+            } else {
+                this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, operator, value));
+            }
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(LogicalOperator logicalOperator, CaseWhen caseWhen, Operator operator,
+                                           Arg value) {
+        return this.addCaseWhenCondition(true, logicalOperator, caseWhen, operator, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen, Arg value) {
+        return this.addCaseWhenCondition(sure, logicalOperator, caseWhen, Operator.eq, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(LogicalOperator logicalOperator, CaseWhen caseWhen, Arg value) {
+        return this.addCaseWhenCondition(true, logicalOperator, caseWhen, Operator.eq, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(boolean sure, CaseWhen caseWhen, Operator operator, Arg value) {
+        return this.addCaseWhenCondition(sure, LogicalOperator.AND, caseWhen, operator, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(CaseWhen caseWhen, Operator operator, Arg value) {
+        return this.addCaseWhenCondition(true, caseWhen, operator, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(CaseWhen caseWhen, Arg value) {
+        return this.addCaseWhenCondition(caseWhen, Operator.eq, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen,
+                                           Operator operator, Object value) {
+        if (sure) {
+            if (value == null) {
+                this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, Operator.isNull));
+            } else if (value instanceof Arg) {
+                this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, operator, (Arg) value));
+            } else {
+                if (operator == Operator.in || operator == Operator.notIn) {
+                    List<Arg> args = valueToArgList(value);
+                    this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, operator, args));
+                } else {
+                    this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, operator,
+                            ObjArg.of(value)));
+                }
+            }
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(LogicalOperator logicalOperator, CaseWhen caseWhen, Operator operator,
+                                           Object value) {
+        return this.addCaseWhenCondition(true, logicalOperator, caseWhen, operator, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen,
+                                           Object value) {
+        return this.addCaseWhenCondition(sure, logicalOperator, caseWhen, Operator.eq, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(LogicalOperator logicalOperator, CaseWhen caseWhen, Object value) {
+        return this.addCaseWhenCondition(true, logicalOperator, caseWhen, Operator.eq, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(boolean sure, CaseWhen caseWhen, Operator operator, Object value) {
+        return this.addCaseWhenCondition(sure, LogicalOperator.AND, caseWhen, operator, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(CaseWhen caseWhen, Operator operator, Object value) {
+        return this.addCaseWhenCondition(true, caseWhen, operator, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenCondition(CaseWhen caseWhen, Object value) {
+        return this.addCaseWhenCondition(caseWhen, Operator.eq, value);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNullCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen) {
+        if (sure) {
+            this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, Operator.isNull));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNullCondition(boolean sure, CaseWhen caseWhen) {
+        return this.addCaseWhenIsNullCondition(sure, LogicalOperator.AND, caseWhen);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNullCondition(LogicalOperator logicalOperator, CaseWhen caseWhen) {
+        return this.addCaseWhenIsNullCondition(true, logicalOperator, caseWhen);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNullCondition(CaseWhen caseWhen) {
+        return this.addCaseWhenIsNullCondition(true, LogicalOperator.AND, caseWhen);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNotNullCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen) {
+        if (sure) {
+            this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, Operator.isNotNull));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNotNullCondition(boolean sure, CaseWhen caseWhen) {
+        return this.addCaseWhenIsNotNullCondition(sure, LogicalOperator.AND, caseWhen);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNotNullCondition(LogicalOperator logicalOperator, CaseWhen caseWhen) {
+        return this.addCaseWhenIsNotNullCondition(true, logicalOperator, caseWhen);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenIsNotNullCondition(CaseWhen caseWhen) {
+        return this.addCaseWhenIsNotNullCondition(true, LogicalOperator.AND, caseWhen);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenBetweenCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen,
+                                                  Arg minValue, Arg maxValue) {
+        if (sure) {
+            this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, Operator.between, minValue,
+                    maxValue));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenBetweenCondition(boolean sure, CaseWhen caseWhen, Arg minValue, Arg maxValue) {
+        return this.addCaseWhenBetweenCondition(sure, LogicalOperator.AND, caseWhen, minValue, maxValue);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenBetweenCondition(LogicalOperator logicalOperator, CaseWhen caseWhen, Arg minValue,
+                                                  Arg maxValue) {
+        return this.addCaseWhenBetweenCondition(true, logicalOperator, caseWhen, minValue, maxValue);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenBetweenCondition(CaseWhen caseWhen, Arg minValue, Arg maxValue) {
+        return this.addCaseWhenBetweenCondition(true, LogicalOperator.AND, caseWhen, minValue, maxValue);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenNotBetweenCondition(boolean sure, LogicalOperator logicalOperator, CaseWhen caseWhen,
+                                                     Arg minValue, Arg maxValue) {
+        if (sure) {
+            this.conditions.add(new CaseWhenCompareArgCondition(logicalOperator, caseWhen, Operator.notBetween,
+                    minValue, maxValue));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenNotBetweenCondition(boolean sure, CaseWhen caseWhen, Arg minValue, Arg maxValue) {
+        return this.addCaseWhenNotBetweenCondition(sure, LogicalOperator.AND, caseWhen, minValue, maxValue);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenNotBetweenCondition(LogicalOperator logicalOperator, CaseWhen caseWhen, Arg minValue,
+                                                     Arg maxValue) {
+        return this.addCaseWhenNotBetweenCondition(true, logicalOperator, caseWhen, minValue, maxValue);
+    }
+
+    /**
+     * 添加caseWhen条件
+     */
+    public SonBuilder addCaseWhenNotBetweenCondition(CaseWhen caseWhen, Arg minValue, Arg maxValue) {
+        return this.addCaseWhenNotBetweenCondition(true, LogicalOperator.AND, caseWhen, minValue, maxValue);
     }
 }

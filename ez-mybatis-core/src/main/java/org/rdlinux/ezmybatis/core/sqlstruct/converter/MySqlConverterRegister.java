@@ -123,5 +123,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FormulaCompareArgCondition.class, MySqlFormulaCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, FunctionCompareArgCondition.class, MySqlFunctionCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenCompareArgCondition.class, MySqlCaseWhenCompareArgConditionConverter.getInstance());
     }
 }
