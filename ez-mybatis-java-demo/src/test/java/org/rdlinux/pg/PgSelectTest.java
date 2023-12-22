@@ -378,7 +378,9 @@ public class PgSelectTest extends PgBaseTest {
                 .groupBy()
                 .addColumn("name")
                 .done()
-                .having().addColumnCondition("name", "张三").done()
+                .having()
+                .addColumnCondition("name", "张三")
+                .addColumnCondition("name", Operator.regexp, "张三").done()
                 .build();
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         List<User> users = userMapper.query(query);

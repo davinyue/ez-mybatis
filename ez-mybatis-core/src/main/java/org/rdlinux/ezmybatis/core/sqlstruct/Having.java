@@ -1,13 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
+import org.rdlinux.ezmybatis.core.sqlstruct.arg.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.BetweenAliasCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.between.NotBetweenAliasCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.AliasCompareCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNotNullAliasCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.nil.IsNullAliasCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.normal.NormalAliasCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.compare.AliasCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.LinkedList;
@@ -32,85 +29,265 @@ public class Having implements SqlStruct {
             this.sonBuilder = this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias,
-                                                        Operator operator, Object value) {
-            this.conditions.add(new NormalAliasCondition(logicalOperator, alias, operator, value));
-            return this;
-        }
-
+        /**
+         * 添加alias条件
+         */
         public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
-                                                        Operator operator, Object value) {
+                                                        Operator operator, Arg value) {
             if (sure) {
-                return this.addAliasCondition(logicalOperator, alias, operator, value);
+                if (value == null) {
+                    this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, Operator.isNull));
+                } else {
+                    this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, operator, value));
+                }
             }
             return this;
         }
 
-        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias,
-                                                        Object value) {
-            return this.addAliasCondition(logicalOperator, alias, Operator.eq, value);
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias, Operator operator,
+                                                        Arg value) {
+            return this.addAliasCondition(true, logicalOperator, alias, operator, value);
         }
 
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias, Arg value) {
+            return this.addAliasCondition(sure, logicalOperator, alias, Operator.eq, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias, Arg value) {
+            return this.addAliasCondition(true, logicalOperator, alias, Operator.eq, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator, Arg value) {
+            return this.addAliasCondition(sure, LogicalOperator.AND, alias, operator, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, Arg value) {
+            return this.addAliasCondition(true, alias, operator, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(String alias, Arg value) {
+            return this.addAliasCondition(alias, Operator.eq, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
         public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
-                                                        Object value) {
+                                                        Operator operator, Object value) {
             if (sure) {
-                return this.addAliasCondition(logicalOperator, alias, value);
+                if (value == null) {
+                    this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, Operator.isNull));
+                } else if (value instanceof Arg) {
+                    this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, operator, (Arg) value));
+                } else {
+                    if (operator == Operator.in || operator == Operator.notIn) {
+                        List<Arg> args = ConditionBuilder.valueToArgList(value);
+                        this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, operator, args));
+                    } else {
+                        this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, operator,
+                                ObjArg.of(value)));
+                    }
+                }
             }
             return this;
         }
 
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias, Operator operator,
+                                                        Object value) {
+            return this.addAliasCondition(true, logicalOperator, alias, operator, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
+                                                        Object value) {
+            return this.addAliasCondition(sure, logicalOperator, alias, Operator.eq, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias, Object value) {
+            return this.addAliasCondition(true, logicalOperator, alias, Operator.eq, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator, Object value) {
+            return this.addAliasCondition(sure, LogicalOperator.AND, alias, operator, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, Object value) {
+            return this.addAliasCondition(true, alias, operator, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
         public HavingBuilder<Builder> addAliasCondition(String alias, Object value) {
-            return this.addAliasCondition(LogicalOperator.AND, alias, Operator.eq, value);
+            return this.addAliasCondition(alias, Operator.eq, value);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, LogicalOperator logicalOperator, String alias) {
+            if (sure) {
+                this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, Operator.isNull));
+            }
+            return this;
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, String alias) {
+            return this.addAliasIsNullCondition(sure, LogicalOperator.AND, alias);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNullCondition(LogicalOperator logicalOperator, String alias) {
+            return this.addAliasIsNullCondition(true, logicalOperator, alias);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNullCondition(String alias) {
+            return this.addAliasIsNullCondition(true, LogicalOperator.AND, alias);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, LogicalOperator logicalOperator, String alias) {
+            if (sure) {
+                this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, Operator.isNotNull));
+            }
+            return this;
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, String alias) {
+            return this.addAliasIsNotNullCondition(sure, LogicalOperator.AND, alias);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(LogicalOperator logicalOperator, String alias) {
+            return this.addAliasIsNotNullCondition(true, logicalOperator, alias);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasIsNotNullCondition(String alias) {
+            return this.addAliasIsNotNullCondition(true, LogicalOperator.AND, alias);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasBtCondition(boolean sure, LogicalOperator logicalOperator, String alias,
+                                                          Arg minValue, Arg maxValue) {
+            if (sure) {
+                this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, Operator.between, minValue,
+                        maxValue));
+            }
+            return this;
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasBtCondition(boolean sure, String alias, Arg minValue, Arg maxValue) {
+            return this.addAliasBtCondition(sure, LogicalOperator.AND, alias, minValue, maxValue);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasBtCondition(LogicalOperator logicalOperator, String alias, Arg minValue,
+                                                          Arg maxValue) {
+            return this.addAliasBtCondition(true, logicalOperator, alias, minValue, maxValue);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasBtCondition(String alias, Arg minValue, Arg maxValue) {
+            return this.addAliasBtCondition(true, LogicalOperator.AND, alias, minValue, maxValue);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, LogicalOperator logicalOperator, String alias,
+                                                             Arg minValue, Arg maxValue) {
+            if (sure) {
+                this.conditions.add(new AliasCompareArgCondition(logicalOperator, alias, Operator.notBetween,
+                        minValue, maxValue));
+            }
+            return this;
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, String alias, Arg minValue, Arg maxValue) {
+            return this.addAliasNotBtCondition(sure, LogicalOperator.AND, alias, minValue, maxValue);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasNotBtCondition(LogicalOperator logicalOperator, String alias, Arg minValue,
+                                                             Arg maxValue) {
+            return this.addAliasNotBtCondition(true, logicalOperator, alias, minValue, maxValue);
+        }
+
+        /**
+         * 添加alias条件
+         */
+        public HavingBuilder<Builder> addAliasNotBtCondition(String alias, Arg minValue, Arg maxValue) {
+            return this.addAliasNotBtCondition(true, LogicalOperator.AND, alias, minValue, maxValue);
         }
 
         public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Object value) {
             if (sure) {
                 return this.addAliasCondition(alias, value);
             }
-            return this;
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, Object value) {
-            return this.addAliasCondition(LogicalOperator.AND, alias, operator, value);
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator, Object value) {
-            if (sure) {
-                return this.addAliasCondition(alias, operator, value);
-            }
-            return this;
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias,
-                                                        Operator operator, String otherAlias) {
-            this.conditions.add(new AliasCompareCondition(logicalOperator, alias, operator, otherAlias));
-            return this;
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
-                                                        Operator operator, String otherAlias) {
-            if (sure) {
-                return this.addAliasCondition(logicalOperator, alias, operator, otherAlias);
-            }
-            return this;
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, String otherAlias) {
-            this.conditions.add(new AliasCompareCondition(LogicalOperator.AND, alias, operator, otherAlias));
-            return this;
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator,
-                                                        String otherAlias) {
-            if (sure) {
-                return this.addAliasCondition(alias, operator, otherAlias);
-            }
-            return this;
-        }
-
-        public HavingBuilder<Builder> addAliasCondition(String alias, String otherAlias) {
-            this.conditions.add(new AliasCompareCondition(LogicalOperator.AND, alias, Operator.eq,
-                    otherAlias));
             return this;
         }
 
@@ -122,86 +299,11 @@ public class Having implements SqlStruct {
         }
 
         /**
-         * 添加is null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNullCondition(LogicalOperator logicalOperator, String alias) {
-            this.conditions.add(new IsNullAliasCondition(logicalOperator, alias));
-            return this;
-        }
-
-        /**
-         * 添加is null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, LogicalOperator logicalOperator,
-                                                              String alias) {
-            if (sure) {
-                return this.addAliasIsNullCondition(logicalOperator, alias);
-            }
-            return this;
-        }
-
-        /**
-         * 添加is null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNullCondition(String alias) {
-            this.conditions.add(new IsNullAliasCondition(LogicalOperator.AND, alias));
-            return this;
-        }
-
-        /**
-         * 添加is null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, String alias) {
-            if (sure) {
-                return this.addAliasIsNullCondition(alias);
-            }
-            return this;
-        }
-
-        /**
-         * 添加is not null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNotNullCondition(LogicalOperator logicalOperator, String alias) {
-            this.conditions.add(new IsNotNullAliasCondition(logicalOperator, alias));
-            return this;
-        }
-
-        /**
-         * 添加is not null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, LogicalOperator logicalOperator,
-                                                                 String alias) {
-            if (sure) {
-                return this.addAliasIsNotNullCondition(logicalOperator, alias);
-            }
-            return this;
-        }
-
-        /**
-         * 添加is not null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNotNullCondition(String alias) {
-            this.conditions.add(new IsNotNullAliasCondition(LogicalOperator.AND, alias));
-            return this;
-        }
-
-        /**
-         * 添加is not null条件
-         */
-        public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, String alias) {
-            if (sure) {
-                return this.addAliasIsNotNullCondition(alias);
-            }
-            return this;
-        }
-
-        /**
          * 添加between on条件
          */
         public HavingBuilder<Builder> addAliasBtCondition(LogicalOperator logicalOperator, String alias,
                                                           Object minValue, Object maxValue) {
-            this.conditions.add(new BetweenAliasCondition(logicalOperator, alias, minValue, maxValue));
-            return this;
+            return this.addAliasBtCondition(logicalOperator, alias, ObjArg.of(minValue), ObjArg.of(maxValue));
         }
 
         /**
@@ -219,8 +321,7 @@ public class Having implements SqlStruct {
          * 添加between on条件
          */
         public HavingBuilder<Builder> addAliasBtCondition(String alias, Object minValue, Object maxValue) {
-            this.conditions.add(new BetweenAliasCondition(LogicalOperator.AND, alias, minValue, maxValue));
-            return this;
+            return this.addAliasBtCondition(alias, ObjArg.of(minValue), ObjArg.of(maxValue));
         }
 
         /**
@@ -239,8 +340,7 @@ public class Having implements SqlStruct {
          */
         public HavingBuilder<Builder> addAliasNotBtCondition(LogicalOperator logicalOperator, String alias,
                                                              Object minValue, Object maxValue) {
-            this.conditions.add(new NotBetweenAliasCondition(logicalOperator, alias, minValue, maxValue));
-            return this;
+            return this.addAliasNotBtCondition(logicalOperator, alias, ObjArg.of(minValue), ObjArg.of(maxValue));
         }
 
         /**
@@ -258,8 +358,7 @@ public class Having implements SqlStruct {
          * 添加not between on条件
          */
         public HavingBuilder<Builder> addAliasNotBtCondition(String alias, Object minValue, Object maxValue) {
-            this.conditions.add(new NotBetweenAliasCondition(LogicalOperator.AND, alias, minValue, maxValue));
-            return this;
+            return this.addAliasNotBtCondition(alias, ObjArg.of(minValue), ObjArg.of(maxValue));
         }
 
         /**
