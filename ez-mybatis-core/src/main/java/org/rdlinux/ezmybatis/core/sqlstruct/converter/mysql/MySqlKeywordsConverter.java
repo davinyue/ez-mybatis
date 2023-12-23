@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;

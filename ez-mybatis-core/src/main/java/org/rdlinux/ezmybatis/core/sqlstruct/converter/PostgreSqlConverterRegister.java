@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
@@ -87,11 +86,11 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectValue.class, MySqlSelectValueConverter.getInstance());
         //argConverter
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Alias.class, MySqlAliasArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, TableColumn.class, MySqlColumnArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, EntityField.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Alias.class, MySqlAliasConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, TableColumn.class, MySqlTableColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, EntityField.class, MySqlEntityFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ObjArg.class, MySqlObjArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Sql.class, MySqlSqlArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Sql.class, MySqlSqlConverter.getInstance());
     }
 }

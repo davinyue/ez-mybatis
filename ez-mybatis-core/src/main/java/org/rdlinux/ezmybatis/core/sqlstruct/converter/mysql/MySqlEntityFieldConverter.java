@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
@@ -12,17 +12,17 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-public class MySqlFieldArgConverter extends AbstractConverter<EntityField> implements Converter<EntityField> {
-    private static volatile MySqlFieldArgConverter instance;
+public class MySqlEntityFieldConverter extends AbstractConverter<EntityField> implements Converter<EntityField> {
+    private static volatile MySqlEntityFieldConverter instance;
 
-    protected MySqlFieldArgConverter() {
+    protected MySqlEntityFieldConverter() {
     }
 
-    public static MySqlFieldArgConverter getInstance() {
+    public static MySqlEntityFieldConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlFieldArgConverter.class) {
+            synchronized (MySqlEntityFieldConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlFieldArgConverter();
+                    instance = new MySqlEntityFieldConverter();
                 }
             }
         }

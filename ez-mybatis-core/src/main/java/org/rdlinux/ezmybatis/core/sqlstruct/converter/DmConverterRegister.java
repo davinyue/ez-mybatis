@@ -8,8 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlArgCompareArgConditionConverter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -87,11 +86,11 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SelectFunction.class, DmSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SelectValue.class, DmSelectValueConverter.getInstance());
         //argConverter
-        EzMybatisContent.addConverter(DbType.DM, Alias.class, MySqlAliasArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, TableColumn.class, MySqlColumnArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, EntityField.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, Alias.class, MySqlAliasConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, TableColumn.class, MySqlTableColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, EntityField.class, MySqlEntityFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ObjArg.class, MySqlObjArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, Sql.class, MySqlSqlArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, Sql.class, MySqlSqlConverter.getInstance());
     }
 }

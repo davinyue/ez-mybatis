@@ -7,8 +7,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlArgCompareArgConditionConverter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
@@ -87,12 +86,12 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFunction.class, OracleSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectValue.class, OracleSelectValueConverter.getInstance());
         //argConverter
-        EzMybatisContent.addConverter(DbType.ORACLE, Alias.class, MySqlAliasArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, TableColumn.class, MySqlColumnArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, EntityField.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Alias.class, MySqlAliasConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, TableColumn.class, MySqlTableColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, EntityField.class, MySqlEntityFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ObjArg.class, MySqlObjArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, Sql.class, MySqlSqlArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Sql.class, MySqlSqlConverter.getInstance());
 
     }
 }
