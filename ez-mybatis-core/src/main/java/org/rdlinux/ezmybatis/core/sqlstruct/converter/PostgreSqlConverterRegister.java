@@ -8,7 +8,10 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlArgCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlLimitConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateColumnItemConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateFieldItemConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -17,7 +20,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 
 /**
  * mysql转换器注册
@@ -57,16 +61,8 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectSumField.class, MySqlSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectTableAllItem.class, MySqlSelectTableAllItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectKeywords.class, MySqlSelectKeywordsConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, CaseWhenUpdateColumnItem.class, PostgreSqlCaseWhenUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, CaseWhenUpdateFieldItem.class, PostgreSqlCaseWhenUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, UpdateColumnItem.class, PostgreSqlUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, UpdateFieldItem.class, PostgreSqlUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FunctionUpdateFieldItem.class, PostgreSqlFunctionUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FunctionUpdateColumnItem.class, PostgreSqlFunctionUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaUpdateFieldItem.class, PostgreSqlFormulaUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaUpdateColumnItem.class, PostgreSqlFormulaUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, KeywordsUpdateFieldItem.class, PostgreSqlKeywordsUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, KeywordsUpdateColumnItem.class, PostgreSqlKeywordsUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SqlCondition.class, MySqlSqlConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, GroupCondition.class, MySqlGroupConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ArgCompareArgCondition.class, PostgreSqlArgCompareArgConditionConverter.getInstance());

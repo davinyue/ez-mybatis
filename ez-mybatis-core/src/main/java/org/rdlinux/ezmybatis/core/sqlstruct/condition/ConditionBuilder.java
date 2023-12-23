@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
-import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -38,11 +37,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     protected static Operand valueToArg(Object value) {
-        if (value instanceof Operand) {
-            return (Operand) value;
-        } else {
-            return ObjArg.of(value);
-        }
+        return Operand.objToOperand(value);
     }
 
     protected static List<Operand> valueToArgList(Object value) {

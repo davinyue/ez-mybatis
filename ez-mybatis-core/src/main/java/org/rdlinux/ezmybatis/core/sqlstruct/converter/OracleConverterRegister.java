@@ -17,7 +17,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 
 /**
  * mysql转换器注册
@@ -57,16 +58,8 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectSumField.class, OracleSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectTableAllItem.class, OracleSelectTableAllItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectKeywords.class, OracleSelectKeywordsConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateColumnItem.class, OracleCaseWhenUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenUpdateFieldItem.class, OracleCaseWhenUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateColumnItem.class, OracleUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FunctionUpdateFieldItem.class, OracleFunctionUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FunctionUpdateColumnItem.class, OracleFunctionUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FormulaUpdateFieldItem.class, OracleFormulaUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FormulaUpdateColumnItem.class, OracleFormulaUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, KeywordsUpdateFieldItem.class, OracleKeywordsUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, KeywordsUpdateColumnItem.class, OracleKeywordsUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SqlCondition.class, OracleSqlConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, GroupCondition.class, OracleGroupConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ArgCompareArgCondition.class, MySqlArgCompareArgConditionConverter.getInstance());
