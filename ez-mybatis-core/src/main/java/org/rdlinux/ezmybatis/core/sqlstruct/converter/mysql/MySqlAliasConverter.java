@@ -1,24 +1,24 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg;
+package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
+import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
-public class MySqlColumnArgConverter extends AbstractConverter<TableColumn> implements Converter<TableColumn> {
-    private static volatile MySqlColumnArgConverter instance;
+public class MySqlAliasConverter extends AbstractConverter<Alias> implements Converter<Alias> {
+    private static volatile MySqlAliasConverter instance;
 
-    protected MySqlColumnArgConverter() {
+    protected MySqlAliasConverter() {
     }
 
-    public static MySqlColumnArgConverter getInstance() {
+    public static MySqlAliasConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlColumnArgConverter.class) {
+            synchronized (MySqlAliasConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlColumnArgConverter();
+                    instance = new MySqlAliasConverter();
                 }
             }
         }
@@ -27,10 +27,9 @@ public class MySqlColumnArgConverter extends AbstractConverter<TableColumn> impl
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       TableColumn obj, MybatisParamHolder mybatisParamHolder) {
+                                       Alias obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        return sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(obj.getColumn())
-                .append(keywordQM);
+        return sqlBuilder.append(keywordQM).append(obj.getAlias()).append(keywordQM);
     }
 
     @Override

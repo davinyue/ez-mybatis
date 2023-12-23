@@ -8,7 +8,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -86,11 +85,11 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectValue.class, MySqlSelectValueConverter.getInstance());
         //argConverter
-        EzMybatisContent.addConverter(DbType.MYSQL, Alias.class, MySqlAliasArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, TableColumn.class, MySqlColumnArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, EntityField.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Alias.class, MySqlAliasConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, TableColumn.class, MySqlTableColumnConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, EntityField.class, MySqlEntityFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ObjArg.class, MySqlObjArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, Sql.class, MySqlSqlArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Sql.class, MySqlSqlConverter.getInstance());
     }
 }
