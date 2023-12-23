@@ -1,26 +1,25 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectFunction;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 
-public class MySqlSelectFunctionConverter extends AbstractConverter<SelectFunction> implements Converter<SelectFunction> {
-    private static volatile MySqlSelectFunctionConverter instance;
+public class MySqlSelectOperandConverter extends AbstractConverter<SelectOperand> implements Converter<SelectOperand> {
+    private static volatile MySqlSelectOperandConverter instance;
 
-    protected MySqlSelectFunctionConverter() {
+    protected MySqlSelectOperandConverter() {
     }
 
-    public static MySqlSelectFunctionConverter getInstance() {
+    public static MySqlSelectOperandConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlSelectFunctionConverter.class) {
+            synchronized (MySqlSelectOperandConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlSelectFunctionConverter();
+                    instance = new MySqlSelectOperandConverter();
                 }
             }
         }
@@ -29,12 +28,12 @@ public class MySqlSelectFunctionConverter extends AbstractConverter<SelectFuncti
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
-            , SelectFunction obj, MybatisParamHolder mybatisParamHolder) {
-        Converter<? extends Function> converter = EzMybatisContent.getConverter(configuration, obj.getFunction()
-                .getClass());
-        converter.buildSql(type, sqlBuilder, configuration, obj.getFunction(), mybatisParamHolder);
+            , SelectOperand obj, MybatisParamHolder mybatisParamHolder) {
+        Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration,
+                obj.getOperand().getClass());
+        converter.buildSql(type, sqlBuilder, configuration, obj.getOperand(), mybatisParamHolder);
         String alias = obj.getAlias();
-        if (StringUtils.isNotBlank(alias)) {
+        if (alias != null && !alias.isEmpty()) {
             String keywordQM = EzMybatisContent.getKeywordQM(configuration);
             sqlBuilder.append(" ").append(keywordQM).append(alias).append(keywordQM).append(" ");
         }

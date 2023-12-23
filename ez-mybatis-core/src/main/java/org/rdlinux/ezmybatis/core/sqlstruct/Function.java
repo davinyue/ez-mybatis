@@ -15,7 +15,7 @@ import java.util.List;
  * 函数
  */
 @Getter
-public class Function implements SqlStruct, Operand {
+public class Function implements QueryRetNeedAlias, Operand {
     /**
      * 表
      */

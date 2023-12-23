@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand {
+public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, QueryRetNeedAlias {
     private Select select;
     private List<Join> joins;
     private GroupBy groupBy;

@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 /**
  * 对象参数
  */
-public class ObjArg implements Operand {
+public class ObjArg implements Operand, QueryRetNeedAlias {
     private Object arg;
     private EntityTable entityTable;
     private String field;

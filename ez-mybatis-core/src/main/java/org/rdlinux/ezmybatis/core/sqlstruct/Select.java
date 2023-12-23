@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
-import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -110,7 +113,7 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addField(String field) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectField((EntityTable) this.table, field));
+            this.selectFields.add(new SelectOperand(EntityField.of((EntityTable) this.table, field), null));
             return this;
         }
 
@@ -123,7 +126,7 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addField(String field, String alias) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectField((EntityTable) this.table, field, alias));
+            this.selectFields.add(new SelectOperand(EntityField.of((EntityTable) this.table, field), alias));
             return this;
         }
 
@@ -136,7 +139,7 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumn(String column) {
-            this.selectFields.add(new SelectColumn(this.table, column));
+            this.selectFields.add(new SelectOperand(TableColumn.of(this.table, column), null));
             return this;
         }
 
@@ -148,7 +151,7 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumn(String column, String alias) {
-            this.selectFields.add(new SelectColumn(this.table, column, alias));
+            this.selectFields.add(new SelectOperand(TableColumn.of(this.table, column), alias));
             return this;
         }
 
@@ -161,7 +164,8 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addFieldMax(String field, String alias) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectMaxField((EntityTable) this.table, field, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MAX")
+                    .addFieldArg(field).build(), alias));
             return this;
         }
 
@@ -173,7 +177,8 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumnMax(String column, String alias) {
-            this.selectFields.add(new SelectMaxColumn(this.table, column, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MAX")
+                    .addColumnArg(column).build(), alias));
             return this;
         }
 
@@ -190,7 +195,13 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addFieldCount(String field, String alias, boolean distinct) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectCountField((EntityTable) this.table, distinct, field, alias));
+            if (distinct) {
+                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
+                        .addDistinctFieldArg(field).build(), alias));
+            } else {
+                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
+                        .addFieldArg(field).build(), alias));
+            }
             return this;
         }
 
@@ -213,7 +224,13 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumnCount(String column, String alias, boolean distinct) {
-            this.selectFields.add(new SelectCountColumn(this.table, distinct, column, alias));
+            if (distinct) {
+                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
+                        .addDistinctColumnArg(column).build(), alias));
+            } else {
+                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
+                        .addColumnArg(column).build(), alias));
+            }
             return this;
         }
 
@@ -233,7 +250,8 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addFieldMin(String field, String alias) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectMaxField((EntityTable) this.table, field, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MIN")
+                    .addFieldArg(field).build(), alias));
             return this;
         }
 
@@ -245,7 +263,8 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumnMin(String column, String alias) {
-            this.selectFields.add(new SelectMinColumn(this.table, column, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MIN")
+                    .addColumnArg(column).build(), alias));
             return this;
         }
 
@@ -258,7 +277,8 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addFieldAvg(String field, String alias) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectAvgField((EntityTable) this.table, field, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("AVG")
+                    .addFieldArg(field).build(), alias));
             return this;
         }
 
@@ -270,7 +290,8 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumnAvg(String column, String alias) {
-            this.selectFields.add(new SelectAvgColumn(this.table, column, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("AVG")
+                    .addColumnArg(column).build(), alias));
             return this;
         }
 
@@ -283,7 +304,8 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addFieldSum(String field, String alias) {
             this.checkEntityTable();
-            this.selectFields.add(new SelectSumField((EntityTable) this.table, field, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("SUM")
+                    .addFieldArg(field).build(), alias));
             return this;
         }
 
@@ -295,7 +317,8 @@ public class Select implements SqlStruct {
         }
 
         public EzSelectBuilder<T> addColumnSum(String column, String alias) {
-            this.selectFields.add(new SelectSumColumn(this.table, column, alias));
+            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("SUM")
+                    .addColumnArg(column).build(), alias));
             return this;
         }
 
@@ -306,42 +329,28 @@ public class Select implements SqlStruct {
             return this;
         }
 
-        public EzSelectBuilder<T> addFormula(boolean sure, Formula formula, String alias) {
+        public EzSelectBuilder<T> add(boolean sure, Operand operand, String alias) {
             if (sure) {
-                this.selectFields.add(new SelectFormula(formula, alias));
+                this.selectFields.add(new SelectOperand(operand, alias));
             }
             return this;
         }
 
-        public EzSelectBuilder<T> addFormula(Formula formula, String alias) {
-            return this.addFormula(true, formula, alias);
+        public EzSelectBuilder<T> add(boolean sure, Operand operand) {
+            return this.add(sure, operand, null);
         }
 
-        public EzSelectBuilder<T> addFunc(boolean sure, Function function, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectFunction(function, alias));
-            }
-            return this;
+        public EzSelectBuilder<T> add(Operand operand, String alias) {
+            return this.add(true, operand, alias);
         }
 
-        public EzSelectBuilder<T> addFunc(Function function, String alias) {
-            return this.addFunc(true, function, alias);
-        }
-
-        public EzSelectBuilder<T> addCaseWhen(boolean sure, CaseWhen caseWhen, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectCaseWhen(caseWhen, alias));
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addCaseWhen(CaseWhen caseWhen, String alias) {
-            return this.addCaseWhen(true, caseWhen, alias);
+        public EzSelectBuilder<T> add(Operand operand) {
+            return this.add(true, operand, null);
         }
 
         public EzSelectBuilder<T> addKeywords(boolean sure, String keywords, String alias) {
             if (sure) {
-                this.selectFields.add(new SelectKeywords(keywords, alias));
+                this.selectFields.add(new SelectOperand(Keywords.of(keywords), alias));
             }
             return this;
         }
@@ -358,37 +367,47 @@ public class Select implements SqlStruct {
             return this.addKeywords(true, keywords, null);
         }
 
-        /**
-         * 添加一个自定义值, 并指定别名
-         */
-        public EzSelectBuilder<T> addValue(boolean sure, String value, String alias) {
+        public EzSelectBuilder<T> addFunc(boolean sure, Function function, String alias) {
             if (sure) {
-                this.selectFields.add(new SelectValue(value, alias));
+                this.selectFields.add(new SelectOperand(function, alias));
             }
             return this;
         }
 
-        /**
-         * 添加一个自定义值, 并指定别名
-         */
-        public EzSelectBuilder<T> addValue(String value, String alias) {
-            return this.addValue(true, value, alias);
+        public EzSelectBuilder<T> addFunc(Function function, String alias) {
+            return this.addFunc(true, function, alias);
         }
 
-        /**
-         * 添加一个自定义值, 并指定别名
-         */
-        public EzSelectBuilder<T> addValue(boolean sure, Number value, String alias) {
+        public EzSelectBuilder<T> addFormula(boolean sure, Formula formula, String alias) {
             if (sure) {
-                this.selectFields.add(new SelectValue(value, alias));
+                this.selectFields.add(new SelectOperand(formula, alias));
             }
             return this;
         }
 
-        /**
-         * 添加一个自定义值, 并指定别名
-         */
-        public EzSelectBuilder<T> addValue(Number value, String alias) {
+        public EzSelectBuilder<T> addFormula(Formula formula, String alias) {
+            return this.addFormula(true, formula, alias);
+        }
+
+        public EzSelectBuilder<T> addCaseWhen(boolean sure, CaseWhen caseWhen, String alias) {
+            if (sure) {
+                this.selectFields.add(new SelectOperand(caseWhen, alias));
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addCaseWhen(CaseWhen caseWhen, String alias) {
+            return this.addCaseWhen(true, caseWhen, alias);
+        }
+
+        public EzSelectBuilder<T> addValue(boolean sure, Object value, String alias) {
+            if (sure) {
+                this.selectFields.add(new SelectOperand(ObjArg.of(value), alias));
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addValue(Object value, String alias) {
             return this.addValue(true, value, alias);
         }
     }
