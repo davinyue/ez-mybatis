@@ -3,30 +3,30 @@ package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 /**
  * 公式运算符
  */
-public class FormulaOperator {
+public enum FormulaOperator {
     /**
      * 加
      */
-    public static FormulaOperator ADD = new FormulaOperator("+");
+    ADD("+"),
     /**
      * 减
      */
-    public static FormulaOperator SUBTRACT = new FormulaOperator("-");
+    SUBTRACT("-"),
     /**
      * 乘
      */
-    public static FormulaOperator MULTIPLY = new FormulaOperator("*");
+    MULTIPLY("*"),
     /**
      * 除
      */
-    public static FormulaOperator DIVIDE = new FormulaOperator("/");
+    DIVIDE("/"),
     /**
-     * 空操作符, 用于公式开始, 不对外开放使用
+     * 空操作符, 用于公式开始
      */
-    protected static FormulaOperator EMPTY = new FormulaOperator("");
+    EMPTY("");
     private String symbol;
 
-    private FormulaOperator(String symbol) {
+    FormulaOperator(String symbol) {
         this.symbol = symbol;
     }
 
