@@ -1,9 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.Function;
-import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
-import org.rdlinux.ezmybatis.core.sqlstruct.QueryRetNeedAlias;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -74,26 +72,23 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 指定运算符并以列构建计算公式
+         * 以列开始, 构建计算公式
          */
-        public FormulaEleBuilder<ParentBuilder> withColumn(FormulaOperator operator, Table table, String column) {
-            FormulaElement element = new ColumnFormulaElement(operator, table, column);
-            this.elements.add(element);
+        public FormulaEleBuilder<ParentBuilder> with(Operand value) {
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.EMPTY, value);
+            if (this.elements.isEmpty()) {
+                this.elements.add(element);
+            } else {
+                this.elements.set(0, element);
+            }
             return this;
-        }
-
-        /**
-         * 指定运算符并以列构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withColumn(FormulaOperator operator, String column) {
-            return this.withColumn(operator, this.table, column);
         }
 
         /**
          * 以列开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withColumn(Table table, String column) {
-            FormulaElement element = new ColumnFormulaElement(FormulaOperator.EMPTY, table, column);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.EMPTY, TableColumn.of(table, column));
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
@@ -111,27 +106,10 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 指定运算符并以实体属性构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withField(FormulaOperator operator, EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(operator, table, field);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
-         * 指定运算符并以实体属性构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withField(FormulaOperator operator, String field) {
-            this.checkEntityTable();
-            return this.withField(operator, (EntityTable) this.table, field);
-        }
-
-        /**
          * 以实体属性开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withField(EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(FormulaOperator.EMPTY, table, field);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.EMPTY, EntityField.of(table, field));
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
@@ -149,77 +127,15 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 指定运算符并以函数构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withFun(FormulaOperator operator, Function fun) {
-            FormulaElement element = new FunFormulaElement(operator, fun);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
-         * 以函数开始, 构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withFun(Function fun) {
-            FormulaElement element = new FunFormulaElement(FormulaOperator.EMPTY, fun);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
-            return this;
-        }
-
-        /**
-         * 指定运算符并以自定义值构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withValue(FormulaOperator operator, Object ojb) {
-            FormulaElement element = new ValueFormulaElement(operator, ojb);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
          * 以自定义值开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withValue(Object ojb) {
-            FormulaElement element = new ValueFormulaElement(FormulaOperator.EMPTY, ojb);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.EMPTY, ObjArg.of(ojb));
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
                 this.elements.set(0, element);
             }
-            return this;
-        }
-
-        /**
-         * 指定运算符并以计算公式构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withFormula(FormulaOperator operator, Formula formula) {
-            FormulaElement element = new FormulaFormulaElement(operator, formula);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
-         * 以计算公式开始, 构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withFormula(Formula formula) {
-            FormulaElement element = new FormulaFormulaElement(FormulaOperator.EMPTY, formula);
-            if (this.elements.isEmpty()) {
-                this.elements.add(element);
-            } else {
-                this.elements.set(0, element);
-            }
-            return this;
-        }
-
-        /**
-         * 指定运算符并以关键词构建计算公式
-         */
-        public FormulaEleBuilder<ParentBuilder> withKeywords(FormulaOperator operator, String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(operator, keywords);
-            this.elements.add(element);
             return this;
         }
 
@@ -227,23 +143,13 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 以关键词开始, 构建计算公式
          */
         public FormulaEleBuilder<ParentBuilder> withKeywords(String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(FormulaOperator.EMPTY, keywords);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.EMPTY, Keywords.of(keywords));
             if (this.elements.isEmpty()) {
                 this.elements.add(element);
             } else {
                 this.elements.set(0, element);
             }
             return this;
-        }
-
-        /**
-         * 指定运算符并以()构建计算公式
-         */
-        public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> withGroup(FormulaOperator operator) {
-            List<FormulaElement> elements = new LinkedList<>();
-            GroupFormulaElement element = new GroupFormulaElement(operator, elements);
-            this.elements.add(element);
-            return new FormulaEleBuilder<>(this, this.table, elements);
         }
 
         /**
@@ -261,10 +167,19 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
+         * 加
+         */
+        public FormulaEleBuilder<ParentBuilder> add(Operand value) {
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.ADD, value);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 加列
          */
         public FormulaEleBuilder<ParentBuilder> addColumn(Table table, String column) {
-            FormulaElement element = new ColumnFormulaElement(FormulaOperator.ADD, table, column);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.ADD, TableColumn.of(table, column));
             this.elements.add(element);
             return this;
         }
@@ -280,7 +195,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 加实体属性
          */
         public FormulaEleBuilder<ParentBuilder> addField(EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(FormulaOperator.ADD, table, field);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.ADD, EntityField.of(table, field));
             this.elements.add(element);
             return this;
         }
@@ -294,37 +209,20 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 加函数
-         */
-        public FormulaEleBuilder<ParentBuilder> addFun(Function fun) {
-            FormulaElement element = new FunFormulaElement(FormulaOperator.ADD, fun);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
          * 加自定义值
          */
         public FormulaEleBuilder<ParentBuilder> addValue(Object ojb) {
-            FormulaElement element = new ValueFormulaElement(FormulaOperator.ADD, ojb);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.ADD, ObjArg.of(ojb));
             this.elements.add(element);
             return this;
         }
 
-        /**
-         * 加公式
-         */
-        public FormulaEleBuilder<ParentBuilder> addFormula(Formula formula) {
-            FormulaElement element = new FormulaFormulaElement(FormulaOperator.ADD, formula);
-            this.elements.add(element);
-            return this;
-        }
 
         /**
          * 加关键字
          */
         public FormulaEleBuilder<ParentBuilder> addKeywords(String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(FormulaOperator.ADD, keywords);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.ADD, Keywords.of(keywords));
             this.elements.add(element);
             return this;
         }
@@ -340,10 +238,19 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
+         * 减
+         */
+        public FormulaEleBuilder<ParentBuilder> subtract(Operand value) {
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.SUBTRACT, value);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 减列
          */
         public FormulaEleBuilder<ParentBuilder> subtractColumn(Table table, String column) {
-            FormulaElement element = new ColumnFormulaElement(FormulaOperator.SUBTRACT, table, column);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.SUBTRACT, TableColumn.of(table, column));
             this.elements.add(element);
             return this;
         }
@@ -359,7 +266,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 减实体属性
          */
         public FormulaEleBuilder<ParentBuilder> subtractField(EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(FormulaOperator.SUBTRACT, table, field);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.SUBTRACT, EntityField.of(table, field));
             this.elements.add(element);
             return this;
         }
@@ -373,28 +280,10 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 减函数
-         */
-        public FormulaEleBuilder<ParentBuilder> subtractFun(Function fun) {
-            FormulaElement element = new FunFormulaElement(FormulaOperator.SUBTRACT, fun);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
          * 减自定义值
          */
         public FormulaEleBuilder<ParentBuilder> subtractValue(Object ojb) {
-            FormulaElement element = new ValueFormulaElement(FormulaOperator.SUBTRACT, ojb);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
-         * 减公式
-         */
-        public FormulaEleBuilder<ParentBuilder> subtractFormula(Formula formula) {
-            FormulaElement element = new FormulaFormulaElement(FormulaOperator.SUBTRACT, formula);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.SUBTRACT, ObjArg.of(ojb));
             this.elements.add(element);
             return this;
         }
@@ -403,7 +292,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 减关键字
          */
         public FormulaEleBuilder<ParentBuilder> subtractKeywords(String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(FormulaOperator.SUBTRACT, keywords);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.SUBTRACT, Keywords.of(keywords));
             this.elements.add(element);
             return this;
         }
@@ -419,10 +308,19 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
+         * 乘
+         */
+        public FormulaEleBuilder<ParentBuilder> multiply(Operand value) {
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.MULTIPLY, value);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 乘列
          */
         public FormulaEleBuilder<ParentBuilder> multiplyColumn(Table table, String column) {
-            FormulaElement element = new ColumnFormulaElement(FormulaOperator.MULTIPLY, table, column);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.MULTIPLY, TableColumn.of(table, column));
             this.elements.add(element);
             return this;
         }
@@ -438,7 +336,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 乘实体属性
          */
         public FormulaEleBuilder<ParentBuilder> multiplyField(EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(FormulaOperator.MULTIPLY, table, field);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.MULTIPLY, EntityField.of(table, field));
             this.elements.add(element);
             return this;
         }
@@ -452,28 +350,10 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 乘函数
-         */
-        public FormulaEleBuilder<ParentBuilder> multiplyFun(Function fun) {
-            FormulaElement element = new FunFormulaElement(FormulaOperator.MULTIPLY, fun);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
          * 乘自定义值
          */
         public FormulaEleBuilder<ParentBuilder> multiplyValue(Object ojb) {
-            FormulaElement element = new ValueFormulaElement(FormulaOperator.MULTIPLY, ojb);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
-         * 乘公式
-         */
-        public FormulaEleBuilder<ParentBuilder> multiplyFormula(Formula formula) {
-            FormulaElement element = new FormulaFormulaElement(FormulaOperator.MULTIPLY, formula);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.MULTIPLY, ObjArg.of(ojb));
             this.elements.add(element);
             return this;
         }
@@ -482,7 +362,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 乘关键字
          */
         public FormulaEleBuilder<ParentBuilder> multiplyKeywords(String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(FormulaOperator.MULTIPLY, keywords);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.MULTIPLY, Keywords.of(keywords));
             this.elements.add(element);
             return this;
         }
@@ -498,10 +378,19 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
+         * 除
+         */
+        public FormulaEleBuilder<ParentBuilder> divide(Operand value) {
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.DIVIDE, value);
+            this.elements.add(element);
+            return this;
+        }
+
+        /**
          * 除以列
          */
         public FormulaEleBuilder<ParentBuilder> divideColumn(Table table, String column) {
-            FormulaElement element = new ColumnFormulaElement(FormulaOperator.DIVIDE, table, column);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.DIVIDE, TableColumn.of(table, column));
             this.elements.add(element);
             return this;
         }
@@ -517,7 +406,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 除以实体属性
          */
         public FormulaEleBuilder<ParentBuilder> divideField(EntityTable table, String field) {
-            FormulaElement element = new FieldFormulaElement(FormulaOperator.DIVIDE, table, field);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.DIVIDE, EntityField.of(table, field));
             this.elements.add(element);
             return this;
         }
@@ -531,28 +420,10 @@ public class Formula implements QueryRetNeedAlias, Operand {
         }
 
         /**
-         * 除以函数
-         */
-        public FormulaEleBuilder<ParentBuilder> divideFun(Function fun) {
-            FormulaElement element = new FunFormulaElement(FormulaOperator.DIVIDE, fun);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
          * 除以自定义值
          */
         public FormulaEleBuilder<ParentBuilder> divideValue(Object ojb) {
-            FormulaElement element = new ValueFormulaElement(FormulaOperator.DIVIDE, ojb);
-            this.elements.add(element);
-            return this;
-        }
-
-        /**
-         * 除以公式
-         */
-        public FormulaEleBuilder<ParentBuilder> divideFormula(Formula formula) {
-            FormulaElement element = new FormulaFormulaElement(FormulaOperator.DIVIDE, formula);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.DIVIDE, ObjArg.of(ojb));
             this.elements.add(element);
             return this;
         }
@@ -561,7 +432,7 @@ public class Formula implements QueryRetNeedAlias, Operand {
          * 除以键字
          */
         public FormulaEleBuilder<ParentBuilder> divideKeywords(String keywords) {
-            FormulaElement element = new KeywordsFormulaElement(FormulaOperator.DIVIDE, keywords);
+            FormulaElement element = new FormulaOperandElement(FormulaOperator.DIVIDE, Keywords.of(keywords));
             this.elements.add(element);
             return this;
         }

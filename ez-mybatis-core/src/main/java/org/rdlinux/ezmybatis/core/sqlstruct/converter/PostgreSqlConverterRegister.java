@@ -12,7 +12,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlArgCompa
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlLimitConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateColumnItemConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateFieldItemConverter;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.FormulaOperandElement;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.GroupFormulaElement;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
@@ -59,13 +61,7 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Function.class, MySqlFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Formula.class, MySqlFormulaConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, GroupFormulaElement.class, MySqlGroupFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ColumnFormulaElement.class, MySqlColumnFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FieldFormulaElement.class, MySqlFieldFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FunFormulaElement.class, MySqlFunFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaFormulaElement.class, MySqlFormulaFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, CaseWhenFormulaElement.class, MySqlCaseWhenFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ValueFormulaElement.class, MySqlValueFormulaElementConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, KeywordsFormulaElement.class, MySqlKeywordsFormulaElementConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Union.class, MySqlUnionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Alias.class, MySqlAliasConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, TableColumn.class, MySqlTableColumnConverter.getInstance());

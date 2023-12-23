@@ -673,7 +673,8 @@ public class PgSelectTest extends PgBaseTest {
         Formula sonFormula = Formula.builder(table).withField(User.Fields.userAge).subtractField(User.Fields.userAge)
                 .done().build();
 
-        Formula formula = Formula.builder(table).withValue(100).subtractFun(function).addFormula(sonFormula)
+        Formula formula = Formula.builder(table).withValue(100).subtract(function).add(sonFormula)
+                .multiplyValue(4).divideValue(2)
                 .addGroup()
                 .withValue(100).multiplyValue(4).divideValue(2)
                 .multiplyGroup()
