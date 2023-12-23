@@ -37,7 +37,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, OrderBy.OrderItem.class, OracleOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Select.class, OracleSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, GroupBy.class, OracleGroupByConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, GroupBy.GroupItem.class, OracleGroupItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Limit.class, OracleLimitConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalPartition.class, OracleNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SubPartition.class, OracleSubPartitionConverter.getInstance());

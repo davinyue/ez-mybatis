@@ -40,7 +40,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, OrderBy.OrderItem.class, MySqlOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Select.class, MySqlSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, GroupBy.class, MySqlGroupByConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, GroupBy.GroupItem.class, MySqlGroupItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Limit.class, PostgreSqlLimitConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NormalPartition.class, MySqlNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SubPartition.class, MySqlSubPartitionConverter.getInstance());

@@ -757,7 +757,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .groupBy()
                 .addAlias("us")
-                .addFormula(Formula.builder(table).withField(User.Fields.userAge)
+                .add(Formula.builder(table).withField(User.Fields.userAge)
                         .subtractField(User.Fields.sex).done().build())
                 .done()
                 .build();
