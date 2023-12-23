@@ -36,7 +36,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, OrderBy.OrderItem.class, MySqlOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Select.class, MySqlSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, GroupBy.class, MySqlGroupByConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, GroupBy.GroupItem.class, MySqlGroupItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Limit.class, MySqlLimitConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, NormalPartition.class, MySqlNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SubPartition.class, MySqlSubPartitionConverter.getInstance());

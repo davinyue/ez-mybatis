@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
+import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
@@ -33,10 +34,10 @@ public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" GROUP BY ");
-            Converter<GroupBy.GroupItem> converter = EzMybatisContent.getConverter(configuration,
-                    GroupBy.GroupItem.class);
             for (int i = 0; i < groupBy.getItems().size(); i++) {
-                GroupBy.GroupItem groupItem = groupBy.getItems().get(i);
+                Operand groupItem = groupBy.getItems().get(i);
+                Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration,
+                        groupItem.getClass());
                 converter.buildSql(type, sql, configuration, groupItem, mybatisParamHolder);
                 if (i + 1 < groupBy.getItems().size()) {
                     sql.append(", ");
