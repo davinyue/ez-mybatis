@@ -817,12 +817,12 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .orderBy()
                 .addField(User.Fields.name)
-                .addFormula(Formula.builder(table).withField(User.Fields.userAge)
+                .add(Formula.builder(table).withField(User.Fields.userAge)
                         .subtractField(User.Fields.sex).done().build())
                 .done()
+                .page(1, 1)
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
-
         query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addAll()
@@ -830,9 +830,9 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .orderBy()
                 .addField(User.Fields.userAge)
                 .done()
+                .page(1, 1)
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
-
         query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addAll()
@@ -840,6 +840,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .orderBy()
                 .addColumn("age", OrderType.DESC)
                 .done()
+                .page(1, 1)
                 .build();
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();

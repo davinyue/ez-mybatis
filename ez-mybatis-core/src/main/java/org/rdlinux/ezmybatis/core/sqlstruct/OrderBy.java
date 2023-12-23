@@ -3,7 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -26,17 +25,9 @@ public class OrderBy implements SqlStruct {
     @Accessors(chain = true)
     public static class OrderItem implements SqlStruct {
         /**
-         * 表
-         */
-        private Table table;
-        /**
-         * 值类型
-         */
-        private ArgType argType;
-        /**
          * 值
          */
-        private Object value;
+        private Operand value;
         /**
          * 排序类型
          */
@@ -62,8 +53,8 @@ public class OrderBy implements SqlStruct {
 
         public OrderBuilder<T> addField(String field, OrderType type) {
             this.checkEntityTable();
-            this.orderBy.getItems().add(new OrderItem().setTable(this.table).setValue(field)
-                    .setArgType(ArgType.FILED).setOrderType(type));
+            this.orderBy.getItems().add(new OrderItem().setValue(EntityField.of((EntityTable) this.table, field))
+                    .setOrderType(type));
             return this;
         }
 
@@ -84,8 +75,8 @@ public class OrderBy implements SqlStruct {
         }
 
         public OrderBuilder<T> addColumn(String column, OrderType type) {
-            this.orderBy.getItems().add(new OrderItem().setTable(this.table).setValue(column)
-                    .setArgType(ArgType.COLUMN).setOrderType(type));
+            this.orderBy.getItems().add(new OrderItem().setValue(TableColumn.of(this.table, column))
+                    .setOrderType(type));
             return this;
         }
 
@@ -106,8 +97,7 @@ public class OrderBy implements SqlStruct {
 
         public OrderBuilder<T> addAlias(boolean sure, String alias, OrderType type) {
             if (sure) {
-                this.orderBy.getItems().add(new OrderItem().setValue(alias).setArgType(ArgType.ALIAS)
-                        .setOrderType(type));
+                this.orderBy.getItems().add(new OrderItem().setValue(Alias.of(alias)).setOrderType(type));
             }
             return this;
         }
@@ -124,64 +114,23 @@ public class OrderBy implements SqlStruct {
             return this.addAlias(alias, OrderType.ASC);
         }
 
-        public OrderBuilder<T> addFormula(boolean sure, Formula formula, OrderType type) {
+        public OrderBuilder<T> add(boolean sure, Operand operand, OrderType type) {
             if (sure) {
-                this.orderBy.getItems().add(new OrderItem().setValue(formula).setArgType(ArgType.FORMULA)
-                        .setOrderType(type));
+                this.orderBy.getItems().add(new OrderItem().setValue(operand).setOrderType(type));
             }
             return this;
         }
 
-        public OrderBuilder<T> addFormula(boolean sure, Formula formula) {
-            return this.addFormula(sure, formula, OrderType.ASC);
+        public OrderBuilder<T> add(boolean sure, Operand operand) {
+            return this.add(sure, operand, OrderType.ASC);
         }
 
-        public OrderBuilder<T> addFormula(Formula formula, OrderType type) {
-            return this.addFormula(true, formula, type);
+        public OrderBuilder<T> add(Operand operand, OrderType type) {
+            return this.add(true, operand, type);
         }
 
-        public OrderBuilder<T> addFormula(Formula formula) {
-            return this.addFormula(formula, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addFunc(boolean sure, Function function, OrderType type) {
-            if (sure) {
-                this.orderBy.getItems().add(new OrderItem().setValue(function).setArgType(ArgType.FUNC)
-                        .setOrderType(type));
-            }
-            return this;
-        }
-
-        public OrderBuilder<T> addFunc(boolean sure, Function function) {
-            return this.addFunc(sure, function, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addFunc(Function function, OrderType type) {
-            return this.addFunc(true, function, type);
-        }
-
-        public OrderBuilder<T> addFunc(Function function) {
-            return this.addFunc(function, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addCaseWhen(boolean sure, CaseWhen caseWhen, OrderType type) {
-            if (sure) {
-                this.orderBy.getItems().add(new OrderItem().setValue(caseWhen).setArgType(ArgType.CASE_WHEN)
-                        .setOrderType(type));
-            }
-            return this;
-        }
-
-        public OrderBuilder<T> addCaseWhen(boolean sure, CaseWhen caseWhen) {
-            return this.addCaseWhen(sure, caseWhen, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addCaseWhen(CaseWhen caseWhen, OrderType type) {
-            return this.addCaseWhen(true, caseWhen, type);
-        }
-
-        public OrderBuilder<T> addCaseWhen(CaseWhen caseWhen) {
-            return this.addCaseWhen(caseWhen, OrderType.ASC);
+        public OrderBuilder<T> add(Operand operand) {
+            return this.add(operand, OrderType.ASC);
         }
 
         public T done() {
