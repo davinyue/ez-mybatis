@@ -1,8 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.AliasArg;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -32,15 +30,15 @@ public class Having implements SqlStruct {
          * 添加alias条件
          */
         public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
-                                                        Operator operator, Arg value) {
-            return this.addCondition(sure, logicalOperator, AliasArg.of(alias), operator, value);
+                                                        Operator operator, Operand value) {
+            return this.addCondition(sure, logicalOperator, Alias.of(alias), operator, value);
         }
 
         /**
          * 添加alias条件
          */
         public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias,
-                                                        Operator operator, Arg value) {
+                                                        Operator operator, Operand value) {
             return this.addAliasCondition(true, logicalOperator, alias, operator, value);
         }
 
@@ -48,35 +46,35 @@ public class Having implements SqlStruct {
          * 添加alias条件
          */
         public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
-                                                        Arg value) {
+                                                        Operand value) {
             return this.addAliasCondition(sure, logicalOperator, alias, Operator.eq, value);
         }
 
         /**
          * 添加alias条件
          */
-        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias, Arg value) {
+        public HavingBuilder<Builder> addAliasCondition(LogicalOperator logicalOperator, String alias, Operand value) {
             return this.addAliasCondition(true, logicalOperator, alias, Operator.eq, value);
         }
 
         /**
          * 添加alias条件
          */
-        public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator, Arg value) {
+        public HavingBuilder<Builder> addAliasCondition(boolean sure, String alias, Operator operator, Operand value) {
             return this.addAliasCondition(sure, LogicalOperator.AND, alias, operator, value);
         }
 
         /**
          * 添加alias条件
          */
-        public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, Arg value) {
+        public HavingBuilder<Builder> addAliasCondition(String alias, Operator operator, Operand value) {
             return this.addAliasCondition(true, LogicalOperator.AND, alias, operator, value);
         }
 
         /**
          * 添加alias条件
          */
-        public HavingBuilder<Builder> addAliasCondition(String alias, Arg value) {
+        public HavingBuilder<Builder> addAliasCondition(String alias, Operand value) {
             return this.addAliasCondition(true, LogicalOperator.AND, alias, Operator.eq, value);
         }
 
@@ -85,7 +83,7 @@ public class Having implements SqlStruct {
          */
         public HavingBuilder<Builder> addAliasCondition(boolean sure, LogicalOperator logicalOperator, String alias,
                                                         Operator operator, Object value) {
-            return this.addCondition(sure, logicalOperator, AliasArg.of(alias), operator, value);
+            return this.addCondition(sure, logicalOperator, Alias.of(alias), operator, value);
         }
 
         /**
@@ -144,7 +142,7 @@ public class Having implements SqlStruct {
          */
         public HavingBuilder<Builder> addAliasIsNullCondition(boolean sure, LogicalOperator logicalOperator,
                                                               String alias) {
-            return this.addIsNullCondition(sure, logicalOperator, AliasArg.of(alias));
+            return this.addIsNullCondition(sure, logicalOperator, Alias.of(alias));
         }
 
         /**
@@ -173,7 +171,7 @@ public class Having implements SqlStruct {
          */
         public HavingBuilder<Builder> addAliasIsNotNullCondition(boolean sure, LogicalOperator logicalOperator,
                                                                  String alias) {
-            return this.addIsNotNullCondition(sure, logicalOperator, AliasArg.of(alias));
+            return this.addIsNotNullCondition(sure, logicalOperator, Alias.of(alias));
         }
 
         /**
@@ -201,29 +199,29 @@ public class Having implements SqlStruct {
          * 添加alias between on条件
          */
         public HavingBuilder<Builder> addAliasBtCondition(boolean sure, LogicalOperator logicalOperator, String alias,
-                                                          Arg minValue, Arg maxValue) {
-            return this.addBtCondition(sure, logicalOperator, AliasArg.of(alias), minValue, maxValue);
+                                                          Operand minValue, Operand maxValue) {
+            return this.addBtCondition(sure, logicalOperator, Alias.of(alias), minValue, maxValue);
         }
 
         /**
          * 添加alias between on条件
          */
-        public HavingBuilder<Builder> addAliasBtCondition(boolean sure, String alias, Arg minValue, Arg maxValue) {
+        public HavingBuilder<Builder> addAliasBtCondition(boolean sure, String alias, Operand minValue, Operand maxValue) {
             return this.addAliasBtCondition(sure, LogicalOperator.AND, alias, minValue, maxValue);
         }
 
         /**
          * 添加alias between on条件
          */
-        public HavingBuilder<Builder> addAliasBtCondition(LogicalOperator logicalOperator, String alias, Arg minValue,
-                                                          Arg maxValue) {
+        public HavingBuilder<Builder> addAliasBtCondition(LogicalOperator logicalOperator, String alias, Operand minValue,
+                                                          Operand maxValue) {
             return this.addAliasBtCondition(true, logicalOperator, alias, minValue, maxValue);
         }
 
         /**
          * 添加alias between on条件
          */
-        public HavingBuilder<Builder> addAliasBtCondition(String alias, Arg minValue, Arg maxValue) {
+        public HavingBuilder<Builder> addAliasBtCondition(String alias, Operand minValue, Operand maxValue) {
             return this.addAliasBtCondition(true, LogicalOperator.AND, alias, minValue, maxValue);
         }
 
@@ -233,7 +231,7 @@ public class Having implements SqlStruct {
          */
         public HavingBuilder<Builder> addAliasBtCondition(boolean sure, LogicalOperator logicalOperator, String alias,
                                                           Object minValue, Object maxValue) {
-            return this.addBtCondition(sure, logicalOperator, AliasArg.of(alias),
+            return this.addBtCondition(sure, logicalOperator, Alias.of(alias),
                     ConditionBuilder.valueToArg(minValue), ConditionBuilder.valueToArg(maxValue));
         }
 
@@ -264,14 +262,14 @@ public class Having implements SqlStruct {
          * 添加alias条件
          */
         public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, LogicalOperator logicalOperator,
-                                                             String alias, Arg minValue, Arg maxValue) {
-            return this.addNotBtCondition(sure, logicalOperator, AliasArg.of(alias), minValue, maxValue);
+                                                             String alias, Operand minValue, Operand maxValue) {
+            return this.addNotBtCondition(sure, logicalOperator, Alias.of(alias), minValue, maxValue);
         }
 
         /**
          * 添加alias条件
          */
-        public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, String alias, Arg minValue, Arg maxValue) {
+        public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, String alias, Operand minValue, Operand maxValue) {
             return this.addAliasNotBtCondition(sure, LogicalOperator.AND, alias, minValue, maxValue);
         }
 
@@ -279,14 +277,14 @@ public class Having implements SqlStruct {
          * 添加alias条件
          */
         public HavingBuilder<Builder> addAliasNotBtCondition(LogicalOperator logicalOperator, String alias,
-                                                             Arg minValue, Arg maxValue) {
+                                                             Operand minValue, Operand maxValue) {
             return this.addAliasNotBtCondition(true, logicalOperator, alias, minValue, maxValue);
         }
 
         /**
          * 添加alias条件
          */
-        public HavingBuilder<Builder> addAliasNotBtCondition(String alias, Arg minValue, Arg maxValue) {
+        public HavingBuilder<Builder> addAliasNotBtCondition(String alias, Operand minValue, Operand maxValue) {
             return this.addAliasNotBtCondition(true, LogicalOperator.AND, alias, minValue, maxValue);
         }
 
@@ -295,7 +293,7 @@ public class Having implements SqlStruct {
          */
         public HavingBuilder<Builder> addAliasNotBtCondition(boolean sure, LogicalOperator logicalOperator,
                                                              String alias, Object minValue, Object maxValue) {
-            return this.addNotBtCondition(sure, logicalOperator, AliasArg.of(alias),
+            return this.addNotBtCondition(sure, logicalOperator, Alias.of(alias),
                     ConditionBuilder.valueToArg(minValue), ConditionBuilder.valueToArg(maxValue));
         }
 

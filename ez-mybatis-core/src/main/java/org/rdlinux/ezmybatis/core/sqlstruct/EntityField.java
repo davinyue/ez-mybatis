@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.arg;
+package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -6,19 +6,19 @@ import org.rdlinux.ezmybatis.utils.Assert;
 /**
  * 属性参数
  */
-public class FieldArg implements Arg {
+public class EntityField implements Operand {
     private EntityTable table;
     private String field;
 
-    private FieldArg(EntityTable table, String field) {
+    private EntityField(EntityTable table, String field) {
         Assert.notNull(table, "table can not be null");
         Assert.notNull(field, "field can not be null");
         this.table = table;
         this.field = field;
     }
 
-    public static FieldArg of(EntityTable table, String field) {
-        return new FieldArg(table, field);
+    public static EntityField of(EntityTable table, String field) {
+        return new EntityField(table, field);
     }
 
     public String getField() {

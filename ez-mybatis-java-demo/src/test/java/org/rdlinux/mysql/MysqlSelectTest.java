@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
-import org.rdlinux.ezmybatis.core.sqlstruct.Function;
-import org.rdlinux.ezmybatis.core.sqlstruct.OrderType;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
@@ -162,7 +159,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .addField(User.Fields.name)
                 .done()
                 .having()
-                .addCondition(FunctionArg.of(countFunc), Operator.gt, 1)
+                .addCondition(countFunc, Operator.gt, 1)
                 .done()
                 .build();
         List<StringHashMap> users = sqlSession.getMapper(EzMapper.class).query(query);
@@ -794,13 +791,13 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .done()
                 .having()
                 .addCondition(
-                        FunctionArg.of(Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build()),
+                        Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.ge, 1)
                 .addCondition(
-                        FunctionArg.of(Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build()),
+                        Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.lt, 10)
                 .addCondition(
-                        FunctionArg.of(Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build()),
+                        Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
                         Operator.le, 10)
                 .done()
                 .build();
@@ -892,20 +889,20 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .addAll()
                 .done()
                 .where()
-                .addCondition(FormulaArg.of(formula), Operator.ne, ObjArg.of(10))
-                .addCondition(LogicalOperator.OR, FormulaArg.of(formula), Operator.eq, AliasArg.of("age"))
-                .addCondition(FormulaArg.of(formula), Operator.eq, CaseWhenArg.of(caseWhen))
-                .addCondition(FormulaArg.of(formula), Operator.eq, ColumnArg.of(table, "age"))
-                .addCondition(FormulaArg.of(formula), Operator.eq, FieldArg.of(table, User.Fields.userAge))
-                .addCondition(FormulaArg.of(formula), Operator.eq, FormulaArg.of(formula))
-                .addCondition(FormulaArg.of(formula), Operator.eq, KeywordsArg.of("age"))
-                .addCondition(FormulaArg.of(formula), Operator.eq, FunctionArg.of(function))
-                .addCondition(FormulaArg.of(formula), Operator.eq, FunctionArg.of(function))
-                .addCondition(FormulaArg.of(formula), Operator.eq, EzQueryArg.of(sonQuery))
-                .addCondition(FormulaArg.of(formula), Operator.eq, SqlArg.of("1 = 1"))
-                .addBtCondition(FormulaArg.of(formula), ObjArg.of(1), ObjArg.of(2))
-                .addCondition(FormulaArg.of(formula), Operator.in, EzQueryArg.of(sonQuery))
-                .addIsNotNullCondition(FormulaArg.of(formula))
+                .addCondition(formula, Operator.ne, ObjArg.of(10))
+                .addCondition(LogicalOperator.OR, formula, Operator.eq, Alias.of("age"))
+                .addCondition(formula, Operator.eq, caseWhen)
+                .addCondition(formula, Operator.eq, TableColumn.of(table, "age"))
+                .addCondition(formula, Operator.eq, EntityField.of(table, User.Fields.userAge))
+                .addCondition(formula, Operator.eq, formula)
+                .addCondition(formula, Operator.eq, Keywords.of("age"))
+                .addCondition(formula, Operator.eq, function)
+                .addCondition(formula, Operator.eq, function)
+                .addCondition(formula, Operator.eq, sonQuery)
+                .addCondition(formula, Operator.eq, Sql.of("1 = 1"))
+                .addBtCondition(formula, ObjArg.of(1), ObjArg.of(2))
+                .addCondition(formula, Operator.in, sonQuery)
+                .addIsNotNullCondition(formula)
                 .done()
                 .page(1, 1)
                 .build();

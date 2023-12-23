@@ -4,8 +4,8 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.EzQueryArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.MultipleRetOperand;
+import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -36,8 +36,8 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        ArgCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
-        Arg leftValue = obj.getLeftValue();
-        Converter<? extends Arg> leftConverter = EzMybatisContent.getConverter(configuration, leftValue.getClass());
+        Operand leftValue = obj.getLeftValue();
+        Converter<? extends Operand> leftConverter = EzMybatisContent.getConverter(configuration, leftValue.getClass());
         StringBuilder leftSql = new StringBuilder();
         leftSql.append(" ").append(leftConverter.buildSql(type, new StringBuilder(), configuration, leftValue,
                 mybatisParamHolder)).append(" ");
@@ -57,8 +57,8 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
                                       Configuration configuration, ArgCompareArgCondition obj,
                                       MybatisParamHolder mybatisParamHolder) {
         Operator operator = obj.getOperator();
-        Arg value = obj.getRightValue();
-        Converter<? extends Arg> argConverter = EzMybatisContent.getConverter(configuration,
+        Operand value = obj.getRightValue();
+        Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                 value.getClass());
         return sqlBuilder.append(" ")
                 .append(leftSql)
@@ -74,7 +74,7 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
                                   MybatisParamHolder mybatisParamHolder) {
         Operator operator = obj.getOperator();
         if (obj.getRightValues().size() == 1) {
-            if (!(obj.getRightValues().get(0) instanceof EzQueryArg)) {
+            if (!(obj.getRightValues().get(0) instanceof MultipleRetOperand)) {
                 if (operator == Operator.in) {
                     operator = Operator.eq;
                 } else {
@@ -92,8 +92,8 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
             sqlBuilder.append("(");
         }
         for (int i = 0; i < obj.getRightValues().size(); i++) {
-            Arg arg = obj.getRightValues().get(i);
-            Converter<? extends Arg> argConverter = EzMybatisContent.getConverter(configuration,
+            Operand arg = obj.getRightValues().get(i);
+            Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                     arg.getClass());
             sqlBuilder.append(argConverter.buildSql(type, new StringBuilder(), configuration, arg,
                     mybatisParamHolder));
@@ -112,9 +112,9 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
                                          Configuration configuration, ArgCompareArgCondition obj,
                                          MybatisParamHolder mybatisParamHolder) {
         Operator operator = obj.getOperator();
-        Converter<? extends Arg> minArgConverter = EzMybatisContent.getConverter(configuration,
+        Converter<? extends Operand> minArgConverter = EzMybatisContent.getConverter(configuration,
                 obj.getMinValue().getClass());
-        Converter<? extends Arg> maxArgConverter = EzMybatisContent.getConverter(configuration,
+        Converter<? extends Operand> maxArgConverter = EzMybatisContent.getConverter(configuration,
                 obj.getMaxValue().getClass());
         return sqlBuilder.append(" ")
                 .append(leftSql)

@@ -4,7 +4,6 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
@@ -87,15 +86,11 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, SelectValue.class, MySqlSelectValueConverter.getInstance());
         //argConverter
-        EzMybatisContent.addConverter(DbType.MYSQL, AliasArg.class, MySqlAliasArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, CaseWhenArg.class, MySqlCaseWhenArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, ColumnArg.class, MySqlColumnArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, FieldArg.class, MySqlFieldArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, FormulaArg.class, MySqlFormulaArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, FunctionArg.class, MySqlFunctionArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, KeywordsArg.class, MySqlKeywordsArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Alias.class, MySqlAliasArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, TableColumn.class, MySqlColumnArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, EntityField.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, ObjArg.class, MySqlObjArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, SqlArg.class, MySqlSqlArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.MYSQL, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, Sql.class, MySqlSqlArgConverter.getInstance());
     }
 }

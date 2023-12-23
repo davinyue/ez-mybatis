@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.AliasGenerate;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
-            return "SELECT COUNT(*) FROM ( " + sqlBuilder.toString() + " ) " + Alias.getAlias();
+            return "SELECT COUNT(*) FROM ( " + sqlBuilder.toString() + " ) " + AliasGenerate.getAlias();
         } else {
             return sqlBuilder.toString();
         }

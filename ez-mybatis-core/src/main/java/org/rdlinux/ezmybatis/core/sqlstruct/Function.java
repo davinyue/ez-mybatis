@@ -15,7 +15,7 @@ import java.util.List;
  * 函数
  */
 @Getter
-public class Function implements SqlStruct {
+public class Function implements SqlStruct, Operand {
     /**
      * 表
      */
