@@ -3,21 +3,21 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.arg;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.KeywordsArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
-public class MySqlKeywordsArgConverter extends AbstractConverter<KeywordsArg> implements Converter<KeywordsArg> {
-    private static volatile MySqlKeywordsArgConverter instance;
+public class MySqlKeywordsConverter extends AbstractConverter<Keywords> implements Converter<Keywords> {
+    private static volatile MySqlKeywordsConverter instance;
 
-    protected MySqlKeywordsArgConverter() {
+    protected MySqlKeywordsConverter() {
     }
 
-    public static MySqlKeywordsArgConverter getInstance() {
+    public static MySqlKeywordsConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlKeywordsArgConverter.class) {
+            synchronized (MySqlKeywordsConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlKeywordsArgConverter();
+                    instance = new MySqlKeywordsConverter();
                 }
             }
         }
@@ -26,7 +26,7 @@ public class MySqlKeywordsArgConverter extends AbstractConverter<KeywordsArg> im
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       KeywordsArg obj, MybatisParamHolder mybatisParamHolder) {
+                                       Keywords obj, MybatisParamHolder mybatisParamHolder) {
         return sqlBuilder.append(obj.getKeywords());
     }
 

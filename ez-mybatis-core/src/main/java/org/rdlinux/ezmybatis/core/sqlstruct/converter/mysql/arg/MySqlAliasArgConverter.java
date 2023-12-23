@@ -4,11 +4,11 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.AliasArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
-public class MySqlAliasArgConverter extends AbstractConverter<AliasArg> implements Converter<AliasArg> {
+public class MySqlAliasArgConverter extends AbstractConverter<Alias> implements Converter<Alias> {
     private static volatile MySqlAliasArgConverter instance;
 
     protected MySqlAliasArgConverter() {
@@ -27,7 +27,7 @@ public class MySqlAliasArgConverter extends AbstractConverter<AliasArg> implemen
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       AliasArg obj, MybatisParamHolder mybatisParamHolder) {
+                                       Alias obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         return sqlBuilder.append(keywordQM).append(obj.getAlias()).append(keywordQM);
     }

@@ -4,7 +4,6 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
@@ -88,16 +87,12 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SelectFunction.class, OracleSelectFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectValue.class, OracleSelectValueConverter.getInstance());
         //argConverter
-        EzMybatisContent.addConverter(DbType.ORACLE, AliasArg.class, MySqlAliasArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, CaseWhenArg.class, MySqlCaseWhenArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, ColumnArg.class, MySqlColumnArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FieldArg.class, MySqlFieldArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FormulaArg.class, MySqlFormulaArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, FunctionArg.class, MySqlFunctionArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, KeywordsArg.class, MySqlKeywordsArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Alias.class, MySqlAliasArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, TableColumn.class, MySqlColumnArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, EntityField.class, MySqlFieldArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ObjArg.class, MySqlObjArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SqlArg.class, MySqlSqlArgConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, EzQueryArg.class, MySqlEzQueryArgConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Sql.class, MySqlSqlArgConverter.getInstance());
 
     }
 }

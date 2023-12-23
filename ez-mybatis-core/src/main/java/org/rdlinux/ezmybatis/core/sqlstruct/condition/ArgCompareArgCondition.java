@@ -1,8 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import lombok.Getter;
+import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.Arg;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Collections;
@@ -14,18 +14,18 @@ import java.util.List;
 @Getter
 public class ArgCompareArgCondition implements Condition, SqlStruct {
     private LogicalOperator logicalOperator;
-    private Arg leftValue;
+    private Operand leftValue;
     /**
      * 关系运算符号
      */
     private Operator operator;
-    private Arg rightValue;
-    private Arg minValue;
-    private Arg maxValue;
-    private List<Arg> rightValues;
+    private Operand rightValue;
+    private Operand minValue;
+    private Operand maxValue;
+    private List<Operand> rightValues;
 
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Arg leftValue, Operator operator, Arg rightValue) {
+    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator, Operand rightValue) {
         Assert.notNull(logicalOperator, "logicalOperator can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
@@ -42,7 +42,7 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
         this.rightValue = rightValue;
     }
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Arg leftValue, Operator operator) {
+    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator) {
         Assert.notNull(logicalOperator, "logicalOperator can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
@@ -54,8 +54,8 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
         this.operator = operator;
     }
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Arg leftValue, Operator operator,
-                                  Arg minValue, Arg maxValue) {
+    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator,
+                                  Operand minValue, Operand maxValue) {
         Assert.notNull(logicalOperator, "logicalOperator can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
@@ -71,8 +71,8 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
         this.maxValue = maxValue;
     }
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Arg leftValue, Operator operator,
-                                  List<Arg> rightValues) {
+    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator,
+                                  List<Operand> rightValues) {
         Assert.notNull(logicalOperator, "logicalOperator can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");

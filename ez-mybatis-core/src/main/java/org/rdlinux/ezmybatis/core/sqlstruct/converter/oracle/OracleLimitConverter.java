@@ -7,12 +7,12 @@ import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.AliasGenerate;
 
 public class OracleLimitConverter extends AbstractConverter<Limit> implements Converter<Limit> {
     private static volatile OracleLimitConverter instance;
@@ -58,7 +58,7 @@ public class OracleLimitConverter extends AbstractConverter<Limit> implements Co
             }
             //需要判断rownum > 0的问题
             else {
-                String bodyAlias = Alias.getAlias();
+                String bodyAlias = AliasGenerate.getAlias();
                 return new StringBuilder("SELECT ").append(bodyAlias).append(".* ")
                         .append(" FROM ( ").append(sqlBuilder).append(" ) ").append(bodyAlias)
                         .append(" WHERE ").append(bodyAlias).append(".\"")
@@ -69,7 +69,7 @@ public class OracleLimitConverter extends AbstractConverter<Limit> implements Co
         }
         //排序和分组时, 需要将原始查询嵌套为子查询后再进行分页操作
         else {
-            String bodyAlias = Alias.getAlias();
+            String bodyAlias = AliasGenerate.getAlias();
             StringBuilder outSqlBuilder = new StringBuilder("SELECT ").append(bodyAlias).append(".*");
             //当不查询第一页是, 才查询出rownum
             if (limit.getSkip() > 0) {
@@ -77,7 +77,7 @@ public class OracleLimitConverter extends AbstractConverter<Limit> implements Co
             }
             outSqlBuilder.append(" FROM (").append(sqlBuilder).append(") ").append(bodyAlias)
                     .append(" WHERE ROWNUM <= ").append(limit.getSkip() + limit.getSize()).append(" ");
-            String outAlias = Alias.getAlias();
+            String outAlias = AliasGenerate.getAlias();
             String outSqlHead = "";
             String outSqlTail = "";
             if (limit.getSkip() > 0) {

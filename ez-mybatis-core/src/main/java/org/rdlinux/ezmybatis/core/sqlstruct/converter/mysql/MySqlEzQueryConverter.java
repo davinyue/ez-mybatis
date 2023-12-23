@@ -6,9 +6,9 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.AliasGenerate;
 
 @SuppressWarnings("rawtypes")
 public class MySqlEzQueryConverter extends AbstractConverter<EzQuery> implements Converter<EzQuery> {
@@ -33,7 +33,7 @@ public class MySqlEzQueryConverter extends AbstractConverter<EzQuery> implements
                                        EzQuery obj, MybatisParamHolder mybatisParamHolder) {
         String sql = this.ezQueryToSql(configuration, obj, mybatisParamHolder);
         if (obj.getLimit() != null) {
-            sql = " (SELECT * FROM " + sql + Alias.getAlias() + ") ";
+            sql = " (SELECT * FROM " + sql + AliasGenerate.getAlias() + ") ";
         }
         return sqlBuilder.append(sql);
     }

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * 关键词
  */
-public class Keywords {
+public class Keywords implements Operand {
     private String keywords;
 
     private Keywords(String keywords) {

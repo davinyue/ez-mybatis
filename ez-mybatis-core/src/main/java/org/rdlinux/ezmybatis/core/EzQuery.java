@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public class EzQuery<Rt> extends EzParam<Rt> implements SqlStruct {
+public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand {
     private Select select;
     private List<Join> joins;
     private GroupBy groupBy;

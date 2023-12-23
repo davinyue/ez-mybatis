@@ -1,14 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
+import org.rdlinux.ezmybatis.utils.AliasGenerate;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 public class SqlTable extends AbstractTable {
     private String sql;
 
     private SqlTable(String sql) {
-        super(Alias.getAlias());
+        super(AliasGenerate.getAlias());
         Assert.notEmpty(sql, "sql can not be null");
         this.sql = sql;
     }

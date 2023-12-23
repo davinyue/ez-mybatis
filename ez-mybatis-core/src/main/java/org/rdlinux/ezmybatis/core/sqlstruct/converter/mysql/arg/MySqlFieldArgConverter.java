@@ -7,12 +7,12 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.arg.FieldArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-public class MySqlFieldArgConverter extends AbstractConverter<FieldArg> implements Converter<FieldArg> {
+public class MySqlFieldArgConverter extends AbstractConverter<EntityField> implements Converter<EntityField> {
     private static volatile MySqlFieldArgConverter instance;
 
     protected MySqlFieldArgConverter() {
@@ -31,7 +31,7 @@ public class MySqlFieldArgConverter extends AbstractConverter<FieldArg> implemen
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       FieldArg obj, MybatisParamHolder mybatisParamHolder) {
+                                       EntityField obj, MybatisParamHolder mybatisParamHolder) {
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         Assert.notNull(fieldInfo, "Class " + etInfo.getEntityClass().getName() + "cannot find the filed "
