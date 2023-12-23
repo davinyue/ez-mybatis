@@ -666,11 +666,10 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void formulaQueryTest() {
         EntityTable table = EntityTable.of(User.class);
         Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
-
         Formula sonFormula = Formula.builder(table).withField(User.Fields.userAge).subtractField(User.Fields.userAge)
                 .done().build();
-
-        Formula formula = Formula.builder(table).withValue(100).subtractFun(function).addFormula(sonFormula)
+        Formula formula = Formula.builder(table).withValue(100).subtract(function).add(sonFormula)
+                .multiply(ObjArg.of(1)).divide(ObjArg.of(1))
                 .addGroup()
                 .withValue(100).multiplyValue(4).divideValue(2)
                 .multiplyGroup()

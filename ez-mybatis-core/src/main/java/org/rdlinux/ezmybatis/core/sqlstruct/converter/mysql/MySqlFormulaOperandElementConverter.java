@@ -4,23 +4,23 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.FunFormulaElement;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.FormulaOperandElement;
 
-public class MySqlFunFormulaElementConverter extends AbstractConverter<FunFormulaElement>
-        implements Converter<FunFormulaElement> {
-    private static volatile MySqlFunFormulaElementConverter instance;
+public class MySqlFormulaOperandElementConverter extends AbstractConverter<FormulaOperandElement>
+        implements Converter<FormulaOperandElement> {
+    private static volatile MySqlFormulaOperandElementConverter instance;
 
-    protected MySqlFunFormulaElementConverter() {
+    protected MySqlFormulaOperandElementConverter() {
     }
 
-    public static MySqlFunFormulaElementConverter getInstance() {
+    public static MySqlFormulaOperandElementConverter getInstance() {
         if (instance == null) {
-            synchronized (MySqlFunFormulaElementConverter.class) {
+            synchronized (MySqlFormulaOperandElementConverter.class) {
                 if (instance == null) {
-                    instance = new MySqlFunFormulaElementConverter();
+                    instance = new MySqlFormulaOperandElementConverter();
                 }
             }
         }
@@ -29,12 +29,12 @@ public class MySqlFunFormulaElementConverter extends AbstractConverter<FunFormul
 
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       FunFormulaElement obj,
+                                       FormulaOperandElement obj,
                                        MybatisParamHolder mybatisParamHolder) {
-        Function function = obj.getFunction();
+        Operand operand = obj.getOperand();
         sqlBuilder.append(" ").append(obj.getOperator().getSymbol()).append(" ");
-        Converter<? extends Function> converter = EzMybatisContent.getConverter(configuration, function.getClass());
-        converter.buildSql(type, sqlBuilder, configuration, function, mybatisParamHolder);
+        Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration, operand.getClass());
+        converter.buildSql(type, sqlBuilder, configuration, operand, mybatisParamHolder);
         sqlBuilder.append(" ");
         return sqlBuilder;
     }
