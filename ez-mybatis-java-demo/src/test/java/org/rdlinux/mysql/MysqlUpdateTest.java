@@ -304,6 +304,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                 .setField(User.Fields.userAge, 1)
                 .setField(User.Fields.userAge, Keywords.of("age"))
                 .setColumn("age", Keywords.of("age"))
+                .setColumn("name", "张三")
                 .done()
                 .where().addFieldCondition("id", "1").done()
                 .build();

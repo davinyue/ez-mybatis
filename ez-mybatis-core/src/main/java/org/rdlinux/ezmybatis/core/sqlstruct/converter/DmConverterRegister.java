@@ -17,7 +17,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 
 /**
  * 达梦转换器注册
@@ -57,16 +58,8 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SelectSumField.class, DmSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SelectTableAllItem.class, DmSelectTableAllItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SelectKeywords.class, DmSelectKeywordsConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, CaseWhenUpdateColumnItem.class, DmCaseWhenUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, CaseWhenUpdateFieldItem.class, DmCaseWhenUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, UpdateColumnItem.class, DmUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, UpdateFieldItem.class, DmUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, FunctionUpdateFieldItem.class, DmFunctionUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, FunctionUpdateColumnItem.class, DmFunctionUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, FormulaUpdateFieldItem.class, DmFormulaUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, FormulaUpdateColumnItem.class, DmFormulaUpdateColumnItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, KeywordsUpdateFieldItem.class, DmKeywordsUpdateFieldItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, KeywordsUpdateColumnItem.class, DmKeywordsUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SqlCondition.class, DmSqlConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, GroupCondition.class, DmGroupConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ArgCompareArgCondition.class, MySqlArgCompareArgConditionConverter.getInstance());
