@@ -151,6 +151,8 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.userAge)
+                .addColumnAvg("age", "avgArg")
+                .addFieldSum(User.Fields.userAge, "sumArg")
                 .addField(User.Fields.name)
                 .addFunc(countFunc, "ct")
                 .done()

@@ -10,7 +10,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
@@ -42,22 +44,9 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, EzQueryTable.class, OracleEzQueryTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SqlTable.class, OracleSqlTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, CaseWhen.class, OracleCaseWhenConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectCaseWhen.class, OracleSelectCaseWhenConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectAllItem.class, OracleSelectAllItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectAvgColumn.class, OracleSelectAvgColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectColumn.class, OracleSelectColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectAvgField.class, OracleSelectAvgFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectCountField.class, OracleSelectCountFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectCountColumn.class, OracleSelectCountColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectField.class, OracleSelectFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectMaxColumn.class, OracleSelectMaxColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectMaxField.class, OracleSelectMaxFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectMinColumn.class, OracleSelectMinColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectMinField.class, OracleSelectMinFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectSumColumn.class, OracleSelectSumColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectSumField.class, OracleSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SelectTableAllItem.class, OracleSelectTableAllItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectKeywords.class, OracleSelectKeywordsConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SelectOperand.class, MySqlSelectOperandConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateColumnItem.class, OracleUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SqlCondition.class, OracleSqlConditionConverter.getInstance());
@@ -75,16 +64,11 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, ValueFormulaElement.class, OracleValueFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, KeywordsFormulaElement.class, OracleKeywordsFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Union.class, OracleUnionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectFormula.class, OracleSelectFormulaConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectFunction.class, OracleSelectFunctionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, SelectValue.class, OracleSelectValueConverter.getInstance());
-        //argConverter
         EzMybatisContent.addConverter(DbType.ORACLE, Alias.class, MySqlAliasConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, TableColumn.class, MySqlTableColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EntityField.class, MySqlEntityFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Sql.class, MySqlSqlConverter.getInstance());
-
     }
 }

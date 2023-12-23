@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
+import org.rdlinux.ezmybatis.core.sqlstruct.QueryRetNeedAlias;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * 计算公式
  */
 @Getter
-public class Formula implements SqlStruct, Operand {
+public class Formula implements QueryRetNeedAlias, Operand {
     /**
      * 表
      */

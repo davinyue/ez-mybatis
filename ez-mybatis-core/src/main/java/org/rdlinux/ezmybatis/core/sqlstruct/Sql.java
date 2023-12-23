@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 /**
  * sql
  */
-public class Sql implements MultipleRetOperand {
+public class Sql implements MultipleRetOperand, QueryRetNeedAlias {
     private String sql;
 
     private Sql(String sql) {

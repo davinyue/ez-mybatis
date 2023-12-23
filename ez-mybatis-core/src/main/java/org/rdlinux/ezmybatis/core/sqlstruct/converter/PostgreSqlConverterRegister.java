@@ -13,7 +13,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlLimitCon
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateColumnItemConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateFieldItemConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
@@ -45,22 +47,9 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, EzQueryTable.class, MySqlEzQueryTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SqlTable.class, MySqlSqlTableConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, CaseWhen.class, MySqlCaseWhenConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectCaseWhen.class, MySqlSelectCaseWhenConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectAllItem.class, MySqlSelectAllItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectAvgColumn.class, MySqlSelectAvgColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectColumn.class, MySqlSelectColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectAvgField.class, MySqlSelectAvgFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectCountField.class, MySqlSelectCountFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectCountColumn.class, MySqlSelectCountColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectField.class, MySqlSelectFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectMaxColumn.class, MySqlSelectMaxColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectMaxField.class, MySqlSelectMaxFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectMinColumn.class, MySqlSelectMinColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectMinField.class, MySqlSelectMinFieldConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectSumColumn.class, MySqlSelectSumColumnConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectSumField.class, MySqlSelectSumFieldConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectTableAllItem.class, MySqlSelectTableAllItemConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectKeywords.class, MySqlSelectKeywordsConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectOperand.class, MySqlSelectOperandConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, UpdateColumnItem.class, PostgreSqlUpdateColumnItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, UpdateFieldItem.class, PostgreSqlUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SqlCondition.class, MySqlSqlConditionConverter.getInstance());
@@ -78,10 +67,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ValueFormulaElement.class, MySqlValueFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, KeywordsFormulaElement.class, MySqlKeywordsFormulaElementConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Union.class, MySqlUnionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectFormula.class, MySqlSelectFormulaConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectFunction.class, MySqlSelectFunctionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SelectValue.class, MySqlSelectValueConverter.getInstance());
-        //argConverter
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Alias.class, MySqlAliasConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, TableColumn.class, MySqlTableColumnConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, EntityField.class, MySqlEntityFieldConverter.getInstance());
