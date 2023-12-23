@@ -299,10 +299,13 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     public void updateByEzParam() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+        EntityTable table = EntityTable.of(User.class);
+        EzUpdate ezUpdate = EzUpdate.update(table)
                 .set()
                 .setField(User.Fields.userAge, 1)
                 .setField(User.Fields.userAge, Keywords.of("age"))
+                .setField(User.Fields.userAge, CaseWhen.builder(table).when()
+                        .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
                 .setColumn("age", Keywords.of("age"))
                 .setColumn("name", "张三")
                 .done()

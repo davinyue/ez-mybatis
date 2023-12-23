@@ -59,13 +59,17 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
          */
         private Table table;
         /**
-         * 值类型
-         */
-        private ArgType argType;
-        /**
          * 值
          */
-        private Object value;
+        private Operand value;
+
+        public CaseWhenData setValue(Operand value) {
+            if (value == null) {
+                value = ObjArg.of(value);
+            }
+            this.value = value;
+            return this;
+        }
 
         /**
          * CaseWhen条件数据构造器
@@ -83,7 +87,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
              * 条件匹配时的值
              */
             public CaseWhenBuilder then(Object value) {
-                this.caseWhenData.setArgType(ArgType.VALUE).setValue(value);
+                this.caseWhenData.setValue(ObjArg.of(value));
                 return this.parentBuilder;
             }
 
@@ -92,7 +96,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
              */
             public CaseWhenBuilder thenKeywords(String keywords) {
                 Assert.notEmpty(keywords, keywords);
-                this.caseWhenData.setArgType(ArgType.KEYWORDS).setValue(keywords);
+                this.caseWhenData.setValue(Keywords.of(keywords));
                 return this.parentBuilder;
             }
 
@@ -102,7 +106,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
             public CaseWhenBuilder thenColumn(Table table, String column) {
                 Assert.notNull(table, "table can not be null");
                 Assert.notEmpty(column, "column can not be null");
-                this.caseWhenData.setTable(table).setArgType(ArgType.COLUMN).setValue(column);
+                this.caseWhenData.setTable(table).setValue(TableColumn.of(table, column));
                 return this.parentBuilder;
             }
 
@@ -119,7 +123,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
             public CaseWhenBuilder thenField(EntityTable table, String field) {
                 Assert.notNull(table, "table can not be null");
                 Assert.notEmpty(field, "field can not be null");
-                this.caseWhenData.setTable(table).setArgType(ArgType.FILED).setValue(field);
+                this.caseWhenData.setTable(table).setValue(EntityField.of(table, field));
                 return this.parentBuilder;
             }
 
@@ -136,7 +140,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
              */
             public CaseWhenBuilder thenFunc(Function function) {
                 Assert.notNull(function, "function can not be null");
-                this.caseWhenData.setArgType(ArgType.FUNC).setValue(function);
+                this.caseWhenData.setValue(function);
                 return this.parentBuilder;
             }
 
@@ -145,7 +149,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
              */
             public CaseWhenBuilder thenFormula(Formula formula) {
                 Assert.notNull(formula, "formula can not be null");
-                this.caseWhenData.setArgType(ArgType.FORMULA).setValue(formula);
+                this.caseWhenData.setValue(formula);
                 return this.parentBuilder;
             }
 
@@ -154,7 +158,15 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
              */
             public CaseWhenBuilder thenCaseWhen(CaseWhen caseWhen) {
                 Assert.notNull(caseWhen, "caseWhen can not be null");
-                this.caseWhenData.setArgType(ArgType.CASE_WHEN).setValue(caseWhen);
+                this.caseWhenData.setValue(caseWhen);
+                return this.parentBuilder;
+            }
+
+            /**
+             * 条件匹配时的值
+             */
+            public CaseWhenBuilder then(Operand value) {
+                this.caseWhenData.setValue(value);
                 return this.parentBuilder;
             }
         }
@@ -190,15 +202,15 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
          * else, else将会构造结束
          */
         public CaseWhen els(Object value) {
-            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.VALUE).setValue(value));
+            this.caseWhen.setEls(new CaseWhenData().setValue(ObjArg.of(value)));
             return this.caseWhen;
         }
 
         /**
          * else, else将会构造结束
          */
-        public CaseWhen elsKeywords(Object keywords) {
-            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.KEYWORDS).setValue(keywords));
+        public CaseWhen elsKeywords(String keywords) {
+            this.caseWhen.setEls(new CaseWhenData().setValue(Keywords.of(keywords)));
             return this.caseWhen;
         }
 
@@ -208,7 +220,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
         public CaseWhen elsColumn(Table table, String column) {
             Assert.notNull(table, "table can not be null");
             Assert.notEmpty(column, "column can not be null");
-            this.caseWhen.setEls(new CaseWhenData().setTable(table).setArgType(ArgType.COLUMN).setValue(column));
+            this.caseWhen.setEls(new CaseWhenData().setTable(table).setValue(TableColumn.of(table, column)));
             return this.caseWhen;
         }
 
@@ -225,7 +237,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
         public CaseWhen elsField(EntityTable table, String field) {
             Assert.notNull(table, "table can not be null");
             Assert.notEmpty(field, "field can not be null");
-            this.caseWhen.setEls(new CaseWhenData().setTable(table).setArgType(ArgType.FILED).setValue(field));
+            this.caseWhen.setEls(new CaseWhenData().setTable(table).setValue(EntityField.of(table, field)));
             return this.caseWhen;
         }
 
@@ -242,7 +254,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
          */
         public CaseWhen elsFunc(Function function) {
             Assert.notNull(function, "function can not be null");
-            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.FUNC).setValue(function));
+            this.caseWhen.setEls(new CaseWhenData().setValue(function));
             return this.caseWhen;
         }
 
@@ -251,7 +263,7 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
          */
         public CaseWhen elsFormula(Formula formula) {
             Assert.notNull(formula, "formula can not be null");
-            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.FORMULA).setValue(formula));
+            this.caseWhen.setEls(new CaseWhenData().setValue(formula));
             return this.caseWhen;
         }
 
@@ -260,9 +272,18 @@ public class CaseWhen implements QueryRetNeedAlias, Operand {
          */
         public CaseWhen elsCaseWhen(CaseWhen caseWhen) {
             Assert.notNull(caseWhen, "caseWhen can not be null");
-            this.caseWhen.setEls(new CaseWhenData().setArgType(ArgType.CASE_WHEN).setValue(caseWhen));
+            this.caseWhen.setEls(new CaseWhenData().setValue(caseWhen));
             return this.caseWhen;
         }
+
+        /**
+         * else, else将会构造结束
+         */
+        public CaseWhen els(Operand value) {
+            this.caseWhen.setEls(new CaseWhenData().setValue(value));
+            return this.caseWhen;
+        }
+
 
         private void checkEntityTable() {
             if (!(this.table instanceof EntityTable)) {

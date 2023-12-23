@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -41,18 +41,17 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
-        String column = fieldInfo.getColumnName();
+        EzMybatisContent.setCurrentAccessField(EntityField.of(obj.getEntityTable(), obj.getField()));
         Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                 obj.getValue().getClass());
-        if (obj.getValue() instanceof ObjArg) {
-            ((ObjArg) obj.getValue()).setEntityTable(obj.getEntityTable()).setField(obj.getField());
-        }
         StringBuilder valueSql = argConverter.buildSql(type, new StringBuilder(), configuration, obj.getValue(),
                 mybatisParamHolder);
         if (this.appendAlias()) {
             sqlBuilder.append(obj.getTable().getAlias()).append(".");
         }
+        String column = fieldInfo.getColumnName();
         sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ").append(valueSql);
+        EzMybatisContent.cleanCurrentAccessField();
         return sqlBuilder;
     }
 

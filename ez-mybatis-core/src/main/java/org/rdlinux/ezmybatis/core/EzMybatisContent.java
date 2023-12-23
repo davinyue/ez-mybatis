@@ -13,6 +13,7 @@ import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.*;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -36,6 +37,22 @@ public class EzMybatisContent {
      * 转换器映射
      */
     private static final Map<DbType, Map<Class<?>, Converter<?>>> CONVERT_MAP = new HashMap<>();
+    /**
+     * 当前访问filed, 用于查询, 更新, 保存时处理回调以支持用户对参数进行 处理
+     */
+    private static final ThreadLocal<EntityField> CURRENT_ACCESS_FIELD = new ThreadLocal<>();
+
+    public static EntityField getCurrentAccessField() {
+        return CURRENT_ACCESS_FIELD.get();
+    }
+
+    public static void setCurrentAccessField(EntityField entityField) {
+        CURRENT_ACCESS_FIELD.set(entityField);
+    }
+
+    public static void cleanCurrentAccessField() {
+        CURRENT_ACCESS_FIELD.remove();
+    }
 
     /**
      * 注册转换器
