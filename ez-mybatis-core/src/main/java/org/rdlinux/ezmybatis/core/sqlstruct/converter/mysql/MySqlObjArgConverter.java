@@ -2,14 +2,15 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 import java.lang.reflect.Field;
 
@@ -33,16 +34,15 @@ public class MySqlObjArgConverter extends AbstractConverter<ObjArg> implements C
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        ObjArg obj, MybatisParamHolder mybatisParamHolder) {
-        EntityTable entityTable = obj.getEntityTable();
-        EntityClassInfo etInfo;
-        EntityFieldInfo fieldInfo;
         Class<?> modelType = null;
         Field field = null;
-        if (entityTable != null) {
-            etInfo = EzEntityClassInfoFactory.forClass(configuration, entityTable.getEtType());
+        EntityField currentAccessField = EzMybatisContent.getCurrentAccessField();
+        if (currentAccessField != null) {
+            modelType = currentAccessField.getTable().getEtType();
+            EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, currentAccessField.getTable()
+                    .getEtType());
             if (etInfo != null) {
-                modelType = etInfo.getEntityClass();
-                fieldInfo = etInfo.getFieldInfo(obj.getField());
+                EntityFieldInfo fieldInfo = etInfo.getFieldInfo(currentAccessField.getField());
                 if (fieldInfo != null) {
                     field = fieldInfo.getField();
                 }
