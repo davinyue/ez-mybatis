@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class CaseWhen implements QueryRetNeedAlias, Operand {
+public class CaseWhen implements QueryRetNeedAlias {
     /**
      * 表
      */
