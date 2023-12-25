@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements Converter<DbTable> {
     private static volatile MySqlDbTableConverter instance;
@@ -32,9 +33,10 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String schema = table.getSchema(configuration);
         if (schema != null && !schema.isEmpty()) {
-            sqlBuilder.append(keywordQM).append(schema).append(keywordQM).append(".");
+            sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(schema)).append(keywordQM).append(".");
         }
-        sqlBuilder.append(keywordQM).append(table.getTableName(configuration)).append(keywordQM);
+        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(table.getTableName(configuration)))
+                .append(keywordQM);
         if (table.getPartition() != null) {
             sqlBuilder.append(this.partitionToSql(type, new StringBuilder(), configuration, table.getPartition(),
                     mybatisParamHolder));

@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Function ojb,
                                        MybatisParamHolder mybatisParamHolder) {
-        sqlBuilder.append(" ").append(ojb.getFunName()).append("(");
+        sqlBuilder.append(" ").append(SqlEscaping.nameEscaping(ojb.getFunName())).append("(");
         List<Function.FunArg> funArgs = ojb.getFunArgs();
         if (funArgs != null && !funArgs.isEmpty()) {
             for (int i = 0; i < funArgs.size(); i++) {

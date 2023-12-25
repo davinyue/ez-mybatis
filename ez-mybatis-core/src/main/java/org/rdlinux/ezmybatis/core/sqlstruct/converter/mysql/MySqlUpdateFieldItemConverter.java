@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateFieldItem> implements Converter<UpdateFieldItem> {
     private static volatile MySqlUpdateFieldItemConverter instance;
@@ -50,7 +51,8 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
             sqlBuilder.append(obj.getTable().getAlias()).append(".");
         }
         String column = fieldInfo.getColumnName();
-        sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ").append(valueSql);
+        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(column))
+                .append(keywordQM).append(" = ").append(valueSql);
         EzMybatisContent.cleanCurrentAccessField();
         return sqlBuilder;
     }

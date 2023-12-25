@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlTableColumnConverter extends AbstractConverter<TableColumn> implements Converter<TableColumn> {
     private static volatile MySqlTableColumnConverter instance;
@@ -29,7 +30,8 @@ public class MySqlTableColumnConverter extends AbstractConverter<TableColumn> im
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        TableColumn obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        return sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM).append(obj.getColumn())
+        return sqlBuilder.append(obj.getTable().getAlias()).append(".").append(keywordQM)
+                .append(SqlEscaping.nameEscaping(obj.getColumn()))
                 .append(keywordQM);
     }
 
