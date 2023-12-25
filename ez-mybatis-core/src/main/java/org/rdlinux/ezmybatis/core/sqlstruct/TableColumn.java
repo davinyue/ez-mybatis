@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 /**
  * 列参数
  */
-public class TableColumn implements Operand {
+public class TableColumn implements QueryRetOperand {
     private Table table;
     private String column;
 

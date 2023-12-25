@@ -4,6 +4,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.MultipleRetOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
@@ -37,20 +38,28 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        ArgCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
         Operand leftValue = obj.getLeftValue();
+        if (leftValue instanceof EntityField) {
+            EzMybatisContent.setCurrentAccessField((EntityField) leftValue);
+        }
         Converter<? extends Operand> leftConverter = EzMybatisContent.getConverter(configuration, leftValue.getClass());
         StringBuilder leftSql = new StringBuilder();
         leftSql.append(" ").append(leftConverter.buildSql(type, new StringBuilder(), configuration, leftValue,
                 mybatisParamHolder)).append(" ");
         Operator operator = obj.getOperator();
+        StringBuilder ret;
         if (operator == Operator.isNull || operator == Operator.isNotNull) {
-            return this.isNullBuild(leftSql, sqlBuilder, obj);
+            ret = this.isNullBuild(leftSql, sqlBuilder, obj);
         } else if (operator == Operator.between || operator == Operator.notBetween) {
-            return this.isBetweenBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            ret = this.isBetweenBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
         } else if (operator == Operator.in || operator == Operator.notIn) {
-            return this.inBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            ret = this.inBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
         } else {
-            return this.normalBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            ret = this.normalBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
         }
+        if (leftValue instanceof EntityField) {
+            EzMybatisContent.cleanCurrentAccessField();
+        }
+        return ret;
     }
 
     private StringBuilder normalBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,

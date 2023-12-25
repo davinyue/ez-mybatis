@@ -39,10 +39,11 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        UpdateColumnItem obj, MybatisParamHolder mybatisParamHolder) {
         String column = obj.getColumn();
+        EntityFieldInfo entityFieldInfo = null;
         if (obj.getTable() instanceof EntityTable) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration,
                     ((EntityTable) obj.getTable()).getEtType());
-            EntityFieldInfo entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(column);
+            entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(column);
             if (entityFieldInfo != null) {
                 EzMybatisContent.setCurrentAccessField(EntityField.of((EntityTable) obj.getTable(),
                         entityFieldInfo.getFieldName()));
@@ -57,7 +58,9 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
             sqlBuilder.append(obj.getTable().getAlias()).append(".");
         }
         sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ").append(valueSql);
-        EzMybatisContent.cleanCurrentAccessField();
+        if (entityFieldInfo != null) {
+            EzMybatisContent.cleanCurrentAccessField();
+        }
         return sqlBuilder;
     }
 
