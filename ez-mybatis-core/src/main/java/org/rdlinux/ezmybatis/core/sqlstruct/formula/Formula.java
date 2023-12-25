@@ -12,7 +12,7 @@ import java.util.List;
  * 计算公式
  */
 @Getter
-public class Formula implements QueryRetNeedAlias, Operand {
+public class Formula implements QueryRetNeedAlias {
     /**
      * 表
      */
