@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.utils.Assert;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,8 +35,8 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
-            , SelectTableAllItem ojb, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       SelectTableAllItem ojb, MybatisParamHolder mybatisParamHolder) {
         boolean execExcludeField = false;
         if (ojb.getTable() instanceof EntityTable) {
             if (ojb.getExcludeField() != null && ojb.getExcludeField().size() > 0) {
@@ -53,7 +54,7 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
             for (int i = 0; i < fieldInfos.size(); i++) {
                 EntityFieldInfo fieldInfo = fieldInfos.get(i);
                 sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".").append(keywordQM)
-                        .append(fieldInfo.getColumnName()).append(keywordQM);
+                        .append(SqlEscaping.nameEscaping(fieldInfo.getColumnName())).append(keywordQM);
                 if (i + 1 < fieldInfos.size()) {
                     sqlBuilder.append(", ");
                 } else {

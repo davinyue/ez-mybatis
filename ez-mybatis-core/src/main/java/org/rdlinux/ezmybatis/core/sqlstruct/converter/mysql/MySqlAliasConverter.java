@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlAliasConverter extends AbstractConverter<Alias> implements Converter<Alias> {
     private static volatile MySqlAliasConverter instance;
@@ -29,7 +30,9 @@ public class MySqlAliasConverter extends AbstractConverter<Alias> implements Con
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        Alias obj, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
-        return sqlBuilder.append(keywordQM).append(obj.getAlias()).append(keywordQM);
+        String alias = obj.getAlias();
+        alias = SqlEscaping.nameEscaping(alias);
+        return sqlBuilder.append(keywordQM).append(alias).append(keywordQM);
     }
 
     @Override

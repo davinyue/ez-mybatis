@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlKeywordsConverter extends AbstractConverter<Keywords> implements Converter<Keywords> {
     private static volatile MySqlKeywordsConverter instance;
@@ -27,7 +28,7 @@ public class MySqlKeywordsConverter extends AbstractConverter<Keywords> implemen
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        Keywords obj, MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder.append(obj.getKeywords());
+        return sqlBuilder.append(SqlEscaping.nameEscaping(obj.getKeywords()));
     }
 
     @Override

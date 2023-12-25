@@ -13,6 +13,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColumnItem> implements Converter<UpdateColumnItem> {
     private static volatile MySqlUpdateColumnItemConverter instance;
@@ -57,7 +58,8 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
         if (this.appendAlias()) {
             sqlBuilder.append(obj.getTable().getAlias()).append(".");
         }
-        sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ").append(valueSql);
+        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(column))
+                .append(keywordQM).append(" = ").append(valueSql);
         if (entityFieldInfo != null) {
             EzMybatisContent.cleanCurrentAccessField();
         }
