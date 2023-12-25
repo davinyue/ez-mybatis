@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 /**
  * 对象参数
  */
-public class ObjArg implements Operand, QueryRetNeedAlias {
+public class ObjArg implements Operand, QueryRetOperand {
     private Object arg;
 
     private ObjArg(Object arg) {

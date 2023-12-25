@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 /**
  * 属性参数
  */
-public class EntityField implements Operand {
+public class EntityField implements QueryRetOperand {
     private EntityTable table;
     private String field;
 

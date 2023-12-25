@@ -13,6 +13,10 @@ public class HumpLineStringUtils {
      * @param interval 连接符
      */
     public static String humpToLine(String str, String interval) {
+        //如果原始字符串不包含小写字母, 则将其全部转换为小写字母
+        if (!str.matches(".*[a-z].*")) {
+            str = str.toLowerCase();
+        }
         Matcher matcher = humpPattern.matcher(str);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {

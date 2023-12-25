@@ -21,10 +21,7 @@ import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -40,18 +37,35 @@ public class EzMybatisContent {
     /**
      * 当前访问filed, 用于查询, 更新, 保存时处理回调以支持用户对参数进行 处理
      */
-    private static final ThreadLocal<EntityField> CURRENT_ACCESS_FIELD = new ThreadLocal<>();
+    private static final ThreadLocal<Deque<EntityField>> CURRENT_ACCESS_FIELD = new ThreadLocal<>();
 
     public static EntityField getCurrentAccessField() {
-        return CURRENT_ACCESS_FIELD.get();
+        Deque<EntityField> deque = CURRENT_ACCESS_FIELD.get();
+        if (deque == null || deque.isEmpty()) {
+            return null;
+        }
+        return CURRENT_ACCESS_FIELD.get().element();
     }
 
     public static void setCurrentAccessField(EntityField entityField) {
-        CURRENT_ACCESS_FIELD.set(entityField);
+        Deque<EntityField> deque = CURRENT_ACCESS_FIELD.get();
+        if (deque == null) {
+            deque = new LinkedList<>();
+            CURRENT_ACCESS_FIELD.set(deque);
+        }
+        deque.push(entityField);
     }
 
     public static void cleanCurrentAccessField() {
-        CURRENT_ACCESS_FIELD.remove();
+        Deque<EntityField> deque = CURRENT_ACCESS_FIELD.get();
+        if (deque != null) {
+            if (!deque.isEmpty()) {
+                deque.poll();
+            }
+            if (deque.isEmpty()) {
+                CURRENT_ACCESS_FIELD.remove();
+            }
+        }
     }
 
     /**

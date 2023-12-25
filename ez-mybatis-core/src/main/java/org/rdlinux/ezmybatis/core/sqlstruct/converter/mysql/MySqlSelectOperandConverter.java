@@ -4,7 +4,7 @@ import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
+import org.rdlinux.ezmybatis.core.sqlstruct.QueryRetOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
@@ -29,7 +29,7 @@ public class MySqlSelectOperandConverter extends AbstractConverter<SelectOperand
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
             , SelectOperand obj, MybatisParamHolder mybatisParamHolder) {
-        Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration,
+        Converter<? extends QueryRetOperand> converter = EzMybatisContent.getConverter(configuration,
                 obj.getOperand().getClass());
         converter.buildSql(type, sqlBuilder, configuration, obj.getOperand(), mybatisParamHolder);
         String alias = obj.getAlias();

@@ -329,22 +329,22 @@ public class Select implements SqlStruct {
             return this;
         }
 
-        public EzSelectBuilder<T> add(boolean sure, Operand operand, String alias) {
+        public EzSelectBuilder<T> add(boolean sure, QueryRetOperand operand, String alias) {
             if (sure) {
                 this.selectFields.add(new SelectOperand(operand, alias));
             }
             return this;
         }
 
-        public EzSelectBuilder<T> add(boolean sure, Operand operand) {
+        public EzSelectBuilder<T> add(boolean sure, QueryRetOperand operand) {
             return this.add(sure, operand, null);
         }
 
-        public EzSelectBuilder<T> add(Operand operand, String alias) {
+        public EzSelectBuilder<T> add(QueryRetOperand operand, String alias) {
             return this.add(true, operand, alias);
         }
 
-        public EzSelectBuilder<T> add(Operand operand) {
+        public EzSelectBuilder<T> add(QueryRetOperand operand) {
             return this.add(true, operand, null);
         }
 

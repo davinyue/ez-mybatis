@@ -268,8 +268,12 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<String> sonQ = EzQuery.builder(String.class).from(EntityTable.of(User.class)).select().addField("id")
                 .done().page(1, 1)
                 .build();
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class)).select().addAll().done()
-                .where().addColumnCondition("id", Operator.in, sonQ).done().build();
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
+                .where().addColumnCondition("id", Operator.in, sonQ)
+                .addFieldCondition(User.Fields.name, "zhang")
+                .addCondition(EntityField.of(table, User.Fields.name), Operator.eq, ObjArg.of("zhang"))
+                .done().build();
         List<User> ret = sqlSession.getMapper(UserMapper.class).query(query);
         sqlSession.close();
         System.out.println(JacksonUtils.toJsonString(ret));
