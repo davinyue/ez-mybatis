@@ -266,7 +266,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addFieldIsNullCondition(boolean sure, LogicalOperator logicalOperator, EntityTable table,
                                               String field) {
-        return this.addIsNullCondition(sure, LogicalOperator.AND, EntityField.of(table, field));
+        return this.addIsNullCondition(sure, logicalOperator, EntityField.of(table, field));
     }
 
     /**
@@ -327,7 +327,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addColumnIsNullCondition(boolean sure, LogicalOperator logicalOperator, Table table,
                                                String column) {
-        return this.addIsNullCondition(sure, LogicalOperator.AND, TableColumn.of(table, column));
+        return this.addIsNullCondition(sure, logicalOperator, TableColumn.of(table, column));
     }
 
     /**
@@ -384,7 +384,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addColumnIsNotNullCondition(boolean sure, LogicalOperator logicalOperator, Table table,
                                                   String column) {
-        return this.addIsNotNullCondition(sure, LogicalOperator.AND, TableColumn.of(table, column));
+        return this.addIsNotNullCondition(sure, logicalOperator, TableColumn.of(table, column));
     }
 
     /**
