@@ -28,14 +28,14 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
-                                       MybatisParamHolder mybatisParamHolder) {
-        StringBuilder sql = super.whereToSql(sqlBuilder, configuration, query, mybatisParamHolder);
+    protected StringBuilder whereToSql(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
+                                       EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
+        StringBuilder sql = super.whereToSql(isPage, sqlBuilder, configuration, query, mybatisParamHolder);
         Limit limit = query.getLimit();
         GroupBy groupBy = query.getGroupBy();
         OrderBy orderBy = query.getOrderBy();
         EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();
-        if (!ezMybatisConfig.isEnableOracleOffsetFetchPage() && limit != null &&
+        if (isPage && !ezMybatisConfig.isEnableOracleOffsetFetchPage() && limit != null &&
                 (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
                 && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
             if (query.getWhere() == null) {
