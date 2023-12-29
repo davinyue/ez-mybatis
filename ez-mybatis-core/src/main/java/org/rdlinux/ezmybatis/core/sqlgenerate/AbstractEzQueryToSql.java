@@ -18,7 +18,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.selectToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.whereToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.whereToSql(true, sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
@@ -34,7 +34,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.selectCountToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.whereToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.whereToSql(false, sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
@@ -99,8 +99,11 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, group, paramHolder);
     }
 
-    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
-                                       MybatisParamHolder paramHolder) {
+    /**
+     * @param isPage 是否分页
+     */
+    protected StringBuilder whereToSql(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
+                                       EzQuery<?> query, MybatisParamHolder paramHolder) {
         Where where = query.getWhere();
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
         return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, where, paramHolder);
