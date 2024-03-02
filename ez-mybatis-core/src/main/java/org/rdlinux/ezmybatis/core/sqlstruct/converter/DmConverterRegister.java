@@ -37,7 +37,7 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, OrderBy.OrderItem.class, DmOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Select.class, DmSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, GroupBy.class, DmGroupByConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.DM, Limit.class, DmLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, Page.class, DmPageConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, NormalPartition.class, DmNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, SubPartition.class, DmSubPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, DbTable.class, DmDbTableConverter.getInstance());
@@ -65,5 +65,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Sql.class, MySqlSqlConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, Limit.class, DmLimitConverter.getInstance());
     }
 }

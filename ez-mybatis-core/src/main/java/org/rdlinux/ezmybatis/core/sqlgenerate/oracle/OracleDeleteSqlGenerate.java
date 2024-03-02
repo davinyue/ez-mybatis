@@ -10,7 +10,7 @@ import java.util.Collection;
 public class OracleDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     private static volatile OracleDeleteSqlGenerate instance;
 
-    private OracleDeleteSqlGenerate() {
+    protected OracleDeleteSqlGenerate() {
     }
 
     public static OracleDeleteSqlGenerate getInstance() {

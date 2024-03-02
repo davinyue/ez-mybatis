@@ -5,6 +5,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
@@ -83,6 +84,20 @@ public class DmDeleteTest extends DmBaseTest {
         deletes.add(delete);
         sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
         sqlSession.commit();
+    }
+
+    @Test
+    public void limitDelete() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        EzDelete ezDelete = EzDelete.delete(DbTable.of("xxx"))
+//                .where()
+//                .addColumnCondition("xxx", "XX")
+//                .done()
+                .limit(2)
+                .build();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        mapper.ezDelete(ezDelete);
+        sqlSession.rollback();
     }
 }
 

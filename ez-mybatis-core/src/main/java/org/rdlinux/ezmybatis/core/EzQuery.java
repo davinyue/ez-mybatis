@@ -15,8 +15,9 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
     private GroupBy groupBy;
     private OrderBy orderBy;
     private Having having;
-    private Limit limit;
+    private Page page;
     private List<Union> unions;
+    private Limit limit;
 
     private EzQuery(Class<Rt> retType) {
         super(retType);
@@ -128,7 +129,15 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * @param pageSize    页大小
          */
         public EzQueryBuilder<Rt> page(int currentPage, int pageSize) {
-            this.query.limit = new Limit(this.query, (currentPage - 1) * pageSize, pageSize);
+            this.query.page = new Page(this.query, (currentPage - 1) * pageSize, pageSize);
+            return this;
+        }
+
+        /**
+         * 限定
+         */
+        public EzQueryBuilder<Rt> limit(int limit) {
+            this.query.limit = new Limit(limit);
             return this;
         }
 

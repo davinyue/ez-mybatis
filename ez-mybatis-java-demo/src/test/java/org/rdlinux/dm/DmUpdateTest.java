@@ -5,6 +5,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
@@ -109,5 +110,21 @@ public class DmUpdateTest extends DmBaseTest {
         updates.add(ezUpdate);
         mapper.batchUpdate(updates);
         sqlSession.commit();
+    }
+
+    @Test
+    public void limitUpdate() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        EzUpdate ezUpdate = EzUpdate.update(DbTable.of("xxx"))
+                .set().setColumn("xxx", "T1PN")
+                .done()
+//                .where()
+//                .addColumnCondition("xxx", "XX")
+//                .done()
+                .limit(1)
+                .build();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        mapper.ezUpdate(ezUpdate);
+        sqlSession.rollback();
     }
 }

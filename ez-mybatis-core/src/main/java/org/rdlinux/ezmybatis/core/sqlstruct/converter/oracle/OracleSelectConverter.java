@@ -7,8 +7,8 @@ import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
-import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
+import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlSelectConverter;
 
@@ -36,7 +36,7 @@ public class OracleSelectConverter extends MySqlSelectConverter {
             return sqlBuilder;
         }
         sqlBuilder = super.doBuildSql(type, sqlBuilder, configuration, select, mybatisParamHolder);
-        Limit limit = select.getQuery().getLimit();
+        Page limit = select.getQuery().getPage();
         GroupBy groupBy = select.getQuery().getGroupBy();
         OrderBy orderBy = select.getQuery().getOrderBy();
         EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();

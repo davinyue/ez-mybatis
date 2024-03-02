@@ -37,7 +37,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, OrderBy.OrderItem.class, OracleOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Select.class, OracleSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, GroupBy.class, OracleGroupByConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, Limit.class, OracleLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Page.class, OraclePageConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, NormalPartition.class, OracleNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SubPartition.class, OracleSubPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, DbTable.class, OracleDbTableConverter.getInstance());
@@ -65,5 +65,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Sql.class, MySqlSqlConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, Limit.class, OracleLimitConverter.getInstance());
     }
 }
