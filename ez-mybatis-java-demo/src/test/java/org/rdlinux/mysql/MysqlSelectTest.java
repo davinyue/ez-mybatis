@@ -915,4 +915,32 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(JacksonUtils.toJsonString(mapper.query(query)));
         sqlSession.close();
     }
+
+    @Test
+    public void existsTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzQuery<User> existsQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addValue("1", "name")
+                .done()
+                .build();
+        EzQuery<User> notExistsQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addValue("1", "name")
+                .done()
+                .build();
+
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addAll()
+                .done()
+                .where()
+                .exists(existsQuery)
+                .notExists(notExistsQuery)
+                .done()
+                .build();
+        List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
+        System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.close();
+    }
 }
