@@ -38,7 +38,7 @@ public class MySqlGroupConditionConverter extends AbstractConverter<GroupConditi
                 Condition condition = obj.getConditions().get(i);
                 Assert.notNull(condition, "condition can not be null");
                 if (i != 0) {
-                    sonSql.append(" ").append(condition.getLogicalOperator().name()).append(" ");
+                    sonSql.append(" ").append(condition.getAndOr().name()).append(" ");
                 }
                 Converter<? extends Condition> converter = EzMybatisContent.getConverter(configuration,
                         condition.getClass());

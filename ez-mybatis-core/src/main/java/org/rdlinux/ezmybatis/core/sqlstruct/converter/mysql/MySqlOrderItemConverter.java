@@ -6,9 +6,9 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy.OrderItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.OrderType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.enumeration.OrderType;
 
 public class MySqlOrderItemConverter extends AbstractConverter<OrderItem> implements Converter<OrderItem> {
     private static volatile MySqlOrderItemConverter instance;

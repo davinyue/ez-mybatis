@@ -41,7 +41,7 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
             boolean emptySql = sqlPart.trim().isEmpty();
             if (!emptySql) {
                 if (beforeHasCondition) {
-                    sqlBuilder.append(condition.getLogicalOperator().name()).append(" ");
+                    sqlBuilder.append(condition.getAndOr().name()).append(" ");
                 }
                 sqlBuilder.append(sqlPart);
                 //如果当前条件不为空, 则将后续循环的“循环中当前条件的前面是否已经有其它条件”设置为true

@@ -8,9 +8,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.MultipleRetOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.enumeration.Operator;
 
 public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgCompareArgCondition>
         implements Converter<ArgCompareArgCondition> {

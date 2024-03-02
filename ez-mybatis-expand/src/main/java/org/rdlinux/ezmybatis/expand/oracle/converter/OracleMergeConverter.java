@@ -40,7 +40,7 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
                     .toString();
             boolean emptySql = sqlPart.trim().isEmpty();
             if (!lastConditionEmpty && !emptySql) {
-                sqlBuilder.append(condition.getLogicalOperator().name()).append(" ");
+                sqlBuilder.append(condition.getAndOr().name()).append(" ");
             }
             if (!emptySql) {
                 lastConditionEmpty = false;

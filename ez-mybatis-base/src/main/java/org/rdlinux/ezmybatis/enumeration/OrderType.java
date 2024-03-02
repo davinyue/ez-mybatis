@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct;
+package org.rdlinux.ezmybatis.enumeration;
 
 /**
  * 排序类型

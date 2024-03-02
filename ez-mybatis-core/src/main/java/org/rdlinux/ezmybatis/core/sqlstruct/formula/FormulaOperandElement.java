@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
+import org.rdlinux.ezmybatis.enumeration.FormulaOperator;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter

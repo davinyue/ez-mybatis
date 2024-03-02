@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
+import org.rdlinux.ezmybatis.enumeration.Operator;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Collections;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 @Getter
 public class ArgCompareArgCondition implements Condition, SqlStruct {
-    private LogicalOperator logicalOperator;
+    private AndOr andOr;
     private Operand leftValue;
     /**
      * 关系运算符号
@@ -26,9 +28,9 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
     private List<Operand> rightValues;
 
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator,
+    public ArgCompareArgCondition(AndOr andOr, Operand leftValue, Operator operator,
                                   Operand rightValue) {
-        Assert.notNull(logicalOperator, "logicalOperator can not be null");
+        Assert.notNull(andOr, "andOr can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
         if (rightValue == null) {
@@ -47,27 +49,27 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
         if (operator == Operator.in || operator == Operator.notIn) {
             this.rightValues = Collections.singletonList(rightValue);
         }
-        this.logicalOperator = logicalOperator;
+        this.andOr = andOr;
         this.leftValue = leftValue;
         this.operator = operator;
         this.rightValue = rightValue;
     }
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator) {
-        Assert.notNull(logicalOperator, "logicalOperator can not be null");
+    public ArgCompareArgCondition(AndOr andOr, Operand leftValue, Operator operator) {
+        Assert.notNull(andOr, "andOr can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
         if (operator != Operator.isNull && operator != Operator.isNotNull) {
             throw new IllegalArgumentException("Unsupported relational operator");
         }
-        this.logicalOperator = logicalOperator;
+        this.andOr = andOr;
         this.leftValue = leftValue;
         this.operator = operator;
     }
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator,
+    public ArgCompareArgCondition(AndOr andOr, Operand leftValue, Operator operator,
                                   Operand minValue, Operand maxValue) {
-        Assert.notNull(logicalOperator, "logicalOperator can not be null");
+        Assert.notNull(andOr, "andOr can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
         if (operator != Operator.between && operator != Operator.notBetween) {
@@ -79,16 +81,16 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
         if (maxValue == null) {
             maxValue = ObjArg.of(null);
         }
-        this.logicalOperator = logicalOperator;
+        this.andOr = andOr;
         this.leftValue = leftValue;
         this.operator = operator;
         this.minValue = minValue;
         this.maxValue = maxValue;
     }
 
-    public ArgCompareArgCondition(LogicalOperator logicalOperator, Operand leftValue, Operator operator,
+    public ArgCompareArgCondition(AndOr andOr, Operand leftValue, Operator operator,
                                   List<Operand> rightValues) {
-        Assert.notNull(logicalOperator, "logicalOperator can not be null");
+        Assert.notNull(andOr, "andOr can not be null");
         Assert.notNull(leftValue, "leftValue can not be null");
         Assert.notNull(operator, "operator can not be null");
         if (operator != Operator.in && operator != Operator.notIn) {
@@ -97,7 +99,7 @@ public class ArgCompareArgCondition implements Condition, SqlStruct {
         if (rightValues == null || rightValues.isEmpty()) {
             rightValues = Collections.singletonList(ObjArg.of(null));
         }
-        this.logicalOperator = logicalOperator;
+        this.andOr = andOr;
         this.leftValue = leftValue;
         this.operator = operator;
         this.rightValues = rightValues;
