@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.ExistsCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
@@ -53,6 +54,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, SqlCondition.class, OracleSqlConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, GroupCondition.class, OracleGroupConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ArgCompareArgCondition.class, MySqlArgCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, ExistsCondition.class, MySqlExistsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EzQuery.class, OracleEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Function.class, OracleFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Formula.class, OracleFormulaConverter.getInstance());

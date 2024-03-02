@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
@@ -1769,5 +1770,67 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
      */
     public SonBuilder addSqlCondition(String sql) {
         return this.addSqlCondition(true, sql);
+    }
+
+    /**
+     * 添exists条件
+     */
+    public SonBuilder exists(boolean sure, LogicalOperator logicalOperator, EzQuery<?> query) {
+        if (sure) {
+            this.conditions.add(new ExistsCondition(logicalOperator, query, false));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添exists条件
+     */
+    public SonBuilder exists(LogicalOperator logicalOperator, EzQuery<?> query) {
+        return this.exists(true, logicalOperator, query);
+    }
+
+    /**
+     * 添exists条件
+     */
+    public SonBuilder exists(boolean sure, EzQuery<?> query) {
+        return this.exists(sure, LogicalOperator.AND, query);
+    }
+
+    /**
+     * 添exists条件
+     */
+    public SonBuilder exists(EzQuery<?> query) {
+        return this.exists(true, query);
+    }
+
+    /**
+     * 添not exists条件
+     */
+    public SonBuilder notExists(boolean sure, LogicalOperator logicalOperator, EzQuery<?> query) {
+        if (sure) {
+            this.conditions.add(new ExistsCondition(logicalOperator, query, true));
+        }
+        return this.sonBuilder;
+    }
+
+    /**
+     * 添not exists条件
+     */
+    public SonBuilder notExists(LogicalOperator logicalOperator, EzQuery<?> query) {
+        return this.notExists(true, logicalOperator, query);
+    }
+
+    /**
+     * 添not exists条件
+     */
+    public SonBuilder notExists(boolean sure, EzQuery<?> query) {
+        return this.notExists(sure, LogicalOperator.AND, query);
+    }
+
+    /**
+     * 添not exists条件
+     */
+    public SonBuilder notExists(EzQuery<?> query) {
+        return this.notExists(true, query);
     }
 }

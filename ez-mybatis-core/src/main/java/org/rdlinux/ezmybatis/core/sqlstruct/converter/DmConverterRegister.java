@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.ExistsCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.dm.*;
@@ -53,6 +54,7 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, SqlCondition.class, DmSqlConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, GroupCondition.class, DmGroupConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, ArgCompareArgCondition.class, MySqlArgCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, ExistsCondition.class, MySqlExistsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, EzQuery.class, DmEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Function.class, DmFunctionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Formula.class, DmFormulaConverter.getInstance());
