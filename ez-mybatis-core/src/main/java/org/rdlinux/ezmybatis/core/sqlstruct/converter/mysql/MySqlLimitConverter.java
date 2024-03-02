@@ -30,7 +30,7 @@ public class MySqlLimitConverter extends AbstractConverter<Limit> implements Con
         if (limit == null) {
             return sqlBuilder;
         }
-        return sqlBuilder.append(" LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize()).append(" ");
+        return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" ");
     }
 
     @Override

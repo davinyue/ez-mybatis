@@ -13,8 +13,8 @@ public class Sql implements MultipleRetOperand, QueryRetNeedAlias {
         this.sql = sql;
     }
 
-    public static Sql of(String function) {
-        return new Sql(function);
+    public static Sql of(String sql) {
+        return new Sql(sql);
     }
 
     public String getSql() {

@@ -8,10 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlArgCompareArgConditionConverter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlLimitConverter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateColumnItemConverter;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.PostgreSqlUpdateFieldItemConverter;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.FormulaOperandElement;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.GroupFormulaElement;
@@ -40,7 +37,7 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, OrderBy.OrderItem.class, MySqlOrderItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Select.class, MySqlSelectConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, GroupBy.class, MySqlGroupByConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Limit.class, PostgreSqlLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Page.class, PostgreSqlPageConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, NormalPartition.class, MySqlNormalPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SubPartition.class, MySqlSubPartitionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, DbTable.class, MySqlDbTableConverter.getInstance());
@@ -68,5 +65,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Keywords.class, MySqlKeywordsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Sql.class, MySqlSqlConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Limit.class, PostgreSqlLimitConverter.getInstance());
     }
 }

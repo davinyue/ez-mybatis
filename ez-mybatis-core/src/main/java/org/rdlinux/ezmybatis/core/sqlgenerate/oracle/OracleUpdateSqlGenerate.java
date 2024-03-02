@@ -11,7 +11,7 @@ import java.util.Collection;
 public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     private static volatile OracleUpdateSqlGenerate instance;
 
-    private OracleUpdateSqlGenerate() {
+    protected OracleUpdateSqlGenerate() {
     }
 
     public static OracleUpdateSqlGenerate getInstance() {

@@ -3,36 +3,35 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
+import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
-public class PostgreSqlLimitConverter extends AbstractConverter<Limit> implements Converter<Limit> {
-    private static volatile PostgreSqlLimitConverter instance;
+public class PostgreSqlPageConverter extends AbstractConverter<Page> implements Converter<Page> {
+    private static volatile PostgreSqlPageConverter instance;
 
-    protected PostgreSqlLimitConverter() {
+    protected PostgreSqlPageConverter() {
     }
 
-    public static PostgreSqlLimitConverter getInstance() {
+    public static PostgreSqlPageConverter getInstance() {
         if (instance == null) {
-            synchronized (PostgreSqlLimitConverter.class) {
+            synchronized (PostgreSqlPageConverter.class) {
                 if (instance == null) {
-                    instance = new PostgreSqlLimitConverter();
+                    instance = new PostgreSqlPageConverter();
                 }
             }
         }
         return instance;
     }
 
-
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Page limit,
                                        MybatisParamHolder mybatisParamHolder) {
         if (limit == null) {
             return sqlBuilder;
         }
-        throw new UnsupportedOperationException("PostgreSQL does not support the LIMIT clause for " +
-                "UPDATE and DELETE operations.");
+        return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" OFFSET ").append(limit.getSkip())
+                .append(" ");
     }
 
     @Override

@@ -7,8 +7,8 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
-import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
+import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 
 public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     private static volatile OracleEzQueryToSql instance;
@@ -31,7 +31,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     protected StringBuilder whereToSql(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
                                        EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
         StringBuilder sql = super.whereToSql(isPage, sqlBuilder, configuration, query, mybatisParamHolder);
-        Limit limit = query.getLimit();
+        Page limit = query.getPage();
         GroupBy groupBy = query.getGroupBy();
         OrderBy orderBy = query.getOrderBy();
         EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();

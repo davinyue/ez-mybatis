@@ -174,4 +174,20 @@ public class OracleUpdateTest extends OracleBaseTest {
         Integer integer = mapper.expandUpdate(merge);
         System.out.println(integer);
     }
+
+    @Test
+    public void limitUpdate() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        EzUpdate ezUpdate = EzUpdate.update(DbTable.of("xxx"))
+                .set().setColumn("xxx", "T1PN")
+                .done()
+                .where()
+                .addColumnCondition("xxx", "XX")
+                .done()
+                .limit(1)
+                .build();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        mapper.ezUpdate(ezUpdate);
+        sqlSession.rollback();
+    }
 }

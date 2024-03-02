@@ -245,4 +245,17 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         sqlSession.commit();
         sqlSession.close();
     }
+
+    @Test
+    public void limitDelete() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzDelete ezDelete = EzDelete.delete(EntityTable.of(User.class))
+                .where().addFieldCondition("id", "1").done()
+                .limit(2)
+                .build();
+        mapper.ezDelete(ezDelete);
+        sqlSession.commit();
+        sqlSession.close();
+    }
 }
