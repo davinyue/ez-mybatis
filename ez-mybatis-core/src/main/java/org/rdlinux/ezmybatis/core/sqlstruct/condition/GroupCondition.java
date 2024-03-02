@@ -16,7 +16,7 @@ public class GroupCondition implements Condition, SqlStruct {
 
     public GroupCondition(boolean sure, List<Condition> conditions, AndOr andOr) {
         Assert.notNull(conditions, "conditions can not be empty");
-        Assert.notNull(andOr, "loginSymbol can not be null");
+        Assert.notNull(andOr, "andOr can not be null");
         this.conditions = conditions;
         this.andOr = andOr;
         this.sure = sure;
