@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.formula;
+package org.rdlinux.ezmybatis.enumeration;
 
 /**
  * 公式运算符

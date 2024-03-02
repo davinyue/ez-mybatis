@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.enumeration.FormulaOperator;
 
 import java.util.LinkedList;
 import java.util.List;

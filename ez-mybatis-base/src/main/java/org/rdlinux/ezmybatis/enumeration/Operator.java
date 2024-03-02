@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.condition;
+package org.rdlinux.ezmybatis.enumeration;
 
 public enum Operator {
     eq("="),

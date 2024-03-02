@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.formula;
 
 import lombok.NoArgsConstructor;
+import org.rdlinux.ezmybatis.enumeration.FormulaOperator;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @NoArgsConstructor

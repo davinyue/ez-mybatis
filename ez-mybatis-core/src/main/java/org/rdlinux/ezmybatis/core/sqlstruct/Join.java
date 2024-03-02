@@ -6,9 +6,9 @@ import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
-import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
+import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -53,8 +53,8 @@ public class Join implements SqlStruct {
             this.join = join;
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure, LogicalOperator logicalOperator) {
-            GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), logicalOperator);
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure, AndOr andOr) {
+            GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), andOr);
             this.conditions.add(condition);
             Join newJoin = new Join();
             newJoin.setTable(this.join.getTable());
@@ -63,16 +63,16 @@ public class Join implements SqlStruct {
             return new JoinBuilder<>(this, newJoin);
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
-            return this.groupCondition(true, logicalOperator);
+        public JoinBuilder<JoinBuilder<Builder>> groupCondition(AndOr andOr) {
+            return this.groupCondition(true, andOr);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
-            return this.groupCondition(LogicalOperator.AND);
+            return this.groupCondition(AndOr.AND);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure) {
-            return this.groupCondition(sure, LogicalOperator.AND);
+            return this.groupCondition(sure, AndOr.AND);
         }
 
         public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, JoinType joinType, Table joinTable) {

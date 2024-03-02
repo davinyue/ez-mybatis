@@ -2,9 +2,9 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlArgCompareArgConditionConverter;
+import org.rdlinux.ezmybatis.enumeration.Operator;
 
 public class PostgreSqlArgCompareArgConditionConverter extends MySqlArgCompareArgConditionConverter
         implements Converter<ArgCompareArgCondition> {

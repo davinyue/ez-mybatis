@@ -8,7 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
+import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 public class MySqlJoinConverter extends AbstractConverter<Join> implements Converter<Join> {
     private static volatile MySqlJoinConverter instance;

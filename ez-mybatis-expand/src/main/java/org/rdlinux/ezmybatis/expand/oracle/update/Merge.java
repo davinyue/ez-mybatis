@@ -8,10 +8,10 @@ import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.expand.oracle.converter.OracleMergeConverter;
 
 import java.util.LinkedList;
@@ -95,19 +95,19 @@ public class Merge implements SqlExpand {
                 this.sonBuilder = this;
             }
 
-            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(boolean sure, LogicalOperator logicalOperator) {
-                GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), logicalOperator);
+            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(boolean sure, AndOr andOr) {
+                GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), andOr);
                 this.conditions.add(condition);
                 return new MergeOnBuilder<>(this, condition.getConditions(), this.table,
                         (EzQueryTable) this.otherTable);
             }
 
-            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(LogicalOperator logicalOperator) {
-                return this.groupCondition(true, logicalOperator);
+            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(AndOr andOr) {
+                return this.groupCondition(true, andOr);
             }
 
             public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(boolean sure) {
-                return this.groupCondition(sure, LogicalOperator.AND);
+                return this.groupCondition(sure, AndOr.AND);
             }
 
             public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition() {

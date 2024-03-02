@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 /**
@@ -9,14 +10,14 @@ import org.rdlinux.ezmybatis.utils.Assert;
  */
 @Getter
 public class SqlCondition implements Condition, SqlStruct {
-    private LogicalOperator logicalOperator;
+    private AndOr andOr;
     private String sql;
 
 
-    public SqlCondition(LogicalOperator logicalOperator, String sql) {
-        Assert.notNull(logicalOperator, "logicalOperator can not be null");
+    public SqlCondition(AndOr andOr, String sql) {
+        Assert.notNull(andOr, "andOr can not be null");
         Assert.notEmpty(sql, "sql can not be empty");
-        this.logicalOperator = logicalOperator;
+        this.andOr = andOr;
         sql = sql.trim();
         if (sql.startsWith("and") || sql.startsWith("AND") || sql.startsWith("aNd") || sql.startsWith("anD") ||
                 sql.startsWith("ANd") || sql.startsWith("aND") || sql.startsWith("AnD") || sql.startsWith("And")) {
@@ -29,7 +30,7 @@ public class SqlCondition implements Condition, SqlStruct {
 
 
     @Override
-    public LogicalOperator getLogicalOperator() {
-        return this.logicalOperator;
+    public AndOr getAndOr() {
+        return this.andOr;
     }
 }

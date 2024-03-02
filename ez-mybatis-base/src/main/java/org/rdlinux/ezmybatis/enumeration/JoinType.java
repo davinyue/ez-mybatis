@@ -1,4 +1,4 @@
-package org.rdlinux.ezmybatis.core.sqlstruct.join;
+package org.rdlinux.ezmybatis.enumeration;
 
 /**
  * join类型枚举

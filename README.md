@@ -253,7 +253,7 @@ EzDelete delete = EzDelete.delete(userTable)
         .addFieldCondition(User.Fields.name, "张三")
         .groupCondition()
         .addFieldCondition(User.Fields.userAge, 55)
-        .addFieldCondition(LogicalOperator.OR, User.Fields.userAge, 78)
+        .addFieldCondition(AndOr.OR, User.Fields.userAge, 78)
         .done()
         .done()
         .build();

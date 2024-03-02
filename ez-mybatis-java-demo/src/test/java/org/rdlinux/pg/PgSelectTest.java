@@ -7,12 +7,13 @@ import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.LogicalOperator;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.Operator;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
+import org.rdlinux.ezmybatis.enumeration.Operator;
+import org.rdlinux.ezmybatis.enumeration.OrderType;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.Org;
 import org.rdlinux.ezmybatis.java.entity.User;
@@ -737,7 +738,7 @@ public class PgSelectTest extends PgBaseTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
                 .where()
                 .addFieldCondition(User.Fields.userAge, 1)
-                .groupCondition(true, LogicalOperator.AND)
+                .groupCondition(true, AndOr.AND)
                 .addFieldCondition(User.Fields.name, "1")
                 .done()
                 .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
@@ -897,7 +898,7 @@ public class PgSelectTest extends PgBaseTest {
                 .done()
                 .where()
                 .addCondition(formula, Operator.ne, ObjArg.of(10))
-                .addCondition(LogicalOperator.OR, formula, Operator.eq, Alias.of("age"))
+                .addCondition(AndOr.OR, formula, Operator.eq, Alias.of("age"))
                 .addCondition(formula, Operator.eq, caseWhen)
                 .addCondition(formula, Operator.eq, TableColumn.of(table, "age"))
                 .addCondition(formula, Operator.eq, EntityField.of(table, User.Fields.userAge))
