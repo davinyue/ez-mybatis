@@ -5,8 +5,12 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
+import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
+import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
@@ -21,11 +25,57 @@ public class DmUpdateTest extends DmBaseTest {
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
-        user.setName("王");
+        user.setName(null);
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).update(user);
         sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void updateByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
+        sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void ezMapperUpdate() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(EzMapper.class).update(user);
+        sqlSession.commit();
+        sqlSession.close();
+        System.out.println(insert);
+    }
+
+    @Test
+    public void ezMapperUpdateByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        int insert = sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
+        sqlSession.commit();
+        sqlSession.close();
         System.out.println(insert);
     }
 
@@ -47,6 +97,70 @@ public class DmUpdateTest extends DmBaseTest {
         int insert = sqlSession.getMapper(UserMapper.class).batchUpdate(users);
         sqlSession.commit();
         System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void batchUpdateByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(UserMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchUpdate() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchUpdate(users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchUpdateByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
     }
 
     @Test
@@ -58,6 +172,43 @@ public class DmUpdateTest extends DmBaseTest {
         int insert = sqlSession.getMapper(UserMapper.class).replace(user);
         sqlSession.commit();
         System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void replaceByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        int insert = sqlSession.getMapper(UserMapper.class).replaceByTable(EntityTable.of(User.class), user);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperReplace() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        int insert = sqlSession.getMapper(EzMapper.class).replace(user);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperReplaceByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        int insert = sqlSession.getMapper(EzMapper.class).replaceByTable(EntityTable.of(User.class), user);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
     }
 
     @Test
@@ -78,19 +229,89 @@ public class DmUpdateTest extends DmBaseTest {
         int insert = sqlSession.getMapper(UserMapper.class).batchReplace(users);
         sqlSession.commit();
         System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void batchReplaceByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(UserMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchReplace() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchReplace(users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperBatchReplaceByTable() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User();
+            user.setId("016cdcdd76f94879ab3d24850514812b");
+            user.setName("芳" + i + 1);
+            if (i == 0) {
+                user.setSex(User.Sex.MAN);
+            } else {
+                user.setUserAge(i);
+            }
+            users.add(user);
+        }
+        int insert = sqlSession.getMapper(EzMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
+        sqlSession.commit();
+        System.out.println(insert);
+        sqlSession.close();
     }
 
     @Test
     public void updateByEzParam() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-                .set().setField("userAge", 1).done()
+        EntityTable table = EntityTable.of(User.class);
+        EzUpdate ezUpdate = EzUpdate.update(table)
+                .set()
+                .setField(User.Fields.userAge, CaseWhen.builder(table).when()
+                        .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
+                .setColumn("name", "张三")
+                .done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
-        int ret = mapper.update(ezUpdate);
+        int ret = mapper.ezUpdate(ezUpdate);
         sqlSession.commit();
         log.info("更新条数{}", ret);
+        sqlSession.close();
     }
 
     @Test
@@ -99,32 +320,192 @@ public class DmUpdateTest extends DmBaseTest {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-                .set().setField("userAge", 1).done()
+                .set().setField("name", "张碧澄").done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         updates.add(ezUpdate);
         ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-                .set().setField("userAge", 2).done()
+                .set().setField("name", "1").done()
                 .where().addFieldCondition("id", "2").done()
                 .build();
         updates.add(ezUpdate);
-        mapper.batchUpdate(updates);
+        mapper.ezBatchUpdate(updates);
         sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void updateSetNull() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                    .set().setField("name", null).done()
+                    .where().addFieldCondition("id", "1").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void caseWhenUpdate() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EntityTable table = EntityTable.of(User.class);
+
+            CaseWhen sonCaseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .els("王二1");
+
+            CaseWhen caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .els("王二1");
+
+            EzUpdate ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsCaseWhen(sonCaseWhen);
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .els("test");
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .els("test");
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsColumn("name");
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsField(User.Fields.name);
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void formulaUpdateTest() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EntityTable table = EntityTable.of(User.class);
+            Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+            EzUpdate ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.userAge, formula).done()
+                    .where()
+                    .addFieldCondition(BaseEntity.Fields.id, "1").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void functionUpdateTest() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EntityTable table = EntityTable.of(User.class);
+            Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
+                    .addValueArg(100).build();
+
+            EzUpdate ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.userAge, function)
+                    .setField(BaseEntity.Fields.updateTime, Keywords.of("SYSDATE"))
+                    .done()
+                    .where()
+                    .addFieldCondition(BaseEntity.Fields.id, "1").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
     }
 
     @Test
     public void limitUpdate() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
-        EzUpdate ezUpdate = EzUpdate.update(DbTable.of("xxx"))
-                .set().setColumn("xxx", "T1PN")
-                .done()
-//                .where()
-//                .addColumnCondition("xxx", "XX")
-//                .done()
-                .limit(1)
-                .build();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set().setField("name", "张碧澄").done()
+                .where().addFieldCondition("id", "1").done()
+                .limit(2)
+                .build();
         mapper.ezUpdate(ezUpdate);
-        sqlSession.rollback();
+        sqlSession.commit();
+        sqlSession.close();
     }
 }
