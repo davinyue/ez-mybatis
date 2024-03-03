@@ -53,7 +53,7 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, SqlCondition.class, OracleSqlConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, GroupCondition.class, OracleGroupConditionConverter.getInstance());
-        EzMybatisContent.addConverter(DbType.ORACLE, ArgCompareArgCondition.class, MySqlArgCompareArgConditionConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, ArgCompareArgCondition.class, OracleArgCompareArgConditionConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, ExistsCondition.class, MySqlExistsConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, EzQuery.class, OracleEzQueryConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Function.class, OracleFunctionConverter.getInstance());
