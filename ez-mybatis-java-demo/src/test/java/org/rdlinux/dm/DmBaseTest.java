@@ -7,9 +7,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
+import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collection;
+import java.util.Date;
 
 public class DmBaseTest {
     protected static SqlSessionFactory sqlSessionFactory;
@@ -24,7 +28,24 @@ public class DmBaseTest {
         }
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
-        EzMybatisContent.init(new EzMybatisConfig(configuration));
+        final EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
+        ezMybatisConfig.setEscapeKeyword(false);
+        EzMybatisContent.init(ezMybatisConfig);
+        EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
+            @Override
+            public void onInsert(Object model) {
+                if (model instanceof BaseEntity) {
+                    System.out.println("插入事件");
+                    ((BaseEntity) model).setUpdateTime(new Date());
+                    ((BaseEntity) model).setCreateTime(new Date());
+                }
+            }
+
+            @Override
+            public void onBatchInsert(Collection<?> models) {
+                models.forEach(this::onInsert);
+            }
+        });
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 }
