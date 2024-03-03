@@ -42,7 +42,7 @@
     </distributionManagement>
     <modules>
         <module>ez-mybatis-core</module>
-        <module>ez-mybatis-base</module>
+        <module>ez-mybatis-define</module>
         <module>ez-mybatis-spring</module>
         <module>ez-mybatis-spring-boot-start</module>
 		<module>ez-mybatis-expand</module>

@@ -9,8 +9,8 @@
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>ez-mybatis-base</artifactId>
-    <name>ez-mybatis-base</name>
+    <artifactId>ez-mybatis-define</artifactId>
+    <name>ez-mybatis-define</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
     <description>ez-mybatis</description>
     <licenses>

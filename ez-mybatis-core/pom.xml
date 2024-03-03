@@ -60,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>org.rdlinux</groupId>
-            <artifactId>ez-mybatis-base</artifactId>
+            <artifactId>ez-mybatis-define</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
