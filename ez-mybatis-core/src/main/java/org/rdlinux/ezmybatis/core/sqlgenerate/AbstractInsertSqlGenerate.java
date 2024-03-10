@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
@@ -135,5 +136,19 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         ret.setSql(sqlBuilder.toString());
         ret.setBatchParams(params);
         return ret;
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                                      EzQuery<?> query) {
+        Assert.notNull(table, "table can not be null");
+        Assert.notNull(table, "query can not be null");
+        Converter<? extends Table> tableConverter = EzMybatisContent.getConverter(configuration, table.getClass());
+        StringBuilder sql = new StringBuilder("INSERT INTO ");
+        tableConverter.buildSql(Converter.Type.INSERT, sql, configuration, table, mybatisParamHolder);
+        Converter<? extends EzQuery> querConverter = EzMybatisContent.getConverter(configuration, query.getClass());
+        querConverter.buildSql(Converter.Type.INSERT, sql, configuration, query, mybatisParamHolder);
+        return sql.toString();
     }
 }

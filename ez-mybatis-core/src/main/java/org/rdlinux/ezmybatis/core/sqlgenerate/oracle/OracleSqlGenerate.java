@@ -47,6 +47,13 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
+    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                                      EzQuery<?> query) {
+        return OracleInsertSqlGenerate.getInstance().getInsertByQuerySql(configuration, mybatisParamHolder, table,
+                query);
+    }
+
+    @Override
     public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
         return OracleSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, table, ntClass, id);

@@ -2,6 +2,7 @@ package org.rdlinux.oracle;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -283,5 +284,21 @@ public class OracleInsertTest extends OracleBaseTest {
         sqlSession.close();
         long end = System.currentTimeMillis();
         System.out.println("jdbc批量插入耗时:" + (end - start));
+    }
+
+    @Test
+    public void insertByQueryTest() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzQuery<SaveTest> query = EzQuery.builder(SaveTest.class)
+                .from(EntityTable.of(SaveTest.class))
+                .select()
+                .addAll()
+                .done()
+                .page(1, 1)
+                .build();
+        mapper.insertByQuery(EntityTable.of(SaveTest.class), query);
+        sqlSession.commit();
+        sqlSession.close();
     }
 }

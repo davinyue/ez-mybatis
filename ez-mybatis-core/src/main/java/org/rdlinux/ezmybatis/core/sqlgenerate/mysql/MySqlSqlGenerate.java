@@ -48,6 +48,12 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
+    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                                      EzQuery<?> query) {
+        return MySqlInsertSqlGenerate.getInstance().getInsertByQuerySql(configuration, mybatisParamHolder, table, query);
+    }
+
+    @Override
     public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
         return MySqlSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
