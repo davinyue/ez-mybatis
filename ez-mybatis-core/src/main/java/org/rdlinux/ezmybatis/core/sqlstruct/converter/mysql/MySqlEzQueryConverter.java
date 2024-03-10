@@ -32,7 +32,7 @@ public class MySqlEzQueryConverter extends AbstractConverter<EzQuery> implements
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        EzQuery obj, MybatisParamHolder mybatisParamHolder) {
         String sql = this.ezQueryToSql(configuration, obj, mybatisParamHolder);
-        if (obj.getPage() != null && type == Type.SELECT) {
+        if (obj.getPage() != null) {
             sql = " (SELECT * FROM " + sql + AliasGenerate.getAlias() + ") ";
         }
         return sqlBuilder.append(sql);
