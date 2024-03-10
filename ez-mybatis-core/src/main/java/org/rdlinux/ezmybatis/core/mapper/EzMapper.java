@@ -199,6 +199,13 @@ public interface EzMapper {
                         @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
+     * 根据Query插入指定表
+     */
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_QUERY_METHOD)
+    Integer insertByQuery(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                          @Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<?> query);
+
+    /**
      * 更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_METHOD)
