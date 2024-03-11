@@ -139,7 +139,6 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
                                       EzQuery<?> query) {
         Assert.notNull(table, "table can not be null");
@@ -147,8 +146,9 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         Converter<? extends Table> tableConverter = EzMybatisContent.getConverter(configuration, table.getClass());
         StringBuilder sql = new StringBuilder("INSERT INTO ");
         tableConverter.buildSql(Converter.Type.INSERT, sql, configuration, table, mybatisParamHolder);
-        Converter<? extends EzQuery> querConverter = EzMybatisContent.getConverter(configuration, query.getClass());
-        querConverter.buildSql(Converter.Type.INSERT, sql, configuration, query, mybatisParamHolder);
+        String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
+                .getQuerySql(configuration, mybatisParamHolder, query);
+        sql.append(" (").append(querySql).append(")");
         return sql.toString();
     }
 }

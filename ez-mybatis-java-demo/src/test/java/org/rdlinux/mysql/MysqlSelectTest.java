@@ -27,12 +27,13 @@ import java.util.concurrent.CountDownLatch;
 @Log4j2
 public class MysqlSelectTest extends MysqlBaseTest {
     @Test
-    public void selectObjectBySqlTest() {
+    public void selectObjectBySqlTest() throws InterruptedException {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         List<User> users = mapper.selectObjectBySql(User.class, "select * from ez_user limit 0,5", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(users));
         sqlSession.close();
+        new CountDownLatch(1).await();
     }
 
     @Test

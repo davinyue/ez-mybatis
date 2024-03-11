@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -24,10 +21,47 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
      */
     protected static final ConcurrentMap<Configuration, ConcurrentMap<String, EntityClassInfo>> ENTITY_INFO_MAP =
             new ConcurrentHashMap<>();
+    private static final String CLASS_TAG = "target" + File.separator + "classes";
+    private static final String CLASS_TEST_TAG = "target" + File.separator + "test-classes";
     private static final Log log = LogFactory.getLog(DefaultEzMybatisEntityInfoCache.class);
 
     public DefaultEzMybatisEntityInfoCache() {
         this.initClassFileChangeWatch();
+    }
+
+    private List<Path> findPath() {
+        //当前项目运行路径
+        Path currentRunPath = Paths.get("").toAbsolutePath();
+        Path parent = currentRunPath.getParent();
+        File parentFile = new File(parent.toUri());
+        //当前路径下的文件夹
+        File[] currentFiles = parentFile.listFiles((dir, name) -> !name.startsWith("."));
+        //下级路径
+        File currentFile = new File(currentRunPath.toUri());
+        File[] sonFiles = currentFile.listFiles((dir, name) -> !name.startsWith("."));
+        List<File> listenFiles = new LinkedList<>();
+        if (currentFiles != null) {
+            listenFiles.addAll(Arrays.asList(currentFiles));
+        }
+        if (sonFiles != null) {
+            listenFiles.addAll(Arrays.asList(sonFiles));
+        }
+        List<Path> sonPaths = new LinkedList<>();
+        for (File file : listenFiles) {
+            if (!file.isDirectory()) {
+                continue;
+            }
+            String absolutePath = file.getAbsolutePath();
+            File sonFile = new File(absolutePath + File.separator + CLASS_TAG);
+            if (sonFile.exists()) {
+                sonPaths.add(Paths.get(absolutePath + File.separator + CLASS_TAG));
+            }
+            sonFile = new File(absolutePath + File.separator + CLASS_TEST_TAG);
+            if (sonFile.exists()) {
+                sonPaths.add(Paths.get(absolutePath + File.separator + CLASS_TEST_TAG));
+            }
+        }
+        return sonPaths;
     }
 
     /**
@@ -46,10 +80,10 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
             log.debug("Hot reloading of class information is only supported for the built artifact directories " +
                     "in the project's \"target/classes\" and \"target/test-classes\".");
         }
-        Path classPath = Paths.get("target/classes").toAbsolutePath();
-        String classPathStr = classPath.toString();
-        Path testClassPath = Paths.get("target/test-classes").toAbsolutePath();
-        String testClassPathStr = testClassPath.toString();
+        List<Path> allPath = this.findPath();
+        if (allPath == null || allPath.isEmpty()) {
+            return;
+        }
         Thread cleanThread = new Thread(() -> {
             try {
                 //创建监视服务类
@@ -60,7 +94,7 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
                         StandardWatchEventKinds.ENTRY_MODIFY};
                 Map<WatchKey, Path> keys = new HashMap<>(16);
                 // 注册子目录到监视服务
-                for (Path path : Arrays.asList(classPath, testClassPath)) {
+                for (Path path : allPath) {
                     Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                         @Override
                         public FileVisitResult preVisitDirectory(Path dir,
@@ -78,13 +112,12 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
                     for (WatchEvent<?> event : watchEvents) {
                         if (event.context().toString().endsWith(".class")) {
                             String packageStr;
-                            if (pathStr.startsWith(classPathStr)) {
-                                packageStr = pathStr.substring(classPathStr.length() + 1).replace(File.separator,
-                                        ".");
-                            } else {
-                                packageStr = pathStr.substring(testClassPathStr.length() + 1).replace(File.separator,
-                                        ".");
+                            String flagStr = CLASS_TAG;
+                            if (pathStr.contains(CLASS_TEST_TAG)) {
+                                flagStr = CLASS_TEST_TAG;
                             }
+                            packageStr = pathStr.substring(pathStr.indexOf(flagStr) + flagStr.length() + 1)
+                                    .replace(File.separator, ".");
                             String className = event.context().toString().split("\\.")[0];
                             String key = packageStr + "." + className;
                             for (ConcurrentMap<String, EntityClassInfo> cache : ENTITY_INFO_MAP.values()) {
@@ -97,7 +130,8 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
                     }
                     watchKey.reset();
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                DefaultEzMybatisEntityInfoCache.log.warn(e.getMessage());
             }
         });
         cleanThread.setDaemon(true);
