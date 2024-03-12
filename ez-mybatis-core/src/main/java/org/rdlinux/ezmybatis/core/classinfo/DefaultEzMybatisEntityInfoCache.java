@@ -81,7 +81,7 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
                     "in the project's \"target/classes\" and \"target/test-classes\".");
         }
         List<Path> allPath = this.findPath();
-        if (allPath == null || allPath.isEmpty()) {
+        if (allPath.isEmpty()) {
             return;
         }
         Thread cleanThread = new Thread(() -> {
