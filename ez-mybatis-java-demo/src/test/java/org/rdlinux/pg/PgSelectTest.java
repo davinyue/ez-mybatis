@@ -613,6 +613,10 @@ public class PgSelectTest extends PgBaseTest {
                 .where()
                 .addFieldCondition(User.Fields.name, "李四")
                 .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 1)
                 .build();
 
         EzQuery<User> wangErSongQuery = EzQuery.builder(User.class).from(table).select()
@@ -620,6 +624,10 @@ public class PgSelectTest extends PgBaseTest {
                 .where()
                 .addFieldCondition(User.Fields.name, "王小二")
                 .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 1)
                 .build();
 
         EzQuery<User> wangErQuery = EzQuery.builder(User.class).from(table).select()
@@ -636,6 +644,10 @@ public class PgSelectTest extends PgBaseTest {
                 .where()
                 .addFieldCondition(User.Fields.name, "张三")
                 .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 1)
                 .union(liSiQuery)
                 .unionAll(wangErQuery)
                 .build();

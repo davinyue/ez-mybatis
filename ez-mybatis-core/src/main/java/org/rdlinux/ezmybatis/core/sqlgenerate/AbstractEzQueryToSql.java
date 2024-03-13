@@ -23,6 +23,14 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.limitToSql(sqlBuilder, configuration, query, paramHolder);
+        if (query.getUnions() != null && !query.getUnions().isEmpty()) {
+            if (query.getOrderBy() != null) {
+                sqlBuilder = new StringBuilder().append(" (SELECT * FROM (").append(sqlBuilder).append(") ")
+                        .append(AliasGenerate.getAlias()).append(") ");
+            } else {
+                sqlBuilder = new StringBuilder().append(" (").append(sqlBuilder).append(") ");
+            }
+        }
         sqlBuilder = this.unionToSql(sqlBuilder, configuration, query, paramHolder);
         return sqlBuilder.toString();
     }
