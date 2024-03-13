@@ -41,7 +41,7 @@ public class EzDelete extends EzParam<Integer> {
             return this;
         }
 
-        public Join.JoinBuilder<EzDeleteBuilder> join(JoinType joinType, Table joinTable) {
+        public Join.JoinBuilder<EzDeleteBuilder> join(boolean sure, JoinType joinType, Table joinTable) {
             if (this.delete.getJoins() == null) {
                 this.delete.joins = new LinkedList<>();
             }
@@ -49,30 +49,62 @@ public class EzDelete extends EzParam<Integer> {
             join.setOnConditions(new LinkedList<>());
             join.setJoinType(joinType);
             join.setTable(this.delete.table);
-            join.setSure(true);
+            join.setSure(sure);
             join.setJoinTable(joinTable);
             this.delete.joins.add(join);
             return new Join.JoinBuilder<>(this, join);
         }
 
-        public Join.JoinBuilder<EzDeleteBuilder> join(Table joinTable) {
-            return this.join(JoinType.InnerJoin, joinTable);
+        public Join.JoinBuilder<EzDeleteBuilder> join(JoinType joinType, Table joinTable) {
+            return this.join(true, joinType, joinTable);
         }
 
-        public Where.WhereBuilder<EzDeleteBuilder> where(Table table) {
-            if (this.delete.where == null) {
-                this.delete.where = new Where(new LinkedList<>());
+        public Join.JoinBuilder<EzDeleteBuilder> join(boolean sure, Table joinTable) {
+            return this.join(sure, JoinType.InnerJoin, joinTable);
+        }
+
+        public Join.JoinBuilder<EzDeleteBuilder> join(Table joinTable) {
+            return this.join(true, JoinType.InnerJoin, joinTable);
+        }
+
+        public Where.WhereBuilder<EzDeleteBuilder> where(boolean sure, Table table) {
+            Where where = this.delete.where;
+            if (where == null) {
+                where = new Where(new LinkedList<>());
+                if (sure) {
+                    this.delete.where = where;
+                }
+            } else {
+                if (!sure) {
+                    where = new Where(new LinkedList<>());
+                }
             }
-            return new Where.WhereBuilder<>(this, this.delete.where, table);
+            return new Where.WhereBuilder<>(this, where, table);
+        }
+
+
+        public Where.WhereBuilder<EzDeleteBuilder> where(Table table) {
+            return this.where(true, table);
+        }
+
+        public Where.WhereBuilder<EzDeleteBuilder> where(boolean sure) {
+            return this.where(sure, this.delete.table);
         }
 
         public Where.WhereBuilder<EzDeleteBuilder> where() {
-            return this.where(this.delete.table);
+            return this.where(true);
+        }
+
+
+        public EzDeleteBuilder limit(boolean sure, int limit) {
+            if (sure) {
+                this.delete.limit = new Limit(limit);
+            }
+            return this;
         }
 
         public EzDeleteBuilder limit(int limit) {
-            this.delete.limit = new Limit(limit);
-            return this;
+            return this.limit(true, limit);
         }
 
         public EzDelete build() {

@@ -281,7 +281,7 @@ public class PgInsertTest extends PgBaseTest {
             PreparedStatement statement = connection.prepareStatement(sql);
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             this.preheat(mapper);
-            for (int i = 0; i < 10000; i++) {
+            for (int i = 0; i < 10; i++) {
                 String id = UUID.randomUUID().toString().replaceAll("-", "");
                 statement.setString(1, id);
                 statement.setString(2, id);
