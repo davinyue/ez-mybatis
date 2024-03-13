@@ -33,7 +33,6 @@ public class MysqlSelectTest extends MysqlBaseTest {
         List<User> users = mapper.selectObjectBySql(User.class, "select * from ez_user limit 0,5", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(users));
         sqlSession.close();
-        new CountDownLatch(1).await();
     }
 
     @Test
@@ -615,6 +614,10 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .where()
                 .addFieldCondition(User.Fields.name, "李四")
                 .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 1)
                 .build();
 
         EzQuery<User> wangErSongQuery = EzQuery.builder(User.class).from(table).select()
@@ -622,6 +625,10 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .where()
                 .addFieldCondition(User.Fields.name, "王小二")
                 .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 1)
                 .build();
 
         EzQuery<User> wangErQuery = EzQuery.builder(User.class).from(table).select()
@@ -638,6 +645,10 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .where()
                 .addFieldCondition(User.Fields.name, "张三")
                 .done()
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
+                .page(1, 1)
                 .union(liSiQuery)
                 .unionAll(wangErQuery)
                 .build();

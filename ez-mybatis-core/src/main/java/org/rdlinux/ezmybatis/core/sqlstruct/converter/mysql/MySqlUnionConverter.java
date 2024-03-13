@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Union;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.utils.AliasGenerate;
 
 public class MySqlUnionConverter extends AbstractConverter<Union> implements Converter<Union> {
     private static volatile MySqlUnionConverter instance;
@@ -29,13 +30,20 @@ public class MySqlUnionConverter extends AbstractConverter<Union> implements Con
     @Override
     protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
                                        Union obj, MybatisParamHolder mybatisParamHolder) {
+        if (obj.getQuery() == null) {
+            return sqlBuilder;
+        }
         sqlBuilder.append(" UNION ");
         if (obj.isAll()) {
             sqlBuilder.append(" ALL ");
         }
-        sqlBuilder.append("\n");
-        sqlBuilder.append(SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, mybatisParamHolder, obj.getQuery()));
+        sqlBuilder.append("\n(");
+        String unionSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
+                .getQuerySql(configuration, mybatisParamHolder, obj.getQuery());
+        if (obj.getQuery().getOrderBy() != null) {
+            unionSql = String.format("SELECT * FROM (%s) %s", unionSql, AliasGenerate.getAlias());
+        }
+        sqlBuilder.append(unionSql).append(") ");
         return sqlBuilder;
     }
 

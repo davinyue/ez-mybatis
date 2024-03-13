@@ -78,48 +78,125 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             return this.join(sure, JoinType.InnerJoin, joinTable);
         }
 
-        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(Table table) {
+        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure, Table table) {
+            Where where = this.query.where;
             if (this.query.where == null) {
-                this.query.where = new Where(new LinkedList<>());
+                where = new Where(new LinkedList<>());
+                if (sure) {
+                    this.query.where = where;
+                }
+            } else {
+                if (!sure) {
+                    where = new Where(new LinkedList<>());
+                }
             }
-            return new Where.WhereBuilder<>(this, this.query.where, table);
+            return new Where.WhereBuilder<>(this, where, table);
+        }
+
+        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(Table table) {
+            return this.where(true, table);
+        }
+
+        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure) {
+            return this.where(sure, this.query.table);
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where() {
-            return this.where(this.query.table);
+            return this.where(true);
+        }
+
+        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure, Table table) {
+            GroupBy groupBy = this.query.groupBy;
+            if (this.query.groupBy == null) {
+                groupBy = new GroupBy(new LinkedList<>());
+                if (sure) {
+                    this.query.groupBy = groupBy;
+                }
+            } else {
+                if (!sure) {
+                    groupBy = new GroupBy(new LinkedList<>());
+                }
+            }
+            return new GroupBy.GroupBuilder<>(this, groupBy, table);
         }
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(Table table) {
-            if (this.query.groupBy == null) {
-                this.query.groupBy = new GroupBy(new LinkedList<>());
-            }
-            return new GroupBy.GroupBuilder<>(this, this.query.groupBy, table);
+            return this.groupBy(true, table);
+        }
+
+        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure) {
+            return this.groupBy(sure, this.query.table);
         }
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy() {
-            return this.groupBy(this.query.table);
+            return this.groupBy(true);
+        }
+
+        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure, Table table) {
+            OrderBy orderBy = this.query.orderBy;
+            if (this.query.orderBy == null) {
+                orderBy = new OrderBy(new LinkedList<>());
+                if (sure) {
+                    this.query.orderBy = orderBy;
+                }
+            } else {
+                if (!sure) {
+                    orderBy = new OrderBy(new LinkedList<>());
+                }
+            }
+            return new OrderBy.OrderBuilder<>(this, orderBy, table);
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(Table table) {
-            if (this.query.orderBy == null) {
-                this.query.orderBy = new OrderBy(new LinkedList<>());
-            }
-            return new OrderBy.OrderBuilder<>(this, this.query.orderBy, table);
+            return this.orderBy(true, table);
+        }
+
+        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure) {
+            return this.orderBy(sure, this.query.table);
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy() {
-            return this.orderBy(this.query.table);
+            return this.orderBy(true);
+        }
+
+        public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure, Table table) {
+            Having having = this.query.having;
+            if (this.query.having == null) {
+                having = new Having(new LinkedList<>());
+                if (sure) {
+                    this.query.having = having;
+                }
+            } else {
+                if (!sure) {
+                    having = new Having(new LinkedList<>());
+                }
+            }
+            return new Having.HavingBuilder<>(this, having, table);
         }
 
         public Having.HavingBuilder<EzQueryBuilder<Rt>> having(Table table) {
-            if (this.query.having == null) {
-                this.query.having = new Having(new LinkedList<>());
-            }
-            return new Having.HavingBuilder<>(this, this.query.having, table);
+            return this.having(true, table);
+        }
+
+        public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure) {
+            return this.having(sure, this.query.table);
         }
 
         public Having.HavingBuilder<EzQueryBuilder<Rt>> having() {
-            return this.having(this.query.table);
+            return this.having(true);
+        }
+
+        /**
+         * 分页
+         *
+         * @param currentPage 当前页, 最小为1
+         * @param pageSize    页大小
+         */
+        public EzQueryBuilder<Rt> page(boolean sure, int currentPage, int pageSize) {
+            if (sure) {
+                this.query.page = new Page(this.query, (currentPage - 1) * pageSize, pageSize);
+            }
+            return this;
         }
 
         /**
@@ -129,7 +206,16 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * @param pageSize    页大小
          */
         public EzQueryBuilder<Rt> page(int currentPage, int pageSize) {
-            this.query.page = new Page(this.query, (currentPage - 1) * pageSize, pageSize);
+            return this.page(true, currentPage, pageSize);
+        }
+
+        /**
+         * 限定
+         */
+        public EzQueryBuilder<Rt> limit(boolean sure, int limit) {
+            if (sure) {
+                this.query.limit = new Limit(limit);
+            }
             return this;
         }
 
@@ -137,7 +223,19 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 限定
          */
         public EzQueryBuilder<Rt> limit(int limit) {
-            this.query.limit = new Limit(limit);
+            return this.limit(true, limit);
+        }
+
+        /**
+         * 联合查询
+         */
+        public EzQueryBuilder<Rt> union(boolean sure, EzQuery<?> query) {
+            if (sure) {
+                if (this.query.unions == null) {
+                    this.query.unions = new LinkedList<>();
+                }
+                this.query.unions.add(new Union(false, query));
+            }
             return this;
         }
 
@@ -145,10 +243,19 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 联合查询
          */
         public EzQueryBuilder<Rt> union(EzQuery<?> query) {
-            if (this.query.unions == null) {
-                this.query.unions = new LinkedList<>();
+            return this.union(true, query);
+        }
+
+        /**
+         * 联合查询
+         */
+        public EzQueryBuilder<Rt> unionAll(boolean sure, EzQuery<?> query) {
+            if (sure) {
+                if (this.query.unions == null) {
+                    this.query.unions = new LinkedList<>();
+                }
+                this.query.unions.add(new Union(true, query));
             }
-            this.query.unions.add(new Union(false, query));
             return this;
         }
 
@@ -156,11 +263,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 联合查询
          */
         public EzQueryBuilder<Rt> unionAll(EzQuery<?> query) {
-            if (this.query.unions == null) {
-                this.query.unions = new LinkedList<>();
-            }
-            this.query.unions.add(new Union(true, query));
-            return this;
+            return this.unionAll(true, query);
         }
 
         public EzQuery<Rt> build() {
