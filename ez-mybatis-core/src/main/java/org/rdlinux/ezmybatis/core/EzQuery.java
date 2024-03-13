@@ -41,15 +41,32 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             return this;
         }
 
-        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(Table table) {
-            if (this.query.select == null) {
-                this.query.select = new Select(this.query, new LinkedList<>());
+        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(boolean sure, Table table) {
+            Select select = this.query.select;
+            if (select == null) {
+                select = new Select(this.query, new LinkedList<>());
+                if (sure) {
+                    this.query.select = select;
+                }
+            } else {
+                if (!sure) {
+                    select = new Select(this.query, new LinkedList<>());
+                }
             }
-            return new Select.EzSelectBuilder<>(this, this.query.select, table);
+            return new Select.EzSelectBuilder<>(this, select, table);
+        }
+
+
+        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(Table table) {
+            return this.select(true, table);
+        }
+
+        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(boolean sure) {
+            return this.select(sure, this.query.table);
         }
 
         public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select() {
-            return this.select(this.query.table);
+            return this.select(true);
         }
 
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, JoinType joinType, Table joinTable) {
@@ -80,7 +97,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure, Table table) {
             Where where = this.query.where;
-            if (this.query.where == null) {
+            if (where == null) {
                 where = new Where(new LinkedList<>());
                 if (sure) {
                     this.query.where = where;
@@ -107,7 +124,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure, Table table) {
             GroupBy groupBy = this.query.groupBy;
-            if (this.query.groupBy == null) {
+            if (groupBy == null) {
                 groupBy = new GroupBy(new LinkedList<>());
                 if (sure) {
                     this.query.groupBy = groupBy;
@@ -134,7 +151,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure, Table table) {
             OrderBy orderBy = this.query.orderBy;
-            if (this.query.orderBy == null) {
+            if (orderBy == null) {
                 orderBy = new OrderBy(new LinkedList<>());
                 if (sure) {
                     this.query.orderBy = orderBy;
@@ -161,7 +178,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure, Table table) {
             Having having = this.query.having;
-            if (this.query.having == null) {
+            if (having == null) {
                 having = new Having(new LinkedList<>());
                 if (sure) {
                     this.query.having = having;
