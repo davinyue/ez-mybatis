@@ -956,4 +956,19 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(JacksonUtils.toJsonString(users));
         sqlSession.close();
     }
+
+    @Test
+    public void limitQuery() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
+                .where()
+                .addFieldNotBtCondition(User.Fields.userAge, 1, 100)
+                .done()
+                .limit(1)
+                .build();
+        System.out.println(mapper.query(query));
+        sqlSession.close();
+    }
 }

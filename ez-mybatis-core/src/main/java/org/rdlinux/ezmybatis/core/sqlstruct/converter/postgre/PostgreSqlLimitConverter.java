@@ -31,8 +31,12 @@ public class PostgreSqlLimitConverter extends AbstractConverter<Limit> implement
         if (limit == null) {
             return sqlBuilder;
         }
-        throw new UnsupportedOperationException("PostgreSQL does not support the LIMIT clause for " +
-                "UPDATE and DELETE operations.");
+        if (type != Type.SELECT) {
+            throw new UnsupportedOperationException("PostgreSQL does not support the LIMIT clause for " +
+                    "UPDATE and DELETE and INSERT operations.");
+        } else {
+            return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" ");
+        }
     }
 
     @Override
