@@ -67,15 +67,14 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
 
     protected StringBuilder handleWhereLimit(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                              MybatisParamHolder mybatisParamHolder) {
-        Limit limit = update.getLimit();
-        if (limit == null) {
+        if (update.getLimit() == null) {
             return sqlBuilder;
         }
         if (update.getWhere() == null) {
             sqlBuilder.append(" WHERE 1 = 1 ");
         }
         Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
-        converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, limit, mybatisParamHolder);
+        converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, update.getLimit(), mybatisParamHolder);
         return sqlBuilder;
     }
 

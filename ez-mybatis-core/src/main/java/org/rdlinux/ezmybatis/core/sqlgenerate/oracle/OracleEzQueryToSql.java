@@ -7,8 +7,10 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
+import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
 public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     private static volatile OracleEzQueryToSql instance;
@@ -46,5 +48,19 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
             sql.append(" ROWNUM <= ").append(limit.getSkip() + limit.getSize());
         }
         return sql;
+    }
+
+    @Override
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
+                                       MybatisParamHolder paramHolder) {
+        Limit limit = query.getLimit();
+        if (limit == null) {
+            return sqlBuilder;
+        }
+        if (query.getWhere() == null) {
+            sqlBuilder.append(" WHERE 1 = 1 ");
+        }
+        Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, limit, paramHolder);
     }
 }
