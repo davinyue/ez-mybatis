@@ -227,7 +227,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         /**
-         * 限定
+         * 限定, 当存在分页时, 限定将失效
          */
         public EzQueryBuilder<Rt> limit(boolean sure, int limit) {
             if (sure) {
@@ -237,7 +237,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         /**
-         * 限定
+         * 限定, 当存在分页时, 限定将失效
          */
         public EzQueryBuilder<Rt> limit(int limit) {
             return this.limit(true, limit);

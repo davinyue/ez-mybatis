@@ -19,10 +19,14 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.whereToSql(true, sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.onWhereToSqlEnd(true, sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.limitToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.pageToSql(sqlBuilder, configuration, query, paramHolder);
+        if (query.getPage() == null) {
+            sqlBuilder = this.limitToSql(sqlBuilder, configuration, query, paramHolder);
+        }
         if (query.getUnions() != null && !query.getUnions().isEmpty()) {
             if (query.getOrderBy() != null) {
                 sqlBuilder = new StringBuilder().append(" (SELECT * FROM (").append(sqlBuilder).append(") ")
@@ -35,6 +39,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         return sqlBuilder.toString();
     }
 
+
     @Override
     public String toCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
         Assert.notNull(query, "query can not be null");
@@ -43,6 +48,7 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.whereToSql(false, sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.onWhereToSqlEnd(false, sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
         if (query.getGroupBy() != null && !query.getGroupBy().getItems().isEmpty()) {
@@ -50,6 +56,14 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         } else {
             return sqlBuilder.toString();
         }
+    }
+
+    /**
+     * @param isPage 是否分页
+     */
+    protected StringBuilder onWhereToSqlEnd(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
+                                            EzQuery<?> query, MybatisParamHolder paramHolder) {
+        return sqlBuilder;
     }
 
     protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
@@ -84,6 +98,13 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
             sqlBuilder = converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, union, paramHolder);
         }
         return sqlBuilder;
+    }
+
+    protected StringBuilder pageToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
+                                      MybatisParamHolder paramHolder) {
+        Page page = query.getPage();
+        Converter<Page> converter = EzMybatisContent.getConverter(configuration, Page.class);
+        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, page, paramHolder);
     }
 
     protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
