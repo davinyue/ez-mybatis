@@ -32,7 +32,7 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     @Override
     protected StringBuilder onWhereToSqlEnd(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
                                             EzQuery<?> query, MybatisParamHolder paramHolder) {
-        if (query.getPage() != null || !isPage) {
+        if (!isPage || query.getPage() != null) {
             return sqlBuilder;
         }
         Limit limit = query.getLimit();
