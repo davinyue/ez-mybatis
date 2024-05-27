@@ -121,9 +121,11 @@ public class OracleSelectTest extends OracleBaseTest {
                 .addField(User.Fields.name, OrderType.DESC)
                 .done()
                 .page(1, 5)
+                .limit(1)
                 .build();
         List<User> users = sqlSession.getMapper(EzMapper.class).query(query);
         System.out.println(JacksonUtils.toJsonString(users));
+        sqlSession.getMapper(EzMapper.class).queryCount(query);
         sqlSession.close();
     }
 

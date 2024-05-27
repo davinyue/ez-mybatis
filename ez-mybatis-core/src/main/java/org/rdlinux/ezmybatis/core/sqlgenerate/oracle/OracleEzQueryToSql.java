@@ -30,29 +30,11 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder whereToSql(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
-                                       EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
-        StringBuilder sql = super.whereToSql(isPage, sqlBuilder, configuration, query, mybatisParamHolder);
-        Page limit = query.getPage();
-        GroupBy groupBy = query.getGroupBy();
-        OrderBy orderBy = query.getOrderBy();
-        EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();
-        if (isPage && !ezMybatisConfig.isEnableOracleOffsetFetchPage() && limit != null &&
-                (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
-                && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
-            if (query.getWhere() == null) {
-                sql.append(" WHERE ");
-            } else {
-                sql.append(" AND ");
-            }
-            sql.append(" ROWNUM <= ").append(limit.getSkip() + limit.getSize());
+    protected StringBuilder onWhereToSqlEnd(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
+                                            EzQuery<?> query, MybatisParamHolder paramHolder) {
+        if (query.getPage() != null || !isPage) {
+            return sqlBuilder;
         }
-        return sql;
-    }
-
-    @Override
-    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
-                                       MybatisParamHolder paramHolder) {
         Limit limit = query.getLimit();
         if (limit == null) {
             return sqlBuilder;
@@ -62,5 +44,32 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
         }
         Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
         return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, limit, paramHolder);
+    }
+
+    @Override
+    protected StringBuilder whereToSql(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
+                                       EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
+        StringBuilder sql = super.whereToSql(isPage, sqlBuilder, configuration, query, mybatisParamHolder);
+        Page page = query.getPage();
+        GroupBy groupBy = query.getGroupBy();
+        OrderBy orderBy = query.getOrderBy();
+        EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();
+        if (isPage && !ezMybatisConfig.isEnableOracleOffsetFetchPage() && page != null &&
+                (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
+                && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
+            if (query.getWhere() == null) {
+                sql.append(" WHERE ");
+            } else {
+                sql.append(" AND ");
+            }
+            sql.append(" ROWNUM <= ").append(page.getSkip() + page.getSize());
+        }
+        return sql;
+    }
+
+    @Override
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
+                                       MybatisParamHolder paramHolder) {
+        return sqlBuilder;
     }
 }
