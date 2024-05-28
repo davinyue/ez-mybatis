@@ -190,6 +190,36 @@ public class OracleInsertTest extends OracleBaseTest {
         sqlSession.close();
     }
 
+    @Test
+    public void jdbcInsertTest() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        for (int i = 0; i < 5; i++) {
+            User user = new User();
+            user.setUpdateTime(new Date());
+            user.setCreateTime(new Date());
+            user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            user.setName("芳" + (i + 1));
+            user.setUserAge(27 + i);
+            user.setSex(User.Sex.MAN);
+            users.add(user);
+        }
+        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(sqlSession);
+        int ct = jdbcInsertDao.batchInsert(users);
+        System.out.println("批量插入" + ct + "条");
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.insert(user);
+        System.out.println("单条插入" + sCt + "条");
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
 
     /**
      * 预热
