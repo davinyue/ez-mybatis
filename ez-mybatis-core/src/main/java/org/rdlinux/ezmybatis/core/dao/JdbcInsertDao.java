@@ -82,14 +82,22 @@ public class JdbcInsertDao {
                     TypeHandler typeHandler = param.getTypeHandler();
                     typeHandler.setParameter(statement, i + 1, param.getValue(), param.getJdbcType());
                 }
-                statement.addBatch();
+                if (jdbcBatchSql.getBatchParams().size() > 1) {
+                    statement.addBatch();
+                }
             }
             if (log.isDebugEnabled()) {
                 end = System.currentTimeMillis();
                 log.debug("SQL parameter setting takes: " + (end - start) + "ms");
             }
             start = System.currentTimeMillis();
-            int[] intRets = statement.executeBatch();
+            int[] intRets;
+            if (jdbcBatchSql.getBatchParams().size() == 1) {
+                statement.execute();
+                intRets = new int[]{1};
+            } else {
+                intRets = statement.executeBatch();
+            }
             if (log.isDebugEnabled()) {
                 end = System.currentTimeMillis();
                 log.debug("SQL execution takes: " + (end - start) + "ms");
@@ -97,7 +105,7 @@ public class JdbcInsertDao {
             int ret = 0;
             for (int intRet : intRets) {
                 if (intRet == -2) {
-                    ret = -2;
+                    ret = models.size();
                     break;
                 }
                 ret = ret + intRet;
