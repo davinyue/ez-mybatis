@@ -500,8 +500,11 @@ public class MysqlSelectTest extends MysqlBaseTest {
     @Test
     public void selectMapBySql() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        Map<String, Object> param = new HashMap<>();
+        param.put("ids", Arrays.asList("1", "2"));
         List<Map<String, Object>> users = sqlSession.getMapper(EzMapper.class)
-                .selectMapBySql("select * from ez_user", new HashMap<>());
+                .selectMapBySql("select * from ez_user where id in (${ids}) and id in ${ids} and id in $ { ids }" +
+                        "and id Not In #{ids}  and id Not In (#{ids})", param);
         sqlSession.close();
         System.out.println(JacksonUtils.toJsonString(users));
     }
