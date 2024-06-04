@@ -477,7 +477,6 @@ public class OracleUpdateTest extends OracleBaseTest {
             EntityTable table = EntityTable.of(User.class);
             Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
                     .addValueArg(100).build();
-
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, function)
                     .setField(BaseEntity.Fields.updateTime, Keywords.of("SYSDATE"))
