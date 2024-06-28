@@ -68,5 +68,6 @@ public class PostgreSqlConverterRegister {
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Sql.class, MySqlSqlConverter.getInstance());
         EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Limit.class, PostgreSqlLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, SqlHint.class, PostgreSqlHintConverter.getInstance());
     }
 }

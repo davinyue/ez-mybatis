@@ -960,4 +960,17 @@ public class OracleSelectTest extends OracleBaseTest {
         System.out.println(mapper.query(query));
         sqlSession.close();
     }
+
+    @Test
+    public void hintTest() {
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select()
+                .withHint("MAX_EXECUTION_TIME(1000)")
+                .addAll().done()
+                .limit(1).build();
+        System.out.println(mapper.query(query));
+        sqlSession.close();
+    }
 }

@@ -67,5 +67,6 @@ public class MySqlConverterRegister {
         EzMybatisContent.addConverter(DbType.MYSQL, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Sql.class, MySqlSqlConverter.getInstance());
         EzMybatisContent.addConverter(DbType.MYSQL, Limit.class, MySqlLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.MYSQL, SqlHint.class, MySqlSqlHintConverter.getInstance());
     }
 }

@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectItem;
@@ -35,6 +36,11 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
             return sqlBuilder;
         }
         sqlBuilder.append("SELECT ");
+        if (select.getSqlHint() != null) {
+            Converter<? extends SqlHint> sqlHintConverter = EzMybatisContent.getConverter(configuration,
+                    select.getSqlHint().getClass());
+            sqlHintConverter.buildSql(type, sqlBuilder, configuration, select.getSqlHint(), mybatisParamHolder);
+        }
         if (select.isDistinct()) {
             sqlBuilder.append("DISTINCT ");
         }

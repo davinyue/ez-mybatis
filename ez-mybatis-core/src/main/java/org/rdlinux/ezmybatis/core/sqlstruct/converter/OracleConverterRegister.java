@@ -68,5 +68,6 @@ public class OracleConverterRegister {
         EzMybatisContent.addConverter(DbType.ORACLE, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Sql.class, MySqlSqlConverter.getInstance());
         EzMybatisContent.addConverter(DbType.ORACLE, Limit.class, OracleLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.ORACLE, SqlHint.class, OracleSqlHintConverter.getInstance());
     }
 }

@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
@@ -23,10 +24,13 @@ public class Select implements SqlStruct {
      */
     private EzQuery<?> query;
     /**
+     * sql提示
+     */
+    private SqlHint sqlHint;
+    /**
      * 是否去重
      */
     private boolean distinct = false;
-    ;
     /**
      * 查询项
      */
@@ -409,6 +413,23 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addValue(Object value, String alias) {
             return this.addValue(true, value, alias);
+        }
+
+        /**
+         * 指定sql提示
+         */
+        public EzSelectBuilder<T> withHint(String hint) {
+            return this.withHint(true, hint);
+        }
+
+        /**
+         * 指定sql提示
+         */
+        public EzSelectBuilder<T> withHint(boolean sure, String hint) {
+            if (sure && StringUtils.isNotEmpty(hint)) {
+                this.select.sqlHint = new SqlHint(hint);
+            }
+            return this;
         }
     }
 }
