@@ -69,5 +69,6 @@ public class DmConverterRegister {
         EzMybatisContent.addConverter(DbType.DM, ObjArg.class, MySqlObjArgConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Sql.class, MySqlSqlConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Limit.class, DmLimitConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.DM, SqlHint.class, DmSqlHintConverter.getInstance());
     }
 }

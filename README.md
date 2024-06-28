@@ -6,7 +6,7 @@ ez-mybatis通过mybatis拦截器机制, 实现数据的增删查改并支持部�
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.8.1.RS</version>
+    <version>0.8.2.RS</version>
 </dependency>
 ```
 
@@ -120,7 +120,7 @@ public void updateByEzParam() {
             .addFieldCondition("id", "1")
             .done()
             .build();
-    this.mapper.ezUpdate(ezUpdate);
+    this.ezMapper.ezUpdate(ezUpdate);
 }
 ```
 
@@ -140,7 +140,7 @@ public void formulaUpdateTest() {
             .where()
             .addFieldCondition(BaseEntity.Fields.id, "1").done()
             .build();
-    this.mapper.ezUpdate(ezUpdate);
+    this.ezMapper.ezUpdate(ezUpdate);
 }
 ```
 
@@ -165,7 +165,7 @@ public void functionUpdateTest() {
             .where()
             .addFieldCondition(BaseEntity.Fields.id, "1").done()
             .build();
-    this.mapper.ezUpdate(ezUpdate);
+    this.ezMapper.ezUpdate(ezUpdate);
 }
 ```
 
@@ -203,7 +203,7 @@ public void functionUpdateTest() {
             .addFieldCondition(BaseEntity.Fields.id, Operator.in, Arrays.asList("1", "2","3","4"))
             .done()
             .build();
-    this.mapper.ezUpdate(ezUpdate);
+    this.ezMapper.ezUpdate(ezUpdate);
 }
 ```
 
@@ -257,7 +257,7 @@ EzDelete delete = EzDelete.delete(userTable)
         .done()
         .done()
         .build();
-this.ezDelete(delete);
+this.ezMapper.ezDelete(delete);
 ```
 
 # 查询
