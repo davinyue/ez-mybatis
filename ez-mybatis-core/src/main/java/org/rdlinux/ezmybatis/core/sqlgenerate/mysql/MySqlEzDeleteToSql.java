@@ -44,9 +44,6 @@ public class MySqlEzDeleteToSql extends AbstractEzDeleteToSql {
     @Override
     protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
                                        MybatisParamHolder mybatisParamHolder) {
-        if (delete.getDeletes().size() != 1) {
-            return sqlBuilder;
-        }
         Limit limit = delete.getLimit();
         Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
         return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, limit, mybatisParamHolder);
