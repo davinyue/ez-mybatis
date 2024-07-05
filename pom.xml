@@ -6,7 +6,7 @@
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis</artifactId>
     <packaging>pom</packaging>
-    <version>0.8.3.RS</version>
+    <version>0.8.4.RS</version>
     <name>ez-mybatis</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
     <description>ez-mybatis</description>
@@ -45,7 +45,7 @@
         <module>ez-mybatis-define</module>
         <module>ez-mybatis-spring</module>
         <module>ez-mybatis-spring-boot-start</module>
-		<module>ez-mybatis-expand</module>
+        <module>ez-mybatis-expand</module>
         <module>ez-mybatis-java-demo</module>
     </modules>
     <build>

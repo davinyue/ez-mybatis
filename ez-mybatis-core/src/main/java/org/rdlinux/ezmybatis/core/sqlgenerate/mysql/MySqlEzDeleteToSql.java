@@ -32,9 +32,6 @@ public class MySqlEzDeleteToSql extends AbstractEzDeleteToSql {
     protected StringBuilder deleteToSql(StringBuilder sqlBuilder, EzDelete delete) {
         StringBuilder sql = super.deleteToSql(sqlBuilder, delete);
         List<Table> deleteTables = delete.getDeletes();
-        if (deleteTables.size() == 1) {
-            return sql;
-        }
         for (int i = 0; i < deleteTables.size(); i++) {
             sql.append(deleteTables.get(i).getAlias());
             if (i + 1 < deleteTables.size()) {
