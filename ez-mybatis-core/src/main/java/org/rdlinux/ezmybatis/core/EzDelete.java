@@ -3,7 +3,6 @@ package org.rdlinux.ezmybatis.core;
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -16,7 +15,6 @@ import java.util.List;
 public class EzDelete extends EzParam<Integer> {
     private List<Table> deletes = new LinkedList<>();
     private List<Join> joins;
-    private Limit limit;
 
     private EzDelete() {
         super(Integer.class);
@@ -93,18 +91,6 @@ public class EzDelete extends EzParam<Integer> {
 
         public Where.WhereBuilder<EzDeleteBuilder> where() {
             return this.where(true);
-        }
-
-
-        public EzDeleteBuilder limit(boolean sure, int limit) {
-            if (sure) {
-                this.delete.limit = new Limit(limit);
-            }
-            return this;
-        }
-
-        public EzDeleteBuilder limit(int limit) {
-            return this.limit(true, limit);
         }
 
         public EzDelete build() {
