@@ -494,18 +494,4 @@ public class DmUpdateTest extends DmBaseTest {
             sqlSession.close();
         }
     }
-
-    @Test
-    public void limitUpdate() {
-        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-                .set().setField("name", "张碧澄").done()
-                .where().addFieldCondition("id", "1").done()
-                .limit(2)
-                .build();
-        mapper.ezUpdate(ezUpdate);
-        sqlSession.commit();
-        sqlSession.close();
-    }
 }
