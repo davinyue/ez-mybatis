@@ -30,6 +30,10 @@ public class MySqlLimitConverter extends AbstractConverter<Limit> implements Con
         if (limit == null) {
             return sqlBuilder;
         }
+        if (type != Type.SELECT) {
+            throw new UnsupportedOperationException("MySql does not support the LIMIT clause for " +
+                    "UPDATE and DELETE and INSERT operations.");
+        }
         return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" ");
     }
 
