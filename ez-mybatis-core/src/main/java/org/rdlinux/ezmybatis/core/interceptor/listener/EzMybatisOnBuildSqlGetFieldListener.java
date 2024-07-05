@@ -20,6 +20,6 @@ public interface EzMybatisOnBuildSqlGetFieldListener {
      * 执行顺序, 约小越优先
      */
     default int order() {
-        return 1;
+        return 0;
     }
 }

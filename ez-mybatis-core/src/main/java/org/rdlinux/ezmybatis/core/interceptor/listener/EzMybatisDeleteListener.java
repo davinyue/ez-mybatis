@@ -15,6 +15,6 @@ public interface EzMybatisDeleteListener {
     void onBatchDeleteById(Collection<Object> ids, Class<?> ntClass);
 
     default int order() {
-        return 1;
+        return 0;
     }
 }
