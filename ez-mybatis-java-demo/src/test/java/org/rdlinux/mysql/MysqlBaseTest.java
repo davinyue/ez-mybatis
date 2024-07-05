@@ -7,9 +7,14 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 
 import java.io.IOException;
@@ -18,7 +23,7 @@ import java.util.Collection;
 import java.util.Date;
 
 public class MysqlBaseTest {
-    public static SqlSessionFactory sqlSessionFactory;
+    protected static SqlSessionFactory sqlSessionFactory;
 
     static {
         String resource = "mybatis-config.xml";
@@ -43,8 +48,8 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchInsert(Collection<Object> entitys) {
-                entitys.forEach(this::onInsert);
+            public void onBatchInsert(Collection<?> models) {
+                models.forEach(this::onInsert);
             }
         });
         EzMybatisContent.addDeleteListener(ezMybatisConfig, new EzMybatisDeleteListener() {
@@ -55,8 +60,8 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchDelete(Collection<Object> entitys) {
-                entitys.forEach(this::onDelete);
+            public void onBatchDelete(Collection<Object> models) {
+                models.forEach(this::onDelete);
             }
 
             @Override
@@ -78,7 +83,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchUpdate(Collection<Object> entitys) {
+            public void onBatchUpdate(Collection<Object> models) {
                 System.out.println("更新事件");
             }
 
@@ -88,9 +93,35 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchReplace(Collection<Object> entitys) {
+            public void onBatchReplace(Collection<Object> models) {
                 System.out.println("替换事件");
             }
+
+            @Override
+            public void onEzUpdate(EzUpdate ezUpdate) {
+                Table table = ezUpdate.getTable();
+                if (table instanceof EntityTable) {
+                    Class<?> etType = ((EntityTable) table).getEtType();
+                    if (BaseEntity.class.isAssignableFrom(etType)) {
+                        ezUpdate.getSet().getItems().add(new UpdateFieldItem(((EntityTable) table),
+                                BaseEntity.Fields.updateTime, ObjArg.of(new Date())));
+                    }
+                }
+
+            }
+
+            @Override
+            public void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
+                ezUpdates.forEach(this::onEzUpdate);
+            }
+        });
+        EzMybatisContent.addFieldSetListener(ezMybatisConfig, (obj, field, value) -> {
+            System.out.println("设置" + obj.getClass().getSimpleName() + "类的" + field + "属性值为" + value);
+            return value;
+        });
+        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (ntType, field, value) -> {
+            System.out.println("构建sql时获取" + ntType.getSimpleName() + "类的" + field.getName() + "属性值为" + value);
+            return value;
         });
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }

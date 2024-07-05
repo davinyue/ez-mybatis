@@ -188,6 +188,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         for (int i = 0; i < 2; i++) {
             users.add("016cdcdd76f94879ab3d24850514812b" + i);
         }
+        users.add(null);
         int insert = sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, users);
         sqlSession.commit();
         sqlSession.close();
@@ -241,6 +242,19 @@ public class MysqlDeleteTest extends MysqlBaseTest {
                 .build();
         deletes.add(delete);
         sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void limitDelete() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzDelete ezDelete = EzDelete.delete(EntityTable.of(User.class))
+                .where().addFieldCondition("id", "1").done()
+                .limit(2)
+                .build();
+        mapper.ezDelete(ezDelete);
         sqlSession.commit();
         sqlSession.close();
     }

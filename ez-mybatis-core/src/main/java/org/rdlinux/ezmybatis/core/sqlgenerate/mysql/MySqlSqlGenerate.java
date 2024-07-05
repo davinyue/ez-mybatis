@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
@@ -13,7 +14,7 @@ import java.util.Collection;
 public class MySqlSqlGenerate implements SqlGenerate {
     private static volatile MySqlSqlGenerate instance;
 
-    private MySqlSqlGenerate() {
+    protected MySqlSqlGenerate() {
     }
 
     public static MySqlSqlGenerate getInstance() {
@@ -36,9 +37,20 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys) {
+                                    Table table, Collection<Object> models) {
         return MySqlInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
-                entitys);
+                models);
+    }
+
+    @Override
+    public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
+        return MySqlInsertSqlGenerate.getInstance().getJdbcBatchInsertSql(configuration, table, models);
+    }
+
+    @Override
+    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                                      EzQuery<?> query) {
+        return MySqlInsertSqlGenerate.getInstance().getInsertByQuerySql(configuration, mybatisParamHolder, table, query);
     }
 
     @Override
@@ -72,8 +84,8 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys, boolean isReplace) {
-        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table, entitys,
+                                    Table table, Collection<Object> models, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table, models,
                 isReplace);
     }
 

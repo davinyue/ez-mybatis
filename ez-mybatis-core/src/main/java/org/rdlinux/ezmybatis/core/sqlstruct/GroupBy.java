@@ -2,9 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.ColumnGroupItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.FieldGroupItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.GroupItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -12,13 +9,12 @@ import java.util.List;
 
 @Getter
 @Setter
-public class GroupBy implements SqlPart {
-    private List<GroupItem> items;
+public class GroupBy implements SqlStruct {
+    private List<Operand> items;
 
-    public GroupBy(List<GroupItem> items) {
+    public GroupBy(List<Operand> items) {
         this.items = items;
     }
-
 
     public static class GroupBuilder<T> {
         private T target;
@@ -37,10 +33,9 @@ public class GroupBy implements SqlPart {
             }
         }
 
-
         public GroupBuilder<T> addField(String field) {
             this.checkEntityTable();
-            this.groupBy.getItems().add(new FieldGroupItem((EntityTable) this.table, field));
+            this.groupBy.getItems().add(EntityField.of((EntityTable) this.table, field));
             return this;
         }
 
@@ -52,7 +47,7 @@ public class GroupBy implements SqlPart {
         }
 
         public GroupBuilder<T> addColumn(String column) {
-            this.groupBy.getItems().add(new ColumnGroupItem(this.table, column));
+            this.groupBy.getItems().add(TableColumn.of(this.table, column));
             return this;
         }
 
@@ -61,6 +56,28 @@ public class GroupBy implements SqlPart {
                 return this.addColumn(column);
             }
             return this;
+        }
+
+        public GroupBuilder<T> addAlias(boolean sure, String alias) {
+            if (sure) {
+                this.groupBy.getItems().add(Alias.of(alias));
+            }
+            return this;
+        }
+
+        public GroupBuilder<T> addAlias(String alias) {
+            return this.addAlias(true, alias);
+        }
+
+        public GroupBuilder<T> add(boolean sure, Operand operand) {
+            if (sure) {
+                this.groupBy.getItems().add(operand);
+            }
+            return this;
+        }
+
+        public GroupBuilder<T> add(Operand operand) {
+            return this.add(true, operand);
         }
 
         public T done() {

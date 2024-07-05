@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
@@ -35,9 +36,21 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys) {
+                                    Table table, Collection<Object> models) {
         return OracleInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
-                entitys);
+                models);
+    }
+
+    @Override
+    public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
+        return OracleInsertSqlGenerate.getInstance().getJdbcBatchInsertSql(configuration, table, models);
+    }
+
+    @Override
+    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                                      EzQuery<?> query) {
+        return OracleInsertSqlGenerate.getInstance().getInsertByQuerySql(configuration, mybatisParamHolder, table,
+                query);
     }
 
     @Override
@@ -71,9 +84,9 @@ public class OracleSqlGenerate implements SqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys, boolean isReplace) {
+                                    Table table, Collection<Object> models, boolean isReplace) {
         return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table,
-                entitys, isReplace);
+                models, isReplace);
     }
 
     @Override

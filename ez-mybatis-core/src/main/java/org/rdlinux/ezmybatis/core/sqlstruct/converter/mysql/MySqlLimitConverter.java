@@ -25,12 +25,16 @@ public class MySqlLimitConverter extends AbstractConverter<Limit> implements Con
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
-                                        MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
+                                       MybatisParamHolder mybatisParamHolder) {
         if (limit == null) {
             return sqlBuilder;
         }
-        return sqlBuilder.append(" LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize()).append(" ");
+        if (type != Type.SELECT) {
+            throw new UnsupportedOperationException("MySql does not support the LIMIT clause for " +
+                    "UPDATE and DELETE and INSERT operations.");
+        }
+        return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" ");
     }
 
     @Override

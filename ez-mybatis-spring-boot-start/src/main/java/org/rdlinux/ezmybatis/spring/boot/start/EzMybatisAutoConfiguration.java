@@ -1,10 +1,13 @@
 package org.rdlinux.ezmybatis.spring.boot.start;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
+import org.rdlinux.ezmybatis.constant.TableNamePattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
 import org.rdlinux.ezmybatis.spring.SpringEzMybatisInit;
@@ -49,6 +52,13 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
     @Resource
     private EzMybatisProperties ezMybatisProperties;
 
+    @Bean
+    public JdbcInsertDao jdbcInsertDao() {
+        SqlSessionTemplate sqlSessionTemplate = this.applicationContext.getBean("sqlSessionTemplate",
+                SqlSessionTemplate.class);
+        return new JdbcInsertDao(sqlSessionTemplate);
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -59,6 +69,16 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
         return configuration -> {
             EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
             ezMybatisConfig.setEscapeKeyword(this.ezMybatisProperties.isEscapeKeyword());
+            if (this.ezMybatisProperties.getMapRetKeyPattern() != null) {
+                ezMybatisConfig.setMapRetKeyPattern(this.ezMybatisProperties.getMapRetKeyPattern());
+            }
+            ezMybatisConfig.setTableNamePattern(TableNamePattern.ORIGINAL);
+            if (this.ezMybatisProperties.getTableNamePattern() != null) {
+                ezMybatisConfig.setTableNamePattern(this.ezMybatisProperties.getTableNamePattern());
+            }
+            if (this.ezMybatisProperties.getEnableOracleOffsetFetchPage() != null) {
+                ezMybatisConfig.setEnableOracleOffsetFetchPage(this.ezMybatisProperties.getEnableOracleOffsetFetchPage());
+            }
             SpringEzMybatisInit.init(ezMybatisConfig, EzMybatisAutoConfiguration.this.applicationContext);
             if (this.ezMybatisProperties.getDbType() != null) {
                 EzMybatisContent.setDbType(configuration, this.ezMybatisProperties.getDbType());

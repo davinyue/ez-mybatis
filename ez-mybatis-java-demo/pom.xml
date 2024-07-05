@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ez-mybatis</artifactId>
         <groupId>org.rdlinux</groupId>
-        <version>0.3.2.RS</version>
+        <version>0.8.4.RS</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ez-mybatis-java-demo</artifactId>
@@ -59,6 +59,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.rdlinux</groupId>
+            <artifactId>ez-mybatis-expand</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.29</version>
@@ -78,6 +83,11 @@
             <groupId>com.dameng</groupId>
             <artifactId>Dm8JdbcDriver18</artifactId>
             <version>8.1.1.49</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.2</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -8,7 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class From implements SqlPart {
+public class From implements SqlStruct {
     private Table table;
 
     public From(Table table) {

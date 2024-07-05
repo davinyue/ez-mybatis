@@ -33,6 +33,7 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
         sqlBuilder = this.whereToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
+        sqlBuilder = this.limitToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
         return sqlBuilder.toString();
     }
 
@@ -45,7 +46,7 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
                                       MybatisParamHolder mybatisParamHolder) {
         From from = delete.getFrom();
         Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
-        return converter.toSqlPart(Converter.Type.DELETE, sqlBuilder, configuration, from, mybatisParamHolder);
+        return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, from, mybatisParamHolder);
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
@@ -53,7 +54,7 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
         if (delete.getJoins() != null) {
             Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : delete.getJoins()) {
-                sqlBuilder = converter.toSqlPart(Converter.Type.DELETE, sqlBuilder, configuration, join,
+                sqlBuilder = converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, join,
                         mybatisParamHolder);
             }
         }
@@ -64,6 +65,9 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
                                        MybatisParamHolder paramHolder) {
         Where where = delete.getWhere();
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
-        return converter.toSqlPart(Converter.Type.DELETE, sqlBuilder, configuration, where, paramHolder);
+        return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, where, paramHolder);
     }
+
+    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
+                                                MybatisParamHolder mybatisParamHolder);
 }

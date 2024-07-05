@@ -5,7 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Update;
+import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
@@ -39,6 +39,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
         sqlBuilder = this.setToSql(sqlBuilder, configuration, update, mybatisParamHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, update, mybatisParamHolder);
         sqlBuilder = this.whereToSql(sqlBuilder, configuration, update, mybatisParamHolder);
+        sqlBuilder = this.limitToSql(sqlBuilder, configuration, update, mybatisParamHolder);
         return sqlBuilder.toString();
     }
 
@@ -49,14 +50,18 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
 
     protected StringBuilder setToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
                                      MybatisParamHolder mybatisParamHolder) {
-        Update set = update.getSet();
+        UpdateSet set = update.getSet();
         if (set == null || set.getItems() == null || set.getItems().isEmpty()) {
             throw new IllegalArgumentException("update items can not be null");
         }
         List<UpdateItem> items = set.getItems();
         sqlBuilder.append(" ").append("SET ");
         for (int i = 0; i < items.size(); i++) {
-            sqlBuilder.append(items.get(i).toSqlPart(configuration, mybatisParamHolder));
+            UpdateItem updateItem = items.get(i);
+            Converter<? extends UpdateItem> converter = EzMybatisContent.getConverter(configuration,
+                    updateItem.getClass());
+            sqlBuilder = converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, updateItem,
+                    mybatisParamHolder);
             if (i + 1 < items.size()) {
                 sqlBuilder.append(", ");
             }
@@ -68,7 +73,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
                                       MybatisParamHolder mybatisParamHolder) {
         From from = update.getFrom();
         Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
-        return converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, from, mybatisParamHolder);
+        return converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, from, mybatisParamHolder);
     }
 
     protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
@@ -76,7 +81,7 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
         if (update.getJoins() != null) {
             Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : update.getJoins()) {
-                sqlBuilder = converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, join,
+                sqlBuilder = converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, join,
                         mybatisParamHolder);
             }
         }
@@ -87,6 +92,9 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
                                        MybatisParamHolder mybatisParamHolder) {
         Where where = update.getWhere();
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
-        return converter.toSqlPart(Converter.Type.UPDATE, sqlBuilder, configuration, where, mybatisParamHolder);
+        return converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, where, mybatisParamHolder);
     }
+
+    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
+                                                MybatisParamHolder mybatisParamHolder);
 }

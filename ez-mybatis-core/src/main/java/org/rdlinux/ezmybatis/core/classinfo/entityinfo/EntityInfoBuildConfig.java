@@ -1,15 +1,25 @@
 package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
+import org.rdlinux.ezmybatis.constant.TableNamePattern;
+import org.rdlinux.ezmybatis.utils.Assert;
+
 /**
  * 实体信息构建配置
  */
 public class EntityInfoBuildConfig {
     /**
+     * 表名转换格式
+     */
+    private TableNamePattern tableNamePattern;
+    /**
      * 列名处理方式
      */
     private ColumnHandle columnHandle;
 
-    public EntityInfoBuildConfig(ColumnHandle columnHandle) {
+    public EntityInfoBuildConfig(TableNamePattern tableNamePattern, ColumnHandle columnHandle) {
+        Assert.notNull(tableNamePattern, "tableNamePattern can not be null");
+        Assert.notNull(columnHandle, "columnHandle can not be null");
+        this.tableNamePattern = tableNamePattern;
         this.columnHandle = columnHandle;
     }
 
@@ -17,14 +27,15 @@ public class EntityInfoBuildConfig {
         return this.columnHandle;
     }
 
-    public void setColumnHandle(ColumnHandle columnHandle) {
-        this.columnHandle = columnHandle;
+    public TableNamePattern getTableNamePattern() {
+        return this.tableNamePattern;
     }
+
 
     /**
      * 列构建方式
      */
-    public static enum ColumnHandle {
+    public enum ColumnHandle {
         /**
          * 原始的
          */
@@ -32,10 +43,10 @@ public class EntityInfoBuildConfig {
         /**
          * 转下划线
          */
-        ToUnder,
+        TO_UNDER,
         /**
          * 转下划线并大写
          */
-        ToUnderAndUpper
+        TO_UNDER_AND_UPPER
     }
 }

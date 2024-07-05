@@ -25,8 +25,8 @@ public class OracleNormalPartitionConverter extends AbstractConverter<NormalPart
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        NormalPartition partition, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       NormalPartition partition, MybatisParamHolder mybatisParamHolder) {
         if (partition == null || partition.getPartitions() == null || partition.getPartitions().isEmpty()) {
             return sqlBuilder;
         }

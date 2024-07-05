@@ -1,29 +1,23 @@
 package org.rdlinux.ezmybatis.core;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.From;
-import org.rdlinux.ezmybatis.core.sqlstruct.Join;
-import org.rdlinux.ezmybatis.core.sqlstruct.Update;
-import org.rdlinux.ezmybatis.core.sqlstruct.Where;
-import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.SyntaxUpdateColumnItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.SyntaxUpdateFieldItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
+import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @Getter
 public class EzUpdate extends EzParam<Integer> {
-    private Update set;
+    private UpdateSet set;
     private List<Join> joins;
+    private Limit limit;
 
     private EzUpdate() {
         super(Integer.class);
-        this.set = new Update();
+        this.set = new UpdateSet();
     }
 
     public static EzUpdateBuilder update(Table table) {
@@ -31,140 +25,95 @@ public class EzUpdate extends EzParam<Integer> {
     }
 
     public static class EzUpdateBuilder {
-        private EzUpdate update;
+        private EzUpdate ezUpdate;
 
         private EzUpdateBuilder(Table table) {
-            this.update = new EzUpdate();
-            this.update.table = table;
-            this.update.from = new From(table);
+            this.ezUpdate = new EzUpdate();
+            this.ezUpdate.table = table;
+            this.ezUpdate.from = new From(table);
+            this.ezUpdate.set = new UpdateSet();
         }
 
-        public EzUpdateBuilder setField(String field, Object value) {
-            this.update.set.getItems().add(new UpdateFieldItem((EntityTable) this.update.table, field, value));
-            return this;
-        }
-
-        public EzUpdateBuilder setField(boolean sure, String field, Object value) {
+        public UpdateSetBuilder<EzUpdateBuilder> set(boolean sure) {
             if (sure) {
-                this.setField(field, value);
+                return new UpdateSetBuilder<>(this, this.ezUpdate.table, this.ezUpdate.set);
+            } else {
+                return new UpdateSetBuilder<>(this, this.ezUpdate.table, new UpdateSet());
             }
-            return this;
         }
 
-        public EzUpdateBuilder setColumn(String column, Object value) {
-            this.update.set.getItems().add(new UpdateColumnItem(this.update.table, column, value));
-            return this;
+        public UpdateSetBuilder<EzUpdateBuilder> set() {
+            return this.set(true);
         }
 
-        public EzUpdateBuilder setColumn(boolean sure, String column, Object value) {
-            if (sure) {
-                this.setColumn(column, value);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder setFieldSyntax(String field, String syntax) {
-            this.update.set.getItems().add(new SyntaxUpdateFieldItem((EntityTable) this.update.table, field, syntax));
-            return this;
-        }
-
-        public EzUpdateBuilder setFieldSyntax(boolean sure, String field, String syntax) {
-            if (sure) {
-                this.setFieldSyntax(field, syntax);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder setColumnSyntax(String column, String syntax) {
-            this.update.set.getItems().add(new SyntaxUpdateColumnItem(this.update.table, column, syntax));
-            return this;
-        }
-
-        public EzUpdateBuilder setColumnSyntax(boolean sure, String column, String syntax) {
-            if (sure) {
-                this.setColumnSyntax(column, syntax);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder setField(EntityTable table, String field, Object value) {
-            this.update.set.getItems().add(new UpdateFieldItem(table, field, value));
-            return this;
-        }
-
-        public EzUpdateBuilder setField(boolean sure, EntityTable table, String field, Object value) {
-            if (sure) {
-                this.setField(table, field, value);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder setColumn(Table table, String column, Object value) {
-            this.update.set.getItems().add(new UpdateColumnItem(table, column, value));
-            return this;
-        }
-
-        public EzUpdateBuilder setColumn(boolean sure, Table table, String column, Object value) {
-            if (sure) {
-                this.setColumn(table, column, value);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder setFieldSyntax(EntityTable table, String field, String syntax) {
-            this.update.set.getItems().add(new SyntaxUpdateFieldItem(table, field, syntax));
-            return this;
-        }
-
-        public EzUpdateBuilder setFieldSyntax(boolean sure, EntityTable table, String field, String syntax) {
-            if (sure) {
-                this.setFieldSyntax(table, field, syntax);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder setColumnSyntax(EntityTable table, String field, String syntax) {
-            this.update.set.getItems().add(new SyntaxUpdateColumnItem(table, field, syntax));
-            return this;
-        }
-
-        public EzUpdateBuilder setColumnSyntax(boolean sure, EntityTable table, String field, String syntax) {
-            if (sure) {
-                this.setColumnSyntax(table, field, syntax);
-            }
-            return this;
-        }
-
-        public Join.JoinBuilder<EzUpdateBuilder> join(JoinType joinType, Table joinTable) {
-            if (this.update.getJoins() == null) {
-                this.update.joins = new LinkedList<>();
+        public Join.JoinBuilder<EzUpdateBuilder> join(boolean sure, JoinType joinType, Table joinTable) {
+            if (this.ezUpdate.getJoins() == null) {
+                this.ezUpdate.joins = new LinkedList<>();
             }
             Join join = new Join();
             join.setJoinType(joinType);
-            join.setTable(this.update.table);
+            join.setTable(this.ezUpdate.table);
             join.setJoinTable(joinTable);
             join.setOnConditions(new LinkedList<>());
-            this.update.joins.add(join);
+            join.setSure(sure);
+            this.ezUpdate.joins.add(join);
             return new Join.JoinBuilder<>(this, join);
         }
 
-        public Join.JoinBuilder<EzUpdateBuilder> join(Table joinTable) {
-            return this.join(JoinType.InnerJoin, joinTable);
+
+        public Join.JoinBuilder<EzUpdateBuilder> join(JoinType joinType, Table joinTable) {
+            return this.join(true, joinType, joinTable);
         }
 
-        public Where.WhereBuilder<EzUpdateBuilder> where(Table table) {
-            if (this.update.where == null) {
-                this.update.where = new Where(new LinkedList<>());
+        public Join.JoinBuilder<EzUpdateBuilder> join(boolean sure, Table joinTable) {
+            return this.join(sure, JoinType.InnerJoin, joinTable);
+        }
+
+        public Join.JoinBuilder<EzUpdateBuilder> join(Table joinTable) {
+            return this.join(true, JoinType.InnerJoin, joinTable);
+        }
+
+        public Where.WhereBuilder<EzUpdateBuilder> where(boolean sure, Table table) {
+            Where where = this.ezUpdate.where;
+            if (where == null) {
+                where = new Where(new LinkedList<>());
+                if (sure) {
+                    this.ezUpdate.where = where;
+                }
+            } else {
+                if (!sure) {
+                    where = new Where(new LinkedList<>());
+                }
             }
-            return new Where.WhereBuilder<>(this, this.update.where, table);
+            return new Where.WhereBuilder<>(this, where, table);
+        }
+
+
+        public Where.WhereBuilder<EzUpdateBuilder> where(Table table) {
+            return this.where(true, table);
+        }
+
+        public Where.WhereBuilder<EzUpdateBuilder> where(boolean sure) {
+            return this.where(sure, this.ezUpdate.table);
         }
 
         public Where.WhereBuilder<EzUpdateBuilder> where() {
-            return this.where(this.update.table);
+            return this.where(true);
+        }
+
+        public EzUpdateBuilder limit(boolean sure, int limit) {
+            if (sure) {
+                this.ezUpdate.limit = new Limit(limit);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder limit(int limit) {
+            return this.limit(true, limit);
         }
 
         public EzUpdate build() {
-            return this.update;
+            return this.ezUpdate;
         }
     }
 }

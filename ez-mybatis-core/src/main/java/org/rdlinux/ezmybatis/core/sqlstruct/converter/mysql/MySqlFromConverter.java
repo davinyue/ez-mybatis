@@ -27,14 +27,14 @@ public class MySqlFromConverter extends AbstractConverter<From> implements Conve
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, From from,
-                                        MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, From from,
+                                       MybatisParamHolder mybatisParamHolder) {
         Table fromTable = from.getTable();
         if (type == Type.SELECT || type == Type.DELETE) {
             sqlBuilder.append(" FROM ");
         }
         Converter<?> converter = EzMybatisContent.getConverter(configuration, fromTable.getClass());
-        return converter.toSqlPart(type, sqlBuilder, configuration, fromTable, mybatisParamHolder);
+        return converter.buildSql(type, sqlBuilder, configuration, fromTable, mybatisParamHolder);
     }
 
     @Override

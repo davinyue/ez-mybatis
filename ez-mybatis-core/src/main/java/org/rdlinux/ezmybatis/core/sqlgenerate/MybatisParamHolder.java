@@ -1,8 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -28,9 +31,11 @@ public class MybatisParamHolder {
      * 原始mybatis参数映射
      */
     private Map<String, Object> mybatisParam;
+    private Configuration configuration;
 
-    public MybatisParamHolder(Map<String, Object> mybatisParam) {
+    public MybatisParamHolder(Configuration configuration, Map<String, Object> mybatisParam) {
         Assert.notNull(mybatisParam, "mybatisParam can not be null");
+        this.configuration = configuration;
         this.mybatisParam = mybatisParam;
         this.transposeArray();
     }
@@ -75,20 +80,29 @@ public class MybatisParamHolder {
      * 获取一个参数名称
      *
      * @param paramValue 参数值
-     * @param canBeNull  参数值是否可以为空
      */
-    public String getParamName(Object paramValue, boolean canBeNull) {
-        if (canBeNull && paramValue == null) {
+    public String getMybatisParamName(Class<?> modelType, Field field, Object paramValue) {
+        if (this.configuration != null && modelType != null && field != null) {
+            paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, modelType, field, paramValue);
+        }
+        return this.getMybatisParamName(paramValue);
+    }
+
+    /**
+     * 获取一个参数名称
+     *
+     * @param paramValue 参数值
+     */
+    public String getMybatisParamName(Object paramValue) {
+        if (paramValue == null) {
             return "NULL";
-        } else if (!canBeNull && paramValue == null) {
-            throw new IllegalArgumentException("paramValue can not be null");
         }
         if (this.currentArray.size() >= ARRAY_MAX_PARAM) {
             this.transposeArray();
         }
         this.currentArray.add(paramValue);
         String escape = getEscapeChar(paramValue);
-        String paramName = this.getCurrentHashKeyName() + "[" + (this.currentArray.size() - 1) + "]";
-        return escape + "{" + paramName + "}";
+        String mybatisParamName = this.getCurrentHashKeyName() + "[" + (this.currentArray.size() - 1) + "]";
+        return escape + "{" + mybatisParamName + "}";
     }
 }

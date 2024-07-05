@@ -2,14 +2,14 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
+import org.rdlinux.ezmybatis.utils.AliasGenerate;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 public class EzQueryTable extends AbstractTable implements Table {
     private EzQuery<?> ezQuery;
 
     private EzQueryTable(EzQuery<?> ezQuery) {
-        super(Alias.getAlias(), null);
+        super(AliasGenerate.getAlias(), null);
         Assert.notNull(ezQuery, "ezQuery can not be null");
         this.ezQuery = ezQuery;
     }

@@ -11,7 +11,7 @@ import java.util.Collection;
 public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     private static volatile OracleUpdateSqlGenerate instance;
 
-    private OracleUpdateSqlGenerate() {
+    protected OracleUpdateSqlGenerate() {
     }
 
     public static OracleUpdateSqlGenerate getInstance() {
@@ -27,8 +27,8 @@ public class OracleUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
 
     @Override
     public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> entitys, boolean isReplace) {
-        return "BEGIN \n" + super.getBatchUpdateSql(configuration, mybatisParamHolder, table, entitys, isReplace)
+                                    Table table, Collection<Object> models, boolean isReplace) {
+        return "BEGIN \n" + super.getBatchUpdateSql(configuration, mybatisParamHolder, table, models, isReplace)
                 + " END;";
     }
 

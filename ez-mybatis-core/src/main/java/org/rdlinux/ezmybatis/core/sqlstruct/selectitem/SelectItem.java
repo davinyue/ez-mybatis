@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 
-public interface SelectItem {
-    String toSqlPart(Configuration configuration);
+public interface SelectItem extends SqlStruct {
 }

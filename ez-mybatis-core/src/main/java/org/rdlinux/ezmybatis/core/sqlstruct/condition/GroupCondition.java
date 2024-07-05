@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
@@ -9,45 +9,29 @@ import java.util.List;
 /**
  * 条件分组
  */
-public class GroupCondition implements Condition {
+public class GroupCondition implements Condition, SqlStruct {
     private List<Condition> conditions;
-    private LogicalOperator logicalOperator;
+    private AndOr andOr;
     private boolean sure;
 
-    public GroupCondition(boolean sure, List<Condition> conditions, LogicalOperator logicalOperator) {
+    public GroupCondition(boolean sure, List<Condition> conditions, AndOr andOr) {
         Assert.notNull(conditions, "conditions can not be empty");
-        Assert.notNull(logicalOperator, "loginSymbol can not be null");
+        Assert.notNull(andOr, "andOr can not be null");
         this.conditions = conditions;
-        this.logicalOperator = logicalOperator;
+        this.andOr = andOr;
         this.sure = sure;
     }
 
     @Override
-    public LogicalOperator getLogicalOperator() {
-        return this.logicalOperator;
+    public AndOr getAndOr() {
+        return this.andOr;
     }
-
-    @Override
-    public String toSqlPart(Configuration configuration, MybatisParamHolder mybatisParamHolder) {
-        if (!this.sure || this.conditions == null || this.conditions.isEmpty()) {
-            return " ";
-        } else {
-            StringBuilder sql = new StringBuilder(" ( ");
-            for (int i = 0; i < this.conditions.size(); i++) {
-                Condition condition = this.conditions.get(i);
-                Assert.notNull(condition, "condition can not be null");
-                if (i != 0) {
-                    sql.append(" ").append(condition.getLogicalOperator().name()).append(" ");
-                }
-                sql.append(condition.toSqlPart(configuration, mybatisParamHolder));
-            }
-            sql.append(" ) ");
-            return sql.toString();
-        }
-    }
-
 
     public List<Condition> getConditions() {
         return this.conditions;
+    }
+
+    public boolean isSure() {
+        return this.sure;
     }
 }

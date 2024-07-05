@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements Converter<DbTable> {
     private static volatile MySqlDbTableConverter instance;
@@ -27,16 +28,17 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        DbTable table, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       DbTable table, MybatisParamHolder mybatisParamHolder) {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String schema = table.getSchema(configuration);
         if (schema != null && !schema.isEmpty()) {
-            sqlBuilder.append(keywordQM).append(schema).append(keywordQM).append(".");
+            sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(schema)).append(keywordQM).append(".");
         }
-        sqlBuilder.append(keywordQM).append(table.getTableName(configuration)).append(keywordQM);
+        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(table.getTableName(configuration)))
+                .append(keywordQM);
         if (table.getPartition() != null) {
-            sqlBuilder.append(this.partitionToSqlPart(type, new StringBuilder(), configuration, table.getPartition(),
+            sqlBuilder.append(this.partitionToSql(type, new StringBuilder(), configuration, table.getPartition(),
                     mybatisParamHolder));
         }
         if (type == Converter.Type.SELECT || type == Converter.Type.UPDATE || type == Converter.Type.DELETE) {
@@ -45,10 +47,10 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
         return sqlBuilder;
     }
 
-    protected StringBuilder partitionToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                               Partition partition, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder partitionToSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                           Partition partition, MybatisParamHolder mybatisParamHolder) {
         Converter<?> converter = EzMybatisContent.getConverter(configuration, partition.getClass());
-        return converter.toSqlPart(type, sqlBuilder, configuration, partition, mybatisParamHolder);
+        return converter.buildSql(type, sqlBuilder, configuration, partition, mybatisParamHolder);
     }
 
     @Override
