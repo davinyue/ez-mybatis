@@ -25,105 +25,105 @@ public interface EzBaseMapper<Nt, Pt extends Serializable> {
      * 插入, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或arra
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_METHOD)
-    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 插入, 指定表, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_TABLE_METHOD)
     int insertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 批量插入
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
-    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 批量插入, 指定表
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_BY_TABLE_METHOD)
     int batchInsertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_METHOD)
-    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_BY_TABLE_METHOD)
     int updateByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 批量更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_METHOD)
-    int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+    int batchUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 批量更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_UPDATE_BY_TABLE_METHOD)
     int batchUpdateByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.REPLACE_METHOD)
-    int replace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+    int replace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.REPLACE_METHOD_BY_TABLE)
     int replaceByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                       @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+                       @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 批量更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_METHOD)
-    int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+    int batchReplace(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 批量更新, 更新所有字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.BATCH_REPLACE_BY_TABLE_METHOD)
     int batchReplaceByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+                            @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_METHOD)
-    int delete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+    int delete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.DELETE_BY_TABLE_METHOD)
     int deleteByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt entity);
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Nt model);
 
     /**
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_METHOD)
-    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+    int batchDelete(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 批量删除
      */
     @DeleteProvider(type = EzDeleteProvider.class, method = EzDeleteProvider.BATCH_DELETE_BY_TABLE_METHOD)
     int batchDeleteByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> entitys);
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<Nt> models);
 
     /**
      * 根据主键删除

@@ -1,10 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
-import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 
-public class SelectAllItem implements SelectItem {
-    @Override
-    public String toSqlPart(Configuration configuration) {
-        return " * ";
-    }
+public class SelectAllItem implements SelectItem, SqlStruct {
 }

@@ -12,6 +12,7 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
@@ -62,36 +63,44 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
         this.deleteListeners.add(deleteListener);
     }
 
-    protected void onInsert(Object entity) {
-        this.insertListeners.forEach(e -> e.onInsert(entity));
+    protected void onInsert(Object model) {
+        this.insertListeners.forEach(e -> e.onInsert(model));
     }
 
-    protected void onBatchInsert(Collection<Object> entitys) {
-        this.insertListeners.forEach(e -> e.onBatchInsert(entitys));
+    protected void onBatchInsert(Collection<Object> models) {
+        this.insertListeners.forEach(e -> e.onBatchInsert(models));
     }
 
-    protected void onUpdate(Object entity) {
-        this.updateListeners.forEach(e -> e.onUpdate(entity));
+    protected void onUpdate(Object model) {
+        this.updateListeners.forEach(e -> e.onUpdate(model));
     }
 
-    protected void onBatchUpdate(Collection<Object> entitys) {
-        this.updateListeners.forEach(e -> e.onBatchUpdate(entitys));
+    protected void onBatchUpdate(Collection<Object> models) {
+        this.updateListeners.forEach(e -> e.onBatchUpdate(models));
     }
 
     protected void onReplace(Object entity) {
         this.updateListeners.forEach(e -> e.onReplace(entity));
     }
 
-    protected void onBatchReplace(Collection<Object> entitys) {
-        this.updateListeners.forEach(e -> e.onBatchReplace(entitys));
+    protected void onBatchReplace(Collection<Object> models) {
+        this.updateListeners.forEach(e -> e.onBatchReplace(models));
+    }
+
+    protected void onEzUpdate(EzUpdate ezUpdate) {
+        this.updateListeners.forEach(e -> e.onEzUpdate(ezUpdate));
+    }
+
+    protected void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
+        this.updateListeners.forEach(e -> e.onEzBatchUpdate(ezUpdates));
     }
 
     protected void onDelete(Object entity) {
         this.deleteListeners.forEach(e -> e.onDelete(entity));
     }
 
-    protected void onBatchDelete(Collection<Object> entitys) {
-        this.deleteListeners.forEach(e -> e.onBatchDelete(entitys));
+    protected void onBatchDelete(Collection<Object> models) {
+        this.deleteListeners.forEach(e -> e.onBatchDelete(models));
     }
 
     protected void onDeleteById(Object id, Class<?> ntClass) {
@@ -146,6 +155,12 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
             } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_REPLACE_METHOD_NAME)) {
                 log.debug("on batch replace");
                 this.onBatchReplace((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
+            } else if (statementId.endsWith("." + EzMybatisConstant.EZ_UPDATE_METHOD_NAME)) {
+                log.debug("on ezUpdate");
+                this.onEzUpdate((EzUpdate) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM));
+            } else if (statementId.endsWith("." + EzMybatisConstant.EZ_BATCH_UPDATE_METHOD_NAME)) {
+                log.debug("on ezBatchUpdate");
+                this.onEzBatchUpdate((Collection<EzUpdate>) param.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM));
             }
         } else if (sqlCommandType == SqlCommandType.DELETE) {
             Map<String, Object> param = (Map<String, Object>) args[1];

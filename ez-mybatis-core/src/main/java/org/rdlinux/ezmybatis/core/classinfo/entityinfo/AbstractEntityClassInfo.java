@@ -32,7 +32,7 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
         if (this.schema != null && !this.schema.isEmpty()) {
             return keywordQM + this.schema + keywordQM + "." + keywordQM + this.tableName + keywordQM;
         } else {
-            return this.tableName;
+            return keywordQM + this.tableName + keywordQM;
         }
     }
 

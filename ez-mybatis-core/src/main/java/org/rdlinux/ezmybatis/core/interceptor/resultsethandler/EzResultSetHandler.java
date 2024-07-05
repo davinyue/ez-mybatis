@@ -26,10 +26,14 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
+import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.executor.ResultMapInitLogic;
+import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 
 import java.lang.reflect.Constructor;
 import java.sql.CallableStatement;
@@ -463,6 +467,57 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     /**
+     * 结果列转为结果对象属性
+     */
+    private String retColumnToField(String column, MetaObject metaObject) {
+        if (EzMybatisConstant.ORACLE_ROW_NUM_ALIAS.equals(column)) {
+            return null;
+        }
+        String property;
+        //如果是map, 则根据配置规则进行推算map属性
+        if (metaObject.getOriginalObject() instanceof Map) {
+            MapRetKeyPattern mapRetKeyPattern = EzMybatisContent.getContentConfig(this.configuration)
+                    .getEzMybatisConfig().getMapRetKeyPattern();
+            if (mapRetKeyPattern == null) {
+                mapRetKeyPattern = MapRetKeyPattern.HUMP;
+            }
+            if (mapRetKeyPattern == MapRetKeyPattern.HUMP) {
+                if (HumpLineStringUtils.isHump(column)) {
+                    property = column;
+                } else {
+                    property = HumpLineStringUtils.lineToHump(column.toLowerCase());
+                }
+            } else if (mapRetKeyPattern == MapRetKeyPattern.LOWER_CASE) {
+                property = column.toLowerCase();
+            } else if (mapRetKeyPattern == MapRetKeyPattern.UPPER_CASE) {
+                property = column.toUpperCase();
+            } else if (mapRetKeyPattern == MapRetKeyPattern.ORIGINAL) {
+                property = column;
+            } else {
+                property = column;
+            }
+        }
+        //如果是实体,则根据实体信息来获取实体属性名称
+        else {
+            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(this.configuration,
+                    metaObject.getOriginalObject().getClass());
+            //一般情况下, 默认数据库使用下划线风格进行命名列
+            property = entityClassInfo.getFieldNameByColumn(column);
+            //如果根据下划线风格找不到对应属性, 则认为数据库使用了驼峰风格
+            if (property == null && !column.contains("_")) {
+                //将列转换为下划线风格尝试重新查找
+                column = HumpLineStringUtils.humpToLine(column);
+                property = entityClassInfo.getFieldNameByColumn(column);
+                if (property == null) {
+                    //在下划线风格的基础上转大写重试一次
+                    property = entityClassInfo.getFieldNameByColumn(column.toUpperCase());
+                }
+            }
+        }
+        return property;
+    }
+
+    /**
      * 次方法将返回列与实体属性的映射以及typeHandle
      * <div>重要, 在此处实现注解映射</div>
      */
@@ -495,17 +550,7 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 //final String property = metaObject.findProperty(skipPfCN, this.configuration
                 //.isMapUnderscoreToCamelCase());
                 //改为调用自定义的查找逻辑
-                String property;
-                //如果是map, 则根据配置规则进行推算map属性
-                if (metaObject.getOriginalObject() instanceof Map) {
-                    property = EzEntityClassInfoFactory.getEntityInfoBuild(this.configuration).computeFieldNameByColumn(
-                            this.configuration, skipPfCN);
-                }
-                //如果是实体,则根据实体信息来获取实体属性名称
-                else {
-                    property = EzEntityClassInfoFactory.forClass(this.configuration, metaObject.getOriginalObject()
-                            .getClass()).getFieldNameByColumn(skipPfCN);
-                }
+                String property = this.retColumnToField(skipPfCN, metaObject);
                 if (property != null && metaObject.hasSetter(property)) {
                     if (resultMap.getMappedProperties().contains(property)) {
                         continue;
@@ -550,13 +595,18 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         boolean foundValues = false;
         if (!autoMapping.isEmpty()) {
             for (EzResultSetHandler.UnMappedColumnAutoMapping mapping : autoMapping) {
-                final Object value = mapping.typeHandler.getResult(rsw.getResultSet(), mapping.column);
+                Object value = mapping.typeHandler.getResult(rsw.getResultSet(), mapping.column);
                 if (value != null) {
                     foundValues = true;
                 }
                 if (value != null || (this.configuration.isCallSettersOnNulls() && !mapping.primitive)) {
                     // gcode issue #377, call setter on nulls (value is not 'found')
-                    metaObject.setValue(mapping.property, value);
+                    // set事件处理
+                    Object originalObject = metaObject.getOriginalObject();
+                    value = EzMybatisContent.onFieldSet(this.configuration, originalObject, mapping.property, value);
+                    if (value != null) {
+                        metaObject.setValue(mapping.property, value);
+                    }
                 }
             }
         }

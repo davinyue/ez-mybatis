@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
+import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
 public class MySqlNormalPartitionConverter extends AbstractConverter<NormalPartition> implements Converter<NormalPartition> {
     private static volatile MySqlNormalPartitionConverter instance;
@@ -25,13 +26,13 @@ public class MySqlNormalPartitionConverter extends AbstractConverter<NormalParti
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        NormalPartition partition, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       NormalPartition partition, MybatisParamHolder mybatisParamHolder) {
         if (partition == null || partition.getPartitions() == null || partition.getPartitions().isEmpty()) {
             return sqlBuilder;
         }
         for (int i = 0; i < partition.getPartitions().size(); i++) {
-            sqlBuilder.append(partition.getPartitions().get(i));
+            sqlBuilder.append(SqlEscaping.nameEscaping(partition.getPartitions().get(i)));
             if (i + 1 < partition.getPartitions().size()) {
                 sqlBuilder.append(", ");
             }

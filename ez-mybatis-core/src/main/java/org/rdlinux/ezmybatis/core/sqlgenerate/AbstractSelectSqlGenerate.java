@@ -15,20 +15,19 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
     @Override
     public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
-        Assert.notNull(id, "id cannot be null");
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
         }
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "SELECT * FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " +
-                paramHolder.getParamName(id, false);
+                paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(), id);
     }
 
     @Override
@@ -40,7 +39,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.INSERT, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
@@ -50,8 +49,8 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {
-            Assert.notNull(id, String.format("ids[%d] can not be null", i));
-            sqlBuilder.append(paramHolder.getParamName(id, false));
+            sqlBuilder.append(paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(),
+                    id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

@@ -34,6 +34,14 @@ public abstract class EzMybatisConstant {
      */
     public static final String REPLACE_METHOD_NAME = "replace";
     /**
+     * ezUpdate方法名称
+     */
+    public static final String EZ_UPDATE_METHOD_NAME = "ezUpdate";
+    /**
+     * ezBatchUpdate方法名称
+     */
+    public static final String EZ_BATCH_UPDATE_METHOD_NAME = "ezBatchUpdate";
+    /**
      * 批量替换实体方法名
      */
     public static final String BATCH_REPLACE_METHOD_NAME = "batchReplace";
@@ -102,4 +110,12 @@ public abstract class EzMybatisConstant {
      * mapper参数, 返回结果类型
      */
     public static final String MAPPER_PARAM_RET = "mp_ret";
+    /**
+     * mapper参数, 自定义更新扩展
+     */
+    public static final String MAPPER_PARAM_UPDATE_EXPAND = "mp_update_expand";
+    /**
+     * oracle行数别名
+     */
+    public static final String ORACLE_ROW_NUM_ALIAS = "ORA_ROWNUM__$";
 }

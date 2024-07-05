@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -7,7 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.join.JoinType;
+import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 public class MySqlJoinConverter extends AbstractConverter<Join> implements Converter<Join> {
     private static volatile MySqlJoinConverter instance;
@@ -27,25 +28,25 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
-                                        MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
+                                       MybatisParamHolder mybatisParamHolder) {
         if (join == null) {
             return sqlBuilder;
         }
         if (!join.isSure()) {
             return sqlBuilder;
         }
-        StringBuilder sonSql = new StringBuilder();
+        String sonSql = "";
         if (join.getJoinType() != JoinType.CrossJoin) {
-            sonSql = MySqlWhereConverter.conditionsToSqlPart(new StringBuilder(), configuration, mybatisParamHolder,
-                    join.getOnConditions());
-            if (sonSql.length() == 0) {
+            sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
+                    mybatisParamHolder, join.getOnConditions()).toString();
+            if (StringUtils.isBlank(sonSql)) {
                 return sqlBuilder;
             }
         }
         Converter<?> joinTableConverter = EzMybatisContent.getConverter(configuration, join.getJoinTable().getClass());
         sqlBuilder.append(join.getJoinType().toSqlStruct());
-        sqlBuilder = joinTableConverter.toSqlPart(type, sqlBuilder, configuration, join.getJoinTable(),
+        sqlBuilder = joinTableConverter.buildSql(type, sqlBuilder, configuration, join.getJoinTable(),
                 mybatisParamHolder);
         if (join.getJoinType() != JoinType.CrossJoin) {
             sqlBuilder.append(" ON ");
@@ -53,7 +54,7 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         sqlBuilder.append(sonSql);
         if (join.getJoins() != null && !join.getJoins().isEmpty()) {
             for (Join sonJoin : join.getJoins()) {
-                sqlBuilder.append(this.doToSqlPart(type, new StringBuilder(), configuration, sonJoin,
+                sqlBuilder.append(this.doBuildSql(type, new StringBuilder(), configuration, sonJoin,
                         mybatisParamHolder));
             }
         }

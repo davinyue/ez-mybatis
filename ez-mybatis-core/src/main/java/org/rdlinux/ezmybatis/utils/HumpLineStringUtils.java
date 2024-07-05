@@ -13,6 +13,10 @@ public class HumpLineStringUtils {
      * @param interval 连接符
      */
     public static String humpToLine(String str, String interval) {
+        //如果原始字符串不包含小写字母, 则将其全部转换为小写字母
+        if (!str.matches(".*[a-z].*")) {
+            str = str.toLowerCase();
+        }
         Matcher matcher = humpPattern.matcher(str);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
@@ -62,5 +66,12 @@ public class HumpLineStringUtils {
      */
     public static String lineToHump(String str) {
         return lineToHump(str, "_");
+    }
+
+    /**
+     * 判断字符串是否是驼峰格式, 注意以小写字符开头, 包含大写字母或数字, 则认为是驼峰
+     */
+    public static boolean isHump(String str) {
+        return str.matches("^[a-z]+([A-Z0-9][a-zA-Z0-9]*)*$");
     }
 }

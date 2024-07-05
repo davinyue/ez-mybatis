@@ -2,8 +2,10 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectItem;
@@ -28,12 +30,17 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration, Select select,
-                                        MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Select select,
+                                       MybatisParamHolder mybatisParamHolder) {
         if (select == null) {
             return sqlBuilder;
         }
         sqlBuilder.append("SELECT ");
+        if (select.getSqlHint() != null) {
+            Converter<? extends SqlHint> sqlHintConverter = EzMybatisContent.getConverter(configuration,
+                    select.getSqlHint().getClass());
+            sqlHintConverter.buildSql(type, sqlBuilder, configuration, select.getSqlHint(), mybatisParamHolder);
+        }
         if (select.isDistinct()) {
             sqlBuilder.append("DISTINCT ");
         }
@@ -42,7 +49,9 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
         } else {
             List<SelectItem> selectFields = select.getSelectFields();
             for (int i = 0; i < selectFields.size(); i++) {
-                sqlBuilder.append(selectFields.get(i).toSqlPart(configuration));
+                SelectItem selectItem = selectFields.get(i);
+                Converter<?> converter = EzMybatisContent.getConverter(configuration, selectItem.getClass());
+                sqlBuilder = converter.buildSql(type, sqlBuilder, configuration, selectItem, mybatisParamHolder);
                 if (i + 1 < selectFields.size()) {
                     sqlBuilder.append(", ");
                 }

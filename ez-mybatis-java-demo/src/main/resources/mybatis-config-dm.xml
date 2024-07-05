@@ -12,8 +12,8 @@
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="aggressiveLazyLoading" value="false"/>
         <!--开启二级缓存 -->
-        <setting name="cacheEnabled" value="true"/>
-        <setting name="logImpl" value="LOG4j2"/>
+        <setting name="cacheEnabled" value="false"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
         <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
         <!-- 指定mybatis-universal-crud-simple的扫描路径，要用于扫描实体信息和搜索类信息，多个包使用","隔开 -->
         <!--		<setting name="universalCrudScan" value="org.linuxprobe.demo.model,org.linuxprobe.demo.query"/>-->
@@ -35,9 +35,9 @@
             <dataSource type="POOLED">
                 <!-- 配置连接信息 -->
                 <property name="driver" value="dm.jdbc.driver.DmDriver"/>
-                <property name="url" value="jdbc:dm://192.168.163.3:5236/"/>
-                <property name="username" value="SYSDBA"/>
-                <property name="password" value="SYSDBA"/>
+                <property name="url" value="jdbc:dm://192.168.8.3:5236/"/>
+                <property name="username" value="ez_mybatis"/>
+                <property name="password" value="123456"/>
             </dataSource>
         </environment>
     </environments>

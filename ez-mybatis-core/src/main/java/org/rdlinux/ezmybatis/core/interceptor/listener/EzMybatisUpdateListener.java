@@ -1,5 +1,7 @@
 package org.rdlinux.ezmybatis.core.interceptor.listener;
 
+import org.rdlinux.ezmybatis.core.EzUpdate;
+
 import java.util.Collection;
 
 /**
@@ -15,7 +17,7 @@ public interface EzMybatisUpdateListener {
     /**
      * 批量更新
      */
-    default void onBatchUpdate(Collection<Object> entitys) {
+    default void onBatchUpdate(Collection<Object> models) {
     }
 
     /**
@@ -27,10 +29,22 @@ public interface EzMybatisUpdateListener {
     /**
      * 批量替换
      */
-    default void onBatchReplace(Collection<Object> entitys) {
+    default void onBatchReplace(Collection<Object> models) {
+    }
+
+    /**
+     * 单条条件更新
+     */
+    default void onEzUpdate(EzUpdate ezUpdate) {
+    }
+
+    /**
+     * 批量批量更新
+     */
+    default void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
     }
 
     default int order() {
-        return 1;
+        return 0;
     }
 }

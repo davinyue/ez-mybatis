@@ -2,11 +2,13 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
+import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
-import org.rdlinux.ezmybatis.core.sqlstruct.group.GroupItem;
+
 
 public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements Converter<GroupBy> {
     private static volatile MySqlGroupByConverter instance;
@@ -26,15 +28,17 @@ public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements
     }
 
     @Override
-    protected StringBuilder doToSqlPart(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                        GroupBy groupBy, MybatisParamHolder mybatisParamHolder) {
+    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
+                                       GroupBy groupBy, MybatisParamHolder mybatisParamHolder) {
         if (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty()) {
             return sqlBuilder;
         } else {
             StringBuilder sql = new StringBuilder(" GROUP BY ");
             for (int i = 0; i < groupBy.getItems().size(); i++) {
-                GroupItem groupItem = groupBy.getItems().get(i);
-                sql.append(groupItem.toSqlStruct(configuration));
+                Operand groupItem = groupBy.getItems().get(i);
+                Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration,
+                        groupItem.getClass());
+                converter.buildSql(type, sql, configuration, groupItem, mybatisParamHolder);
                 if (i + 1 < groupBy.getItems().size()) {
                     sql.append(", ");
                 } else {

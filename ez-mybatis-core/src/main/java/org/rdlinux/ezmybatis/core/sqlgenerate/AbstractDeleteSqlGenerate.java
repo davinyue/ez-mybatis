@@ -14,17 +14,13 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
     @Override
     public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
-        Assert.notNull(id, "id cannot be null");
-        if (id instanceof Collection) {
-            throw new IllegalArgumentException("id can not instanceof Collection");
-        }
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
 
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.DELETE, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.DELETE, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
@@ -32,7 +28,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
 
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "DELETE FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " + paramHolder
-                .getParamName(id, false);
+                .getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(), id);
     }
 
 
@@ -46,7 +42,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.toSqlPart(Converter.Type.DELETE, new StringBuilder(), configuration, table,
+            tableName = converter.buildSql(Converter.Type.DELETE, new StringBuilder(), configuration, table,
                     paramHolder).toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
@@ -57,8 +53,8 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {
-            Assert.notNull(id, String.format("ids[%d] can not be null", i));
-            sqlBuilder.append(paramHolder.getParamName(id, false));
+            sqlBuilder.append(paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(),
+                    id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");
             }

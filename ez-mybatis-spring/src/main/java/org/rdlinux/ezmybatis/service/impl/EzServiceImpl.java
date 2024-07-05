@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.service.impl;
 
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -23,6 +24,8 @@ import java.util.List;
 public abstract class EzServiceImpl<MdType, PkType extends Serializable> implements EzService<MdType, PkType> {
     @Resource
     protected EzMapper ezMapper;
+    @Resource
+    protected JdbcInsertDao jdbcBatchInsertDao;
     /**
      * 实体类型
      */

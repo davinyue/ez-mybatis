@@ -1,7 +1,12 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
-import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzDeleteToSql;
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzDeleteToSql;
+import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.List;
@@ -34,5 +39,16 @@ public class MySqlEzDeleteToSql extends AbstractEzDeleteToSql {
             }
         }
         return sql;
+    }
+
+    @Override
+    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
+                                       MybatisParamHolder mybatisParamHolder) {
+        if (delete.getDeletes().size() != 1) {
+            return sqlBuilder;
+        }
+        Limit limit = delete.getLimit();
+        Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
+        return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, limit, mybatisParamHolder);
     }
 }

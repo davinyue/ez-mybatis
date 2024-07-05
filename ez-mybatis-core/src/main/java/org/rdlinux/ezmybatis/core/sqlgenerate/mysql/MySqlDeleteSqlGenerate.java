@@ -10,7 +10,7 @@ import java.util.Collection;
 public class MySqlDeleteSqlGenerate extends AbstractDeleteSqlGenerate {
     private static volatile MySqlDeleteSqlGenerate instance;
 
-    private MySqlDeleteSqlGenerate() {
+    protected MySqlDeleteSqlGenerate() {
     }
 
     public static MySqlDeleteSqlGenerate getInstance() {

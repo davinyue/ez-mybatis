@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzDeleteProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzUpdateProvider;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.io.Serializable;
@@ -138,6 +139,12 @@ public interface EzMapper {
                         @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
+     * 扩展更新
+     */
+    @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.EXPAND_UPDATE_METHOD)
+    Integer expandUpdate(@Param(EzMybatisConstant.MAPPER_PARAM_UPDATE_EXPAND) SqlExpand expand);
+
+    /**
      * 批量删除
      */
     @MethodName(EZ_DELETE_METHOD)
@@ -162,27 +169,27 @@ public interface EzMapper {
      * 插入, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_METHOD)
-    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+    int insert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object model);
 
     /**
      * 插入,指定表, 注意, 该接口仅能插入单条实体数据, 不能传入map或collection或array
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_TABLE_METHOD)
     int insertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+                      @Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object model);
 
     /**
-     * 批量插入
+     * 批量插入, 实体总属性控制在5000个以下, 一个批次保存效率最高
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_METHOD)
-    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+    int batchInsert(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> models);
 
     /**
-     * 批量插入, 指定表
+     * 批量插入, 指定表, 实体总属性控制在5000个以下, 一个批次保存效率最高
      */
     @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.BATCH_INSERT_BY_TABLE_METHOD)
     int batchInsertByTable(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
-                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> entitys);
+                           @Param(EzMybatisConstant.MAPPER_PARAM_ENTITYS) Collection<?> models);
 
     /**
      * 根据sql插入记录
@@ -192,10 +199,17 @@ public interface EzMapper {
                         @Param(EzMybatisConstant.MAPPER_PARAM_SQLPARAM) Map<String, Object> param);
 
     /**
+     * 根据Query插入指定表
+     */
+    @InsertProvider(type = EzInsertProvider.class, method = EzInsertProvider.INSERT_BY_QUERY_METHOD)
+    Integer insertByQuery(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) Table table,
+                          @Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<?> query);
+
+    /**
      * 更新, 只更新非空字段
      */
     @UpdateProvider(type = EzUpdateProvider.class, method = EzUpdateProvider.UPDATE_METHOD)
-    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object entity);
+    int update(@Param(EzMybatisConstant.MAPPER_PARAM_ENTITY) Object model);
 
     /**
      * 更新, 只更新非空字段
