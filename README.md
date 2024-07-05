@@ -6,7 +6,7 @@ ez-mybatis通过mybatis拦截器机制, 实现数据的增删查改并支持部�
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.8.2.RS</version>
+    <version>0.8.3.RS</version>
 </dependency>
 ```
 
@@ -415,5 +415,172 @@ public void test() {
             .page(1, 5)
             .build();
     List<User> users = this.ezMapper.query(query);
+}
+```
+
+# 事件支持
+ez-mybatis支持在数据插入，更新，取出时定义事件进行处理，方便用户扩展相关功能; 用户只需要实现对应的接口，将其注册为spring bean即可.
+## 插入数据事件
+```java
+package org.rdlinux.ezmybatis.core.interceptor.listener;
+
+import java.util.Collection;
+
+/**
+ * 插入事件监听器
+ */
+public interface EzMybatisInsertListener {
+    /**
+     * 当执行插入时
+     */
+    void onInsert(Object model);
+
+    /**
+     * 当执行批量插入时
+     */
+    void onBatchInsert(Collection<?> models);
+
+    /**
+     * 拦截器顺序
+     */
+    default int order() {
+        return 0;
+    }
+}
+```
+
+## 更新数据事件
+```java
+package org.rdlinux.ezmybatis.core.interceptor.listener;
+
+import org.rdlinux.ezmybatis.core.EzUpdate;
+
+import java.util.Collection;
+
+/**
+ * 更新事件监听器
+ */
+public interface EzMybatisUpdateListener {
+    /**
+     * 单条更新
+     */
+    default void onUpdate(Object entity) {
+    }
+
+    /**
+     * 批量更新
+     */
+    default void onBatchUpdate(Collection<Object> models) {
+    }
+
+    /**
+     * 单条替换
+     */
+    default void onReplace(Object entity) {
+    }
+
+    /**
+     * 批量替换
+     */
+    default void onBatchReplace(Collection<Object> models) {
+    }
+
+    /**
+     * 单条条件更新
+     */
+    default void onEzUpdate(EzUpdate ezUpdate) {
+    }
+
+    /**
+     * 批量批量更新
+     */
+    default void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
+    }
+
+    default int order() {
+        return 0;
+    }
+}
+```
+
+## 更新数据事件
+```java
+package org.rdlinux.ezmybatis.core.interceptor.listener;
+
+import java.util.Collection;
+
+/**
+ * 删除事件监听器
+ */
+public interface EzMybatisDeleteListener {
+    void onDelete(Object entity);
+
+    void onBatchDelete(Collection<Object> entitys);
+
+    void onDeleteById(Object id, Class<?> ntClass);
+
+    void onBatchDeleteById(Collection<Object> ids, Class<?> ntClass);
+
+    default int order() {
+        return 0;
+    }
+}
+```
+
+## 查询结果构造事件
+可用于扩展数据库加密列解密或其它处理
+```java
+package org.rdlinux.ezmybatis.core.interceptor.listener;
+
+/**
+ * 对象属性设置监听器, 当执行sql查询出结构组装为对象时调用, 注意如果查询结果返回一个基础类型或者包装类型时, 不支持该事件
+ */
+public interface EzMybatisFieldSetListener {
+    /**
+     * 当调用set方法时
+     *
+     * @param obj   被设置对象
+     * @param field 设置属性
+     * @param value 设置值
+     * @return 返回新的设置值
+     */
+    Object onSet(Object obj, String field, Object value);
+
+    /**
+     * 执行顺序, 约小越优先
+     */
+    default int order() {
+        return 0;
+    }
+}
+```
+
+## sql构建参数事件
+可用于扩展数据库加密列的加密或其它处理
+```java
+package org.rdlinux.ezmybatis.core.interceptor.listener;
+
+import java.lang.reflect.Field;
+
+/**
+ * 对象属性获取监听器, 当构建sql时触发, 通过此接口可以实现加密等功能
+ */
+public interface EzMybatisOnBuildSqlGetFieldListener {
+    /**
+     * 当调用get方法时
+     *
+     * @param ntType 实体对象类型
+     * @param field  被获取的属性
+     * @param value  获取到的值
+     * @return 返回新的设置值
+     */
+    Object onGet(Class<?> ntType, Field field, Object value);
+
+    /**
+     * 执行顺序, 约小越优先
+     */
+    default int order() {
+        return 0;
+    }
 }
 ```

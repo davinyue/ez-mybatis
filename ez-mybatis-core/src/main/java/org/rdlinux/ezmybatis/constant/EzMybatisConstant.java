@@ -34,6 +34,14 @@ public abstract class EzMybatisConstant {
      */
     public static final String REPLACE_METHOD_NAME = "replace";
     /**
+     * ezUpdate方法名称
+     */
+    public static final String EZ_UPDATE_METHOD_NAME = "ezUpdate";
+    /**
+     * ezBatchUpdate方法名称
+     */
+    public static final String EZ_BATCH_UPDATE_METHOD_NAME = "ezBatchUpdate";
+    /**
      * 批量替换实体方法名
      */
     public static final String BATCH_REPLACE_METHOD_NAME = "batchReplace";

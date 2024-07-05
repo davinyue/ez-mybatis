@@ -20,6 +20,6 @@ public interface EzMybatisInsertListener {
      * 拦截器顺序
      */
     default int order() {
-        return 1;
+        return 0;
     }
 }

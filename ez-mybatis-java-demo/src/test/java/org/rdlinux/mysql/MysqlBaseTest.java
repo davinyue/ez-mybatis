@@ -7,9 +7,14 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 
 import java.io.IOException;
@@ -90,6 +95,24 @@ public class MysqlBaseTest {
             @Override
             public void onBatchReplace(Collection<Object> models) {
                 System.out.println("替换事件");
+            }
+
+            @Override
+            public void onEzUpdate(EzUpdate ezUpdate) {
+                Table table = ezUpdate.getTable();
+                if (table instanceof EntityTable) {
+                    Class<?> etType = ((EntityTable) table).getEtType();
+                    if (BaseEntity.class.isAssignableFrom(etType)) {
+                        ezUpdate.getSet().getItems().add(new UpdateFieldItem(((EntityTable) table),
+                                BaseEntity.Fields.updateTime, ObjArg.of(new Date())));
+                    }
+                }
+
+            }
+
+            @Override
+            public void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
+                ezUpdates.forEach(this::onEzUpdate);
             }
         });
         EzMybatisContent.addFieldSetListener(ezMybatisConfig, (obj, field, value) -> {
