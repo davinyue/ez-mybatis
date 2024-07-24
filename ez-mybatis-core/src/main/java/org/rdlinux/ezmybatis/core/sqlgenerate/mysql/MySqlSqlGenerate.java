@@ -101,6 +101,12 @@ public class MySqlSqlGenerate implements SqlGenerate {
     }
 
     @Override
+    public EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
+                                                boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getJdbcBatchUpdateSql(configuration, table, models, isReplace);
+    }
+
+    @Override
     public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
         return MySqlDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
@@ -123,4 +129,6 @@ public class MySqlSqlGenerate implements SqlGenerate {
                                Collection<EzDelete> deletes) {
         return MySqlDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, deletes);
     }
+
+
 }

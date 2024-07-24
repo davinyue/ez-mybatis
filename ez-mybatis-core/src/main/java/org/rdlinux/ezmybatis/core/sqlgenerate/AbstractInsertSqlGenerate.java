@@ -3,8 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
@@ -16,14 +14,15 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
+import org.rdlinux.ezmybatis.utils.TypeHandlerUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
-    private String getTableName(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
-                                Object model) {
+    public static String getTableName(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+                                      Object model) {
         Assert.notNull(model, "model can not be null");
         if (model instanceof Collection) {
             throw new IllegalArgumentException("model can not instanceof Collection");
@@ -44,7 +43,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     @Override
     public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
                                Object entity) {
-        String tableName = this.getTableName(configuration, mybatisParamHolder, table, entity);
+        String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table, entity);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
@@ -73,13 +72,17 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
         Assert.notEmpty(models, "models can not be empty");
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         Object firstEntity = models.iterator().next();
-        String tableName = this.getTableName(configuration, mybatisParamHolder, table, firstEntity);
+        for (Object model : models) {
+            if (!firstEntity.getClass().getName().equals(model.getClass().getName())) {
+                throw new IllegalArgumentException("Inconsistent object types within the container");
+            }
+        }
+        String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
         StringBuilder columnBuilder = new StringBuilder("( ");
         StringBuilder paramBuilder = new StringBuilder("( ");
@@ -102,30 +105,14 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
                 paramBuilder.append(" )");
             }
             EntityFieldInfo fieldInfo = columnMapFieldInfo.get(column);
-            TypeHandler typeHandler = null;
-            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            if (fieldInfo.getField().isAnnotationPresent(ColumnHandler.class)) {
-                ColumnHandler annotation = fieldInfo.getField().getAnnotation(ColumnHandler.class);
-                typeHandler = typeHandlerRegistry.getMappingTypeHandler(
-                        (Class<? extends TypeHandler<?>>) annotation.value());
-            }
             Method fieldGetMethod = fieldInfo.getFieldGetMethod();
+            TypeHandler<?> typeHandler = TypeHandlerUtils.getTypeHandle(configuration, fieldInfo.getField());
             int eti = 0;
             for (Object entity : models) {
                 Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
+                JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
                 fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, entity.getClass(),
                         fieldInfo.getField(), fieldValue);
-                JdbcType jdbcType = null;
-                if (fieldValue == null) {
-                    if (typeHandler == null) {
-                        typeHandler = typeHandlerRegistry.getUnknownTypeHandler();
-                    }
-                    jdbcType = JdbcType.NULL;
-                } else {
-                    if (typeHandler == null) {
-                        typeHandler = typeHandlerRegistry.getTypeHandler(fieldValue.getClass());
-                    }
-                }
                 EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
                 params.get(eti).add(param);
                 eti++;

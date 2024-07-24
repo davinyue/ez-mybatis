@@ -83,7 +83,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchUpdate(Collection<Object> models) {
+            public void onBatchUpdate(Collection<?> models) {
                 System.out.println("更新事件");
             }
 
@@ -93,7 +93,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchReplace(Collection<Object> models) {
+            public void onBatchReplace(Collection<?> models) {
                 System.out.println("替换事件");
             }
 

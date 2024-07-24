@@ -17,7 +17,7 @@ public interface EzMybatisUpdateListener {
     /**
      * 批量更新
      */
-    default void onBatchUpdate(Collection<Object> models) {
+    default void onBatchUpdate(Collection<?> models) {
     }
 
     /**
@@ -29,7 +29,7 @@ public interface EzMybatisUpdateListener {
     /**
      * 批量替换
      */
-    default void onBatchReplace(Collection<Object> models) {
+    default void onBatchReplace(Collection<?> models) {
     }
 
     /**

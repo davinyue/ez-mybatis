@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisFieldSetListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisOnBuildSqlGetFieldListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 
 import java.util.Comparator;
@@ -37,6 +38,7 @@ public class EzContentConfig {
     private DbKeywordQMFactory dbKeywordQMFactory;
     private DbType dbType;
     private List<EzMybatisInsertListener> insertListeners;
+    private List<EzMybatisUpdateListener> updateListeners;
 
 
     /**
