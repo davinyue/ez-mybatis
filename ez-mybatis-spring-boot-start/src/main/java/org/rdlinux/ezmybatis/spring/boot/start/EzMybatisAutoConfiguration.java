@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.TableNamePattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
+import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.spring.EzMybatisMapperScannerConfigurer;
 import org.rdlinux.ezmybatis.spring.SpringEzMybatisInit;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.NonNull;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -59,8 +61,15 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
         return new JdbcInsertDao(sqlSessionTemplate);
     }
 
+    @Bean
+    public JdbcUpdateDao jdbcUpdateDao() {
+        SqlSessionTemplate sqlSessionTemplate = this.applicationContext.getBean("sqlSessionTemplate",
+                SqlSessionTemplate.class);
+        return new JdbcUpdateDao(sqlSessionTemplate);
+    }
+
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
@@ -119,7 +128,7 @@ public class EzMybatisAutoConfiguration implements ApplicationContextAware {
         }
 
         @Override
-        public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
             this.beanFactory = beanFactory;
         }
     }

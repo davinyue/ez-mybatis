@@ -1,6 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
+import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
@@ -9,10 +13,11 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
+import org.rdlinux.ezmybatis.utils.TypeHandlerUtils;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
@@ -70,5 +75,73 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             sqlBuilder.append(sqlTmpl).append(";\n");
         }
         return sqlBuilder.toString();
+    }
+
+    @Override
+    public EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
+                                                boolean isReplace) {
+        Assert.notNull(models, "models can not be null");
+        Object firstEntity = models.iterator().next();
+        for (Object model : models) {
+            if (!firstEntity.getClass().getName().equals(model.getClass().getName())) {
+                throw new IllegalArgumentException("Inconsistent object types within the container");
+            }
+        }
+        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
+        String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table,
+                firstEntity);
+        StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
+        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, firstEntity.getClass());
+        EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
+        List<EntityFieldInfo> updateFieldInfo = new ArrayList<>();
+        Map<String, EntityFieldInfo> allColumnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
+        //replace模式更新全部字段, 否则更新非空字段, 以第一个实体的非空字段为准
+        if (isReplace) {
+            updateFieldInfo = allColumnMapFieldInfo.values().stream().filter(e -> !e.isPrimaryKey())
+                    .collect(Collectors.toList());
+        } else {
+            for (EntityFieldInfo fieldInfo : allColumnMapFieldInfo.values()) {
+                Method fieldGetMethod = fieldInfo.getFieldGetMethod();
+                Object fieldValue = ReflectionUtils.invokeMethod(firstEntity, fieldGetMethod);
+                if (fieldValue != null && !fieldInfo.isPrimaryKey()) {
+                    updateFieldInfo.add(fieldInfo);
+                }
+            }
+        }
+        updateFieldInfo.add(primaryKeyInfo);
+        Assert.isTrue(!updateFieldInfo.isEmpty(), "cannot update empty entity");
+        EzJdbcBatchSql ret = new EzJdbcBatchSql();
+        List<List<EzJdbcSqlParam>> params = new ArrayList<>(models.size());
+        for (Object ignored : models) {
+            params.add(new ArrayList<>(updateFieldInfo.size()));
+        }
+        int i = 1;
+        for (EntityFieldInfo fieldInfo : updateFieldInfo) {
+            if (!fieldInfo.isPrimaryKey()) {
+                sqlBuilder.append(keywordQM).append(fieldInfo.getColumnName()).append(keywordQM).append(" = ?");
+            }
+            if (i < updateFieldInfo.size() - 1) {
+                sqlBuilder.append(", ");
+            }
+            TypeHandler<?> typeHandler = TypeHandlerUtils.getTypeHandle(configuration, fieldInfo.getField());
+            Method fieldGetMethod = fieldInfo.getFieldGetMethod();
+            int eti = 0;
+            for (Object model : models) {
+                Object fieldValue = ReflectionUtils.invokeMethod(model, fieldGetMethod);
+                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, model.getClass(),
+                        fieldInfo.getField(), fieldValue);
+                JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
+                EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
+                params.get(eti).add(param);
+                eti++;
+            }
+            i++;
+        }
+        sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
+                .append(" = ?");
+        ret.setSql(sqlBuilder.toString());
+        ret.setBatchParams(params);
+        return ret;
     }
 }

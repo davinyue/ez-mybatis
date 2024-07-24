@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -17,4 +18,10 @@ public interface UpdateSqlGenerate {
 
     String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
                         Collection<EzUpdate> updates);
+
+    /**
+     * 获取jdbc批量更新sql
+     */
+    EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
+                                         boolean isReplace);
 }

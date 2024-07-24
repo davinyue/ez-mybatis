@@ -135,7 +135,8 @@ public class EzMybatisContent {
         configurationConfig.setConfiguration(config.getConfiguration());
         configurationConfig.setDbKeywordQMFactory(new DbKeywordQMFactory(config));
         configurationConfig.setEzMybatisConfig(config);
-        configurationConfig.setInsertListeners(new LinkedList<>());
+        configurationConfig.setInsertListeners(new ArrayList<>());
+        configurationConfig.setUpdateListeners(new ArrayList<>());
         CFG_CONFIG_MAP.put(config.getConfiguration(), configurationConfig);
         initMapper(config);
         initInterceptor(config);
@@ -164,6 +165,17 @@ public class EzMybatisContent {
     }
 
     /**
+     * 获取更新监听器
+     */
+    public static List<EzMybatisUpdateListener> getUpdateListeners(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        return configurationConfig.getUpdateListeners();
+    }
+
+
+    /**
      * 添加插入监听器
      */
     public static void addInsertListener(EzMybatisConfig config, EzMybatisInsertListener listener) {
@@ -179,6 +191,7 @@ public class EzMybatisContent {
     public static void addUpdateListener(EzMybatisConfig config, EzMybatisUpdateListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        configurationConfig.getUpdateListeners().add(listener);
         configurationConfig.getUpdateInterceptor().addUpdateListener(listener);
     }
 
