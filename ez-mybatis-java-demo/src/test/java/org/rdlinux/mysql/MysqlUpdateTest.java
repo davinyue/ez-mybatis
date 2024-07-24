@@ -533,11 +533,14 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
+        user1.setUserAge(null);
         user1.setId("08649915562c421f858236f60fd652e5");
         users.add(user1);
 
         User user2 = new User();
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName(null);
+        user1.setUserAge(19);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);

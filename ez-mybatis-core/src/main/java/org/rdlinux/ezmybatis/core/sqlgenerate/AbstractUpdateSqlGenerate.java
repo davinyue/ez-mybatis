@@ -96,6 +96,8 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         List<EntityFieldInfo> updateFieldInfo = new ArrayList<>();
         Map<String, EntityFieldInfo> allColumnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
+        //已经存在的更新字段
+        Set<String> existsUpdateFieldInfos = new HashSet<>();
         //replace模式更新全部字段, 否则更新非空字段, 以第一个实体的非空字段为准
         if (isReplace) {
             updateFieldInfo = allColumnMapFieldInfo.values().stream().filter(e -> !e.isPrimaryKey())
@@ -103,9 +105,14 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         } else {
             for (EntityFieldInfo fieldInfo : allColumnMapFieldInfo.values()) {
                 Method fieldGetMethod = fieldInfo.getFieldGetMethod();
-                Object fieldValue = ReflectionUtils.invokeMethod(firstEntity, fieldGetMethod);
-                if (fieldValue != null && !fieldInfo.isPrimaryKey()) {
-                    updateFieldInfo.add(fieldInfo);
+                for (Object model : models) {
+                    Object fieldValue = ReflectionUtils.invokeMethod(model, fieldGetMethod);
+                    if (fieldValue != null && !fieldInfo.isPrimaryKey()) {
+                        if (!existsUpdateFieldInfos.contains(fieldInfo.getFieldName())) {
+                            updateFieldInfo.add(fieldInfo);
+                            existsUpdateFieldInfos.add(fieldInfo.getFieldName());
+                        }
+                    }
                 }
             }
         }
