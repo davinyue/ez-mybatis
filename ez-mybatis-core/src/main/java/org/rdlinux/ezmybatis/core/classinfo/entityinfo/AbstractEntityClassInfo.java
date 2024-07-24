@@ -80,7 +80,8 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
 
     @Override
     public EntityFieldInfo getPrimaryKeyInfo() {
-        Assert.notNull(this.primaryKeyInfo, "can not find primary key info");
+        Assert.notNull(this.primaryKeyInfo, String.format("class %s not found primary key info",
+                this.getEntityClass().getName()));
         return this.primaryKeyInfo;
     }
 
