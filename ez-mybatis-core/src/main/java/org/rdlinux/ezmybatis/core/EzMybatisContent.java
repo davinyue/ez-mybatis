@@ -132,11 +132,8 @@ public class EzMybatisContent {
      */
     public static void init(EzMybatisConfig config) {
         EzContentConfig configurationConfig = new EzContentConfig();
-        configurationConfig.setConfiguration(config.getConfiguration());
         configurationConfig.setDbKeywordQMFactory(new DbKeywordQMFactory(config));
         configurationConfig.setEzMybatisConfig(config);
-        configurationConfig.setInsertListeners(new ArrayList<>());
-        configurationConfig.setUpdateListeners(new ArrayList<>());
         CFG_CONFIG_MAP.put(config.getConfiguration(), configurationConfig);
         initMapper(config);
         initInterceptor(config);
@@ -181,8 +178,7 @@ public class EzMybatisContent {
     public static void addInsertListener(EzMybatisConfig config, EzMybatisInsertListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.getInsertListeners().add(listener);
-        configurationConfig.getUpdateInterceptor().addInsertListener(listener);
+        configurationConfig.addInsertListener(listener);
     }
 
     /**
@@ -191,8 +187,7 @@ public class EzMybatisContent {
     public static void addUpdateListener(EzMybatisConfig config, EzMybatisUpdateListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.getUpdateListeners().add(listener);
-        configurationConfig.getUpdateInterceptor().addUpdateListener(listener);
+        configurationConfig.addUpdateListener(listener);
     }
 
     /**
@@ -201,7 +196,7 @@ public class EzMybatisContent {
     public static void addDeleteListener(EzMybatisConfig config, EzMybatisDeleteListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.getUpdateInterceptor().addDeleteListener(listener);
+        configurationConfig.addDeleteListener(listener);
     }
 
     /**
