@@ -77,11 +77,6 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         Object firstEntity = models.iterator().next();
-        for (Object model : models) {
-            if (!firstEntity.getClass().getName().equals(model.getClass().getName())) {
-                throw new IllegalArgumentException("Inconsistent object types within the container");
-            }
-        }
         String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
         StringBuilder columnBuilder = new StringBuilder("( ");
@@ -91,7 +86,10 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         EzJdbcBatchSql ret = new EzJdbcBatchSql();
         int i = 1;
         List<List<EzJdbcSqlParam>> params = new ArrayList<>(models.size());
-        for (Object ignored : models) {
+        for (Object model : models) {
+            if (!firstEntity.getClass().getName().equals(model.getClass().getName())) {
+                throw new IllegalArgumentException("Inconsistent object types within the container");
+            }
             params.add(new ArrayList<>(columnMapFieldInfo.size()));
         }
         for (String column : columnMapFieldInfo.keySet()) {
