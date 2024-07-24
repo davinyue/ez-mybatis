@@ -82,11 +82,6 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                                                 boolean isReplace) {
         Assert.notNull(models, "models can not be null");
         Object firstEntity = models.iterator().next();
-        for (Object model : models) {
-            if (!firstEntity.getClass().getName().equals(model.getClass().getName())) {
-                throw new IllegalArgumentException("Inconsistent object types within the container");
-            }
-        }
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table,
                 firstEntity);
@@ -106,6 +101,9 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             for (EntityFieldInfo fieldInfo : allColumnMapFieldInfo.values()) {
                 Method fieldGetMethod = fieldInfo.getFieldGetMethod();
                 for (Object model : models) {
+                    if (!firstEntity.getClass().getName().equals(model.getClass().getName())) {
+                        throw new IllegalArgumentException("Inconsistent object types within the container");
+                    }
                     Object fieldValue = ReflectionUtils.invokeMethod(model, fieldGetMethod);
                     if (fieldValue != null && !fieldInfo.isPrimaryKey()) {
                         if (!existsUpdateFieldInfos.contains(fieldInfo.getFieldName())) {
