@@ -540,7 +540,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         User user2 = new User();
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
         user2.setName(null);
-        user1.setUserAge(19);
+        user2.setUserAge(19);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
