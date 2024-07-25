@@ -161,6 +161,9 @@ public class JdbcUpdateDao {
             }
             return ret;
         } catch (SQLException e) {
+            log.error(String.format("SQL execution failed,  the SQL statement is \"%s\"," +
+                            " the error message is \"%s\", the error code is %d", jdbcBatchSql.getSql(), e.getMessage(),
+                    e.getErrorCode()));
             throw new RuntimeException(e);
         }
     }
