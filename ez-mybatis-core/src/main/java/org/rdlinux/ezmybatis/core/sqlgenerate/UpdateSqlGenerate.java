@@ -23,5 +23,5 @@ public interface UpdateSqlGenerate {
      * 获取jdbc批量更新sql
      */
     EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
-                                         boolean isReplace);
+                                         Collection<String> updateFields, boolean isReplace);
 }

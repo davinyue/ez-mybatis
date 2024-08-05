@@ -34,32 +34,73 @@ public class JdbcUpdateDao {
     }
 
     /**
-     * 单条更新
+     * 单条更新, 本方法会先获取对象所有属性值, 判定哪些属性不为空, 再更新
      */
     public int update(Object model) {
         return this.updateByTable(null, model);
     }
 
     /**
+     * 单条更新,指定需要更新的属性
+     *
+     * @param updateFields 需要更新的属性
+     */
+    public int update(Object model, Collection<String> updateFields) {
+        Assert.notEmpty(updateFields, "updateFields can not be empty");
+        return this.doUpdate(null, Collections.singleton(model), updateFields, Boolean.FALSE);
+    }
+
+    /**
      * 单条更新, 指定表
      */
     public int updateByTable(Table table, Object model) {
-        return this.doUpdate(table, Collections.singleton(model), false);
+        return this.doUpdate(table, Collections.singleton(model), null, Boolean.FALSE);
     }
 
+    /**
+     * 单条更新, 指定表, 指定需要更新的属性
+     *
+     * @param updateFields 需要更新的属性
+     */
+    public int updateByTable(Table table, Object model, Collection<String> updateFields) {
+        Assert.notEmpty(updateFields, "updateFields can not be empty");
+        return this.doUpdate(table, Collections.singleton(model), updateFields, Boolean.FALSE);
+    }
 
     /**
-     * 批量更新
+     * 批量更新, 遍历集合内每个元素的非空字段作为每行数据的更新字段, 如果一个字段在有的元素里面不为空,
+     * 其它元素中为空时, 也将更新所有元素该字段
      */
     public int batchUpdate(Collection<?> models) {
-        return this.doUpdate(null, models, false);
+        return this.doUpdate(null, models, null, Boolean.FALSE);
     }
 
     /**
-     * 批量更新, 指定表
+     * 批量更新, 指定需要更新的属性
+     *
+     * @param updateFields 需要更新的属性
+     */
+    public int batchUpdate(Collection<?> models, Collection<String> updateFields) {
+        Assert.notEmpty(updateFields, "updateFields can not be empty");
+        return this.doUpdate(null, models, updateFields, Boolean.FALSE);
+    }
+
+    /**
+     * 指定表批量更新, 遍历集合内每个元素的非空字段作为每行数据的更新字段, 如果一个字段在有的元素里面不为空,
+     * * 其它元素中为空时, 也将更新所有元素该字段
      */
     public int batchUpdateByTable(Table table, Collection<?> models) {
-        return this.doUpdate(table, models, false);
+        return this.doUpdate(table, models, null, Boolean.FALSE);
+    }
+
+    /**
+     * 指定表批量更新, 指定需要更新的属性
+     *
+     * @param updateFields 需要更新的属性
+     */
+    public int batchUpdateByTable(Table table, Collection<?> models, Collection<String> updateFields) {
+        Assert.notEmpty(updateFields, "updateFields can not be empty");
+        return this.doUpdate(table, models, updateFields, Boolean.FALSE);
     }
 
 
@@ -75,21 +116,21 @@ public class JdbcUpdateDao {
      * 单条替换, 指定表
      */
     public int replaceByTable(Table table, Object model) {
-        return this.doUpdate(table, Collections.singleton(model), true);
+        return this.doUpdate(table, Collections.singleton(model), null, Boolean.TRUE);
     }
 
     /**
      * 批量替换
      */
     public int batchReplace(Collection<?> models) {
-        return this.doUpdate(null, models, true);
+        return this.doUpdate(null, models, null, Boolean.TRUE);
     }
 
     /**
      * 批量替换, 指定表
      */
     public int batchReplaceByTable(Table table, Collection<?> models) {
-        return this.doUpdate(table, models, true);
+        return this.doUpdate(table, models, null, Boolean.TRUE);
     }
 
 
@@ -97,7 +138,7 @@ public class JdbcUpdateDao {
      * 批量更新, 指定表
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private int doUpdate(Table table, Collection<?> models, boolean isReplace) {
+    private int doUpdate(Table table, Collection<?> models, Collection<String> updateFields, boolean isReplace) {
         Connection connection = this.sqlSession.getConnection();
         Configuration configuration = this.sqlSession.getConfiguration();
         List<EzMybatisUpdateListener> listeners = EzMybatisContent.getUpdateListeners(configuration);
@@ -112,7 +153,7 @@ public class JdbcUpdateDao {
         }
         long start = System.currentTimeMillis();
         EzJdbcBatchSql jdbcBatchSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getJdbcBatchUpdateSql(configuration, table, models, isReplace);
+                .getJdbcBatchUpdateSql(configuration, table, models, updateFields, isReplace);
         long end = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
             log.debug("SQL construction takes: " + (end - start) + "ms");
