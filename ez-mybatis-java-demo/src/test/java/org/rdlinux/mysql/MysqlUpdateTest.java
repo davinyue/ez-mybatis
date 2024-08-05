@@ -15,6 +15,7 @@ import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -554,6 +555,41 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.update(user);
         System.out.println("单条更新" + sCt + "条");
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void jdbcUpdateTest2() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId("038f530bad3745d3a75f584296368501");
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        System.out.println("单条更新" + sCt + "条");
+
+        List<User> users = new LinkedList<>();
+        User user1 = new User();
+        user1.setName("王值");
+        user1.setUserAge(20);
+        user1.setSex(User.Sex.MAN);
+        user1.setId("08649915562c421f858236f60fd652e5");
+        users.add(user1);
+
+        User user2 = new User();
+        user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName("王值1");
+        user2.setUserAge(19);
+        users.add(user2);
+        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        System.out.println("批量更新" + ct + "条");
+
+
         sqlSession.commit();
         sqlSession.close();
     }

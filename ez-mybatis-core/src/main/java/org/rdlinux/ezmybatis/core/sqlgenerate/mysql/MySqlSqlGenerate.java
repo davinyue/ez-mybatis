@@ -102,8 +102,9 @@ public class MySqlSqlGenerate implements SqlGenerate {
 
     @Override
     public EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
-                                                boolean isReplace) {
-        return MySqlUpdateSqlGenerate.getInstance().getJdbcBatchUpdateSql(configuration, table, models, isReplace);
+                                                Collection<String> updateFields, boolean isReplace) {
+        return MySqlUpdateSqlGenerate.getInstance().getJdbcBatchUpdateSql(configuration, table, models, updateFields,
+                isReplace);
     }
 
     @Override
