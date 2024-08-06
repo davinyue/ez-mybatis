@@ -115,11 +115,7 @@ public class MysqlBaseTest {
                 ezUpdates.forEach(this::onEzUpdate);
             }
         });
-        EzMybatisContent.addFieldSetListener(ezMybatisConfig, (obj, field, value) -> {
-            System.out.println("设置" + obj.getClass().getSimpleName() + "类的" + field + "属性值为" + value);
-            return value;
-        });
-        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (ntType, field, value) -> {
+        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (originObj, ntType, field, value) -> {
             System.out.println("构建sql时获取" + ntType.getSimpleName() + "类的" + field.getName() + "属性值为" + value);
             return value;
         });

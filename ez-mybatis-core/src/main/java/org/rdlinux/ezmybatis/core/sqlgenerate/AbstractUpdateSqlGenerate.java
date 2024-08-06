@@ -158,7 +158,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             int eti = 0;
             for (Object model : models) {
                 Object fieldValue = ReflectionUtils.invokeMethod(model, fieldGetMethod);
-                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, model.getClass(),
+                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, Boolean.TRUE, model.getClass(),
                         fieldInfo.getField(), fieldValue);
                 JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
                 EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
