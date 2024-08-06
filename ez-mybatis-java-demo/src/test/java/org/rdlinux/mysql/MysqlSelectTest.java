@@ -39,7 +39,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void selectOneObjectBySqlTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        User user = mapper.selectOneObjectBySql(User.class, "select * from ez_user limit 0,1", new HashMap<>());
+        User user = mapper.selectOneObjectBySql(User.class, "select * from ez_user limit 0,2", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
         sqlSession.close();
     }
@@ -492,7 +492,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void selectOneMapBySql() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         Map<String, Object> user = sqlSession.getMapper(EzMapper.class).selectOneMapBySql(
-                "select * from ez_user where id = '1s'", new HashMap<>());
+                "select * from ez_user limit 1", new HashMap<>());
         sqlSession.close();
         System.out.println(JacksonUtils.toJsonString(user));
     }

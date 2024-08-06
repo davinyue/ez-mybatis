@@ -9,12 +9,13 @@ public interface EzMybatisOnBuildSqlGetFieldListener {
     /**
      * 当调用get方法时
      *
-     * @param ntType 实体对象类型
-     * @param field  被获取的属性
-     * @param value  获取到的值
+     * @param isJdbcMode 是否是jdbc模式操作触发的事件
+     * @param ntType     实体对象类型
+     * @param field      被获取的属性
+     * @param value      获取到的值
      * @return 返回新的设置值
      */
-    Object onGet(Class<?> ntType, Field field, Object value);
+    Object onGet(boolean isJdbcMode, Class<?> ntType, Field field, Object value);
 
     /**
      * 执行顺序, 约小越优先

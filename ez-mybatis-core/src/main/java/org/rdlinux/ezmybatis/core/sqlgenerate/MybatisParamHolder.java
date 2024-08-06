@@ -83,7 +83,8 @@ public class MybatisParamHolder {
      */
     public String getMybatisParamName(Class<?> modelType, Field field, Object paramValue) {
         if (this.configuration != null && modelType != null && field != null) {
-            paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, modelType, field, paramValue);
+            paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, Boolean.FALSE, modelType, field,
+                    paramValue);
         }
         return this.getMybatisParamName(paramValue);
     }

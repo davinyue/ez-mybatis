@@ -33,7 +33,6 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
         sqlBuilder = this.fromToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
         sqlBuilder = this.whereToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
-        sqlBuilder = this.limitToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
         return sqlBuilder.toString();
     }
 
@@ -67,7 +66,4 @@ public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
         return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, where, paramHolder);
     }
-
-    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                                MybatisParamHolder mybatisParamHolder);
 }

@@ -83,7 +83,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchUpdate(Collection<Object> models) {
+            public void onBatchUpdate(Collection<?> models) {
                 System.out.println("更新事件");
             }
 
@@ -93,7 +93,7 @@ public class MysqlBaseTest {
             }
 
             @Override
-            public void onBatchReplace(Collection<Object> models) {
+            public void onBatchReplace(Collection<?> models) {
                 System.out.println("替换事件");
             }
 
@@ -115,11 +115,7 @@ public class MysqlBaseTest {
                 ezUpdates.forEach(this::onEzUpdate);
             }
         });
-        EzMybatisContent.addFieldSetListener(ezMybatisConfig, (obj, field, value) -> {
-            System.out.println("设置" + obj.getClass().getSimpleName() + "类的" + field + "属性值为" + value);
-            return value;
-        });
-        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (ntType, field, value) -> {
+        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (originObj, ntType, field, value) -> {
             System.out.println("构建sql时获取" + ntType.getSimpleName() + "类的" + field.getName() + "属性值为" + value);
             return value;
         });

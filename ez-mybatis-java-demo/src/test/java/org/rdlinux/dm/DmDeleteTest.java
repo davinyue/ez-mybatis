@@ -245,17 +245,4 @@ public class DmDeleteTest extends DmBaseTest {
         sqlSession.commit();
         sqlSession.close();
     }
-
-    @Test
-    public void limitDelete() {
-        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzDelete ezDelete = EzDelete.delete(EntityTable.of(User.class))
-                .where().addFieldCondition("id", "1").done()
-                .limit(2)
-                .build();
-        mapper.ezDelete(ezDelete);
-        sqlSession.commit();
-        sqlSession.close();
-    }
 }

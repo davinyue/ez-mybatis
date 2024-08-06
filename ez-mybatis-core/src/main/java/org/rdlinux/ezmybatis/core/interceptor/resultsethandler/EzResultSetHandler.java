@@ -306,10 +306,18 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
         ResultSet resultSet = rsw.getResultSet();
         this.skipRows(resultSet, rowBounds);
+        List<Object> ret = new ArrayList<>();
         while (this.shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
             ResultMap discriminatedResultMap = this.resolveDiscriminatedResultMap(resultSet, resultMap, null);
             Object rowValue = this.getRowValue(rsw, discriminatedResultMap, null);
+            //TODO 调用单条组结果对象装完成事件
+            rowValue = EzMybatisContent.onRetBuildDone(this.configuration, rowValue);
             this.storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet);
+            ret.add(rowValue);
+        }
+        if (!ret.isEmpty()) {
+            //TODO 调用全部组结果对象装完成事件
+            EzMybatisContent.onBatchRetBuildDone(this.configuration, ret);
         }
     }
 
@@ -457,7 +465,7 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         if (propertyMapping.getNestedQueryId() != null) {
             return this.getNestedQueryMappingValue(rs, metaResultObject, propertyMapping, lazyLoader, columnPrefix);
         } else if (propertyMapping.getResultSet() != null) {
-            this.addPendingChildRelation(rs, metaResultObject, propertyMapping);   // TODO is that OK?
+            this.addPendingChildRelation(rs, metaResultObject, propertyMapping);
             return DEFERRED;
         } else {
             final TypeHandler<?> typeHandler = propertyMapping.getTypeHandler();
@@ -467,7 +475,7 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     /**
-     * 结果列转为结果对象属性
+     * TODO 结果列转为结果对象属性
      */
     private String retColumnToField(String column, MetaObject metaObject) {
         if (EzMybatisConstant.ORACLE_ROW_NUM_ALIAS.equals(column)) {
@@ -601,9 +609,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 }
                 if (value != null || (this.configuration.isCallSettersOnNulls() && !mapping.primitive)) {
                     // gcode issue #377, call setter on nulls (value is not 'found')
-                    // set事件处理
-                    Object originalObject = metaObject.getOriginalObject();
-                    value = EzMybatisContent.onFieldSet(this.configuration, originalObject, mapping.property, value);
                     if (value != null) {
                         metaObject.setValue(mapping.property, value);
                     }

@@ -132,10 +132,8 @@ public class EzMybatisContent {
      */
     public static void init(EzMybatisConfig config) {
         EzContentConfig configurationConfig = new EzContentConfig();
-        configurationConfig.setConfiguration(config.getConfiguration());
         configurationConfig.setDbKeywordQMFactory(new DbKeywordQMFactory(config));
         configurationConfig.setEzMybatisConfig(config);
-        configurationConfig.setInsertListeners(new LinkedList<>());
         CFG_CONFIG_MAP.put(config.getConfiguration(), configurationConfig);
         initMapper(config);
         initInterceptor(config);
@@ -164,13 +162,33 @@ public class EzMybatisContent {
     }
 
     /**
+     * 获取更新监听器
+     */
+    public static List<EzMybatisUpdateListener> getUpdateListeners(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        return configurationConfig.getUpdateListeners();
+    }
+
+    /**
+     * 获取查询结构构造结束监听器
+     */
+    public static List<EzMybatisQueryRetListener> getQueryRetListeners(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        return configurationConfig.getQueryRetListeners();
+    }
+
+
+    /**
      * 添加插入监听器
      */
     public static void addInsertListener(EzMybatisConfig config, EzMybatisInsertListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.getInsertListeners().add(listener);
-        configurationConfig.getUpdateInterceptor().addInsertListener(listener);
+        configurationConfig.addInsertListener(listener);
     }
 
     /**
@@ -179,7 +197,16 @@ public class EzMybatisContent {
     public static void addUpdateListener(EzMybatisConfig config, EzMybatisUpdateListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.getUpdateInterceptor().addUpdateListener(listener);
+        configurationConfig.addUpdateListener(listener);
+    }
+
+    /**
+     * 添加查询结构构造结束监听器
+     */
+    public static void addQueryRetListener(EzMybatisConfig config, EzMybatisQueryRetListener listener) {
+        checkInit(config);
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        configurationConfig.addQueryRetListener(listener);
     }
 
     /**
@@ -188,16 +215,7 @@ public class EzMybatisContent {
     public static void addDeleteListener(EzMybatisConfig config, EzMybatisDeleteListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.getUpdateInterceptor().addDeleteListener(listener);
-    }
-
-    /**
-     * 添加删除监听器
-     */
-    public static void addFieldSetListener(EzMybatisConfig config, EzMybatisFieldSetListener listener) {
-        checkInit(config);
-        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
-        configurationConfig.addFieldSetListener(listener);
+        configurationConfig.addDeleteListener(listener);
     }
 
     /**
@@ -304,42 +322,58 @@ public class EzMybatisContent {
     }
 
     /**
-     * 当调用set方法或者map的put方法时
+     * 当调用set方法时
      *
      * @param configuration mybatis配置对象
-     * @param obj           被设置对象
+     * @param isJdbcMode    是否是jdbc模式操作触发的事件
+     * @param ntType        实体对象类型
      * @param field         设置属性
      * @param value         设置值
      * @return 返回新的设置值
      */
-    public static Object onFieldSet(Configuration configuration, Object obj, String field, Object value) {
+    public static Object onBuildSqlGetField(Configuration configuration, boolean isJdbcMode, Class<?> ntType,
+                                            Field field, Object value) {
         EzContentConfig contentConfig = getContentConfig(configuration);
-        List<EzMybatisFieldSetListener> listeners = contentConfig.getFieldSetListeners();
+        List<EzMybatisOnBuildSqlGetFieldListener> listeners = contentConfig.getOnBuildSqlGetFieldListeners();
         if (listeners != null) {
-            for (EzMybatisFieldSetListener listener : listeners) {
-                value = listener.onSet(obj, field, value);
+            for (EzMybatisOnBuildSqlGetFieldListener listener : listeners) {
+                value = listener.onGet(isJdbcMode, ntType, field, value);
             }
         }
         return value;
     }
 
     /**
-     * 当调用set方法时
+     * 当查询结果单条构造结束时
      *
      * @param configuration mybatis配置对象
-     * @param ntType        实体对象类型
-     * @param field         设置属性
-     * @param value         设置值
+     * @param model         值
      * @return 返回新的设置值
      */
-    public static Object onBuildSqlGetField(Configuration configuration, Class<?> ntType, Field field, Object value) {
+    public static Object onRetBuildDone(Configuration configuration, Object model) {
         EzContentConfig contentConfig = getContentConfig(configuration);
-        List<EzMybatisOnBuildSqlGetFieldListener> listeners = contentConfig.getOnBuildSqlGetFieldListeners();
+        List<EzMybatisQueryRetListener> listeners = contentConfig.getQueryRetListeners();
         if (listeners != null) {
-            for (EzMybatisOnBuildSqlGetFieldListener listener : listeners) {
-                value = listener.onGet(ntType, field, value);
+            for (EzMybatisQueryRetListener listener : listeners) {
+                model = listener.onBuildDone(model);
             }
         }
-        return value;
+        return model;
+    }
+
+    /**
+     * 当查询结果全部构造结束时
+     *
+     * @param configuration mybatis配置对象
+     * @param models        结果集
+     */
+    public static void onBatchRetBuildDone(Configuration configuration, List<Object> models) {
+        EzContentConfig contentConfig = getContentConfig(configuration);
+        List<EzMybatisQueryRetListener> listeners = contentConfig.getQueryRetListeners();
+        if (listeners != null) {
+            for (EzMybatisQueryRetListener listener : listeners) {
+                listener.onBatchBuildDone(models);
+            }
+        }
     }
 }

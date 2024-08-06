@@ -6,7 +6,7 @@ ez-mybatis通过mybatis拦截器机制, 实现数据的增删查改并支持部�
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.8.4.RS</version>
+    <version>0.8.8.RS</version>
 </dependency>
 ```
 
@@ -533,21 +533,24 @@ public interface EzMybatisDeleteListener {
 package org.rdlinux.ezmybatis.core.interceptor.listener;
 
 /**
- * 对象属性设置监听器, 当执行sql查询出结构组装为对象时调用, 注意如果查询结果返回一个基础类型或者包装类型时, 不支持该事件
+ * 查询结构构造结束监听器
  */
-public interface EzMybatisFieldSetListener {
+public interface EzMybatisQueryRetListener {
     /**
-     * 当调用set方法时
-     *
-     * @param obj   被设置对象
-     * @param field 设置属性
-     * @param value 设置值
-     * @return 返回新的设置值
+     * 当单条构造结束时
      */
-    Object onSet(Object obj, String field, Object value);
+    default <T> T onBuildDone(T model) {
+        return model;
+    }
 
     /**
-     * 执行顺序, 约小越优先
+     * 当全部构造结束时
+     */
+    default void onBatchBuildDone(List<Object> models) {
+    }
+
+    /**
+     * 拦截器顺序
      */
     default int order() {
         return 0;
@@ -569,12 +572,13 @@ public interface EzMybatisOnBuildSqlGetFieldListener {
     /**
      * 当调用get方法时
      *
-     * @param ntType 实体对象类型
-     * @param field  被获取的属性
-     * @param value  获取到的值
+     * @param isJdbcMode 是否是jdbc模式操作触发的事件
+     * @param ntType     实体对象类型
+     * @param field      被获取的属性
+     * @param value      获取到的值
      * @return 返回新的设置值
      */
-    Object onGet(Class<?> ntType, Field field, Object value);
+    Object onGet(boolean isJdbcMode, Class<?> ntType, Field field, Object value);
 
     /**
      * 执行顺序, 约小越优先

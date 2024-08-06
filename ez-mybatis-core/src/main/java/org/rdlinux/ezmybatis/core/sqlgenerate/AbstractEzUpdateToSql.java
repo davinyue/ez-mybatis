@@ -39,7 +39,6 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
         sqlBuilder = this.setToSql(sqlBuilder, configuration, update, mybatisParamHolder);
         sqlBuilder = this.joinsToSql(sqlBuilder, configuration, update, mybatisParamHolder);
         sqlBuilder = this.whereToSql(sqlBuilder, configuration, update, mybatisParamHolder);
-        sqlBuilder = this.limitToSql(sqlBuilder, configuration, update, mybatisParamHolder);
         return sqlBuilder.toString();
     }
 
@@ -94,7 +93,4 @@ public abstract class AbstractEzUpdateToSql implements EzUpdateToSql {
         Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
         return converter.buildSql(Converter.Type.UPDATE, sqlBuilder, configuration, where, mybatisParamHolder);
     }
-
-    protected abstract StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
-                                                MybatisParamHolder mybatisParamHolder);
 }
