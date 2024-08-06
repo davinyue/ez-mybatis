@@ -1,7 +1,10 @@
 package org.rdlinux.ezmybatis.core;
 
 import lombok.Getter;
-import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.From;
+import org.rdlinux.ezmybatis.core.sqlstruct.Join;
+import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
+import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.enumeration.JoinType;
@@ -13,7 +16,6 @@ import java.util.List;
 public class EzUpdate extends EzParam<Integer> {
     private UpdateSet set;
     private List<Join> joins;
-    private Limit limit;
 
     private EzUpdate() {
         super(Integer.class);
@@ -99,17 +101,6 @@ public class EzUpdate extends EzParam<Integer> {
 
         public Where.WhereBuilder<EzUpdateBuilder> where() {
             return this.where(true);
-        }
-
-        public EzUpdateBuilder limit(boolean sure, int limit) {
-            if (sure) {
-                this.ezUpdate.limit = new Limit(limit);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder limit(int limit) {
-            return this.limit(true, limit);
         }
 
         public EzUpdate build() {

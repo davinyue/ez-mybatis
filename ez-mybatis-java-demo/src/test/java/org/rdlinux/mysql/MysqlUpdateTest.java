@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzUpdate;
+import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
@@ -14,6 +15,8 @@ import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -526,15 +529,104 @@ public class MysqlUpdateTest extends MysqlBaseTest {
     }
 
     @Test
-    public void limitUpdate() {
+    public void jdbcUpdateTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-                .set().setField("name", "张碧澄").done()
-                .where().addFieldCondition("id", "1").done()
-                .limit(2)
-                .build();
-        mapper.ezUpdate(ezUpdate);
+        List<User> users = new LinkedList<>();
+        User user1 = new User();
+        user1.setName("王值");
+        user1.setUserAge(null);
+        user1.setId("08649915562c421f858236f60fd652e5");
+        users.add(user1);
+
+        User user2 = new User();
+        user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName(null);
+        user2.setUserAge(19);
+        users.add(user2);
+        JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
+        int ct = jdbcInsertDao.batchUpdate(users);
+        System.out.println("批量更新" + ct + "条");
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId("038f530bad3745d3a75f584296368501");
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.update(user);
+        System.out.println("单条更新" + sCt + "条");
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void jdbcUpdateTest2() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId("038f530bad3745d3a75f584296368501");
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        System.out.println("单条更新" + sCt + "条");
+
+        List<User> users = new LinkedList<>();
+        User user1 = new User();
+        user1.setName("王值");
+        user1.setUserAge(20);
+        user1.setSex(User.Sex.MAN);
+        user1.setId("08649915562c421f858236f60fd652e5");
+        users.add(user1);
+
+        User user2 = new User();
+        user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName("王值1");
+        user2.setUserAge(19);
+        users.add(user2);
+        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        System.out.println("批量更新" + ct + "条");
+
+
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void jdbcReplaceTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<User> users = new LinkedList<>();
+        User user1 = new User();
+        user1.setName(null);
+        user1.setUpdateTime(new Date());
+        user1.setCreateTime(new Date());
+        user1.setUserAge(12);
+        user1.setSex(User.Sex.MAN);
+        user1.setId("08649915562c421f858236f60fd652e5");
+        users.add(user1);
+
+        User user2 = new User();
+        user2.setName("杨玉婷");
+        user2.setUpdateTime(new Date());
+        user2.setCreateTime(new Date());
+        user2.setUserAge(18);
+        user2.setSex(User.Sex.WOMAN);
+        user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        users.add(user2);
+        JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
+        int ct = jdbcInsertDao.batchReplace(users);
+        System.out.println("批量更新" + ct + "条");
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId("038f530bad3745d3a75f584296368501");
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.replace(user);
+        System.out.println("单条更新" + sCt + "条");
         sqlSession.commit();
         sqlSession.close();
     }

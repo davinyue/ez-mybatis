@@ -101,6 +101,13 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
+    public EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
+                                                Collection<String> updateFields, boolean isReplace) {
+        return OracleUpdateSqlGenerate.getInstance().getJdbcBatchUpdateSql(configuration, table, models, updateFields,
+                isReplace);
+    }
+
+    @Override
     public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
                                    Class<?> ntClass, Object id) {
         return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);

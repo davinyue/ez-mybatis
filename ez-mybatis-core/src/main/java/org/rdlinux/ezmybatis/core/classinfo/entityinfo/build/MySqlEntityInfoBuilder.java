@@ -27,7 +27,7 @@ public class MySqlEntityInfoBuilder implements EntityInfoBuilder {
     public EntityClassInfo buildInfo(EzContentConfig ezContentConfig, Class<?> ntClass) {
         EntityInfoBuildConfig buildConfig;
         //如果配置下划线转驼峰
-        if (ezContentConfig.getConfiguration().isMapUnderscoreToCamelCase()) {
+        if (ezContentConfig.getEzMybatisConfig().getConfiguration().isMapUnderscoreToCamelCase()) {
             buildConfig = new EntityInfoBuildConfig(ezContentConfig.getEzMybatisConfig().getTableNamePattern(),
                     EntityInfoBuildConfig.ColumnHandle.TO_UNDER);
         } else {
