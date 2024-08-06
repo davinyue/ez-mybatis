@@ -46,15 +46,16 @@ public class SpringEzMybatisInit {
                 EzMybatisDeleteListener.class);
         deleteListenerMap.values().stream().sorted(Comparator.comparingInt(EzMybatisDeleteListener::order))
                 .forEach(e -> EzMybatisContent.addDeleteListener(ezMybatisConfig, e));
-        Map<String, EzMybatisFieldSetListener> fieldSetListenerMap = applicationContext.getBeansOfType(
-                EzMybatisFieldSetListener.class);
-        fieldSetListenerMap.values().stream().sorted(Comparator.comparingInt(EzMybatisFieldSetListener::order))
-                .forEach(e -> EzMybatisContent.addFieldSetListener(ezMybatisConfig, e));
         Map<String, EzMybatisOnBuildSqlGetFieldListener> buildSqlGetFieldListenerMap = applicationContext
                 .getBeansOfType(EzMybatisOnBuildSqlGetFieldListener.class);
         buildSqlGetFieldListenerMap.values().stream()
                 .sorted(Comparator.comparingInt(EzMybatisOnBuildSqlGetFieldListener::order))
                 .forEach(e -> EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, e));
+        Map<String, EzMybatisQueryRetListener> buildRetListenerMap = applicationContext.getBeansOfType(
+                EzMybatisQueryRetListener.class);
+        buildRetListenerMap.values().stream()
+                .sorted(Comparator.comparingInt(EzMybatisQueryRetListener::order))
+                .forEach(e -> EzMybatisContent.addQueryRetListener(ezMybatisConfig, e));
         //调用初始监听器
         Map<String, EzMybatisInitListener> initListenerMap = applicationContext.getBeansOfType(
                 EzMybatisInitListener.class);

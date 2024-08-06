@@ -12,7 +12,6 @@ import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -22,10 +21,6 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 public class EzContentConfig {
-    /**
-     * 属性设置监听器
-     */
-    private List<EzMybatisFieldSetListener> fieldSetListeners;
     /**
      * 当构建sql获取属性时的监听器
      */
@@ -54,18 +49,10 @@ public class EzContentConfig {
      * 更新监听器列表
      */
     private List<EzMybatisUpdateListener> updateListeners;
-
-
     /**
-     * 添加属性设置监听器
+     * 查询结构构造结束监听器列表
      */
-    public void addFieldSetListener(EzMybatisFieldSetListener listener) {
-        if (this.fieldSetListeners == null) {
-            this.fieldSetListeners = new LinkedList<>();
-        }
-        this.fieldSetListeners.add(listener);
-        this.fieldSetListeners.sort(Comparator.comparingInt(EzMybatisFieldSetListener::order));
-    }
+    private List<EzMybatisQueryRetListener> queryRetListeners;
 
     /**
      * 添加当构建sql获取属性时的监听器
@@ -110,6 +97,18 @@ public class EzContentConfig {
         this.updateListeners.add(listener);
         this.updateListeners.sort(Comparator.comparingInt(EzMybatisUpdateListener::order));
         this.updateInterceptor.addUpdateListener(listener);
+    }
+
+    /**
+     * 添加查询结构构造结束监听器
+     */
+    public void addQueryRetListener(EzMybatisQueryRetListener listener) {
+        this.checkUpdateInterceptor();
+        if (this.queryRetListeners == null) {
+            this.queryRetListeners = new ArrayList<>();
+        }
+        this.queryRetListeners.add(listener);
+        this.queryRetListeners.sort(Comparator.comparingInt(EzMybatisQueryRetListener::order));
     }
 
     /**

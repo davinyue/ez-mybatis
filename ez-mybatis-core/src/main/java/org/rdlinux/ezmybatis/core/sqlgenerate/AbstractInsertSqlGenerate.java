@@ -109,7 +109,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             for (Object entity : models) {
                 Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
                 JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
-                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, entity.getClass(),
+                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, Boolean.TRUE, entity.getClass(),
                         fieldInfo.getField(), fieldValue);
                 EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
                 params.get(eti).add(param);
