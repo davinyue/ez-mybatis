@@ -325,19 +325,22 @@ public class EzMybatisContent {
      * 当调用set方法时
      *
      * @param configuration mybatis配置对象
-     * @param isJdbcMode    是否是jdbc模式操作触发的事件
+     * @param isSimple      是否是简单模式, 只有当使用JdbcInsertDao, JdbcUpdateDao下面的所有方法和
+     *                      mapper的insert、insertByTable、batchInsert、batchInsertByTable、 update、 batchUpdate、
+     *                      updateByTable、 batchUpdateByTable、 replace、 replaceByTable、batchReplace、
+     *                      batchReplaceByTable方法时,该值才为true, 否则为false
      * @param ntType        实体对象类型
      * @param field         设置属性
      * @param value         设置值
      * @return 返回新的设置值
      */
-    public static Object onBuildSqlGetField(Configuration configuration, boolean isJdbcMode, Class<?> ntType,
+    public static Object onBuildSqlGetField(Configuration configuration, boolean isSimple, Class<?> ntType,
                                             Field field, Object value) {
         EzContentConfig contentConfig = getContentConfig(configuration);
         List<EzMybatisOnBuildSqlGetFieldListener> listeners = contentConfig.getOnBuildSqlGetFieldListeners();
         if (listeners != null) {
             for (EzMybatisOnBuildSqlGetFieldListener listener : listeners) {
-                value = listener.onGet(isJdbcMode, ntType, field, value);
+                value = listener.onGet(isSimple, ntType, field, value);
             }
         }
         return value;

@@ -77,13 +77,26 @@ public class MybatisParamHolder {
     }
 
     /**
-     * 获取一个参数名称
+     * 获取一个参数名称，触发非简单模式事件
      *
      * @param paramValue 参数值
      */
     public String getMybatisParamName(Class<?> modelType, Field field, Object paramValue) {
         if (this.configuration != null && modelType != null && field != null) {
             paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, Boolean.FALSE, modelType, field,
+                    paramValue);
+        }
+        return this.getMybatisParamName(paramValue);
+    }
+
+    /**
+     * 获取一个参数名称, 触发简单模式事件
+     *
+     * @param paramValue 参数值
+     */
+    public String simpleGetMybatisParamName(Class<?> modelType, Field field, Object paramValue) {
+        if (this.configuration != null && modelType != null && field != null) {
+            paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, Boolean.TRUE, modelType, field,
                     paramValue);
         }
         return this.getMybatisParamName(paramValue);
