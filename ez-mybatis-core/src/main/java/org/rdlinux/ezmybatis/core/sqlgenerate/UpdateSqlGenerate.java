@@ -8,7 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import java.util.Collection;
 
 public interface UpdateSqlGenerate {
-    String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table, Object entity,
+    String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table, Object model,
                         boolean isReplace);
 
     String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
