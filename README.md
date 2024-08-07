@@ -503,7 +503,7 @@ public interface EzMybatisUpdateListener {
 }
 ```
 
-## 更新数据事件
+## 删除数据事件
 ```java
 package org.rdlinux.ezmybatis.core.interceptor.listener;
 
