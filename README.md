@@ -572,13 +572,16 @@ public interface EzMybatisOnBuildSqlGetFieldListener {
     /**
      * 当调用get方法时
      *
-     * @param isJdbcMode 是否是jdbc模式操作触发的事件
-     * @param ntType     实体对象类型
-     * @param field      被获取的属性
-     * @param value      获取到的值
+     * @param isSimple 是否是简单模式, 只有当使用JdbcInsertDao, JdbcUpdateDao下面的所有方法和
+     *                 mapper的insert、insertByTable、batchInsert、batchInsertByTable、 update、 batchUpdate、
+     *                 updateByTable、 batchUpdateByTable、 replace、 replaceByTable、batchReplace、
+     *                 batchReplaceByTable方法时,该值才为true, 否则为false
+     * @param ntType   实体对象类型
+     * @param field    被获取的属性
+     * @param value    获取到的值
      * @return 返回新的设置值
      */
-    Object onGet(boolean isJdbcMode, Class<?> ntType, Field field, Object value);
+    Object onGet(boolean isSimple, Class<?> ntType, Field field, Object value);
 
     /**
      * 执行顺序, 约小越优先
