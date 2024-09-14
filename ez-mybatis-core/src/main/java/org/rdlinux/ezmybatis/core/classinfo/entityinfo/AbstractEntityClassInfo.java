@@ -1,10 +1,14 @@
 package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.List;
 import java.util.Map;
 
+@Setter
+@Accessors(chain = true)
 public abstract class AbstractEntityClassInfo implements EntityClassInfo {
     protected Class<?> entityClass;
     protected String tableName;
@@ -84,5 +88,4 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
                 this.getEntityClass().getName()));
         return this.primaryKeyInfo;
     }
-
 }

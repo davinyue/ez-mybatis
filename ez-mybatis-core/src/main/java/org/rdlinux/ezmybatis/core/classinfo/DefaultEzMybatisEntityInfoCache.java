@@ -69,6 +69,10 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
      */
     protected void initClassFileChangeWatch() {
         URL classLocation = DefaultEzMybatisEntityInfoCache.class.getResource("/");
+        if (classLocation == null) {
+            log.debug("Disable hot reloading of class information.");
+            return;
+        }
         if (classLocation.toString().startsWith("jar:file:")) {
             if (log.isDebugEnabled()) {
                 log.debug("Disable hot reloading of class information.");
@@ -135,7 +139,7 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
             }
         });
         cleanThread.setDaemon(true);
-        cleanThread.setName("ez-mybatis-entity-info-clean");
+        cleanThread.setName("ez-mybatis-entity-info-hot-reloading");
         cleanThread.start();
     }
 
@@ -154,11 +158,8 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
     public void set(Configuration configuration, EntityClassInfo entityClassInfo) {
         Assert.notNull(configuration, "Configuration can not be null");
         Assert.notNull(entityClassInfo, "EntityClassInfo can not be null");
-        ConcurrentMap<String, EntityClassInfo> entityInfo = ENTITY_INFO_MAP.get(configuration);
-        if (entityInfo == null) {
-            entityInfo = new ConcurrentHashMap<>();
-            ENTITY_INFO_MAP.put(configuration, entityInfo);
-        }
+        ConcurrentMap<String, EntityClassInfo> entityInfo = ENTITY_INFO_MAP.computeIfAbsent(configuration,
+                k -> new ConcurrentHashMap<>());
         entityInfo.put(entityClassInfo.getEntityClass().getName(), entityClassInfo);
     }
 }

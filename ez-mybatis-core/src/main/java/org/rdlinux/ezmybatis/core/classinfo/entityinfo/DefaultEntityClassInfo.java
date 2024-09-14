@@ -33,8 +33,6 @@ public class DefaultEntityClassInfo extends AbstractEntityClassInfo {
         }
         this.entityClass = entityClass;
         this.fieldInfos = new LinkedList<>();
-        this.columnMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
-        this.filedNameMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
         List<Field> fields = SqlReflectionUtils.getSupportFields(entityClass);
         for (Field field : fields) {
             Method fieldGetMethod;
@@ -49,6 +47,8 @@ public class DefaultEntityClassInfo extends AbstractEntityClassInfo {
                 this.primaryKeyInfo = fieldInfo;
             }
         }
+        this.columnMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
+        this.filedNameMapFieldInfo = new HashMap<>((int) (this.fieldInfos.size() / 0.75) + 1);
         this.fieldInfos.forEach(fieldInfo -> {
             this.columnMapFieldInfo.put(fieldInfo.getColumnName(), fieldInfo);
             this.filedNameMapFieldInfo.put(fieldInfo.getFieldName(), fieldInfo);

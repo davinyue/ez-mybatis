@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MapperParamInitLogic implements InterceptorLogic {
-    private static Set<String> methodNames;
+    private static final Set<String> methodNames;
 
     static {
         Method[] declaredMethods = EzBaseMapper.class.getDeclaredMethods();

@@ -13,6 +13,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class EzEntityClassInfoFactory {
     /**
@@ -23,6 +24,10 @@ public class EzEntityClassInfoFactory {
      * 默认实体信息缓存
      */
     private static EzMybatisEntityInfoCache ENTITY_INFO_CACHE = new DefaultEzMybatisEntityInfoCache();
+    /**
+     * 锁映射
+     */
+    private static final ConcurrentMap<String, Object> LOCK_MAP = new ConcurrentHashMap<>();
 
     //初始化实体构建信息
     static {
@@ -35,15 +40,6 @@ public class EzEntityClassInfoFactory {
         ENTITY_INFO_BUILD_MAP.put(DbType.POSTGRE_SQL, mySqlEntityInfoBuild);
     }
 
-    private static EntityClassInfo buildInfo(Configuration configuration, Class<?> ntClass) {
-        DbType dbType = EzMybatisContent.getDbType(configuration);
-        EntityInfoBuilder infoBuild = ENTITY_INFO_BUILD_MAP.get(dbType);
-        EzContentConfig ezContentConfig = EzMybatisContent.getContentConfig(configuration);
-        EntityClassInfo entityClassInfo = infoBuild.buildInfo(ezContentConfig, ntClass);
-        ENTITY_INFO_CACHE.set(configuration, entityClassInfo);
-        return entityClassInfo;
-    }
-
     /**
      * 获取实体信息, 如果没有将构造实体信息返回
      *
@@ -53,12 +49,19 @@ public class EzEntityClassInfoFactory {
     public static EntityClassInfo forClass(Configuration configuration, Class<?> ntClass) {
         EntityClassInfo result = ENTITY_INFO_CACHE.get(configuration, ntClass);
         if (result == null) {
-            synchronized (configuration) {
+            String lockKey = configuration.hashCode() + "." + ntClass.hashCode();
+            Object lockObj = LOCK_MAP.computeIfAbsent(lockKey, (k) -> new Object());
+            synchronized (lockObj) {
                 result = ENTITY_INFO_CACHE.get(configuration, ntClass);
                 if (result == null) {
-                    result = buildInfo(configuration, ntClass);
+                    DbType dbType = EzMybatisContent.getDbType(configuration);
+                    EntityInfoBuilder infoBuilder = ENTITY_INFO_BUILD_MAP.get(dbType);
+                    EzContentConfig ezContentConfig = EzMybatisContent.getContentConfig(configuration);
+                    result = infoBuilder.buildInfo(ezContentConfig, ntClass);
+                    ENTITY_INFO_CACHE.set(configuration, result);
                 }
             }
+            LOCK_MAP.remove(lockKey);
         }
         return result;
     }
@@ -74,13 +77,17 @@ public class EzEntityClassInfoFactory {
     }
 
     /**
-     * 根据配置实体信息构造器
+     * 根据配置获取实体信息构造器
      */
-    public static EntityInfoBuilder getEntityInfoBuild(Configuration configuration) {
+    public static EntityInfoBuilder getEntityInfoBuilder(Configuration configuration) {
         return ENTITY_INFO_BUILD_MAP.get(EzMybatisContent.getDbType(configuration));
     }
 
+    /**
+     * 设置实体信息缓存
+     */
     public static void setEntityInfoCache(EzMybatisEntityInfoCache entityInfoCache) {
+        Assert.notNull(entityInfoCache, "The entity information cache cannot be null.");
         EzEntityClassInfoFactory.ENTITY_INFO_CACHE = entityInfoCache;
     }
 }
