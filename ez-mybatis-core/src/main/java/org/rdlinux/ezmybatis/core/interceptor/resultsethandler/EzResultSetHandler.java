@@ -32,6 +32,7 @@ import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.executor.ResultMapInitLogic;
 import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 
@@ -552,8 +553,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                         continue;
                     }
                     final Class<?> propertyType = metaObject.getSetterType(property);
-                    if (this.typeHandlerRegistry.hasTypeHandler(propertyType, rsw.getJdbcType(columnName))) {
-                        final TypeHandler<?> typeHandler = rsw.getTypeHandler(propertyType, columnName);
+                    //TODO 获取注解的类型处理器
+                    TypeHandler<?> typeHandler = this.getAnnotationTypeHandler(metaObject, property);
+                    //TODO 如何未注解typeHandler， 则使用官方逻辑来获取typeHandler
+                    if (typeHandler == null && this.typeHandlerRegistry.hasTypeHandler(propertyType, rsw.getJdbcType(columnName))) {
+                        typeHandler = rsw.getTypeHandler(propertyType, columnName);
+                    }
+                    //TODO 修改类型处理器
+                    if (typeHandler != null) {
                         autoMapping
                                 .add(new UnMappedColumnAutoMapping(columnName, property, typeHandler, propertyType.isPrimitive()));
                     } else {
@@ -1317,5 +1324,21 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
             }
         }
         return property;
+    }
+
+    /**
+     * TODO 获取注解的类型处理器
+     */
+    private TypeHandler<?> getAnnotationTypeHandler(MetaObject metaObject, String property) {
+        TypeHandler<?> typeHandler = null;
+        if (!(metaObject.getOriginalObject() instanceof Map)) {
+            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(this.configuration,
+                    metaObject.getOriginalObject().getClass());
+            EntityFieldInfo entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(property);
+            if (entityFieldInfo != null && entityFieldInfo.getTypeHandler() != null) {
+                typeHandler = entityFieldInfo.getTypeHandler();
+            }
+        }
+        return typeHandler;
     }
 }
