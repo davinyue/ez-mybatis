@@ -18,8 +18,8 @@ createRowKeyForUnmappedProperties(ResultMap resultMap, ResultSetWrapper rsw, Cac
 
 以上方法从ResultMapInitLogic获取结果类型
 
-
 handleResultSets方法的最后需要清空ResultMapInitLogic设置的threadlocal结果变量
 
-
 createAutomaticMappings方法负责解析类与数据库列的映射
+
+handleRowValuesForSimpleResultMap方法调用onRetBuildDone和onBatchRetBuildDone事件通知
