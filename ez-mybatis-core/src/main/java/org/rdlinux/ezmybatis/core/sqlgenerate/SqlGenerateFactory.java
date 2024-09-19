@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.dm.DmSqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlgenerate.mssql.SqlServerSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.oracle.OracleSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.postgre.PostgreSqlGenerate;
@@ -18,6 +19,7 @@ public class SqlGenerateFactory {
         sqlGenerateMap.put(DbType.ORACLE, OracleSqlGenerate.getInstance());
         sqlGenerateMap.put(DbType.DM, DmSqlGenerate.getInstance());
         sqlGenerateMap.put(DbType.POSTGRE_SQL, PostgreSqlGenerate.getInstance());
+        sqlGenerateMap.put(DbType.SQL_SERVER, SqlServerSqlGenerate.getInstance());
     }
 
     public static SqlGenerate getSqlGenerate(DbType dbType) {

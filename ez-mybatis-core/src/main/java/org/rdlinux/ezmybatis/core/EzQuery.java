@@ -32,6 +32,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         private EzQueryBuilder(Class<Rt> retType) {
             this.query = new EzQuery<>(retType);
+            this.query.orderBy = new OrderBy(this.query, new LinkedList<>());
         }
 
         public EzQueryBuilder<Rt> from(Table table) {
@@ -152,13 +153,13 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure, Table table) {
             OrderBy orderBy = this.query.orderBy;
             if (orderBy == null) {
-                orderBy = new OrderBy(new LinkedList<>());
+                orderBy = new OrderBy(this.query, new LinkedList<>());
                 if (sure) {
                     this.query.orderBy = orderBy;
                 }
             } else {
                 if (!sure) {
-                    orderBy = new OrderBy(new LinkedList<>());
+                    orderBy = new OrderBy(this.query, new LinkedList<>());
                 }
             }
             return new OrderBy.OrderBuilder<>(this, orderBy, table);

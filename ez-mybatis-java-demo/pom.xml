@@ -90,14 +90,19 @@
             <version>42.7.2</version>
         </dependency>
         <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.8.1.jre8</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
         </dependency>
         <dependency>
-            <groupId>org.linuxprobe</groupId>
+            <groupId>org.rdlinux</groupId>
             <artifactId>luava-json</artifactId>
-            <version>0.0.8.RELEASE</version>
+            <version>0.0.9.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

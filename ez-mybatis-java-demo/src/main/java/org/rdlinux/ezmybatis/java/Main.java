@@ -4,9 +4,9 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
+import org.rdlinux.luava.json.JacksonUtils;
 
 import java.io.IOException;
 import java.io.Reader;

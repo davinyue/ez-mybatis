@@ -21,8 +21,8 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         sqlBuilder = this.whereToSql(true, sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.onWhereToSqlEnd(true, sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.groupByToSql(sqlBuilder, configuration, query, paramHolder);
-        sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.havingToSql(sqlBuilder, configuration, query, paramHolder);
+        sqlBuilder = this.orderByToSql(sqlBuilder, configuration, query, paramHolder);
         sqlBuilder = this.pageToSql(sqlBuilder, configuration, query, paramHolder);
         if (query.getPage() == null) {
             sqlBuilder = this.limitToSql(sqlBuilder, configuration, query, paramHolder);

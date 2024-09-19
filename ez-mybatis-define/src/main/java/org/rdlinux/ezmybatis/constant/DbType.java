@@ -19,5 +19,9 @@ public enum DbType {
     /**
      * PostgreSql数据库
      */
-    POSTGRE_SQL;
+    POSTGRE_SQL,
+    /**
+     * ms sql
+     */
+    SQL_SERVER;
 }

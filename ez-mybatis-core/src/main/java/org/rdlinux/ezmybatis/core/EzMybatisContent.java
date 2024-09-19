@@ -272,6 +272,8 @@ public class EzMybatisContent {
             dbType = DbType.DM;
         } else if (driver.toLowerCase().contains("postgresql")) {
             dbType = DbType.POSTGRE_SQL;
+        } else if (driver.toLowerCase().contains("sqlserver")) {
+            dbType = DbType.SQL_SERVER;
         }
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.setDbType(dbType);
@@ -293,6 +295,8 @@ public class EzMybatisContent {
             DmConverterRegister.register();
         } else if (dbType == DbType.POSTGRE_SQL) {
             PostgreSqlConverterRegister.register();
+        } else if (dbType == DbType.SQL_SERVER) {
+            SqlServerConverterRegister.register();
         }
     }
 

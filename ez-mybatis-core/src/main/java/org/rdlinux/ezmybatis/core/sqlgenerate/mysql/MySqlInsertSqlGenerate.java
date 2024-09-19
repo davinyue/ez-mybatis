@@ -11,7 +11,7 @@ import java.util.Collection;
 public class MySqlInsertSqlGenerate extends AbstractInsertSqlGenerate {
     private static volatile MySqlInsertSqlGenerate instance;
 
-    private MySqlInsertSqlGenerate() {
+    protected MySqlInsertSqlGenerate() {
     }
 
     public static MySqlInsertSqlGenerate getInstance() {

@@ -3,7 +3,6 @@ package org.rdlinux.mysql;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
-import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
@@ -20,6 +19,7 @@ import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 import org.rdlinux.ezmybatis.utils.StringHashMap;
+import org.rdlinux.luava.json.JacksonUtils;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -39,7 +39,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
     public void selectOneObjectBySqlTest() {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        User user = mapper.selectOneObjectBySql(User.class, "select * from ez_user limit 0,2", new HashMap<>());
+        User user = mapper.selectOneObjectBySql(User.class, "select * from ez_user limit 0,1", new HashMap<>());
         System.out.println(JacksonUtils.toJsonString(user));
         sqlSession.close();
     }
