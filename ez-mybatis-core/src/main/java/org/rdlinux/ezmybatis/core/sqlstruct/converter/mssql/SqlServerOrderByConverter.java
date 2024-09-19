@@ -7,7 +7,6 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlOrderByConverter;
-import org.rdlinux.ezmybatis.utils.Assert;
 
 public class SqlServerOrderByConverter extends MySqlOrderByConverter implements Converter<OrderBy> {
     private static volatile SqlServerOrderByConverter instance;
@@ -24,16 +23,6 @@ public class SqlServerOrderByConverter extends MySqlOrderByConverter implements 
             }
         }
         return instance;
-    }
-
-    @Override
-    public StringBuilder buildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Object struct,
-                                  MybatisParamHolder mybatisParamHolder) {
-        Assert.notNull(type, "type can not be null");
-        Assert.notNull(sqlBuilder, "sqlBuilder can not be null");
-        Assert.notNull(configuration, "configuration can not be null");
-        Assert.notNull(mybatisParamHolder, "mybatisParamHolder can not be null");
-        return this.doBuildSql(type, sqlBuilder, configuration, (OrderBy) struct, mybatisParamHolder);
     }
 
     @Override
