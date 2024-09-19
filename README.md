@@ -11,6 +11,15 @@ ez-mybatis通过mybatis拦截器机制, 实现数据的增删查改并支持部�
 * PostgreSql
 * SqlServer
 
+对于不在列表内的国产数据库，可以参考官方文档查看其兼容的数据库语法，一般都是兼容
+MySql , Oracle, PostgreSql语法，将其数据库类型配置为兼容的数据库即可, 例如
+国产高斯数据库，其兼容PostgreSql语法，sprin boot新增配置如下
+
+```yaml
+ez-mybatis:
+  db-type: POSTGRE_SQL
+```
+
 # spring boot使用
 
 ```
