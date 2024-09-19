@@ -1,4 +1,4 @@
-package org.rdlinux.oracle;
+package org.rdlinux.mssql;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
@@ -8,22 +8,22 @@ import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
-import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.java.entity.BaseEntity;
 import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
-public class OracleUpdateTest extends OracleBaseTest {
+public class MsSqlUpdateTest extends MsSqlBaseTest {
     @Test
     public void update() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -38,7 +38,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void updateByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -53,7 +53,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperUpdate() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -68,7 +68,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperUpdateByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -83,7 +83,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void batchUpdate() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -104,7 +104,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void batchUpdateByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -125,7 +125,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperBatchUpdate() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -146,7 +146,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperBatchUpdateByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -167,7 +167,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void replace() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -179,7 +179,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void replaceByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -191,7 +191,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperReplace() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -203,7 +203,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperReplaceByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
@@ -215,7 +215,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void batchReplace() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -236,7 +236,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void batchReplaceByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -257,7 +257,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperBatchReplace() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -278,7 +278,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void ezMapperBatchReplaceByTable() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
@@ -299,7 +299,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void updateByEzParam() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
@@ -318,7 +318,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void batchUpdateByEzParam() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
@@ -338,7 +338,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void updateSetNull() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
@@ -357,14 +357,110 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void caseWhenUpdate() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
+            Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
+            Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
+
+            CaseWhen sonCaseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .els("王二1");
+
             CaseWhen caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四").build();
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .els("王二1");
+
             EzUpdate ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsCaseWhen(sonCaseWhen);
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsFormula(formula);
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsFunc(function);
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsColumn("name");
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder(table)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .elsField(User.Fields.name);
+            ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
@@ -381,7 +477,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void formulaUpdateTest() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
@@ -403,7 +499,7 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void functionUpdateTest() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
@@ -411,7 +507,6 @@ public class OracleUpdateTest extends OracleBaseTest {
                     .addValueArg(100).build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, function)
-                    .setField(BaseEntity.Fields.updateTime, Keywords.of("SYSDATE"))
                     .done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
@@ -428,15 +523,18 @@ public class OracleUpdateTest extends OracleBaseTest {
 
     @Test
     public void jdbcUpdateTest() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
+        user1.setUserAge(null);
         user1.setId("08649915562c421f858236f60fd652e5");
         users.add(user1);
 
         User user2 = new User();
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName(null);
+        user2.setUserAge(19);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
@@ -455,8 +553,43 @@ public class OracleUpdateTest extends OracleBaseTest {
     }
 
     @Test
+    public void jdbcUpdateTest2() {
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
+        JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId("038f530bad3745d3a75f584296368501");
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        System.out.println("单条更新" + sCt + "条");
+
+        List<User> users = new LinkedList<>();
+        User user1 = new User();
+        user1.setName("王值");
+        user1.setUserAge(20);
+        user1.setSex(User.Sex.MAN);
+        user1.setId("08649915562c421f858236f60fd652e5");
+        users.add(user1);
+
+        User user2 = new User();
+        user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName("王值1");
+        user2.setUserAge(19);
+        users.add(user2);
+        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        System.out.println("批量更新" + ct + "条");
+
+
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
     public void jdbcReplaceTest() {
-        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName(null);

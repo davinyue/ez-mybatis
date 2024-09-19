@@ -3,7 +3,6 @@ package org.rdlinux.oracle;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
-import org.linuxprobe.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
@@ -20,6 +19,7 @@ import org.rdlinux.ezmybatis.java.entity.User;
 import org.rdlinux.ezmybatis.java.entity.UserOrg;
 import org.rdlinux.ezmybatis.java.mapper.UserMapper;
 import org.rdlinux.ezmybatis.utils.StringHashMap;
+import org.rdlinux.luava.json.JacksonUtils;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -651,7 +651,7 @@ public class OracleSelectTest extends OracleBaseTest {
         Formula formula = Formula.builder(table).withField(User.Fields.userAge).addField(User.Fields.userAge)
                 .done().build();
         Function sonFun = Function.builder(table).setFunName("CONCAT").addFieldArg(User.Fields.name)
-                .addFieldArg(User.Fields.userAge).addValueArg("-").addFormulaArg(formula).build();
+                .addFieldArg(User.Fields.userAge).build();
         Function function = Function.builder(table).setFunName("CONCAT").addValueArg("test-")
                 .addFunArg(sonFun).build();
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)

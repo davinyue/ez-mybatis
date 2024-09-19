@@ -133,7 +133,22 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         tableConverter.buildSql(Converter.Type.INSERT, sql, configuration, table, mybatisParamHolder);
         String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
                 .getQuerySql(configuration, mybatisParamHolder, query);
-        sql.append(" (").append(querySql).append(")");
+        sql.append(" ");
+        boolean insertParenthesis = this.insertByQueryAppendParenthesis();
+        if (insertParenthesis) {
+            sql.append("(");
+        }
+        sql.append(querySql);
+        if (insertParenthesis) {
+            sql.append(")");
+        }
         return sql.toString();
+    }
+
+    /**
+     * 根据查询插入数据是否在查询sql外层添加圆括号
+     */
+    protected boolean insertByQueryAppendParenthesis() {
+        return true;
     }
 }

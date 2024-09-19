@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.enumeration.OrderType;
@@ -12,9 +13,11 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderBy implements SqlStruct {
+    private EzQuery<?> query;
     private List<OrderItem> items;
 
-    public OrderBy(List<OrderItem> items) {
+    public OrderBy(EzQuery<?> query, List<OrderItem> items) {
+        this.query = query;
         this.items = items;
     }
 

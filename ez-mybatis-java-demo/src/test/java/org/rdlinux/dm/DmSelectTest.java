@@ -3,7 +3,7 @@ package org.rdlinux.dm;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
-import org.linuxprobe.luava.json.JacksonUtils;
+import org.rdlinux.luava.json.JacksonUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
