@@ -20,7 +20,7 @@ public class AliasGenerate {
     private static String toAlphabeticRadix(int num) {
         char[] str = Integer.toString(num, 26).toCharArray();
         for (int i = 0; i < str.length; i++) {
-            str[i] += str[i] > '9' ? 10 : 49;
+            str[i] += (char) (str[i] > '9' ? 10 : 49);
         }
         return new String(str);
     }
@@ -33,10 +33,5 @@ public class AliasGenerate {
         }
         currentTl.set(cu + 1);
         return "t_" + toAlphabeticRadix(cu);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getAlias());
-        System.out.println(getAlias());
     }
 }
