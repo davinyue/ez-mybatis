@@ -60,7 +60,7 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
                 .append(merge.getMergeTable().getAlias()).append(" USING ");
         Converter<? extends EzQueryTable> tableConverter = EzMybatisContent.getConverter(configuration,
                 merge.getUseTable().getClass());
-        tableConverter.buildSql(type, sqlBuilder, configuration, merge.getUseTable(), mybatisParamHolder);
+        tableConverter.buildSql(Type.SELECT, sqlBuilder, configuration, merge.getUseTable(), mybatisParamHolder);
         sqlBuilder.append(" ON ( ");
         conditionsToSql(type, sqlBuilder, configuration, mybatisParamHolder, merge.getOn());
         sqlBuilder.append(" ) WHEN MATCHED THEN UPDATE SET ");
