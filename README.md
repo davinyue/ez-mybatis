@@ -149,7 +149,10 @@ public class Test {
         user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
+        //使用mapper更新
         this.ezMapper.replace(user);
+        //使用jdbc更新, 当批量更新大量数据时, 推荐使用, 效率好
+        this.jdbcUpdateDao.replace(user);
     }
 }
 ```
@@ -196,7 +199,8 @@ public class Test {
     public void formulaUpdateTest() {
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EntityTable table = EntityTable.of(User.class);
-        Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+        Formula formula = Formula.builder(table).withField(User.Fields.userAge)
+                .addValue(10).done().build();
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set().setFieldFormula(User.Fields.userAge, formula).done()
                 .where()
@@ -219,7 +223,8 @@ public class Test {
     @Test
     public void functionUpdateTest() {
         EntityTable table = EntityTable.of(User.class);
-        Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
+        Function function = Function.builder(table).setFunName("GREATEST")
+                .addFieldArg(User.Fields.userAge)
                 .addValueArg(100).build();
 
         Function updateTimeFunction = Function.builder(table).setFunName("now").build();
@@ -251,7 +256,8 @@ public class Test {
     public void functionUpdateTest() {
         EntityTable table = EntityTable.of(User.class);
         Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
-        Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
+        Function function = Function.builder(table).setFunName("GREATEST")
+                .addValueArg(1).addValueArg(2).build();
 
         CaseWhen sonCaseWhen = CaseWhen.builder(table)
                 .when()
@@ -395,7 +401,8 @@ public class Test {
 
     @Test
     public void test() {
-        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+                .from(EntityTable.of(User.class))
                 .select()
                 .addField(User.Fields.userAge)
                 .addField(User.Fields.name)
@@ -419,7 +426,8 @@ public class Test {
 
     @Test
     public void test() {
-        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+                .from(EntityTable.of(User.class))
                 .select()
                 .addAll()
                 .done()
@@ -443,7 +451,8 @@ public class Test {
     @Test
     public void test() {
         EntityTable table = EntityTable.of(User.class);
-        Function countFunc = Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build();
+        Function countFunc = Function.builder(table).setFunName("COUNT")
+                .addKeywordsArg("*").build();
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.userAge)
@@ -474,7 +483,8 @@ public class Test {
 
     @Test
     public void test() {
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> query = EzQuery.builder(User.class)
+                .from(EntityTable.of(User.class))
                 .select()
                 .addAll()
                 .done()
@@ -500,7 +510,8 @@ public class Test {
 
     @Test
     public void test() {
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> query = EzQuery.builder(User.class)
+                .from(EntityTable.of(User.class))
                 .select()
                 .addAll()
                 .done()
@@ -533,7 +544,8 @@ public class Test {
     @Test
     public void test() {
         EntityTable userOrgTable = EntityTable.of(UserOrg.class);
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> query = EzQuery.builder(User.class)
+                .from(EntityTable.of(User.class))
                 .select()
                 .addAll().done()
                 .select(userOrgTable)
