@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.enumeration.Operator;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -29,10 +30,20 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
         this.otherTable = otherTable;
     }
 
-    protected static List<?> valueToCollection(Object obj) {
+    protected static Collection<?> valueToCollection(Object obj) {
         if (obj instanceof Collection) {
-            return new ArrayList<>((Collection<?>) obj);
+            return (Collection<?>) obj;
         } else if (obj.getClass().isArray()) {
+            //原始类型数组, 比如int[]
+            if (obj.getClass().getComponentType().isPrimitive()) {
+                int length = Array.getLength(obj);
+                List<Object> ret = new ArrayList<>(length);
+                for (int i = 0; i < length; i++) {
+                    Object element = Array.get(obj, i);
+                    ret.add(element);
+                }
+                return ret;
+            }
             return Arrays.asList((Object[]) obj);
         } else {
             return Collections.singletonList(obj);
@@ -44,7 +55,7 @@ public abstract class ConditionBuilder<ParentBuilder, SonBuilder> {
     }
 
     protected static List<Operand> valueToArgList(Object value) {
-        List<?> objects = valueToCollection(value);
+        Collection<?> objects = valueToCollection(value);
         List<Operand> args = new ArrayList<>(objects.size());
         for (Object datum : objects) {
             args.add(valueToArg(datum));

@@ -11,9 +11,9 @@ ez-mybatis通过mybatis拦截器机制, 实现数据的增删查改并支持部�
 * PostgreSql
 * SqlServer
 
-对于不在列表内的国产数据库，可以参考官方文档查看其兼容的数据库语法，一般都是兼容
-MySql , Oracle, PostgreSql语法，将其数据库类型配置为兼容的数据库即可, 例如
-国产高斯数据库，其兼容PostgreSql语法，spring boot新增配置如下
+对于不在列表内的国产数据库，可以参考官方文档查看其兼容的数据库语法，一般都是兼容 MySql , Oracle,
+PostgreSql语法，将其数据库类型配置为兼容的
+数据库即可, 例如 国产高斯数据库，基于PostgreSql，spring boot新增配置如下
 
 ```yaml
 ez-mybatis:
@@ -26,7 +26,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.9.0.RS</version>
+    <version>0.9.1.RS</version>
 </dependency>
 ```
 
@@ -90,14 +90,21 @@ public class User extends BaseEntity {
 # 保存实体
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
+    @Resource
+    private JdbcInsertDao jdbcInsertDao;
 
-@Resource
-private EzMapper ezMapper;
-
-User user = new User();
-ezMapper.
-
-insert(user);
+    @Test
+    public void test() {
+        User user = new User();
+        //使用mapper插入, 效率不如jdbc
+        ezMapper.insert(user);
+        //使用jdbc插入, 效率好
+        jdbcInsertDao.insert(user);
+    }
+}
 ```
 
 # 更新实体
@@ -105,57 +112,46 @@ insert(user);
 ## 不更新空字段
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
+    @Resource
+    private JdbcUpdateDao jdbcUpdateDao;
 
-@Resource
-private EzMapper ezMapper;
-
-User user = new User();
-user.
-
-setId("016cdcdd76f94879ab3d24850514812b");
-user.
-
-setName("王二");
-user.
-
-setName("王");
-user.
-
-setUserAge(27);
-user.
-
-setSex(User.Sex.MAN);
-this.ezMapper.
-
-update(user);
+    @Test
+    public void test() {
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        //使用mapper更新
+        this.ezMapper.update(user);
+        //使用jdbc更新, 当批量更新大量数据时, 推荐使用, 效率好
+        this.jdbcUpdateDao.update(user);
+    }
+}
 ```
 
 ## 更新所有字段
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-User user = new User();
-user.
-
-setId("016cdcdd76f94879ab3d24850514812b");
-user.
-
-setName("王二");
-user.
-
-setName("王");
-user.
-
-setUserAge(27);
-user.
-
-setSex(User.Sex.MAN);
-this.ezMapper.
-
-replace(user);
+    @Test
+    public void test() {
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        user.setName("王二");
+        user.setName("王");
+        user.setUserAge(27);
+        user.setSex(User.Sex.MAN);
+        this.ezMapper.replace(user);
+    }
+}
 ```
 
 ## 条件更新
@@ -163,26 +159,27 @@ replace(user);
 在当前示例中, 可以在where构造器里面指定更多的条件对指定字段进行更新
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-public void updateByEzParam() {
-    EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
-            .set()
-            //设置userAge属性的值为1, 会自动转换为age列
-            .setField(User.Fields.userAge, 1)
-            //设置userAge属性的值为关键词age, 等价于sql set age = age
-            .setFieldKeywords(User.Fields.userAge, "age")
-            //设置age列的值为关键词age, 等价于sql set age = age
-            .setColumnKeywords("age", "age")
-            .done()
-            .where()
-            //当id等于1时更新
-            .addFieldCondition("id", "1")
-            .done()
-            .build();
-    this.ezMapper.ezUpdate(ezUpdate);
+    public void updateByEzParam() {
+        EzUpdate ezUpdate = EzUpdate.update(EntityTable.of(User.class))
+                .set()
+                //设置userAge属性的值为1, 会自动转换为age列
+                .setField(User.Fields.userAge, 1)
+                //设置userAge属性的值为关键词age, 等价于sql set age = age
+                .setFieldKeywords(User.Fields.userAge, "age")
+                //设置age列的值为关键词age, 等价于sql set age = age
+                .setColumnKeywords("age", "age")
+                .done()
+                .where()
+                //当id等于1时更新
+                .addFieldCondition("id", "1")
+                .done()
+                .build();
+        this.ezMapper.ezUpdate(ezUpdate);
+    }
 }
 ```
 
@@ -191,21 +188,22 @@ public void updateByEzParam() {
 在当前示例中, 将id等于1的数据年龄更新为加10岁
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void formulaUpdateTest() {
-    EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-    EntityTable table = EntityTable.of(User.class);
-    Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
-    EzUpdate ezUpdate = EzUpdate.update(table)
-            .set().setFieldFormula(User.Fields.userAge, formula).done()
-            .where()
-            .addFieldCondition(BaseEntity.Fields.id, "1").done()
-            .build();
-    this.ezMapper.ezUpdate(ezUpdate);
+    @Test
+    public void formulaUpdateTest() {
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+        EzUpdate ezUpdate = EzUpdate.update(table)
+                .set().setFieldFormula(User.Fields.userAge, formula).done()
+                .where()
+                .addFieldCondition(BaseEntity.Fields.id, "1").done()
+                .build();
+        this.ezMapper.ezUpdate(ezUpdate);
+    }
 }
 ```
 
@@ -214,26 +212,27 @@ public void formulaUpdateTest() {
 在当前示例中, 将id等于1的数据年龄使用GREATEST函数找到最大值并设置为最大值, 将更新时间设置为当前时间
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
+    @Test
+    public void functionUpdateTest() {
+        EntityTable table = EntityTable.of(User.class);
+        Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
+                .addValueArg(100).build();
 
-@Test
-public void functionUpdateTest() {
-    EntityTable table = EntityTable.of(User.class);
-    Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
-            .addValueArg(100).build();
-
-    Function updateTimeFunction = Function.builder(table).setFunName("now").build();
-    EzUpdate ezUpdate = EzUpdate.update(table)
-            .set()
-            .setFieldFunction(User.Fields.userAge, function)
-            .setFieldFunction(BaseEntity.Fields.updateTime, updateTimeFunction)
-            .done()
-            .where()
-            .addFieldCondition(BaseEntity.Fields.id, "1").done()
-            .build();
-    this.ezMapper.ezUpdate(ezUpdate);
+        Function updateTimeFunction = Function.builder(table).setFunName("now").build();
+        EzUpdate ezUpdate = EzUpdate.update(table)
+                .set()
+                .setFieldFunction(User.Fields.userAge, function)
+                .setFieldFunction(BaseEntity.Fields.updateTime, updateTimeFunction)
+                .done()
+                .where()
+                .addFieldCondition(BaseEntity.Fields.id, "1").done()
+                .build();
+        this.ezMapper.ezUpdate(ezUpdate);
+    }
 }
 ```
 
@@ -244,39 +243,40 @@ public void functionUpdateTest() {
 formula"表达式的返回值"101"； 当名字等于"王二2"时, 设置为"sonCaseWhen"表达式的返回值"王二1"。
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
+    @Test
+    public void functionUpdateTest() {
+        EntityTable table = EntityTable.of(User.class);
+        Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
+        Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
 
-@Test
-public void functionUpdateTest() {
-    EntityTable table = EntityTable.of(User.class);
-    Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
-    Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
+        CaseWhen sonCaseWhen = CaseWhen.builder(table)
+                .when()
+                .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                .els("王二1");
 
-    CaseWhen sonCaseWhen = CaseWhen.builder(table)
-            .when()
-            .addFieldCondition(User.Fields.name, "张三1").then("李四")
-            .els("王二1");
+        CaseWhen caseWhen = CaseWhen.builder(table)
+                .when()
+                .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                .when()
+                .addFieldCondition(User.Fields.name, "张三2").thenFunc(function)
+                .when()
+                .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                .when()
+                .addFieldCondition(User.Fields.name, "王二2").thenCaseWhen(sonCaseWhen)
+                .els("王二1");
 
-    CaseWhen caseWhen = CaseWhen.builder(table)
-            .when()
-            .addFieldCondition(User.Fields.name, "张三1").then("李四")
-            .when()
-            .addFieldCondition(User.Fields.name, "张三2").thenFunc(function)
-            .when()
-            .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
-            .when()
-            .addFieldCondition(User.Fields.name, "王二2").thenCaseWhen(sonCaseWhen)
-            .els("王二1");
-
-    EzUpdate ezUpdate = EzUpdate.update(table)
-            .set().setField(User.Fields.name, caseWhen).done()
-            .where()
-            .addFieldCondition(BaseEntity.Fields.id, Operator.in, Arrays.asList("1", "2", "3", "4"))
-            .done()
-            .build();
-    this.ezMapper.ezUpdate(ezUpdate);
+        EzUpdate ezUpdate = EzUpdate.update(table)
+                .set().setField(User.Fields.name, caseWhen).done()
+                .where()
+                .addFieldCondition(BaseEntity.Fields.id, Operator.in, Arrays.asList("1", "2", "3", "4"))
+                .done()
+                .build();
+        this.ezMapper.ezUpdate(ezUpdate);
+    }
 }
 ```
 
@@ -285,49 +285,49 @@ public void functionUpdateTest() {
 ## 根据实体删除
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-User user = new User();
-user.
-
-setId("016cdcdd76f94879ab3d24850514812b");
-this.ezMapper.
-
-delete(user);
+    @Test
+    public void test() {
+        User user = new User();
+        user.setId("016cdcdd76f94879ab3d24850514812b");
+        this.ezMapper.delete(user);
+    }
+}
 ```
 
 ## 根据id删除
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-this.ezMapper.
-
-deleteById(User .class, "016cdcdd76f94879ab3d24850514812b");
+    @Test
+    public void test() {
+        this.ezMapper.deleteById(User.class, "016cdcdd76f94879ab3d24850514812b");
+    }
+}
 ```
 
 ## 根据id批量删除
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-List<String> userIds = new LinkedList<>();
-for(
-int i = 0;
-i< 2;i++){
-        userIds.
-
-add("016cdcdd76f94879ab3d24850514812b"+i);
+    @Test
+    public void test() {
+        List<String> userIds = new LinkedList<>();
+        for (int i = 0; i < 2; i++) {
+            userIds.add("016cdcdd76f94879ab3d24850514812b" + i);
+        }
+        this.ezMapper.batchDeleteById(User.class, userIds);
+    }
 }
-        this.ezMapper.
-
-batchDeleteById(User .class, userIds);
 ```
 
 ## 条件删除
@@ -338,23 +338,25 @@ batchDeleteById(User .class, userIds);
 对于or条件, 可以使用groupCondition将其作为一个条件组, 为其加上括号
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-EntityTable userTable = EntityTable.of(User.class);
-EzDelete delete = EzDelete.delete(userTable)
-        .where()
-        .addFieldCondition(User.Fields.name, "张三")
-        .groupCondition()
-        .addFieldCondition(User.Fields.userAge, 55)
-        .addFieldCondition(AndOr.OR, User.Fields.userAge, 78)
-        .done()
-        .done()
-        .build();
-this.ezMapper.
-
-ezDelete(delete);
+    @Test
+    public void test() {
+        EntityTable userTable = EntityTable.of(User.class);
+        EzDelete delete = EzDelete.delete(userTable)
+                .where()
+                .addFieldCondition(User.Fields.name, "张三")
+                .groupCondition()
+                .addFieldCondition(User.Fields.userAge, 55)
+                .addFieldCondition(AndOr.OR, User.Fields.userAge, 78)
+                .done()
+                .done()
+                .build();
+        this.ezMapper.ezDelete(delete);
+    }
+}
 ```
 
 # 查询
@@ -362,23 +364,22 @@ ezDelete(delete);
 ## 根据id查询
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
+    @Test
+    public void test() {
+        //单条查询
+        User user = this.ezMapper.selectById(User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
 
-//单条查询
-User user = this.ezMapper.selectById(User.class, "04b7abcf2c454e56b1bc85f6599e19a5");
-
-//批量查询
-List<String> ids = new LinkedList<>();
-ids.
-
-add("04b7abcf2c454e56b1bc85f6599e19a5");
-ids.
-
-add("085491774b2240688edb1b31772ff629");
-
-List<User> users = this.ezMapper.selectByIds(User.class, ids);
+        //批量查询
+        List<String> ids = new LinkedList<>();
+        ids.add("04b7abcf2c454e56b1bc85f6599e19a5");
+        ids.add("085491774b2240688edb1b31772ff629");
+        List<User> users = this.ezMapper.selectByIds(User.class, ids);
+    }
+}
 ```
 
 ## 高级查询
@@ -388,21 +389,22 @@ List<User> users = this.ezMapper.selectByIds(User.class, ids);
 在当前查询中, 只查询用户的age列, name列, "二三班"作为class列, 123.12作为balance列
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void test() {
-    EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
-            .select()
-            .addField(User.Fields.userAge)
-            .addField(User.Fields.name)
-            .addValue("二三班", "class")
-            .addValue(123.12, "balance")
-            .done()
-            .build();
-    List<StringHashMap> users = this.ezMapper.query(query);
+    @Test
+    public void test() {
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+                .select()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .addValue("二三班", "class")
+                .addValue(123.12, "balance")
+                .done()
+                .build();
+        List<StringHashMap> users = this.ezMapper.query(query);
+    }
 }
 ```
 
@@ -411,19 +413,20 @@ public void test() {
 在当前查询中, 查询user表所有列, 并且分页取第一页的5条数据
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void test() {
-    EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
-            .select()
-            .addAll()
-            .done()
-            .page(1, 5)
-            .build();
-    List<StringHashMap> users = this.ezMapper.query(query);
+    @Test
+    public void test() {
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(EntityTable.of(User.class))
+                .select()
+                .addAll()
+                .done()
+                .page(1, 5)
+                .build();
+        List<StringHashMap> users = this.ezMapper.query(query);
+    }
 }
 ```
 
@@ -433,29 +436,30 @@ public void test() {
 group时, 根据age列和name列进行group， 并且having指定了分组后总数大于1的结果
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void test() {
-    EntityTable table = EntityTable.of(User.class);
-    Function countFunc = Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build();
-    EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
-            .select()
-            .addField(User.Fields.userAge)
-            .addField(User.Fields.name)
-            .addFunc(countFunc, "ct")
-            .done()
-            .groupBy()
-            .addField(User.Fields.userAge)
-            .addField(User.Fields.name)
-            .done()
-            .having()
-            .addFuncCompareValueCondition(countFunc, Operator.gt, 1)
-            .done()
-            .build();
-    List<StringHashMap> users = this.ezMapper.query(query);
+    @Test
+    public void test() {
+        EntityTable table = EntityTable.of(User.class);
+        Function countFunc = Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build();
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .addFunc(countFunc, "ct")
+                .done()
+                .groupBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name)
+                .done()
+                .having()
+                .addFuncCompareValueCondition(countFunc, Operator.gt, 1)
+                .done()
+                .build();
+        List<StringHashMap> users = this.ezMapper.query(query);
+    }
 }
 ```
 
@@ -464,23 +468,24 @@ public void test() {
 在当前查询中, 从user表查询结果，返回类型指定为User实体类, 同时分页，并根据age列和name列进行排序, 其中name列指定使用倒排序
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void test() {
-    EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-            .select()
-            .addAll()
-            .done()
-            .orderBy()
-            .addField(User.Fields.userAge)
-            .addField(User.Fields.name, OrderType.DESC)
-            .done()
-            .page(1, 5)
-            .build();
-    List<User> users = this.ezMapper.query(query);
+    @Test
+    public void test() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addAll()
+                .done()
+                .orderBy()
+                .addField(User.Fields.userAge)
+                .addField(User.Fields.name, OrderType.DESC)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = this.ezMapper.query(query);
+    }
 }
 ```
 
@@ -489,24 +494,25 @@ public void test() {
 在当前查询中, 从user表查询结果，返回类型指定为User实体类, 同时分页，并且条件为name不在指定值内
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void test() {
-    EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-            .select()
-            .addAll()
-            .done()
-            .where()
-            .addFieldCondition(User.Fields.name, Operator.notIn, "1")
-            .addFieldCondition(User.Fields.name, Operator.notIn, Collections.singletonList("张三"))
-            .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
-            .done()
-            .page(1, 5)
-            .build();
-    List<User> users = this.ezMapper.query(query);
+    @Test
+    public void test() {
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addAll()
+                .done()
+                .where()
+                .addFieldCondition(User.Fields.name, Operator.notIn, "1")
+                .addFieldCondition(User.Fields.name, Operator.notIn, Collections.singletonList("张三"))
+                .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王二"))
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = this.ezMapper.query(query);
+    }
 }
 ```
 
@@ -520,30 +526,31 @@ joinTableCondition将条件切换到被关联表，接着添加的条件是user_
 并指定user表的age列等于22。
 
 ```java
+public class Test {
+    @Resource
+    private EzMapper ezMapper;
 
-@Resource
-private EzMapper ezMapper;
-
-@Test
-public void test() {
-    EntityTable userOrgTable = EntityTable.of(UserOrg.class);
-    EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
-            .select()
-            .addAll().done()
-            .select(userOrgTable)
-            .addField(UserOrg.Fields.orgId)
-            .done()
-            .join(userOrgTable)
-            .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)
-            .addFieldCondition(User.Fields.name, "张三")
-            .joinTableCondition()
-            .addFieldCondition(UserOrg.Fields.orgId, "2")
-            .masterTableCondition()
-            .addFieldCondition(User.Fields.userAge, 22)
-            .done()
-            .page(1, 5)
-            .build();
-    List<User> users = this.ezMapper.query(query);
+    @Test
+    public void test() {
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select()
+                .addAll().done()
+                .select(userOrgTable)
+                .addField(UserOrg.Fields.orgId)
+                .done()
+                .join(userOrgTable)
+                .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)
+                .addFieldCondition(User.Fields.name, "张三")
+                .joinTableCondition()
+                .addFieldCondition(UserOrg.Fields.orgId, "2")
+                .masterTableCondition()
+                .addFieldCondition(User.Fields.userAge, 22)
+                .done()
+                .page(1, 5)
+                .build();
+        List<User> users = this.ezMapper.query(query);
+    }
 }
 ```
 
