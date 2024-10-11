@@ -988,4 +988,19 @@ public class MysqlSelectTest extends MysqlBaseTest {
         System.out.println(mapper.query(query));
         sqlSession.close();
     }
+
+    @Test
+    public void baseTypeInTest() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        int[] ages = {1, 3, 45, 23};
+        EntityTable table = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(table).select().addAll().done()
+                .where()
+                .addFieldCondition(User.Fields.userAge, Operator.in, ages)
+                .done()
+                .page(1, 1).build();
+        List<User> ret = sqlSession.getMapper(UserMapper.class).query(query);
+        sqlSession.close();
+        System.out.println(JacksonUtils.toJsonString(ret));
+    }
 }
