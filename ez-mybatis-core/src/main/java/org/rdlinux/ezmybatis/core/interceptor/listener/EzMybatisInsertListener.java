@@ -9,12 +9,17 @@ public interface EzMybatisInsertListener {
     /**
      * 当执行插入时
      */
-    void onInsert(Object model);
+    default void onInsert(Object model) {
+    }
 
     /**
      * 当执行批量插入时
      */
-    void onBatchInsert(Collection<?> models);
+    default void onBatchInsert(Collection<?> models) {
+        for (Object model : models) {
+            this.onInsert(model);
+        }
+    }
 
     /**
      * 拦截器顺序

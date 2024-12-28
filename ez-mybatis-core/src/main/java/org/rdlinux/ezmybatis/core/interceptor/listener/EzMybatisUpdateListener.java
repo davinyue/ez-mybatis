@@ -18,6 +18,9 @@ public interface EzMybatisUpdateListener {
      * 批量更新
      */
     default void onBatchUpdate(Collection<?> models) {
+        for (Object model : models) {
+            this.onUpdate(model);
+        }
     }
 
     /**
@@ -30,6 +33,9 @@ public interface EzMybatisUpdateListener {
      * 批量替换
      */
     default void onBatchReplace(Collection<?> models) {
+        for (Object model : models) {
+            this.onReplace(model);
+        }
     }
 
     /**
@@ -42,6 +48,9 @@ public interface EzMybatisUpdateListener {
      * 批量批量更新
      */
     default void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
+        for (EzUpdate ezUpdate : ezUpdates) {
+            this.onEzUpdate(ezUpdate);
+        }
     }
 
     default int order() {

@@ -6,6 +6,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
+import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
@@ -74,6 +75,11 @@ public class MysqlBaseTest {
                 for (Object id : ids) {
                     this.onDeleteById(id, ntClass);
                 }
+            }
+
+            @Override
+            public void onEzDelete(EzDelete ezDelete) {
+                System.out.println("ez_delete删除:" + ezDelete.getTable().getTableName(configuration));
             }
         });
         EzMybatisContent.addUpdateListener(ezMybatisConfig, new EzMybatisUpdateListener() {
