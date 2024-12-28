@@ -29,6 +29,10 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
     public static class EzQueryBuilder<Rt> {
         private final EzQuery<Rt> query;
+        /**
+         * from 表是否已经设置
+         */
+        private boolean formIsSet = false;
 
         private EzQueryBuilder(Class<Rt> retType) {
             this.query = new EzQuery<>(retType);
@@ -39,10 +43,22 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             this.query.table = table;
             this.query.from = new From(table);
             this.query.select = new Select(this.query, new LinkedList<>());
+            this.formIsSet = true;
             return this;
         }
 
+        /**
+         * 检查from表是否已经指定
+         */
+        private void checkFromTable() {
+            if (!this.formIsSet) {
+                throw new RuntimeException("The from table is not specified. Please call the from function to " +
+                        "specify the main table to be queried first.");
+            }
+        }
+
         public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(boolean sure, Table table) {
+            this.checkFromTable();
             Select select = this.query.select;
             if (select == null) {
                 select = new Select(this.query, new LinkedList<>());
@@ -71,6 +87,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, JoinType joinType, Table joinTable) {
+            this.checkFromTable();
             if (this.query.getJoins() == null) {
                 this.query.joins = new LinkedList<>();
             }
@@ -97,6 +114,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure, Table table) {
+            this.checkFromTable();
             Where where = this.query.where;
             if (where == null) {
                 where = new Where(new LinkedList<>());
@@ -124,6 +142,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure, Table table) {
+            this.checkFromTable();
             GroupBy groupBy = this.query.groupBy;
             if (groupBy == null) {
                 groupBy = new GroupBy(new LinkedList<>());
@@ -151,6 +170,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure, Table table) {
+            this.checkFromTable();
             OrderBy orderBy = this.query.orderBy;
             if (orderBy == null) {
                 orderBy = new OrderBy(this.query, new LinkedList<>());
@@ -178,6 +198,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure, Table table) {
+            this.checkFromTable();
             Having having = this.query.having;
             if (having == null) {
                 having = new Having(new LinkedList<>());
@@ -211,6 +232,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * @param pageSize    页大小
          */
         public EzQueryBuilder<Rt> page(boolean sure, int currentPage, int pageSize) {
+            this.checkFromTable();
             if (sure) {
                 this.query.page = new Page(this.query, (currentPage - 1) * pageSize, pageSize);
             }
@@ -231,6 +253,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 限定, 当存在分页时, 限定将失效
          */
         public EzQueryBuilder<Rt> limit(boolean sure, int limit) {
+            this.checkFromTable();
             if (sure) {
                 this.query.limit = new Limit(limit);
             }
@@ -248,6 +271,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 联合查询
          */
         public EzQueryBuilder<Rt> union(boolean sure, EzQuery<?> query) {
+            this.checkFromTable();
             if (sure) {
                 if (this.query.unions == null) {
                     this.query.unions = new LinkedList<>();
@@ -268,6 +292,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 联合查询
          */
         public EzQueryBuilder<Rt> unionAll(boolean sure, EzQuery<?> query) {
+            this.checkFromTable();
             if (sure) {
                 if (this.query.unions == null) {
                     this.query.unions = new LinkedList<>();
@@ -285,6 +310,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         }
 
         public EzQuery<Rt> build() {
+            this.checkFromTable();
             return this.query;
         }
     }
