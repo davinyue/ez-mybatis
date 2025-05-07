@@ -1,5 +1,7 @@
 package org.rdlinux.ezmybatis.service;
 
+import org.rdlinux.Page;
+import org.rdlinux.PageParam;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -27,6 +29,14 @@ public interface EzService<MdType, PkType extends Serializable> {
      * @param param 查询参数
      */
     int queryCount(EzQuery<MdType> param);
+
+    /**
+     * 根据条件查询分页数据
+     *
+     * @param queryParam 查询参数
+     * @param pageParam  分页参数, 为空时则默认第一页取10条数据
+     */
+    <RetType> Page<RetType> queryPage(EzQuery<RetType> queryParam, PageParam pageParam);
 
     /**
      * 根据id查询

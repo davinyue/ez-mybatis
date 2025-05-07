@@ -26,7 +26,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.9.2.RS</version>
+    <version>0.9.3.RS</version>
 </dependency>
 ```
 
