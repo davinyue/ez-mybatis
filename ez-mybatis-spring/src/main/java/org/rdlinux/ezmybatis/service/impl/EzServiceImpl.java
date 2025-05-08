@@ -1,13 +1,12 @@
 package org.rdlinux.ezmybatis.service.impl;
 
-import org.rdlinux.Page;
-import org.rdlinux.PageParam;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.dto.DcDTO;
 import org.rdlinux.ezmybatis.service.EzService;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
@@ -52,20 +51,14 @@ public abstract class EzServiceImpl<MdType, PkType extends Serializable> impleme
     }
 
     @Override
-    public <RetType> Page<RetType> queryPage(EzQuery<RetType> queryParam, PageParam pageParam) {
-        Assert.notNull(queryParam, "queryParam can not be null");
-        if (pageParam == null) {
-            pageParam = new PageParam(1, 10);
-        }
-        org.rdlinux.ezmybatis.core.sqlstruct.Page page = new org.rdlinux.ezmybatis.core.sqlstruct.Page(queryParam,
-                (pageParam.getCurrentPage() - 1) * pageParam.getPageSize(), pageParam.getPageSize());
-        ReflectionUtils.setFieldValue(queryParam, "page", page);
-        int count = this.ezMapper.queryCount(queryParam);
+    public <RetType> DcDTO<RetType> queryDataAndCount(EzQuery<RetType> param) {
+        Assert.notNull(param, "param can not be null");
+        int count = this.ezMapper.queryCount(param);
         if (count > 0) {
-            List<RetType> data = this.ezMapper.query(queryParam);
-            return new Page<>(pageParam, count, data);
+            List<RetType> data = this.ezMapper.query(param);
+            return new DcDTO<>(count, data);
         } else {
-            return new Page<>(pageParam, 0, Collections.emptyList());
+            return new DcDTO<>(0, Collections.emptyList());
         }
     }
 
