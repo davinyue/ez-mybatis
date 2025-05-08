@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>ez-mybatis</artifactId>
         <groupId>org.rdlinux</groupId>
+        <artifactId>ez-mybatis</artifactId>
         <version>0.9.3.RS</version>
     </parent>
+
+    <artifactId>ez-mybatis-plus-spring-boot-start</artifactId>
     <packaging>jar</packaging>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>ez-mybatis-core</artifactId>
-    <name>ez-mybatis-core</name>
+    <name>ez-mybatis-plus-spring-boot-start</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
-    <description>ez-mybatis</description>
+    <description>ez-mybatis-plus-spring-boot-start</description>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -43,6 +42,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -50,34 +50,26 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <mybatis.plus.version>3.5.12</mybatis.plus.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.rdlinux</groupId>
-            <artifactId>ez-mybatis-define</artifactId>
+            <artifactId>ez-mybatis-spring-boot-start</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>3.5.19</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-annotation</artifactId>
+            <version>${mybatis.plus.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.17.0</version>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis.plus.version}</version>
+            <scope>provided</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>cglib</groupId>-->
-        <!--            <artifactId>cglib</artifactId>-->
-        <!--            <version>3.3.0</version>-->
-        <!--        </dependency>-->
     </dependencies>
     <build>
         <plugins>

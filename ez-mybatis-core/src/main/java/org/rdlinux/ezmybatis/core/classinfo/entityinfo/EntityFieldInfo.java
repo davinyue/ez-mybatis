@@ -1,5 +1,8 @@
 package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.TypeHandler;
 import org.rdlinux.ezmybatis.annotation.ColumnHandler;
@@ -10,6 +13,9 @@ import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 public class EntityFieldInfo {
     private Field field;
     private Method fieldGetMethod;
@@ -75,33 +81,5 @@ public class EntityFieldInfo {
                 throw new IllegalArgumentException("columnHandler must extend org.apache.ibatis.type.TypeHandler");
             }
         }
-    }
-
-    public Field getField() {
-        return this.field;
-    }
-
-    public String getColumnName() {
-        return this.columnName;
-    }
-
-    public boolean isPrimaryKey() {
-        return this.isPrimaryKey;
-    }
-
-    public TypeHandler<?> getTypeHandler() {
-        return this.typeHandler;
-    }
-
-    public EntityInfoBuildConfig getBuildConfig() {
-        return this.buildConfig;
-    }
-
-    public String getFieldName() {
-        return this.fieldName;
-    }
-
-    public Method getFieldGetMethod() {
-        return this.fieldGetMethod;
     }
 }
