@@ -47,6 +47,7 @@
         <module>ez-mybatis-spring-boot-start</module>
         <module>ez-mybatis-expand</module>
         <module>ez-mybatis-java-demo</module>
+        <module>ez-mybatis-plus-spring-boot-start</module>
     </modules>
     <build>
         <plugins>
