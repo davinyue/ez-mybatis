@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.service;
 
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.dto.DcDTO;
 
 import java.io.Serializable;
@@ -42,29 +41,13 @@ public interface EzService<MdType, PkType extends Serializable> {
      * @param id 主键
      */
     MdType getById(PkType id);
-
-    /**
-     * 根据id查询
-     *
-     * @param table 指定表
-     * @param id    主键
-     */
-    MdType getById(Table table, PkType id);
-
+    
     /**
      * 根据多个id查询
      *
      * @param ids 主键集合
      */
     List<MdType> getByIds(Collection<PkType> ids);
-
-    /**
-     * 根据多个id查询
-     *
-     * @param table 指定表
-     * @param ids   主键集合
-     */
-    List<MdType> getByIds(Table table, Collection<PkType> ids);
 
     /**
      * 根据实体属性查询
@@ -75,30 +58,12 @@ public interface EzService<MdType, PkType extends Serializable> {
     List<MdType> getByField(String field, Object value);
 
     /**
-     * 根据实体属性查询
-     *
-     * @param table 指定表
-     * @param field 实体属性
-     * @param value 属性值
-     */
-    List<MdType> getByField(Table table, String field, Object value);
-
-    /**
      * 根据实体属性查询一条记录
      *
      * @param field 实体属性
      * @param value 属性值
      */
     MdType getOneByField(String field, Object value);
-
-    /**
-     * 根据实体属性查询一条记录
-     *
-     * @param table 指定表
-     * @param field 实体属性
-     * @param value 属性值
-     */
-    MdType getOneByField(Table table, String field, Object value);
 
     /**
      * 根据列明查询
@@ -109,15 +74,6 @@ public interface EzService<MdType, PkType extends Serializable> {
     List<MdType> getByColumn(String column, Object value);
 
     /**
-     * 根据列明查询
-     *
-     * @param table  指定表
-     * @param column 表列
-     * @param value  列值
-     */
-    List<MdType> getByColumn(Table table, String column, Object value);
-
-    /**
      * 根据列明查询一条记录
      *
      * @param column 表列
@@ -126,22 +82,9 @@ public interface EzService<MdType, PkType extends Serializable> {
     MdType getOneByColumn(String column, Object value);
 
     /**
-     * 根据列明查询一条记录
-     *
-     * @param column 表列
-     * @param value  列值
-     */
-    MdType getOneByColumn(Table table, String column, Object value);
-
-    /**
      * 更新, 只会更新非空字段
      */
     int update(MdType model);
-
-    /**
-     * 更新, 只会更新非空字段
-     */
-    int update(Table table, MdType model);
 
     /**
      * 批量更新, 只会更新非空字段
@@ -149,19 +92,9 @@ public interface EzService<MdType, PkType extends Serializable> {
     int batchUpdate(Collection<MdType> models);
 
     /**
-     * 批量更新, 只会更新非空字段
-     */
-    int batchUpdate(Table table, Collection<MdType> models);
-
-    /**
      * 替换, 更新全部字段
      */
     int replace(MdType model);
-
-    /**
-     * 替换, 更新全部字段
-     */
-    int replace(Table table, MdType model);
 
     /**
      * 批量替换, 更新全部字段
@@ -169,29 +102,14 @@ public interface EzService<MdType, PkType extends Serializable> {
     int batchReplace(Collection<MdType> models);
 
     /**
-     * 批量替换, 更新全部字段
-     */
-    int batchReplace(Table table, Collection<MdType> models);
-
-    /**
      * 根据id删除
      */
     int deleteById(PkType id);
 
     /**
-     * 根据id删除
-     */
-    int deleteById(Table table, PkType id);
-
-    /**
      * 根据id批量删除
      */
     int deleteByIds(Collection<PkType> ids);
-
-    /**
-     * 根据id批量删除
-     */
-    int deleteByIds(Table table, Collection<PkType> ids);
 
     /**
      * 根据属性删除
@@ -202,28 +120,12 @@ public interface EzService<MdType, PkType extends Serializable> {
     int deleteByField(String field, Object value);
 
     /**
-     * 根据属性删除
-     *
-     * @param field 实体属性
-     * @param value 属性值
-     */
-    int deleteByField(Table table, String field, Object value);
-
-    /**
      * 根据列删除
      *
      * @param column 表列
      * @param value  列值
      */
     int deleteByColumn(String column, Object value);
-
-    /**
-     * 根据列删除
-     *
-     * @param column 表列
-     * @param value  列值
-     */
-    int deleteByColumn(Table table, String column, Object value);
 
     /**
      * 删除
@@ -233,25 +135,11 @@ public interface EzService<MdType, PkType extends Serializable> {
     int delete(MdType model);
 
     /**
-     * 删除
-     *
-     * @param model 要删除的实体
-     */
-    int delete(Table table, MdType model);
-
-    /**
      * 批量删除
      *
      * @param models 要删除的实体集合
      */
     int batchDelete(Collection<MdType> models);
-
-    /**
-     * 批量删除
-     *
-     * @param models 要删除的实体集合
-     */
-    int batchDelete(Table table, Collection<MdType> models);
 
     /**
      * 保存
@@ -261,23 +149,9 @@ public interface EzService<MdType, PkType extends Serializable> {
     int save(MdType model);
 
     /**
-     * 保存
-     *
-     * @param model 要保存的实体
-     */
-    int save(Table table, MdType model);
-
-    /**
      * 批量保存
      *
      * @param models 要保存的实体集合
      */
     int batchSave(Collection<MdType> models);
-
-    /**
-     * 批量保存
-     *
-     * @param models 要保存的实体集合
-     */
-    int batchSave(Table table, Collection<MdType> models);
 }
