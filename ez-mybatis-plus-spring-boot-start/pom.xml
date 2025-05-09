@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis</artifactId>
-        <version>0.9.3.RS</version>
+        <version>0.9.4.RS</version>
     </parent>
 
     <artifactId>ez-mybatis-plus-spring-boot-start</artifactId>
