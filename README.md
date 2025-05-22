@@ -20,7 +20,7 @@ ez-mybatis:
   db-type: POSTGRE_SQL
 ```
 
-# spring boot使用，目前支持到spring boot 2.x, 暂不支持3.x
+# spring boot2.x
 
 ## 和mybatis结合使用
 
@@ -48,6 +48,33 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-plus-spring-boot-start</artifactId>
+    <version>0.9.5.RS</version>
+</dependency>
+```
+
+# spring boot3.x
+
+## 和mybatis结合使用
+
+```
+<dependency>
+    <groupId>org.rdlinux</groupId>
+    <artifactId>ez-mybatis-spring3-boot-start</artifactId>
+    <version>0.9.5.RS</version>
+</dependency>
+```
+
+## 和mybatis-plus结合使用
+
+```
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+    <version>3.5.12</version>
+</dependency>
+<dependency>
+    <groupId>org.rdlinux</groupId>
+    <artifactId>ez-mybatis-to-plus-spring3-boot-start</artifactId>
     <version>0.9.5.RS</version>
 </dependency>
 ```
