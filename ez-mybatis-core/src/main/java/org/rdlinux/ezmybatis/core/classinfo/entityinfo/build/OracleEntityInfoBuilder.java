@@ -25,15 +25,8 @@ public class OracleEntityInfoBuilder implements EntityInfoBuilder {
 
     @Override
     public EntityClassInfo buildInfo(EzContentConfig ezContentConfig, Class<?> ntClass) {
-        EntityInfoBuildConfig buildConfig;
-        //如果配置下划线转驼峰
-        if (ezContentConfig.getEzMybatisConfig().getConfiguration().isMapUnderscoreToCamelCase()) {
-            buildConfig = new EntityInfoBuildConfig(ezContentConfig.getEzMybatisConfig().getTableNamePattern(),
-                    EntityInfoBuildConfig.ColumnHandle.TO_UNDER_AND_UPPER);
-        } else {
-            buildConfig = new EntityInfoBuildConfig(ezContentConfig.getEzMybatisConfig().getTableNamePattern(),
-                    EntityInfoBuildConfig.ColumnHandle.ORIGINAL);
-        }
+        EntityInfoBuildConfig buildConfig = new EntityInfoBuildConfig(ezContentConfig.getEzMybatisConfig()
+                .getTableNamePattern(), EntityInfoBuildConfig.ColumnHandle.TO_UNDER_AND_UPPER);
         return new DefaultEntityClassInfo(ntClass, buildConfig);
     }
 

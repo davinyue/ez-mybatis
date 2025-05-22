@@ -1,17 +1,18 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis</artifactId>
-        <version>0.9.4.RS</version>
+        <groupId>org.rdlinux</groupId>
+        <version>0.9.5.RS</version>
     </parent>
-
-    <artifactId>ez-mybatis-plus-spring-boot-start</artifactId>
     <packaging>jar</packaging>
-    <name>ez-mybatis-plus-spring-boot-start</name>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>ez-mybatis-to-plus</artifactId>
+    <name>ez-mybatis-to-plus</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
-    <description>ez-mybatis-plus-spring-boot-start</description>
+    <description>ez-mybatis</description>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -44,18 +45,12 @@
     <dependencies>
         <dependency>
             <groupId>org.rdlinux</groupId>
-            <artifactId>ez-mybatis-spring-boot-start</artifactId>
+            <artifactId>ez-mybatis-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-annotation</artifactId>
-            <version>${mybatis.plus.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis.plus.version}</version>
             <scope>provided</scope>
         </dependency>
