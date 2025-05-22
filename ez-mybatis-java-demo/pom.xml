@@ -32,16 +32,6 @@
         <developerConnection>https://github.com/davinyue</developerConnection>
         <url>https://github.com/davinyue/ez-mybatis</url>
     </scm>
-    <distributionManagement>
-        <repository>
-            <id>oss-release</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>oss-snapshot</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
