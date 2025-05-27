@@ -62,37 +62,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // nested resultmaps
     private final Map<CacheKey, Object> nestedResultObjects = new HashMap<>();
     private final Map<String, Object> ancestorObjects = new HashMap<>();
-    private Object previousRowValue;
-
     // multiple resultsets
     private final Map<String, ResultMapping> nextResultMaps = new HashMap<>();
     private final Map<CacheKey, List<PendingRelation>> pendingRelations = new HashMap<>();
-
     // Cached Automappings
     private final Map<String, List<UnMappedColumnAutoMapping>> autoMappingsCache = new HashMap<>();
     private final Map<String, List<String>> constructorAutoMappingColumns = new HashMap<>();
-
+    private Object previousRowValue;
     // temporary marking flag that indicate using constructor mapping (use field to reduce memory usage)
     private boolean useConstructorMappings;
-
-    private static class PendingRelation {
-        public MetaObject metaObject;
-        public ResultMapping propertyMapping;
-    }
-
-    private static class UnMappedColumnAutoMapping {
-        private final String column;
-        private final String property;
-        private final TypeHandler<?> typeHandler;
-        private final boolean primitive;
-
-        public UnMappedColumnAutoMapping(String column, String property, TypeHandler<?> typeHandler, boolean primitive) {
-            this.column = column;
-            this.property = property;
-            this.typeHandler = typeHandler;
-            this.primitive = primitive;
-        }
-    }
 
     public EzResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler,
                               ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
@@ -108,10 +86,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         this.reflectorFactory = this.configuration.getReflectorFactory();
         this.resultHandler = resultHandler;
     }
-
-    //
-    // HANDLE OUTPUT PARAMETER
-    //
 
     @Override
     public void handleOutputParameters(CallableStatement cs) throws SQLException {
@@ -152,6 +126,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
             this.closeResultSet(rs);
         }
     }
+
+    //
+    // HANDLE OUTPUT PARAMETER
+    //
 
     //
     // HANDLE RESULT SETS
@@ -296,10 +274,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return multipleResults.size() == 1 ? (List<Object>) multipleResults.get(0) : multipleResults;
     }
 
-    //
-    // HANDLE ROWS FOR SIMPLE RESULTMAP
-    //
-
     @Override
     public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler,
                                 RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
@@ -320,6 +294,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                             + "Use safeRowBoundsEnabled=false setting to bypass this check.");
         }
     }
+
+    //
+    // HANDLE ROWS FOR SIMPLE RESULTMAP
+    //
 
     @Override
     protected void checkResultHandler() {
@@ -386,10 +364,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    //
-    // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
-    //
-
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         final ResultLoaderMap lazyLoader = new ResultLoaderMap();
         Object rowValue = this.createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
@@ -407,10 +381,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
         return rowValue;
     }
-
-    //
-    // GET VALUE FROM ROW FOR NESTED RESULT MAP
-    //
 
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix,
                                Object partialObject) throws SQLException {
@@ -447,9 +417,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return rowValue;
     }
 
+    //
+    // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
+    //
+
     private void putAncestor(Object resultObject, String resultMapId) {
         this.ancestorObjects.put(resultMapId, resultObject);
     }
+
+    //
+    // GET VALUE FROM ROW FOR NESTED RESULT MAP
+    //
 
     private boolean shouldApplyAutomaticMappings(ResultMap resultMap, boolean isNested) {
         if (resultMap.getAutoMapping() != null) {
@@ -462,13 +440,9 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    //
-    // PROPERTY MAPPINGS
-    //
-
     private boolean applyPropertyMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject,
                                           ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
-        final Set<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
+        final List<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
         boolean foundValues = false;
         final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
         for (ResultMapping propertyMapping : propertyMappings) {
@@ -518,6 +492,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
             return typeHandler.getResult(rs, column);
         }
     }
+
+    //
+    // PROPERTY MAPPINGS
+    //
 
     private List<UnMappedColumnAutoMapping> createAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap,
                                                                     MetaObject metaObject, String columnPrefix) throws SQLException {
@@ -596,8 +574,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues;
     }
 
-    // MULTIPLE RESULT SETS
-
     private void linkToParents(ResultSet rs, ResultMapping parentMapping, Object rowValue) throws SQLException {
         CacheKey parentKey = this.createKeyForMultipleResults(rs, parentMapping, parentMapping.getColumn(),
                 parentMapping.getForeignColumn());
@@ -629,6 +605,8 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    // MULTIPLE RESULT SETS
+
     private CacheKey createKeyForMultipleResults(ResultSet rs, ResultMapping resultMapping, String names, String columns)
             throws SQLException {
         CacheKey cacheKey = new CacheKey();
@@ -646,10 +624,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
         return cacheKey;
     }
-
-    //
-    // INSTANTIATION & CONSTRUCTOR MAPPING
-    //
 
     private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader,
                                       String columnPrefix) throws SQLException {
@@ -695,6 +669,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
         throw new ExecutorException("Do not know how to create an instance of " + resultType);
     }
+
+    //
+    // INSTANTIATION & CONSTRUCTOR MAPPING
+    //
 
     Object createParameterizedResultObject(ResultSetWrapper rsw, Class<?> resultType,
                                            List<ResultMapping> constructorMappings, List<Class<?>> constructorArgTypes, List<Object> constructorArgs,
@@ -867,10 +845,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return typeHandler.getResult(rsw.getResultSet(), columnName);
     }
 
-    //
-    // NESTED QUERY
-    //
-
     private Object getNestedQueryConstructorValue(ResultSet rs, ResultMapping constructorMapping, String columnPrefix)
             throws SQLException {
         final String nestedQueryId = constructorMapping.getNestedQueryId();
@@ -922,6 +896,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return value;
     }
 
+    //
+    // NESTED QUERY
+    //
+
     private Object prepareParameterForNestedQuery(ResultSet rs, ResultMapping resultMapping, Class<?> parameterType,
                                                   String columnPrefix) throws SQLException {
         if (resultMapping.isCompositeResult()) {
@@ -970,10 +948,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
-    //
-    // DISCRIMINATOR
-    //
-
     @Override
     public ResultMap resolveDiscriminatedResultMap(ResultSet rs, ResultMap resultMap, String columnPrefix)
             throws SQLException {
@@ -1002,16 +976,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return typeHandler.getResult(rs, this.prependPrefix(resultMapping.getColumn(), columnPrefix));
     }
 
+    //
+    // DISCRIMINATOR
+    //
+
     private String prependPrefix(String columnName, String prefix) {
         if (columnName == null || columnName.length() == 0 || prefix == null || prefix.length() == 0) {
             return columnName;
         }
         return prefix + columnName;
     }
-
-    //
-    // HANDLE NESTED RESULT MAPS
-    //
 
     private void handleRowValuesForNestedResultMap(ResultSetWrapper rsw, ResultMap resultMap,
                                                    ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
@@ -1044,10 +1018,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
             this.previousRowValue = rowValue;
         }
     }
-
-    //
-    // NESTED RESULT MAP (JOIN MAPPING)
-    //
 
     private boolean applyNestedResultMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject,
                                               String parentPrefix, CacheKey parentRowKey, boolean newObject) {
@@ -1090,6 +1060,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues;
     }
 
+    //
+    // HANDLE NESTED RESULT MAPS
+    //
+
     private String getColumnPrefix(String parentPrefix, ResultMapping resultMapping) {
         final StringBuilder columnPrefixBuilder = new StringBuilder();
         if (parentPrefix != null) {
@@ -1100,6 +1074,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
         return columnPrefixBuilder.length() == 0 ? null : columnPrefixBuilder.toString().toUpperCase(Locale.ENGLISH);
     }
+
+    //
+    // NESTED RESULT MAP (JOIN MAPPING)
+    //
 
     private boolean anyNotNullColumnHasValue(ResultMapping resultMapping, String columnPrefix, ResultSetWrapper rsw)
             throws SQLException {
@@ -1130,10 +1108,6 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         ResultMap nestedResultMap = this.configuration.getResultMap(nestedResultMapId);
         return this.resolveDiscriminatedResultMap(rs, nestedResultMap, columnPrefix);
     }
-
-    //
-    // UNIQUE RESULT KEY
-    //
 
     private CacheKey createRowKey(ResultMap resultMap, ResultSetWrapper rsw, String columnPrefix) throws SQLException {
         final CacheKey cacheKey = new CacheKey();
@@ -1170,6 +1144,10 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return CacheKey.NULL_CACHE_KEY;
     }
 
+    //
+    // UNIQUE RESULT KEY
+    //
+
     private List<ResultMapping> getResultMappingsForRowKey(ResultMap resultMap) {
         List<ResultMapping> resultMappings = resultMap.getIdResultMappings();
         if (resultMappings.isEmpty()) {
@@ -1184,7 +1162,7 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
             if (resultMapping.isSimple()) {
                 final String column = this.prependPrefix(resultMapping.getColumn(), columnPrefix);
                 final TypeHandler<?> th = resultMapping.getTypeHandler();
-                Set<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
+                List<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
                 // Issue #114
                 if (column != null && mappedColumnNames.contains(column.toUpperCase(Locale.ENGLISH))) {
                     final Object value = th.getResult(rsw.getResultSet(), column);
@@ -1340,5 +1318,24 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
             }
         }
         return typeHandler;
+    }
+
+    private static class PendingRelation {
+        public MetaObject metaObject;
+        public ResultMapping propertyMapping;
+    }
+
+    private static class UnMappedColumnAutoMapping {
+        private final String column;
+        private final String property;
+        private final TypeHandler<?> typeHandler;
+        private final boolean primitive;
+
+        public UnMappedColumnAutoMapping(String column, String property, TypeHandler<?> typeHandler, boolean primitive) {
+            this.column = column;
+            this.property = property;
+            this.typeHandler = typeHandler;
+            this.primitive = primitive;
+        }
     }
 }
