@@ -17,9 +17,9 @@ public class GroupBy implements SqlStruct {
     }
 
     public static class GroupBuilder<T> {
-        private T target;
-        private Table table;
-        private GroupBy groupBy;
+        private final T target;
+        private final Table table;
+        private final GroupBy groupBy;
 
         public GroupBuilder(T target, GroupBy groupBy, Table table) {
             this.target = target;
