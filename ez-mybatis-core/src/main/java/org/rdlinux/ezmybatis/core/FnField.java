@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 /**
  * Lambda field name extraction
  */
-public class LmField {
+public class FnField {
     public static <T, R> String of(SFunction<T, R> fn) {
         try {
             Method writeReplace = fn.getClass().getDeclaredMethod("writeReplace");
