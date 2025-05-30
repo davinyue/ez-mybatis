@@ -7,8 +7,8 @@ import org.rdlinux.ezmybatis.utils.Assert;
  * 属性参数
  */
 public class EntityField implements QueryRetOperand {
-    private EntityTable table;
-    private String field;
+    private final EntityTable table;
+    private final String field;
 
     private EntityField(EntityTable table, String field) {
         Assert.notNull(table, "table can not be null");
