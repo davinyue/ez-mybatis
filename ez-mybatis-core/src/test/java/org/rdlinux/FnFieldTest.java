@@ -2,17 +2,17 @@ package org.rdlinux;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.rdlinux.ezmybatis.core.LmField;
+import org.rdlinux.ezmybatis.core.FnField;
 
-public class LmFieldTest {
+public class FnFieldTest {
     public static void main(String[] args) {
-        String field = LmField.of(User::getName);
+        String field = FnField.of(User::getName);
         System.out.println(field);
-        field = LmField.of(User::getFirst_name);
+        field = FnField.of(User::getFirst_name);
         System.out.println(field);
-        field = LmField.of(User::getLastName);
+        field = FnField.of(User::getLastName);
         System.out.println(field);
-        field = LmField.of(User::isWoman);
+        field = FnField.of(User::isWoman);
         System.out.println(field);
     }
 
