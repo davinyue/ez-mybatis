@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ez-mybatis</artifactId>
         <groupId>org.rdlinux</groupId>
-        <version>0.9.5.plus352</version>
+        <version>0.9.6.plus352</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
@@ -40,7 +40,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-        <mybatis.plus.version>3.5.2</mybatis.plus.version>
+        <mybatis.plus.version>3.5.12</mybatis.plus.version>
     </properties>
     <dependencies>
         <dependency>

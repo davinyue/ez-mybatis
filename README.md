@@ -28,7 +28,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-start</artifactId>
-    <version>0.9.5.plus352</version>
+    <version>0.9.6.plus352</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-to-plus-spring-boot-start</artifactId>
-    <version>0.9.5.plus352</version>
+    <version>0.9.6.plus352</version>
 </dependency>
 ```
 
@@ -60,7 +60,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring3-boot-start</artifactId>
-    <version>0.9.5.plus352</version>
+    <version>0.9.6.plus352</version>
 </dependency>
 ```
 
@@ -75,7 +75,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-to-plus-spring3-boot-start</artifactId>
-    <version>0.9.5.plus352</version>
+    <version>0.9.6.plus352</version>
 </dependency>
 ```
 
