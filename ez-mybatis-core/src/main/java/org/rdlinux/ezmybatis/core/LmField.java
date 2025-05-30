@@ -3,6 +3,9 @@ package org.rdlinux.ezmybatis.core;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 
+/**
+ * Lambda field name extraction
+ */
 public class LmField {
     public static <T, R> String of(SFunction<T, R> fn) {
         try {
