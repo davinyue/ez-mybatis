@@ -1,5 +1,7 @@
 package org.rdlinux.ezmybatis.core;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -7,6 +9,8 @@ import org.rdlinux.ezmybatis.utils.Assert;
 /**
  * jdbc 参数
  */
+@Getter
+@Setter
 public class EzJdbcSqlParam {
     /**
      * 参数值
@@ -24,18 +28,5 @@ public class EzJdbcSqlParam {
         this.jdbcType = jdbcType;
         Assert.notNull(typeHandler, "typeHandler can not be null");
         this.typeHandler = typeHandler;
-    }
-
-    public Object getValue() {
-        return this.value;
-    }
-
-    @SuppressWarnings({"rawtypes"})
-    public TypeHandler getTypeHandler() {
-        return this.typeHandler;
-    }
-
-    public JdbcType getJdbcType() {
-        return this.jdbcType;
     }
 }

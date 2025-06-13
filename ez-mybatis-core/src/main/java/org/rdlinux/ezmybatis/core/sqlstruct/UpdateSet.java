@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 public class UpdateSet {
-    private List<UpdateItem> items;
+    private final List<UpdateItem> items;
 
     public UpdateSet() {
         this.items = new LinkedList<>();

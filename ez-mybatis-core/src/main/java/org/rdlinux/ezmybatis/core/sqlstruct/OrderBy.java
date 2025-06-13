@@ -39,9 +39,9 @@ public class OrderBy implements SqlStruct {
     }
 
     public static class OrderBuilder<T> {
-        private T target;
-        private Table table;
-        private OrderBy orderBy;
+        private final T target;
+        private final Table table;
+        private final OrderBy orderBy;
 
         public OrderBuilder(T target, OrderBy orderBy, Table table) {
             this.target = target;

@@ -26,7 +26,7 @@ import java.util.List;
 public class JdbcInsertDao {
     private static final Log log = LogFactory.getLog(JdbcInsertDao.class);
 
-    private SqlSession sqlSession;
+    private final SqlSession sqlSession;
 
     public JdbcInsertDao(SqlSession sqlSession) {
         Assert.notNull(sqlSession, "sqlSession can not be null");

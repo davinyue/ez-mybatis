@@ -1,14 +1,16 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 /**
  * 列参数
  */
+@Getter
 public class TableColumn implements QueryRetOperand {
-    private Table table;
-    private String column;
+    private final Table table;
+    private final String column;
 
     private TableColumn(Table table, String column) {
         Assert.notNull(table, "table can not be null");
@@ -19,13 +21,5 @@ public class TableColumn implements QueryRetOperand {
 
     public static TableColumn of(Table table, String column) {
         return new TableColumn(table, column);
-    }
-
-    public String getColumn() {
-        return this.column;
-    }
-
-    public Table getTable() {
-        return this.table;
     }
 }

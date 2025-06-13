@@ -43,10 +43,10 @@ public class Select implements SqlStruct {
     }
 
     public static class EzSelectBuilder<T> {
-        private List<SelectItem> selectFields;
-        private T target;
-        private Table table;
-        private Select select;
+        private final List<SelectItem> selectFields;
+        private final T target;
+        private final Table table;
+        private final Select select;
 
         public EzSelectBuilder(T target, Select select, Table table) {
             if (select.getSelectFields() == null) {

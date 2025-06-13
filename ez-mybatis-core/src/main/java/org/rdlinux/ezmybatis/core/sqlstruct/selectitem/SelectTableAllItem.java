@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 
+import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -9,8 +10,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 public class SelectTableAllItem implements SelectItem, SqlStruct {
-    private Table table;
+    private final Table table;
     private Set<String> excludeField;
 
     /**
@@ -27,11 +29,4 @@ public class SelectTableAllItem implements SelectItem, SqlStruct {
         }
     }
 
-    public Table getTable() {
-        return this.table;
-    }
-
-    public Set<String> getExcludeField() {
-        return this.excludeField;
-    }
 }
