@@ -7,7 +7,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
 public class FormulaOperandElement extends AbstractFormulaElement {
-    private Operand operand;
+    private final Operand operand;
 
     public FormulaOperandElement(FormulaOperator operator, Operand operand) {
         super(operator);

@@ -1,12 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import lombok.Getter;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 /**
  * sql
  */
+@Getter
 public class Sql implements MultipleRetOperand, QueryRetNeedAlias {
-    private String sql;
+    private final String sql;
 
     private Sql(String sql) {
         Assert.notNull(sql, "sql can not be null");
@@ -15,9 +17,5 @@ public class Sql implements MultipleRetOperand, QueryRetNeedAlias {
 
     public static Sql of(String sql) {
         return new Sql(sql);
-    }
-
-    public String getSql() {
-        return this.sql;
     }
 }

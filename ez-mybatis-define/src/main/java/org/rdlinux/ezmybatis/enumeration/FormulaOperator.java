@@ -24,7 +24,7 @@ public enum FormulaOperator {
      * 空操作符, 用于公式开始
      */
     EMPTY("");
-    private String symbol;
+    private final String symbol;
 
     FormulaOperator(String symbol) {
         this.symbol = symbol;

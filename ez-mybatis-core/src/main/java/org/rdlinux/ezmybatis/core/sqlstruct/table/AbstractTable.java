@@ -47,14 +47,6 @@ public abstract class AbstractTable implements Table {
         this.partition = partition;
     }
 
-    public String getSchema() {
-        return this.schema;
-    }
-
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
     @Override
     public String getSchema(Configuration configuration) {
         return this.schema;

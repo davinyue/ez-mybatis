@@ -9,7 +9,7 @@ public enum JoinType {
     FullJoin(" FULL JOIN "),
     InnerJoin(" INNER JOIN "),
     CrossJoin(", ");
-    private String sqlStruct;
+    private final String sqlStruct;
 
     JoinType(String sqlStruct) {
         this.sqlStruct = sqlStruct;

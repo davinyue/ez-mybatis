@@ -65,7 +65,7 @@ public class Function implements QueryRetNeedAlias {
      * 函数构造器
      */
     public static class FunctionBuilder {
-        private Function function;
+        private final Function function;
 
         private FunctionBuilder(Table table) {
             this.function = new Function();

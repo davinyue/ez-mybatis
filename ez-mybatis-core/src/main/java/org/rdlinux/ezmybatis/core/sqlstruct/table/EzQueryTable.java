@@ -1,10 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.utils.AliasGenerate;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+@Setter
+@Getter
 public class EzQueryTable extends AbstractTable implements Table {
     private EzQuery<?> ezQuery;
 
@@ -16,14 +20,6 @@ public class EzQueryTable extends AbstractTable implements Table {
 
     public static EzQueryTable of(EzQuery<?> ezQuery) {
         return new EzQueryTable(ezQuery);
-    }
-
-    public EzQuery<?> getEzQuery() {
-        return this.ezQuery;
-    }
-
-    public void setEzQuery(EzQuery<?> ezQuery) {
-        this.ezQuery = ezQuery;
     }
 
     @Override

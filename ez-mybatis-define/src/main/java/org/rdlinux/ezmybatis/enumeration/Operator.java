@@ -16,7 +16,7 @@ public enum Operator {
     between("BETWEEN"),
     notBetween("NOT BETWEEN"),
     regexp("REGEXP");
-    private String operator;
+    private final String operator;
 
     Operator(String operator) {
         this.operator = operator;

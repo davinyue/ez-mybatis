@@ -6,7 +6,7 @@
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.6.RS</version>
+    <version>0.9.7.RS</version>
     <name>ez-mybatis</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
     <description>ez-mybatis</description>
@@ -17,7 +17,6 @@
             <distribution>actable</distribution>
         </license>
     </licenses>
-    <!-- 开发者信息 -->
     <developers>
         <developer>
             <name>DavinYue</name>
@@ -33,16 +32,11 @@
     <modules>
         <module>ez-mybatis-core</module>
         <module>ez-mybatis-define</module>
-        <module>ez-mybatis-spring</module>
-        <module>ez-mybatis-spring-boot-start</module>
         <module>ez-mybatis-expand</module>
-        <module>ez-mybatis-java-demo</module>
         <module>ez-mybatis-to-plus</module>
-        <module>ez-mybatis-to-plus-spring-boot-start</module>
     </modules>
     <build>
         <plugins>
-            <!-- 指定编译器版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -51,13 +45,6 @@
                     <fork>true</fork>
                 </configuration>
             </plugin>
-            <!-- lombok编译插件 -->
-            <plugin>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok-maven-plugin</artifactId>
-                <version>1.18.4.0</version>
-            </plugin>
-            <!--打包源码 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -71,7 +58,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- 打包java-doc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -94,7 +80,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- GPG签名 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>

@@ -75,7 +75,7 @@ public class CaseWhen implements QueryRetNeedAlias {
          * CaseWhen条件数据构造器
          */
         public static class CaseWhenDataBuilder extends ConditionBuilder<CaseWhenBuilder, CaseWhenDataBuilder> {
-            private CaseWhenData caseWhenData;
+            private final CaseWhenData caseWhenData;
 
             public CaseWhenDataBuilder(Table table, CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
                 super(caseWhenBuilder, caseWhenData.getConditions(), table, table);
