@@ -68,7 +68,15 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
 
     protected StringBuilder selectCountToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
                                              MybatisParamHolder paramHolder) {
-        sqlBuilder.append("SELECT COUNT(*) ");
+        sqlBuilder.append("SELECT ");
+        if (query.getSelect() != null) {
+            SqlHint sqlHint = query.getSelect().getSqlHint();
+            if (sqlHint != null) {
+                Converter<SqlHint> converter = EzMybatisContent.getConverter(configuration, SqlHint.class);
+                sqlBuilder = converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, sqlHint, paramHolder);
+            }
+        }
+        sqlBuilder.append(" COUNT(*) ");
         return sqlBuilder;
     }
 
