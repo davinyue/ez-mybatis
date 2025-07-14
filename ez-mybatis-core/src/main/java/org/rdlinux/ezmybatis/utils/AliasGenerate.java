@@ -4,7 +4,7 @@ package org.rdlinux.ezmybatis.utils;
  * 别名生成工具
  */
 public class AliasGenerate {
-    private static final int min = 676;
+    private static final int min = 0;
     private static final int max = 17575;
     private static final ThreadLocal<Integer> currentTl = new ThreadLocal<>();
 
@@ -18,18 +18,17 @@ public class AliasGenerate {
     }
 
     private static String toAlphabeticRadix(int num) {
-        char[] str = Integer.toString(num, 26).toCharArray();
-        for (int i = 0; i < str.length; i++) {
-            str[i] += (char) (str[i] > '9' ? 10 : 49);
-        }
-        return new String(str);
+        int base = 26;
+        char c1 = (char) ('a' + (num / (base * base)) % base);
+        char c2 = (char) ('a' + (num / base) % base);
+        char c3 = (char) ('a' + num % base);
+        return new String(new char[]{c1, c2, c3});
     }
 
     public static String getAlias() {
         Integer cu = getCurrent();
         if (cu > max) {
             cu = min;
-            currentTl.set(min);
         }
         currentTl.set(cu + 1);
         return "t_" + toAlphabeticRadix(cu);
