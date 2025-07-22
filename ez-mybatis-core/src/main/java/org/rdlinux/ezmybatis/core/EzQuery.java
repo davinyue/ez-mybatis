@@ -32,7 +32,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
         /**
          * from 表是否已经设置
          */
-        private boolean formIsSet = false;
+        private boolean fromIsSet = false;
 
         private EzQueryBuilder(Class<Rt> retType) {
             this.query = new EzQuery<>(retType);
@@ -43,7 +43,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             this.query.table = table;
             this.query.from = new From(table);
             this.query.select = new Select(this.query, new LinkedList<>());
-            this.formIsSet = true;
+            this.fromIsSet = true;
             return this;
         }
 
@@ -51,7 +51,7 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          * 检查from表是否已经指定
          */
         private void checkFromTable() {
-            if (!this.formIsSet) {
+            if (!this.fromIsSet) {
                 throw new RuntimeException("The from table is not specified. Please call the from function to " +
                         "specify the main table to be queried first.");
             }
