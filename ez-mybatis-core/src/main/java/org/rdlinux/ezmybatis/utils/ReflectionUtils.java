@@ -1,13 +1,19 @@
 package org.rdlinux.ezmybatis.utils;
 
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
-
 import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ReflectionUtils {
+    private static final Map<Class<?>, List<Field>> FIELDS_CACHE = new ConcurrentHashMap<>();
+
+    public static void clearCache(Class<?> clazz) {
+        FIELDS_CACHE.remove(clazz);
+    }
+
     /**
      * 获取代理类的真实类
      *
@@ -27,11 +33,17 @@ public class ReflectionUtils {
      */
     public static List<Field> getAllFields(Class<?> objClass) {
         objClass = getRealClassOfProxyClass(objClass);
-        List<Field> fields = new LinkedList<>();
-        while (objClass != Object.class) {
-            fields.addAll(Arrays.asList(objClass.getDeclaredFields()));
-            objClass = objClass.getSuperclass();
+        List<Field> fields = FIELDS_CACHE.get(objClass);
+        if (fields != null) {
+            return fields;
         }
+        fields = new LinkedList<>();
+        Class<?> searchType = objClass;
+        while (searchType != Object.class) {
+            fields.addAll(Arrays.asList(searchType.getDeclaredFields()));
+            searchType = searchType.getSuperclass();
+        }
+        FIELDS_CACHE.put(objClass, fields);
         return fields;
     }
 
@@ -63,7 +75,7 @@ public class ReflectionUtils {
      */
     public static Class<?> getGenericSuperinterface(Class<?> objClass, int interfaceOrder, int paramOrder) {
         Type[] interfaces = objClass.getGenericInterfaces();
-        Type[] actualTypeArguments = ((ParameterizedTypeImpl) interfaces[interfaceOrder]).getActualTypeArguments();
+        Type[] actualTypeArguments = ((ParameterizedType) interfaces[interfaceOrder]).getActualTypeArguments();
         return (Class<?>) actualTypeArguments[paramOrder];
     }
 
@@ -146,7 +158,6 @@ public class ReflectionUtils {
     public static <T> T getFieldValue(Object obj, String fieldName) {
         return getFieldValue(obj, fieldName, false);
     }
-
 
     /**
      * 根据属性名称和类型查找属性
