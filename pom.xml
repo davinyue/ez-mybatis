@@ -6,7 +6,7 @@
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.8.RS</version>
+    <version>0.9.9.RS</version>
     <name>ez-mybatis</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
     <description>ez-mybatis</description>
