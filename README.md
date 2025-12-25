@@ -49,13 +49,15 @@ Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis�
 | SQL Server | ✅    | 完全支持        |
 | 其他国产数据库    | ⚠️   | 需配置兼容的数据库类型 |
 
-对于其他国产数据库（如高斯数据库），可配置为兼容的数据库类型（示例：映射为 PostgreSQL）。
+Ez-MyBatis 会自动根据数据源的 Driver Class 识别数据库类型（支持 MySQL, Oracle, PostgreSql, SqlServer, 达梦等常用驱动），通常情况下 **无需手动配置** `db-type`。
+
+对于无法自动识别的国产数据库（如高斯数据库），可配置为兼容的数据库类型（示例：映射为 PostgreSQL）：
 
 ### 数据库类型配置
 
 ```yaml
 ez-mybatis:
-  db-type: POSTGRE_SQL  # 高斯数据库基于 PostgreSQL
+  db-type: POSTGRE_SQL  # 指强制指定数据库类型
 ```
 
 ---
@@ -67,60 +69,64 @@ ez-mybatis:
 ### Spring Boot 2.x 集成 MyBatis
 
 ```xml
-
-<dependency>
-    <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-    <version>0.9.9.RS</version>
-</dependency>
+<dependencys>
+    <dependency>
+        <groupId>org.rdlinux</groupId>
+        <artifactId>ez-mybatis-spring-boot-starter</artifactId>
+        <version>0.9.9.RS</version>
+    </dependency>
+</dependencys>
 ```
 
 ### Spring Boot 2.x 集成 MyBatis-Plus
 
 ```xml
-
-<dependency>
-    <groupId>com.baomidou</groupId>
-    <artifactId>mybatis-plus-boot-starter</artifactId>
-    <version>3.5.12</version>
-</dependency>
-<dependency>
-<groupId>com.baomidou</groupId>
-<artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
-<version>3.5.12</version>
-</dependency>
-<dependency>
-<groupId>org.rdlinux</groupId>
-<artifactId>ez-mybatis-to-plus-spring-boot-starter</artifactId>
-<version>0.9.9.RS</version>
-</dependency>
+<dependencys>
+    <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>3.5.12</version>
+    </dependency>
+    <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+        <version>3.5.12</version>
+    </dependency>
+    <dependency>
+        <groupId>org.rdlinux</groupId>
+        <artifactId>ez-mybatis-to-plus-spring-boot-starter</artifactId>
+        <version>0.9.9.RS</version>
+    </dependency>
+</dependencys>
 ```
 
 ### Spring Boot 3.x 集成 MyBatis
 
 ```xml
-
-<dependency>
-    <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-    <version>0.9.9.RS</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>org.rdlinux</groupId>
+        <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
+        <version>0.9.9.RS</version>
+    </dependency>
+</dependencys>
 ```
 
 ### Spring Boot 3.x 集成 MyBatis-Plus
 
 ```xml
-
-<dependency>
-    <groupId>com.baomidou</groupId>
-    <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
-    <version>3.5.12</version>
-</dependency>
-<dependency>
-<groupId>org.rdlinux</groupId>
-<artifactId>ez-mybatis-to-plus-spring3-boot-starter</artifactId>
-<version>0.9.9.RS</version>
-</dependency>
+<dependencys>
+    <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+        <version>3.5.12</version>
+    </dependency>
+    <dependency>
+        <groupId>org.rdlinux</groupId>
+        <artifactId>ez-mybatis-to-plus-spring3-boot-starter</artifactId>
+        <version>0.9.9.RS</version>
+    </dependency>
+</dependencys>
 ```
 
 ---
@@ -128,6 +134,16 @@ ez-mybatis:
 ## 📝 实体类定义
 
 > 推荐使用 Lombok（`@Getter @Setter @FieldNameConstants`）自动生成字段常量，便于类型安全 DSL 构建。
+> 
+> **💡 提示**：如果不方便使用 Lombok，或者更偏好 Lambda 风格，**Ez-MyBatis** 提供了 `FnField` 工具类，支持通过 Getter 方法引用获取字段名，同样能实现类型安全：
+>
+> ```java
+> // 替代 User.Fields.name
+> String nameField = FnField.of(User::getName);
+> 
+> // 在 DSL 中使用
+> .addFieldCondition(FnField.of(User::getName), "张三")
+> ```
 
 ### 基础实体
 
@@ -199,6 +215,17 @@ public class UserService {
 
         // 方式二：使用 JDBC（高性能，适合大批量数据）
         jdbcInsertDao.insert(user);
+    }
+
+    // 方式三：INSERT INTO ... SELECT ...
+    public void insertByQuery() {
+        // 将查询结果插入到 User 对应的表中
+        EzQuery<User> query = EzQuery.builder(User.class)
+             .from(EntityTable.of(UserDump.class)) // 从备份表查询
+             .select().addAll().done()
+             .build();
+             
+        ezMapper.insertByQuery(EntityTable.of(User.class), query);
     }
 }
 ```
@@ -581,6 +608,105 @@ public void joinQuery() {
             .build();
 
     List<User> users = ezMapper.query(query);
+}
+```
+
+---
+
+## 🚀 进阶用法
+
+### 🔄 动态表名操作
+
+对于分库分表或动态表名场景，Ez-MyBatis 支持在运行时指定表名。所有 `*ByTable` 结尾的方法均支持动态表名。
+
+#### 动态表名插入/更新/删除
+
+```java
+public void dynamicTableOps() {
+    // 1. 定义动态表（表名为 ez_user_2023）
+    EntityTable dynamicTable = EntityTable.of(User.class, "ez_user_2023");
+    
+    User user = new User();
+    user.setId("1");
+    user.setName("Dynamic");
+
+    // 2. 插入到指定表
+    ezMapper.insertByTable(dynamicTable, user);
+
+    // 3. 更新指定表
+    ezMapper.updateByTable(dynamicTable, user);
+
+    // 4. 删除指定表数据
+    ezMapper.deleteByTable(dynamicTable, user);
+}
+```
+
+#### 动态表名查询
+
+```java
+public void dynamicQuery() {
+    EzQuery<User> query = EzQuery.builder(User.class)
+            .from(EntityTable.of(User.class, "ez_user_2023")) // 指定 FROM 表名
+            .select().addAll().done()
+            .where()
+            .addFieldCondition(User.Fields.userAge, Operator.gt, 18)
+            .done()
+            .build();
+
+    List<User> users = ezMapper.query(query);
+}
+```
+
+### 🔗 联合查询 (UNION)
+
+支持标准 SQL 的 `UNION` 和 `UNION ALL` 操作。
+
+```java
+public void unionQuery() {
+    // 子查询 1
+    EzQuery<User> query1 = EzQuery.builder(User.class)
+            .from(EntityTable.of(User.class))
+            .select().addAll().done()
+            .where().addFieldCondition(User.Fields.userAge, Operator.gt, 18).done()
+            .build();
+
+    // 子查询 2
+    EzQuery<User> query2 = EzQuery.builder(User.class)
+            .from(EntityTable.of(User.class))
+            .select().addAll().done()
+            .where().addFieldCondition(User.Fields.name, Operator.like, "admin%").done()
+            .build();
+
+    // 构建 UNION 查询
+    EzQuery<User> unionQuery = EzQuery.builder(User.class)
+            .from(EntityTable.of(User.class))   // 主结构
+            .select().addAll().done()           // 主 Select
+            .union(query1)                      // UNION
+            .unionAll(query2)                   // UNION ALL
+            .build();
+
+    List<User> result = ezMapper.query(unionQuery);
+}
+```
+
+### 🧩 原生 SQL 支持
+
+虽然 DSL 能覆盖绝大部分场景，但 Ez-MyBatis 依然保留了执行原生 SQL 的能力，并支持自动映射。
+
+```java
+public void rawSqlOps() {
+    String sql = "SELECT * FROM ez_user WHERE age > #{age}";
+    Map<String, Object> params = new HashMap<>();
+    params.put("age", 18);
+
+    // 1. 查询返回 Map
+    List<Map<String, Object>> mapList = ezMapper.selectMapBySql(sql, params);
+
+    // 2. 查询返回实体对象
+    List<User> users = ezMapper.selectObjectBySql(User.class, sql, params);
+
+    // 3. 执行更新 / 删除 SQL
+    ezMapper.updateBySql("UPDATE ez_user SET age = 20 WHERE id = '1'", null);
 }
 ```
 
