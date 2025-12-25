@@ -534,7 +534,6 @@ public class OracleSelectTest extends OracleBaseTest {
         Function nameDesc = Function.builder(table).setFunName("CONCAT")
                 .addFieldArg(User.Fields.name)
                 .addValueArg(" - ")
-                .addFieldArg(User.Fields.userAge)
                 .build();
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
