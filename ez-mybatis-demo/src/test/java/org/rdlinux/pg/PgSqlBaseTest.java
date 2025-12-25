@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.pg;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
@@ -13,10 +13,6 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
-import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
 
 import java.io.IOException;
@@ -25,12 +21,12 @@ import java.util.Collection;
 import java.util.Date;
 
 @Slf4j
-public class MysqlBaseTest {
+public class PgSqlBaseTest {
     protected static SqlSessionFactory sqlSessionFactory;
 
     static {
 
-        String resource = "mybatis-config-mysql.xml";
+        String resource = "mybatis-config-pg.xml";
         Reader reader = null;
         try {
             reader = Resources.getResourceAsReader(resource);
@@ -45,7 +41,7 @@ public class MysqlBaseTest {
             @Override
             public void onInsert(Object entity) {
                 if (entity instanceof BaseEntity) {
-                    MysqlBaseTest.log.info("插入事件");
+                    PgSqlBaseTest.log.info("插入事件");
                     ((BaseEntity) entity).setUpdateTime(new Date());
                     ((BaseEntity) entity).setCreateTime(new Date());
                 }
@@ -60,7 +56,7 @@ public class MysqlBaseTest {
 
             @Override
             public void onDelete(Object entity) {
-                MysqlBaseTest.log.info("删除事件");
+                PgSqlBaseTest.log.info("删除事件");
             }
 
             @Override
@@ -70,7 +66,7 @@ public class MysqlBaseTest {
 
             @Override
             public void onDeleteById(Object id, Class<?> ntClass) {
-                MysqlBaseTest.log.info("删除事件");
+                PgSqlBaseTest.log.info("删除事件");
             }
 
             @Override
@@ -82,41 +78,33 @@ public class MysqlBaseTest {
 
             @Override
             public void onEzDelete(EzDelete ezDelete) {
-                MysqlBaseTest.log.info("ez_delete删除:{}", ezDelete.getTable().getTableName(configuration));
+                PgSqlBaseTest.log.info("ez_delete删除:{}", ezDelete.getTable().getTableName(configuration));
             }
         });
         EzMybatisContent.addUpdateListener(ezMybatisConfig, new EzMybatisUpdateListener() {
             @Override
             public void onUpdate(Object entity) {
-                MysqlBaseTest.log.info("更新事件");
+                PgSqlBaseTest.log.info("更新事件");
             }
 
             @Override
             public void onBatchUpdate(Collection<?> models) {
-                MysqlBaseTest.log.info("更新事件");
+                PgSqlBaseTest.log.info("更新事件");
             }
 
             @Override
             public void onReplace(Object entity) {
-                MysqlBaseTest.log.info("替换事件");
+                PgSqlBaseTest.log.info("替换事件");
             }
 
             @Override
             public void onBatchReplace(Collection<?> models) {
-                MysqlBaseTest.log.info("替换事件");
+                PgSqlBaseTest.log.info("替换事件");
             }
 
             @Override
             public void onEzUpdate(EzUpdate ezUpdate) {
-                Table table = ezUpdate.getTable();
-                if (table instanceof EntityTable) {
-                    Class<?> etType = ((EntityTable) table).getEtType();
-                    if (BaseEntity.class.isAssignableFrom(etType)) {
-                        ezUpdate.getSet().getItems().add(new UpdateFieldItem(((EntityTable) table),
-                                BaseEntity.Fields.updateTime, ObjArg.of(new Date())));
-                    }
-                }
-
+                PgSqlBaseTest.log.info("ezUpdate事件");
             }
 
             @Override
