@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
+import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
@@ -411,7 +412,7 @@ public class OracleUpdateTest extends OracleBaseTest {
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsColumn("name");
+                    .elsFunc(Function.builder(table).setFunName("TO_CHAR").addColumnArg("name").build());
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
@@ -423,7 +424,7 @@ public class OracleUpdateTest extends OracleBaseTest {
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsField(User.Fields.name);
+                    .elsFunc(Function.builder(table).setFunName("TO_CHAR").addFieldArg(User.Fields.name).build());
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
