@@ -2,12 +2,14 @@
 
 &#x20; &#x20;
 
-> **兼容性提示**：Ez-MyBatis 支持 Spring Boot 2.x / 3.x，支持 MyBatis 与 MyBatis-Plus 两种生态。请根据项目栈选择对应 Starter 依赖。
-
+> **兼容性提示**：Ez-MyBatis 支持 Spring Boot 2.x / 3.x，支持 MyBatis 与 MyBatis-Plus 两种生态。请根据项目栈选择对应
+> Starter 依赖。
 
 ## 🚀 简介
 
-**Ez-MyBatis** 是一个基于 **MyBatis 拦截器机制** 的数据访问层增强框架。它在 **无需修改 MyBatis 源码** 的前提下，为你提供统一、简洁、类型安全的通用 Mapper 接口与流式 DSL（EzQuery / EzUpdate / EzDelete 等），并兼容常用 JPA 注解，显著降低手写 XML 与重复 Mapper 的工作量，让你更专注业务逻辑开发。
+**Ez-MyBatis** 是一个基于 **MyBatis 拦截器机制** 的数据访问层增强框架。它在 **无需修改 MyBatis 源码**
+的前提下，为你提供统一、简洁、类型安全的通用 Mapper 接口与流式 DSL（EzQuery / EzUpdate / EzDelete 等），并兼容常用 JPA
+注解，显著降低手写 XML 与重复 Mapper 的工作量，让你更专注业务逻辑开发。
 
 ---
 
@@ -16,7 +18,8 @@
 - 你厌倦了维护大量 XML 映射？
 - 想在 **MyBatis + 多数据库** 项目中有统一上层抽象？
 - 需要 **类型安全查询构建器** 避免字段写错？
-- 原生 JOIN 支持，无需手写复杂 SQL, Ez-MyBatis 提供了完整的连表查询 DSL，可无缝替代原生 SQL 的 JOIN 写法，支持：INNER JOIN / LEFT JOIN / RIGHT JOIN 等常用连接方式
+- 原生 JOIN 支持，无需手写复杂 SQL, Ez-MyBatis 提供了完整的连表查询 DSL，可无缝替代原生 SQL 的 JOIN 写法，支持：INNER JOIN /
+  LEFT JOIN / RIGHT JOIN 等常用连接方式
 - 既要轻量，又希望在大批量场景里用 **JDBC 极致性能**？
 
 Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis，可按需渐进接入，低成本迁移、低学习曲线。
@@ -38,7 +41,7 @@ Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis�
 ## 📋 支持的数据库
 
 | 数据库        | 支持状态 | 备注          |
-| ---------- | ---- | ----------- |
+|------------|------|-------------|
 | MySQL      | ✅    | 完全支持        |
 | Oracle     | ✅    | 完全支持        |
 | 达梦         | ✅    | 完全支持        |
@@ -64,9 +67,10 @@ ez-mybatis:
 ### Spring Boot 2.x 集成 MyBatis
 
 ```xml
+
 <dependency>
     <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis-spring-boot-start</artifactId>
+    <artifactId>ez-mybatis-spring-boot-starter</artifactId>
     <version>0.9.9.RS</version>
 </dependency>
 ```
@@ -74,29 +78,31 @@ ez-mybatis:
 ### Spring Boot 2.x 集成 MyBatis-Plus
 
 ```xml
+
 <dependency>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus-boot-starter</artifactId>
     <version>3.5.12</version>
 </dependency>
 <dependency>
-    <groupId>com.baomidou</groupId>
-    <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
-    <version>3.5.12</version>
+<groupId>com.baomidou</groupId>
+<artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+<version>3.5.12</version>
 </dependency>
 <dependency>
-    <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis-to-plus-spring-boot-start</artifactId>
-    <version>0.9.9.RS</version>
+<groupId>org.rdlinux</groupId>
+<artifactId>ez-mybatis-to-plus-spring-boot-starter</artifactId>
+<version>0.9.9.RS</version>
 </dependency>
 ```
 
 ### Spring Boot 3.x 集成 MyBatis
 
 ```xml
+
 <dependency>
     <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis-spring3-boot-start</artifactId>
+    <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
     <version>0.9.9.RS</version>
 </dependency>
 ```
@@ -104,15 +110,16 @@ ez-mybatis:
 ### Spring Boot 3.x 集成 MyBatis-Plus
 
 ```xml
+
 <dependency>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
     <version>3.5.12</version>
 </dependency>
 <dependency>
-    <groupId>org.rdlinux</groupId>
-    <artifactId>ez-mybatis-to-plus-spring3-boot-start</artifactId>
-    <version>0.9.9.RS</version>
+<groupId>org.rdlinux</groupId>
+<artifactId>ez-mybatis-to-plus-spring3-boot-starter</artifactId>
+<version>0.9.9.RS</version>
 </dependency>
 ```
 
@@ -125,6 +132,7 @@ ez-mybatis:
 ### 基础实体
 
 ```java
+
 @Getter
 @Setter
 @FieldNameConstants
@@ -139,6 +147,7 @@ public abstract class BaseEntity {
 ### 用户实体示例
 
 ```java
+
 @Table(name = "ez_user", schema = "ez_mybatis")  // 指定表名和模式
 @Getter
 @Setter
@@ -170,6 +179,7 @@ public class User extends BaseEntity {
 ### 插入数据
 
 ```java
+
 @Service
 public class UserService {
     @Resource
@@ -236,19 +246,19 @@ public void conditionalUpdate() {
     EntityTable entityTable = EntityTable.of(User.class);
     EzUpdate ezUpdate = EzUpdate.update(entityTable)
             .set()
-                // 设置年龄为 1
-                .setField(User.Fields.userAge, 1)
-                // 设置年龄为原值 (通过列名引用)
-                .setField(User.Fields.userAge, TableColumn.of(entityTable, "age"))
-                // 设置年龄为原值 (通过实体字段引用)
-                .setField(User.Fields.userAge, EntityField.of(entityTable, User.Fields.userAge))
-                // 年龄加 1
-                .setField(User.Fields.userAge,
-                        Formula.builder(entityTable).addField(User.Fields.userAge).addValue(1))
+            // 设置年龄为 1
+            .setField(User.Fields.userAge, 1)
+            // 设置年龄为原值 (通过列名引用)
+            .setField(User.Fields.userAge, TableColumn.of(entityTable, "age"))
+            // 设置年龄为原值 (通过实体字段引用)
+            .setField(User.Fields.userAge, EntityField.of(entityTable, User.Fields.userAge))
+            // 年龄加 1
+            .setField(User.Fields.userAge,
+                    Formula.builder(entityTable).addField(User.Fields.userAge).addValue(1))
             .done()
             .where()
-                // 条件：ID = 1
-                .addFieldCondition(BaseEntity.Fields.id, "1")
+            // 条件：ID = 1
+            .addFieldCondition(BaseEntity.Fields.id, "1")
             .done()
             .build();
     ezMapper.ezUpdate(ezUpdate);
@@ -270,10 +280,10 @@ public void formulaUpdate() {
 
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
-                .setField(User.Fields.userAge, formula)  // 年龄增加 10
+            .setField(User.Fields.userAge, formula)  // 年龄增加 10
             .done()
             .where()
-                .addFieldCondition(BaseEntity.Fields.id, "1")
+            .addFieldCondition(BaseEntity.Fields.id, "1")
             .done()
             .build();
 
@@ -289,25 +299,25 @@ public void functionUpdate() {
 
     // GREATEST 函数：取最大值
     Function ageFunction = Function.builder(table)
-        .setFunName("GREATEST")
-        .addFieldArg(User.Fields.userAge)
-        .addValueArg(100)
-        .build();
+            .setFunName("GREATEST")
+            .addFieldArg(User.Fields.userAge)
+            .addValueArg(100)
+            .build();
 
     // NOW 函数：当前时间
     Function timeFunction = Function.builder(table)
-        .setFunName("now")
-        .build();
+            .setFunName("now")
+            .build();
 
     EzUpdate ezUpdate = EzUpdate.update(table)
-        .set()
+            .set()
             .setField(User.Fields.userAge, ageFunction)              // 年龄取最大值
             .setField(BaseEntity.Fields.updateTime, timeFunction)    // 更新时间
-        .done()
-        .where()
+            .done()
+            .where()
             .addFieldCondition(BaseEntity.Fields.id, "1")
-        .done()
-        .build();
+            .done()
+            .build();
 
     ezMapper.ezUpdate(ezUpdate);
 }
@@ -332,25 +342,25 @@ public void caseWhenUpdate() {
 
     // 嵌套的 CASE WHEN
     CaseWhen nestedCaseWhen = CaseWhen.builder(table)
-        .when().addFieldCondition(User.Fields.name, "张三1").then("李四")
-        .els("王二1");
+            .when().addFieldCondition(User.Fields.name, "张三1").then("李四")
+            .els("王二1");
 
     // 主 CASE WHEN
     CaseWhen caseWhen = CaseWhen.builder(table)
-        .when().addFieldCondition(User.Fields.name, "张三1").then("李四")
-        .when().addFieldCondition(User.Fields.name, "张三2").thenFunc(someFunction)
-        .when().addFieldCondition(User.Fields.name, "王二1").thenFormula(someFormula)
-        .when().addFieldCondition(User.Fields.name, "王二2").thenCaseWhen(nestedCaseWhen)
-        .els("默认值");
+            .when().addFieldCondition(User.Fields.name, "张三1").then("李四")
+            .when().addFieldCondition(User.Fields.name, "张三2").thenFunc(someFunction)
+            .when().addFieldCondition(User.Fields.name, "王二1").thenFormula(someFormula)
+            .when().addFieldCondition(User.Fields.name, "王二2").thenCaseWhen(nestedCaseWhen)
+            .els("默认值");
 
     EzUpdate ezUpdate = EzUpdate.update(table)
-        .set()
+            .set()
             .setField(User.Fields.name, caseWhen)
-        .done()
-        .where()
+            .done()
+            .where()
             .addFieldCondition(BaseEntity.Fields.id, Operator.in, Arrays.asList("1", "2", "3", "4"))
-        .done()
-        .build();
+            .done()
+            .build();
 
     ezMapper.ezUpdate(ezUpdate);
 }
@@ -392,14 +402,14 @@ public void conditionalDelete() {
     EntityTable userTable = EntityTable.of(User.class);
 
     EzDelete delete = EzDelete.delete(userTable)
-        .where()
+            .where()
             .addFieldCondition(User.Fields.name, "张三")
             .groupCondition()  // 条件分组
-                .addFieldCondition(User.Fields.userAge, 55)
-                .addFieldCondition(AndOr.OR, User.Fields.userAge, 78)  // OR 条件
+            .addFieldCondition(User.Fields.userAge, 55)
+            .addFieldCondition(AndOr.OR, User.Fields.userAge, 78)  // OR 条件
             .done()
-        .done()
-        .build();
+            .done()
+            .build();
 
     // 等价于 SQL: WHERE name = '张三' AND (age = 55 OR age = 78)
     ezMapper.ezDelete(delete);
@@ -428,14 +438,14 @@ List<User> users = ezMapper.selectByIds(User.class, ids);
 ```java
 public void selectSpecificFields() {
     EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
-        .from(EntityTable.of(User.class))
-        .select()
+            .from(EntityTable.of(User.class))
+            .select()
             .addField(User.Fields.userAge)        // 查询年龄字段
             .addField(User.Fields.name)           // 查询姓名字段
             .addValue("二三班", "class")           // 添加常量值
             .addValue(123.12, "balance")          // 添加数值常量
-        .done()
-        .build();
+            .done()
+            .build();
 
     List<StringHashMap> result = ezMapper.query(query);
 }
@@ -450,12 +460,12 @@ public void selectSpecificFields() {
 ```java
 public void pageQuery() {
     EzQuery<User> query = EzQuery.builder(User.class)
-        .from(EntityTable.of(User.class))
-        .select()
+            .from(EntityTable.of(User.class))
+            .select()
             .addAll()  // 查询所有字段
-        .done()
-        .page(1, 10)   // 第1页，每页10条
-        .build();
+            .done()
+            .page(1, 10)   // 第1页，每页10条
+            .build();
 
     List<User> users = ezMapper.query(query);
 }
@@ -471,25 +481,25 @@ public void groupByQuery() {
 
     // COUNT(*) 函数
     Function countFunc = Function.builder(table)
-        .setFunName("COUNT")
-        .addKeywordsArg("*")
-        .build();
+            .setFunName("COUNT")
+            .addKeywordsArg("*")
+            .build();
 
     EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
-        .from(table)
-        .select()
+            .from(table)
+            .select()
             .addField(User.Fields.userAge)     // 分组字段
             .addField(User.Fields.name)        // 分组字段
             .addFunc(countFunc, "total")       // 聚合函数
-        .done()
-        .groupBy()
+            .done()
+            .groupBy()
             .addField(User.Fields.userAge)     // 按年龄分组
             .addField(User.Fields.name)        // 按姓名分组
-        .done()
-        .having()
+            .done()
+            .having()
             .addFuncCompareValueCondition(countFunc, Operator.gt, 1)  // HAVING count > 1
-        .done()
-        .build();
+            .done()
+            .build();
 
     List<StringHashMap> result = ezMapper.query(query);
 }
@@ -502,16 +512,16 @@ public void groupByQuery() {
 ```java
 public void orderByQuery() {
     EzQuery<User> query = EzQuery.builder(User.class)
-        .from(EntityTable.of(User.class))
-        .select()
+            .from(EntityTable.of(User.class))
+            .select()
             .addAll()
-        .done()
-        .orderBy()
+            .done()
+            .orderBy()
             .addField(User.Fields.userAge)                    // 按年龄升序
             .addField(User.Fields.name, OrderType.DESC)       // 按姓名降序
-        .done()
-        .page(1, 10)
-        .build();
+            .done()
+            .page(1, 10)
+            .build();
 
     List<User> users = ezMapper.query(query);
 }
@@ -524,19 +534,19 @@ public void orderByQuery() {
 ```java
 public void conditionalQuery() {
     EzQuery<User> query = EzQuery.builder(User.class)
-        .from(EntityTable.of(User.class))
-        .select()
+            .from(EntityTable.of(User.class))
+            .select()
             .addAll()
-        .done()
-        .where()
+            .done()
+            .where()
             // NOT IN 条件
             .addFieldCondition(User.Fields.name, Operator.notIn, "张三")
             .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王五"))
             // 其他条件
             .addFieldCondition(User.Fields.userAge, Operator.gt, 18)  // 年龄 > 18
-        .done()
-        .page(1, 10)
-        .build();
+            .done()
+            .page(1, 10)
+            .build();
 
     List<User> users = ezMapper.query(query);
 }
@@ -552,23 +562,23 @@ public void joinQuery() {
     EntityTable userOrgTable = EntityTable.of(UserOrg.class);
 
     EzQuery<User> query = EzQuery.builder(User.class)
-        .from(userTable)
-        .select()
+            .from(userTable)
+            .select()
             .addAll()                                        // 查询用户表所有字段
-        .done()
-        .select(userOrgTable)                               // 切换到关联表
+            .done()
+            .select(userOrgTable)                               // 切换到关联表
             .addField(UserOrg.Fields.orgId)                 // 查询组织ID
-        .done()
-        .join(userOrgTable)                                 // INNER JOIN
+            .done()
+            .join(userOrgTable)                                 // INNER JOIN
             .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)  // ON 条件
             .addFieldCondition(User.Fields.name, "张三")     // 主表条件
             .joinTableCondition()                           // 切换到关联表条件
-                .addFieldCondition(UserOrg.Fields.orgId, "2")  // 关联表条件
+            .addFieldCondition(UserOrg.Fields.orgId, "2")  // 关联表条件
             .masterTableCondition()                         // 切换回主表条件
-                .addFieldCondition(User.Fields.userAge, 22)
-        .done()
-        .page(1, 10)
-        .build();
+            .addFieldCondition(User.Fields.userAge, 22)
+            .done()
+            .page(1, 10)
+            .build();
 
     List<User> users = ezMapper.query(query);
 }
@@ -578,13 +588,15 @@ public void joinQuery() {
 
 ## 🔔 事件监听扩展点
 
-Ez-MyBatis 在数据操作生命周期提供多个监听接口，方便做 **审计、埋点、加解密、缓存、数据脱敏** 等逻辑扩展。只需实现接口并注册为 Spring Bean 即可生效。
+Ez-MyBatis 在数据操作生命周期提供多个监听接口，方便做 **审计、埋点、加解密、缓存、数据脱敏** 等逻辑扩展。只需实现接口并注册为
+Spring Bean 即可生效。
 
 > `order()` 用于控制多个监听器执行顺序；数值越小越先执行（若框架约定不同，请以实际实现为准）。
 
 ### 插入事件监听
 
 ```java
+
 @Component
 public class UserInsertListener implements EzMybatisInsertListener {
 
@@ -608,6 +620,7 @@ public class UserInsertListener implements EzMybatisInsertListener {
 ### 更新事件监听
 
 ```java
+
 @Component
 public class UserUpdateListener implements EzMybatisUpdateListener {
 
@@ -636,6 +649,7 @@ public class UserUpdateListener implements EzMybatisUpdateListener {
 ### 删除事件监听
 
 ```java
+
 @Component
 public class UserDeleteListener implements EzMybatisDeleteListener {
 
@@ -661,6 +675,7 @@ public class UserDeleteListener implements EzMybatisDeleteListener {
 可用于 **数据解密、格式转换、脱敏** 等后处理：
 
 ```java
+
 @Component
 public class QueryResultListener implements EzMybatisQueryRetListener {
 
@@ -698,6 +713,7 @@ public class QueryResultListener implements EzMybatisQueryRetListener {
 在 SQL 构建阶段对字段值做预处理（如 **加密、脱敏、格式化、租户注入**）：
 
 ```java
+
 @Component
 public class SqlBuildListener implements EzMybatisOnBuildSqlGetFieldListener {
 
@@ -728,7 +744,7 @@ public class SqlBuildListener implements EzMybatisOnBuildSqlGetFieldListener {
 ## 📖 注解说明
 
 | 注解               | 说明      | 示例                                                |
-| ---------------- | ------- | ------------------------------------------------- |
+|------------------|---------|---------------------------------------------------|
 | `@Table`         | 指定表名和模式 | `@Table(name = "user_table", schema = "app")`     |
 | `@Id`            | 标识主键字段  | `@Id private String id;`                          |
 | `@Column`        | 指定列名    | `@Column(name = "user_age") private Integer age;` |
@@ -747,21 +763,21 @@ public class SqlBuildListener implements EzMybatisOnBuildSqlGetFieldListener {
 
 ```java
 EzQuery<User> query = EzQuery.builder(User.class)
-    .from(EntityTable.of(User.class))
-    .where()
+        .from(EntityTable.of(User.class))
+        .where()
         .addFieldCondition(User.Fields.name, "张三")
         .groupCondition()  // (age > 20 OR age < 60)
-            .addFieldCondition(User.Fields.userAge, Operator.gt, 20)
-            .addFieldCondition(AndOr.OR, User.Fields.userAge, Operator.lt, 60)
+        .addFieldCondition(User.Fields.userAge, Operator.gt, 20)
+        .addFieldCondition(AndOr.OR, User.Fields.userAge, Operator.lt, 60)
         .done()
-    .done()
-    .build();
+        .done()
+        .build();
 ```
 
 ### Q2: Mapper 和 JDBC 方式如何选择？
 
 | 场景           | 推荐方式     | 理由                   |
-| ------------ | -------- | -------------------- |
+|--------------|----------|----------------------|
 | 少量数据、简单 CRUD | Mapper   | 代码简洁、集成方便            |
 | 大批量导入/批量更新   | JDBC DAO | 性能优、减少 ORM 开销        |
 | 渐进迁移         | 两者并行     | 可逐步从老 Mapper 迁移到 DSL |
@@ -773,7 +789,8 @@ EzQuery<User> query = EzQuery.builder(User.class)
 
 ### Q4: 如何扩展新数据库类型？
 
-若数据库协议兼容（如国产数据库对 PostgreSQL 或 MySQL 高兼容），可先通过 `db-type` 指定兼容方；如需完全适配，可提交 Issue 或 PR。
+若数据库协议兼容（如国产数据库对 PostgreSQL 或 MySQL 高兼容），可先通过 `db-type` 指定兼容方；如需完全适配，可提交 Issue 或
+PR。
 
 ---
 
