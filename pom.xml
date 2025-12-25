@@ -101,6 +101,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
+                    <excludeArtifacts>
+                        <artifact>ez-mybatis-demo</artifact>
+                    </excludeArtifacts>
                 </configuration>
             </plugin>
         </plugins>
