@@ -1,6 +1,6 @@
 package org.rdlinux.dm;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -8,21 +8,18 @@ import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
-import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
 import org.rdlinux.ezmybatis.demo.entity.User;
 import org.rdlinux.ezmybatis.demo.mapper.UserMapper;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-@Log4j2
+@Slf4j
 public class DmUpdateTest extends DmBaseTest {
     @Test
-    public void update() {
+    public void userMapperUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
@@ -33,56 +30,50 @@ public class DmUpdateTest extends DmBaseTest {
         int insert = sqlSession.getMapper(UserMapper.class).update(user);
         sqlSession.commit();
         sqlSession.close();
-        System.out.println(insert);
+        log.info("userMapperUpdateTest result: {}", insert);
     }
 
     @Test
-    public void updateByTable() {
+    public void userMapperUpdateByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setName("王二");
-        user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
         sqlSession.close();
-        System.out.println(insert);
+        log.info("userMapperUpdateByTableTest result: {}", insert);
     }
 
     @Test
-    public void ezMapperUpdate() {
+    public void ezMapperUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setName("王二");
-        user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).update(user);
         sqlSession.commit();
         sqlSession.close();
-        System.out.println(insert);
+        log.info("ezMapperUpdateTest result: {}", insert);
     }
 
     @Test
-    public void ezMapperUpdateByTable() {
+    public void ezMapperUpdateByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setName("王二");
-        user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
         sqlSession.close();
-        System.out.println(insert);
+        log.info("ezMapperUpdateByTableTest result: {}", insert);
     }
 
     @Test
-    public void batchUpdate() {
+    public void userMapperBatchUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -98,12 +89,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchUpdate(users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("userMapperBatchUpdateTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void batchUpdateByTable() {
+    public void userMapperBatchUpdateByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -119,12 +110,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("userMapperBatchUpdateByTableTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void ezMapperBatchUpdate() {
+    public void ezMapperBatchUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -140,12 +131,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchUpdate(users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("ezMapperBatchUpdateTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void ezMapperBatchUpdateByTable() {
+    public void ezMapperBatchUpdateByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -161,60 +152,60 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("ezMapperBatchUpdateByTableTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void replace() {
+    public void userMapperReplaceTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         int insert = sqlSession.getMapper(UserMapper.class).replace(user);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("userMapperReplaceTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void replaceByTable() {
+    public void userMapperReplaceByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         int insert = sqlSession.getMapper(UserMapper.class).replaceByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("userMapperReplaceByTableTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void ezMapperReplace() {
+    public void ezMapperReplaceTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         int insert = sqlSession.getMapper(EzMapper.class).replace(user);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("ezMapperReplaceTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void ezMapperReplaceByTable() {
+    public void ezMapperReplaceByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         int insert = sqlSession.getMapper(EzMapper.class).replaceByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("ezMapperReplaceByTableTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void batchReplace() {
+    public void userMapperBatchReplaceTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -230,12 +221,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchReplace(users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("userMapperBatchReplaceTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void batchReplaceByTable() {
+    public void userMapperBatchReplaceByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -251,12 +242,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(UserMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("userMapperBatchReplaceByTableTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void ezMapperBatchReplace() {
+    public void ezMapperBatchReplaceTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -272,12 +263,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchReplace(users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("ezMapperBatchReplaceTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void ezMapperBatchReplaceByTable() {
+    public void ezMapperBatchReplaceByTableTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
@@ -293,12 +284,12 @@ public class DmUpdateTest extends DmBaseTest {
         }
         int insert = sqlSession.getMapper(EzMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
         sqlSession.commit();
-        System.out.println(insert);
+        log.info("ezMapperBatchReplaceByTableTest result: {}", insert);
         sqlSession.close();
     }
 
     @Test
-    public void updateByEzParam() {
+    public void ezMapperUpdateByEzParamTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
         EntityTable table = EntityTable.of(User.class);
@@ -306,18 +297,17 @@ public class DmUpdateTest extends DmBaseTest {
                 .set()
                 .setField(User.Fields.userAge, CaseWhen.builder(table).when()
                         .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
-                .setColumn("name", "张三")
                 .done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
         int ret = mapper.ezUpdate(ezUpdate);
         sqlSession.commit();
-        log.info("更新条数{}", ret);
+        log.info("ezMapperUpdateByEzParamTest result: {}", ret);
         sqlSession.close();
     }
 
     @Test
-    public void batchUpdateByEzParam() {
+    public void ezMapperBatchUpdateByEzParamTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
@@ -333,11 +323,12 @@ public class DmUpdateTest extends DmBaseTest {
         updates.add(ezUpdate);
         mapper.ezBatchUpdate(updates);
         sqlSession.commit();
+        log.info("ezMapperBatchUpdateByEzParamTest executed");
         sqlSession.close();
     }
 
     @Test
-    public void updateSetNull() {
+    public void ezMapperUpdateSetNullTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
@@ -356,11 +347,13 @@ public class DmUpdateTest extends DmBaseTest {
     }
 
     @Test
-    public void caseWhenUpdate() {
+    public void ezMapperCaseWhenUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
+            Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
+            Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
 
             CaseWhen sonCaseWhen = CaseWhen.builder(table)
                     .when()
@@ -370,6 +363,10 @@ public class DmUpdateTest extends DmBaseTest {
             CaseWhen caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
                     .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .els("王二1");
@@ -384,6 +381,10 @@ public class DmUpdateTest extends DmBaseTest {
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsCaseWhen(sonCaseWhen);
             ezUpdate = EzUpdate.update(table)
@@ -396,8 +397,12 @@ public class DmUpdateTest extends DmBaseTest {
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .els("test");
+                    .elsFormula(formula);
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
@@ -408,8 +413,12 @@ public class DmUpdateTest extends DmBaseTest {
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .els("test");
+                    .elsFunc(function);
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
@@ -419,6 +428,10 @@ public class DmUpdateTest extends DmBaseTest {
             caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
                     .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsColumn("name");
@@ -431,6 +444,10 @@ public class DmUpdateTest extends DmBaseTest {
             caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
                     .when()
                     .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
                     .elsField(User.Fields.name);
@@ -450,7 +467,7 @@ public class DmUpdateTest extends DmBaseTest {
     }
 
     @Test
-    public void formulaUpdateTest() {
+    public void ezMapperFormulaUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
@@ -472,7 +489,7 @@ public class DmUpdateTest extends DmBaseTest {
     }
 
     @Test
-    public void functionUpdateTest() {
+    public void ezMapperFunctionUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
@@ -480,9 +497,10 @@ public class DmUpdateTest extends DmBaseTest {
             Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
                     .addValueArg(100).build();
 
+            Function updateTimeFunction = Function.builder(table).setFunName("now").build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, function)
-                    .setField(BaseEntity.Fields.updateTime, Keywords.of("SYSDATE"))
+                    .setField(BaseEntity.Fields.updateTime, updateTimeFunction)
                     .done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
@@ -498,20 +516,23 @@ public class DmUpdateTest extends DmBaseTest {
     }
 
     @Test
-    public void jdbcUpdateTest() {
+    public void jdbcUpdateDaoUpdateTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
+        user1.setUserAge(null);
         user1.setId("08649915562c421f858236f60fd652e5");
         users.add(user1);
 
         User user2 = new User();
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName(null);
+        user2.setUserAge(19);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
-        System.out.println("批量更新" + ct + "条");
+        log.info("jdbcUpdateDaoUpdateTest batch result: {}", ct);
         User user = new User();
         user.setUpdateTime(new Date());
         user.setCreateTime(new Date());
@@ -520,13 +541,48 @@ public class DmUpdateTest extends DmBaseTest {
         user.setUserAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.update(user);
-        System.out.println("单条更新" + sCt + "条");
+        log.info("jdbcUpdateDaoUpdateTest single result: {}", sCt);
         sqlSession.commit();
         sqlSession.close();
     }
 
     @Test
-    public void jdbcReplaceTest() {
+    public void jdbcUpdateDaoPartialUpdateTest() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
+        User user = new User();
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setId("038f530bad3745d3a75f584296368501");
+        user.setName("王芳");
+        user.setUserAge(8);
+        user.setSex(User.Sex.MAN);
+        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        log.info("jdbcUpdateDaoPartialUpdateTest single result: {}", sCt);
+
+        List<User> users = new LinkedList<>();
+        User user1 = new User();
+        user1.setName("王值");
+        user1.setUserAge(20);
+        user1.setSex(User.Sex.MAN);
+        user1.setId("08649915562c421f858236f60fd652e5");
+        users.add(user1);
+
+        User user2 = new User();
+        user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
+        user2.setName("王值1");
+        user2.setUserAge(19);
+        users.add(user2);
+        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        log.info("jdbcUpdateDaoPartialUpdateTest batch result: {}", ct);
+
+
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void jdbcUpdateDaoReplaceTest() {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         List<User> users = new LinkedList<>();
         User user1 = new User();
@@ -548,7 +604,7 @@ public class DmUpdateTest extends DmBaseTest {
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
         int ct = jdbcInsertDao.batchReplace(users);
-        System.out.println("批量更新" + ct + "条");
+        log.info("jdbcUpdateDaoReplaceTest batch result: {}", ct);
         User user = new User();
         user.setUpdateTime(new Date());
         user.setCreateTime(new Date());
@@ -557,8 +613,28 @@ public class DmUpdateTest extends DmBaseTest {
         user.setUserAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.replace(user);
-        System.out.println("单条更新" + sCt + "条");
+        log.info("jdbcUpdateDaoReplaceTest single result: {}", sCt);
         sqlSession.commit();
         sqlSession.close();
+    }
+
+    @Test
+    public void ezMapperUpdateBySqlTest() {
+        SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
+        try {
+            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            String sql = "UPDATE ez_user SET name = #{name} WHERE id = #{id}";
+            Map<String, Object> param = new HashMap<>();
+            param.put("name", "SQL Update");
+            param.put("id", "1");
+            Integer result = mapper.updateBySql(sql, param);
+            log.info("ezMapperUpdateBySqlTest result: {}", result);
+            sqlSession.commit();
+        } catch (Exception e) {
+            sqlSession.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            sqlSession.close();
+        }
     }
 }
