@@ -42,8 +42,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setName("王二");
-        user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
@@ -57,8 +55,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setName("王二");
-        user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).update(user);
@@ -72,8 +68,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setName("王二");
-        user.setName("王");
         user.setUserAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
