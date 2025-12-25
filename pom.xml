@@ -34,6 +34,7 @@
         <module>ez-mybatis-define</module>
         <module>ez-mybatis-expand</module>
         <module>ez-mybatis-to-plus</module>
+        <module>ez-mybatis-demo</module>
     </modules>
     <build>
         <plugins>
