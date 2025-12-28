@@ -21,7 +21,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 使用jdbc批量插入
+ * JDBC-based insert operations.
+ * This class provides efficient batch insert functionality using native JDBC
+ * PreparedStatement,
+ * bypassing MyBatis XML mapping for better performance with large datasets.
  */
 public class JdbcInsertDao {
     private static final Log log = LogFactory.getLog(JdbcInsertDao.class);
@@ -34,30 +37,30 @@ public class JdbcInsertDao {
     }
 
     /**
-     * 单条插入
+     * Insert a single record
      */
     public int insert(Object model) {
         return this.insertByTable(null, model);
     }
 
     /**
-     * 单条插入, 指定表
+     * Insert a single record into the specified table
      */
     public int insertByTable(Table table, Object model) {
         return this.batchInsertByTable(table, Collections.singleton(model));
     }
 
     /**
-     * 批量插入
+     * Batch insert records
      */
     public int batchInsert(Collection<?> models) {
         return this.batchInsertByTable(null, models);
     }
 
     /**
-     * 批量插入, 指定表
+     * Batch insert records into the specified table
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public int batchInsertByTable(Table table, Collection<?> models) {
         Connection connection = this.sqlSession.getConnection();
         Configuration configuration = this.sqlSession.getConfiguration();
@@ -94,7 +97,7 @@ public class JdbcInsertDao {
             int[] intRets;
             if (jdbcBatchSql.getBatchParams().size() == 1) {
                 statement.execute();
-                intRets = new int[]{1};
+                intRets = new int[] { 1 };
             } else {
                 intRets = statement.executeBatch();
             }
@@ -119,7 +122,7 @@ public class JdbcInsertDao {
             return ret;
         } catch (SQLException e) {
             log.error(String.format("SQL execution failed,  the SQL statement is \"%s\"," +
-                            " the error message is \"%s\", the error code is %d", jdbcBatchSql.getSql(), e.getMessage(),
+                    " the error message is \"%s\", the error code is %d", jdbcBatchSql.getSql(), e.getMessage(),
                     e.getErrorCode()));
             throw new RuntimeException(e);
         }
