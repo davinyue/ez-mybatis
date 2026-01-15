@@ -49,7 +49,8 @@ Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis�
 | SQL Server | ✅    | 完全支持        |
 | 其他国产数据库    | ⚠️   | 需配置兼容的数据库类型 |
 
-Ez-MyBatis 会自动根据数据源的 Driver Class 识别数据库类型（支持 MySQL, Oracle, PostgreSql, SqlServer, 达梦等常用驱动），通常情况下 **无需手动配置** `db-type`。
+Ez-MyBatis 会自动根据数据源的 Driver Class 识别数据库类型（支持 MySQL, Oracle, PostgreSql, SqlServer, 达梦等常用驱动），通常情况下
+**无需手动配置** `db-type`。
 
 对于无法自动识别的国产数据库（如高斯数据库），可配置为兼容的数据库类型（示例：映射为 PostgreSQL）：
 
@@ -73,7 +74,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-        <version>0.9.9.RS</version>
+        <version>1.0.0.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -95,7 +96,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-to-plus-spring-boot-starter</artifactId>
-        <version>0.9.9.RS</version>
+        <version>1.0.0.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -107,7 +108,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-        <version>0.9.9.RS</version>
+        <version>1.0.0.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -124,7 +125,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-to-plus-spring3-boot-starter</artifactId>
-        <version>0.9.9.RS</version>
+        <version>1.0.0.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -134,8 +135,9 @@ ez-mybatis:
 ## 📝 实体类定义
 
 > 推荐使用 Lombok（`@Getter @Setter @FieldNameConstants`）自动生成字段常量，便于类型安全 DSL 构建。
-> 
-> **💡 提示**：如果不方便使用 Lombok，或者更偏好 Lambda 风格，**Ez-MyBatis** 提供了 `FnField` 工具类，支持通过 Getter 方法引用获取字段名，同样能实现类型安全：
+>
+> **💡 提示**：如果不方便使用 Lombok，或者更偏好 Lambda 风格，**Ez-MyBatis** 提供了 `FnField` 工具类，支持通过 Getter
+> 方法引用获取字段名，同样能实现类型安全：
 >
 > ```java
 > // 替代 User.Fields.name
