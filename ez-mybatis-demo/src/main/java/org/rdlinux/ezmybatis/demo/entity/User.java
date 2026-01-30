@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
-import org.apache.ibatis.type.StringTypeHandler;
 import org.rdlinux.ezmybatis.annotation.ColumnHandler;
+import org.rdlinux.ezmybatis.demo.typehandler.CustomStringTypeHandler;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,7 @@ import javax.persistence.Transient;
 @Setter
 @Accessors(chain = true)
 public class User extends BaseEntity {
-    @ColumnHandler(StringTypeHandler.class)
+    @ColumnHandler(CustomStringTypeHandler.class)
     private String name;
     private Sex sex;
     @Column(name = "age")

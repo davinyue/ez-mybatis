@@ -13,14 +13,16 @@ public class TypeHandlerUtils {
     /**
      * 获取类数据的TypeHandle
      */
-    @SuppressWarnings({"unchecked"})
     public static TypeHandler<?> getTypeHandle(Configuration configuration, Field field) {
         TypeHandler<?> typeHandler = null;
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
         if (field.isAnnotationPresent(ColumnHandler.class)) {
             ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
-            typeHandler = typeHandlerRegistry.getMappingTypeHandler(
-                    (Class<? extends TypeHandler<?>>) annotation.value());
+            try {
+                typeHandler = (TypeHandler<?>) annotation.value().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         if (typeHandler == null) {
             typeHandler = typeHandlerRegistry.getTypeHandler(field.getType());
