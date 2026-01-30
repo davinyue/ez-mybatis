@@ -5,8 +5,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.TypeHandler;
-import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
+import org.rdlinux.ezmybatis.utils.TypeHandlerUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -32,19 +32,7 @@ public class EntityFieldInfo {
         this.fieldName = field.getName();
         this.columnName = column;
         this.isPrimaryKey = isPrimaryKey;
-        if (field.isAnnotationPresent(ColumnHandler.class)) {
-            ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
-            Class<?> typeHandlerClass = annotation.value();
-            if (TypeHandler.class.isAssignableFrom(typeHandlerClass)) {
-                try {
-                    this.typeHandler = (TypeHandler<?>) typeHandlerClass.newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                throw new IllegalArgumentException("columnHandler must extend org.apache.ibatis.type.TypeHandler");
-            }
-        }
+        this.typeHandler = TypeHandlerUtils.getCustomTypeHandle(field);
     }
 
     public EntityFieldInfo(Field field, Method fieldGetMethod, EntityInfoBuildConfig buildConfig) {
@@ -68,18 +56,6 @@ public class EntityFieldInfo {
         if (field.isAnnotationPresent(Id.class)) {
             this.isPrimaryKey = true;
         }
-        if (field.isAnnotationPresent(ColumnHandler.class)) {
-            ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
-            Class<?> typeHandlerClass = annotation.value();
-            if (TypeHandler.class.isAssignableFrom(typeHandlerClass)) {
-                try {
-                    this.typeHandler = (TypeHandler<?>) typeHandlerClass.newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                throw new IllegalArgumentException("columnHandler must extend org.apache.ibatis.type.TypeHandler");
-            }
-        }
+        this.typeHandler = TypeHandlerUtils.getCustomTypeHandle(field);
     }
 }
