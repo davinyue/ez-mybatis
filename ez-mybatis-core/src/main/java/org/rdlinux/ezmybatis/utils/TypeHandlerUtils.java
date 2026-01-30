@@ -7,23 +7,43 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.rdlinux.ezmybatis.annotation.ColumnHandler;
 
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TypeHandlerUtils {
+    private static final Map<Class<?>, TypeHandler<?>> TYPE_HANDLER_INS_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 获取自定义的TypeHandle
+     */
+    public static TypeHandler<?> getCustomTypeHandle(Field field) {
+        TypeHandler<?> typeHandler = null;
+        if (field.isAnnotationPresent(ColumnHandler.class)) {
+            ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
+            Class<?> typeHandlerClass = annotation.value();
+            if (typeHandlerClass != null) {
+                if (TypeHandler.class.isAssignableFrom(typeHandlerClass)) {
+                    typeHandler = TYPE_HANDLER_INS_MAP.computeIfAbsent(typeHandlerClass, (key) -> {
+                        try {
+                            return (TypeHandler<?>) key.newInstance();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                } else {
+                    throw new IllegalArgumentException("typeHandler must extend org.apache.ibatis.type.TypeHandler");
+                }
+            }
+        }
+        return typeHandler;
+    }
 
     /**
      * 获取类数据的TypeHandle
      */
     public static TypeHandler<?> getTypeHandle(Configuration configuration, Field field) {
-        TypeHandler<?> typeHandler = null;
+        TypeHandler<?> typeHandler = getCustomTypeHandle(field);
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-        if (field.isAnnotationPresent(ColumnHandler.class)) {
-            ColumnHandler annotation = field.getAnnotation(ColumnHandler.class);
-            try {
-                typeHandler = (TypeHandler<?>) annotation.value().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
         if (typeHandler == null) {
             typeHandler = typeHandlerRegistry.getTypeHandler(field.getType());
         }
