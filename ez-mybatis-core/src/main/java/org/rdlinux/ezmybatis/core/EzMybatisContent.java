@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor;
+import org.rdlinux.ezmybatis.core.interceptor.EzMybatisStatementHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -308,6 +309,7 @@ public class EzMybatisContent {
         InterceptorChain interceptorChain = ReflectionUtils.getFieldValue(configuration, "interceptorChain");
         EzMybatisInterceptorChain ezMybatisInterceptorChain = new EzMybatisInterceptorChain(interceptorChain);
         ReflectionUtils.setFieldValue(configuration, "interceptorChain", ezMybatisInterceptorChain);
+        ezMybatisInterceptorChain.addEzInterceptor(new EzMybatisStatementHandlerInterceptor());
         ezMybatisInterceptorChain.addEzInterceptor(new EzMybatisResultSetHandlerInterceptor());
         ezMybatisInterceptorChain.addEzInterceptor(new EzMybatisExecutorInterceptor());
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
