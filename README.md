@@ -30,7 +30,7 @@ Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis�
 
 - 🔧 **零侵入**：基于拦截器，无需改动现有 MyBatis 配置或 Mapper 接口即可逐步接入。
 - 📊 **多数据库支持**：MySQL、Oracle、达梦、PostgreSQL、SQL Server；亦可通过兼容配置支持其他国产数据库。
-- 🏷️ **JPA 注解支持**：@Table、@Id、@Column、@Transient、@ColumnHandler 等常用注解开箱即用。
+- 🏷️ **JPA 注解支持**：@Table、@Id、@Column、@Transient、@TypeHandler 等常用注解开箱即用。
 - ⚡ **高性能通道**：提供 JDBC 直接操作 DAO（如 `JdbcInsertDao`、`JdbcUpdateDao`），大批量导入/更新更高效。
 - 🔌 **事件机制**：插入、更新、删除、查询、SQL 构建等生命周期点均可注入自定义逻辑（如加解密、审计、埋点）。
 - 🎯 **类型安全 DSL**：所有字段都有常量（如 `User.Fields.userAge`），IDE 自动提示，不怕写错列名。
@@ -70,11 +70,12 @@ ez-mybatis:
 ### Spring Boot 2.x 集成 MyBatis
 
 ```xml
+
 <dependencys>
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-        <version>1.0.0.RS</version>
+        <version>1.0.1.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -82,6 +83,7 @@ ez-mybatis:
 ### Spring Boot 2.x 集成 MyBatis-Plus
 
 ```xml
+
 <dependencys>
     <dependency>
         <groupId>com.baomidou</groupId>
@@ -96,7 +98,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-to-plus-spring-boot-starter</artifactId>
-        <version>1.0.0.RS</version>
+        <version>1.0.1.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -104,11 +106,12 @@ ez-mybatis:
 ### Spring Boot 3.x 集成 MyBatis
 
 ```xml
+
 <dependencies>
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-        <version>1.0.0.RS</version>
+        <version>1.0.1.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -116,6 +119,7 @@ ez-mybatis:
 ### Spring Boot 3.x 集成 MyBatis-Plus
 
 ```xml
+
 <dependencys>
     <dependency>
         <groupId>com.baomidou</groupId>
@@ -125,7 +129,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-to-plus-spring3-boot-starter</artifactId>
-        <version>1.0.0.RS</version>
+        <version>1.0.1.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -171,7 +175,7 @@ public abstract class BaseEntity {
 @Setter
 @FieldNameConstants
 public class User extends BaseEntity {
-    @ColumnHandler(StringTypeHandler.class)  // 指定类型处理器
+    @TypeHandler(StringTypeHandler.class)  // 指定类型处理器
     private String name;
 
     private Sex sex;
@@ -223,10 +227,10 @@ public class UserService {
     public void insertByQuery() {
         // 将查询结果插入到 User 对应的表中
         EzQuery<User> query = EzQuery.builder(User.class)
-             .from(EntityTable.of(UserDump.class)) // 从备份表查询
-             .select().addAll().done()
-             .build();
-             
+                .from(EntityTable.of(UserDump.class)) // 从备份表查询
+                .select().addAll().done()
+                .build();
+
         ezMapper.insertByQuery(EntityTable.of(User.class), query);
     }
 }
@@ -627,7 +631,7 @@ public void joinQuery() {
 public void dynamicTableOps() {
     // 1. 定义动态表（表名为 ez_user_2023）
     EntityTable dynamicTable = EntityTable.of(User.class, "ez_user_2023");
-    
+
     User user = new User();
     user.setId("1");
     user.setName("Dynamic");
@@ -871,15 +875,15 @@ public class SqlBuildListener implements EzMybatisOnBuildSqlGetFieldListener {
 
 ## 📖 注解说明
 
-| 注解               | 说明      | 示例                                                |
-|------------------|---------|---------------------------------------------------|
-| `@Table`         | 指定表名和模式 | `@Table(name = "user_table", schema = "app")`     |
-| `@Id`            | 标识主键字段  | `@Id private String id;`                          |
-| `@Column`        | 指定列名    | `@Column(name = "user_age") private Integer age;` |
-| `@Transient`     | 忽略字段    | `@Transient private String temp;`                 |
-| `@ColumnHandler` | 指定类型处理器 | `@ColumnHandler(StringTypeHandler.class)`         |
+| 注解             | 说明      | 示例                                                |
+|----------------|---------|---------------------------------------------------|
+| `@Table`       | 指定表名和模式 | `@Table(name = "user_table", schema = "app")`     |
+| `@Id`          | 标识主键字段  | `@Id private String id;`                          |
+| `@Column`      | 指定列名    | `@Column(name = "user_age") private Integer age;` |
+| `@Transient`   | 忽略字段    | `@Transient private String temp;`                 |
+| `@TypeHandler` | 指定类型处理器 | `@TypeHandler(StringTypeHandler.class)`           |
 
-> **小贴士**：当数据库列名与字段名不一致时务必使用 `@Column`；当需要在字段层面接入自定义类型转换时使用 `@ColumnHandler`。
+> **小贴士**：当数据库列名与字段名不一致时务必使用 `@Column`；当需要在字段层面接入自定义类型转换时使用 `@TypeHandler`。
 
 ---
 
