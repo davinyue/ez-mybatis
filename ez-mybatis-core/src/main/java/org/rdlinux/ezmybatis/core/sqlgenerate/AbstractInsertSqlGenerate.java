@@ -135,8 +135,8 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         Converter<? extends Table> tableConverter = EzMybatisContent.getConverter(configuration, table.getClass());
         sqlGenerateContext.getSqlBuilder().append("INSERT INTO ");
         tableConverter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
-        String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), query);
+        String querySql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+                .getSqlGenerate().getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), query);
         sqlGenerateContext.getSqlBuilder().append(" ");
         boolean insertParenthesis = this.insertByQueryAppendParenthesis();
         if (insertParenthesis) {

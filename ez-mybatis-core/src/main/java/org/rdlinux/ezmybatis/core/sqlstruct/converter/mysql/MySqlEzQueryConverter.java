@@ -3,8 +3,8 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.AliasGenerate;
@@ -37,9 +37,9 @@ public class MySqlEzQueryConverter extends AbstractConverter<EzQuery> implements
     }
 
     protected String ezQueryToSql(EzQuery<?> obj, SqlGenerateContext sqlGenerateContext) {
-        return " (" + SqlGenerateFactory.getSqlGenerate(EzMybatisContent
+        return " (" + DbDialectProviderLoader.getProvider(EzMybatisContent
                         .getDbType(sqlGenerateContext.getConfiguration()))
-                .getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), obj) + ") ";
+                .getSqlGenerate().getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), obj) + ") ";
     }
 
     @Override

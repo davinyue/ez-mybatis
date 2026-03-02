@@ -10,8 +10,8 @@ import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
@@ -163,7 +163,8 @@ public class JdbcUpdateDao {
         mybatisParam.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, configuration);
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(mybatisParam);
         long start = System.currentTimeMillis();
-        EzJdbcBatchSql jdbcBatchSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
+        EzJdbcBatchSql jdbcBatchSql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+                .getSqlGenerate()
                 .getJdbcBatchUpdateSql(sqlGenerateContext, table, models, updateFields, isReplace);
         long end = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
