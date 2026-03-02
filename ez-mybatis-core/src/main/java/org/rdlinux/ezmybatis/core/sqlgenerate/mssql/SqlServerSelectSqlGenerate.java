@@ -3,7 +3,6 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.mssql;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractSelectSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
-import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlInsertSqlGenerate;
 
 public class SqlServerSelectSqlGenerate extends AbstractSelectSqlGenerate {
@@ -25,11 +24,11 @@ public class SqlServerSelectSqlGenerate extends AbstractSelectSqlGenerate {
 
     @Override
     public String getQuerySql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
-        return MySqlEzQueryToSql.getInstance().toSql(sqlGenerateContext, query);
+        return SqlServerEzQueryToSql.getInstance().toSql(sqlGenerateContext, query);
     }
 
     @Override
     public String getQueryCountSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
-        return MySqlEzQueryToSql.getInstance().toCountSql(sqlGenerateContext, query);
+        return SqlServerEzQueryToSql.getInstance().toCountSql(sqlGenerateContext, query);
     }
 }
