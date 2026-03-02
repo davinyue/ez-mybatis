@@ -44,7 +44,7 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
                     ((EntityTable) obj.getTable()).getEtType());
             entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(column);
             if (entityFieldInfo != null) {
-                EzMybatisContent.setCurrentAccessField(EntityField.of((EntityTable) obj.getTable(),
+                sqlGenerateContext.pushAccessField(EntityField.of((EntityTable) obj.getTable(),
                         entityFieldInfo.getFieldName()));
             }
         }
@@ -59,7 +59,7 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
                 .append(keywordQM).append(" = ");
         argConverter.buildSql(type, obj.getValue(), sqlGenerateContext);
         if (entityFieldInfo != null) {
-            EzMybatisContent.cleanCurrentAccessField();
+            sqlGenerateContext.popAccessField();
         }
     }
 

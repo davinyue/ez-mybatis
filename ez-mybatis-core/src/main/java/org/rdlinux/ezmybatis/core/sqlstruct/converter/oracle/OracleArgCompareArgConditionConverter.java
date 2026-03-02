@@ -35,7 +35,7 @@ public class OracleArgCompareArgConditionConverter extends MySqlArgCompareArgCon
         if (operator == Operator.regexp) {
             Operand leftValue = obj.getLeftValue();
             if (leftValue instanceof EntityField) {
-                EzMybatisContent.setCurrentAccessField((EntityField) leftValue);
+                sqlGenerateContext.pushAccessField((EntityField) leftValue);
             }
             Configuration configuration = sqlGenerateContext.getConfiguration();
             Converter<? extends Operand> leftConverter = EzMybatisContent.getConverter(configuration,
