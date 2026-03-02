@@ -13,9 +13,10 @@ import org.rdlinux.ezmybatis.core.interceptor.EzMybatisStatementHandlerIntercept
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
-import org.rdlinux.ezmybatis.core.sqlstruct.converter.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
@@ -101,7 +102,6 @@ public class EzMybatisContent {
      */
     public static void init(EzMybatisConfig config) {
         EzContentConfig configurationConfig = new EzContentConfig();
-        configurationConfig.setDbKeywordQMFactory(new DbKeywordQMFactory(config));
         configurationConfig.setEzMybatisConfig(config);
         CFG_CONFIG_MAP.put(config.getConfiguration(), configurationConfig);
         initMapper(config);
@@ -109,15 +109,13 @@ public class EzMybatisContent {
         initDbType(config);
     }
 
-
     /**
      * 获取关键词引号
      */
     public static String getKeywordQM(Configuration configuration) {
-        Assert.notNull(configuration, "configuration can not be null");
-        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
-        Assert.notNull(configurationConfig, "please init");
-        return configurationConfig.getDbKeywordQMFactory().getKeywordQM();
+        DbType dbType = getDbType(configuration);
+        DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
+        return provider.getKeywordQuoteMark();
     }
 
     /**
@@ -149,7 +147,6 @@ public class EzMybatisContent {
         Assert.notNull(configurationConfig, "please init");
         return configurationConfig.getQueryRetListeners();
     }
-
 
     /**
      * 添加插入监听器
@@ -190,7 +187,8 @@ public class EzMybatisContent {
     /**
      * 添加当构建sql获取属性时的监听器
      */
-    public static void addOnBuildSqlGetFieldListener(EzMybatisConfig config, EzMybatisOnBuildSqlGetFieldListener listener) {
+    public static void addOnBuildSqlGetFieldListener(EzMybatisConfig config,
+                                                     EzMybatisOnBuildSqlGetFieldListener listener) {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.addOnBuildSqlGetFieldListener(listener);
@@ -232,18 +230,7 @@ public class EzMybatisContent {
         if (StringUtils.isBlank(driver)) {
             return;
         }
-        DbType dbType = null;
-        if (driver.contains("mysql")) {
-            dbType = DbType.MYSQL;
-        } else if (driver.contains("oracle")) {
-            dbType = DbType.ORACLE;
-        } else if (driver.toLowerCase().contains("dmdriver")) {
-            dbType = DbType.DM;
-        } else if (driver.toLowerCase().contains("postgresql")) {
-            dbType = DbType.POSTGRE_SQL;
-        } else if (driver.toLowerCase().contains("sqlserver")) {
-            dbType = DbType.SQL_SERVER;
-        }
+        DbType dbType = DbDialectProviderLoader.matchDbType(driver);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.setDbType(dbType);
         initConverterRegister(dbType);
@@ -256,17 +243,8 @@ public class EzMybatisContent {
         if (dbType == null) {
             return;
         }
-        if (dbType == DbType.MYSQL) {
-            MySqlConverterRegister.register();
-        } else if (dbType == DbType.ORACLE) {
-            OracleConverterRegister.register();
-        } else if (dbType == DbType.DM) {
-            DmConverterRegister.register();
-        } else if (dbType == DbType.POSTGRE_SQL) {
-            PostgreSqlConverterRegister.register();
-        } else if (dbType == DbType.SQL_SERVER) {
-            SqlServerConverterRegister.register();
-        }
+        DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
+        provider.registerConverters();
     }
 
     /**
@@ -300,8 +278,10 @@ public class EzMybatisContent {
      *
      * @param configuration mybatis配置对象
      * @param isSimple      是否是简单模式, 只有当使用JdbcInsertDao, JdbcUpdateDao下面的所有方法和
-     *                      mapper的insert、insertByTable、batchInsert、batchInsertByTable、 update、 batchUpdate、
-     *                      updateByTable、 batchUpdateByTable、 replace、 replaceByTable、batchReplace、
+     *                      mapper的insert、insertByTable、batchInsert、batchInsertByTable、
+     *                      update、 batchUpdate、
+     *                      updateByTable、 batchUpdateByTable、 replace、
+     *                      replaceByTable、batchReplace、
      *                      batchReplaceByTable方法时,该值才为true, 否则为false
      * @param ntType        实体对象类型
      * @param field         设置属性
