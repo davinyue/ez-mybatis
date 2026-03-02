@@ -4,8 +4,8 @@ import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -31,8 +31,8 @@ public class EzUpdateProvider {
     public String update(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getUpdateSql(sqlGenerateContext, null, entity, false);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getUpdateSql(sqlGenerateContext, null, entity, false);
     }
 
     @MethodName(UPDATE_BY_TABLE_METHOD)
@@ -40,8 +40,8 @@ public class EzUpdateProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getUpdateSql(sqlGenerateContext, table, entity, false);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getUpdateSql(sqlGenerateContext, table, entity, false);
     }
 
 
@@ -49,8 +49,8 @@ public class EzUpdateProvider {
     public String batchUpdate(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getBatchUpdateSql(sqlGenerateContext, null, entities, false);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getBatchUpdateSql(sqlGenerateContext, null, entities, false);
     }
 
     @MethodName(BATCH_UPDATE_BY_TABLE_METHOD)
@@ -58,16 +58,16 @@ public class EzUpdateProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getBatchUpdateSql(sqlGenerateContext, table, entities, false);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getBatchUpdateSql(sqlGenerateContext, table, entities, false);
     }
 
     @MethodName(REPLACE_METHOD)
     public String replace(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getUpdateSql(sqlGenerateContext, null, entity, true);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getUpdateSql(sqlGenerateContext, null, entity, true);
     }
 
     @MethodName(REPLACE_METHOD_BY_TABLE)
@@ -75,8 +75,8 @@ public class EzUpdateProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getUpdateSql(sqlGenerateContext, table, entity, true);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getUpdateSql(sqlGenerateContext, table, entity, true);
     }
 
 
@@ -84,8 +84,8 @@ public class EzUpdateProvider {
     public String batchReplace(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getBatchUpdateSql(sqlGenerateContext, null, entities, true);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getBatchUpdateSql(sqlGenerateContext, null, entities, true);
     }
 
     @MethodName(BATCH_REPLACE_BY_TABLE_METHOD)
@@ -93,24 +93,24 @@ public class EzUpdateProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = sqlGenerateContext.getMybatisParamHolder().get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getBatchUpdateSql(sqlGenerateContext, table, entities, true);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getBatchUpdateSql(sqlGenerateContext, table, entities, true);
     }
 
     @MethodName(UPDATE_BY_EZ_UPDATE_METHOD)
     public String updateByEzUpdate(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         EzUpdate update = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getUpdateSql(sqlGenerateContext, update);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getUpdateSql(sqlGenerateContext, update);
     }
 
     @MethodName(BATCH_UPDATE_BY_EZ_UPDATE_METHOD)
     public String batchUpdateByEzUpdate(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<EzUpdate> updates = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
-                .getUpdateSql(sqlGenerateContext, updates);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getUpdateSql(sqlGenerateContext, updates);
     }
 
     @MethodName(UPDATE_BY_SQL_METHOD)
