@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,12 +24,12 @@ public class MySqlPageConverter extends AbstractConverter<Page> implements Conve
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Page limit,
-                                       MybatisParamHolder mybatisParamHolder) {
-        if (limit == null) {
-            return sqlBuilder;
+    protected void doBuildSql(Type type, Page page, SqlGenerateContext sqlGenerateContext) {
+        if (page == null) {
+            return;
         }
-        return sqlBuilder.append(" LIMIT ").append(limit.getSkip()).append(", ").append(limit.getSize()).append(" ");
+        sqlGenerateContext.getSqlBuilder().append(" LIMIT ").append(page.getSkip()).append(", ")
+                .append(page.getSize()).append(" ");
     }
 
     @Override

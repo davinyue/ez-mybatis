@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -30,9 +29,7 @@ public class MySqlEntityTableConverter extends AbstractConverter<EntityTable> im
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       EntityTable table, MybatisParamHolder mybatisParamHolder) {
-        return MySqlDbTableConverter.getInstance().doBuildSql(type, sqlBuilder, configuration, table,
-                mybatisParamHolder);
+    protected void doBuildSql(Type type, EntityTable table, SqlGenerateContext sqlGenerateContext) {
+        MySqlDbTableConverter.getInstance().doBuildSql(type, table, sqlGenerateContext);
     }
 }

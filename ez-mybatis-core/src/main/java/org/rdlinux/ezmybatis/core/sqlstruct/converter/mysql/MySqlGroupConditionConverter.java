@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -28,27 +27,22 @@ public class MySqlGroupConditionConverter extends AbstractConverter<GroupConditi
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       GroupCondition obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, GroupCondition obj, SqlGenerateContext sqlGenerateContext) {
         if (!obj.isSure() || obj.getConditions() == null || obj.getConditions().isEmpty()) {
-            return sqlBuilder;
-        } else {
-            StringBuilder sonSql = new StringBuilder(" ( ");
-            for (int i = 0; i < obj.getConditions().size(); i++) {
-                Condition condition = obj.getConditions().get(i);
-                Assert.notNull(condition, "condition can not be null");
-                if (i != 0) {
-                    sonSql.append(" ").append(condition.getAndOr().name()).append(" ");
-                }
-                Converter<? extends Condition> converter = EzMybatisContent.getConverter(configuration,
-                        condition.getClass());
-                StringBuilder conditionSql = converter.buildSql(type, new StringBuilder(), configuration, condition,
-                        mybatisParamHolder);
-                sonSql.append(conditionSql);
-            }
-            sonSql.append(" ) ");
-            return sqlBuilder.append(sonSql);
+            return;
         }
+        sqlGenerateContext.getSqlBuilder().append(" ( ");
+        for (int i = 0; i < obj.getConditions().size(); i++) {
+            Condition condition = obj.getConditions().get(i);
+            Assert.notNull(condition, "condition can not be null");
+            if (i != 0) {
+                sqlGenerateContext.getSqlBuilder().append(" ").append(condition.getAndOr().name()).append(" ");
+            }
+            Converter<? extends Condition> converter = EzMybatisContent
+                    .getConverter(sqlGenerateContext.getConfiguration(), condition.getClass());
+            converter.buildSql(type, condition, sqlGenerateContext);
+        }
+        sqlGenerateContext.getSqlBuilder().append(" ) ");
     }
 
     @Override

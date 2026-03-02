@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -36,25 +36,23 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       UpdateFieldItem obj, MybatisParamHolder mybatisParamHolder) {
-
+    protected void doBuildSql(Type type, UpdateFieldItem obj, SqlGenerateContext sqlGenerateContext) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         EzMybatisContent.setCurrentAccessField(EntityField.of(obj.getEntityTable(), obj.getField()));
         Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                 obj.getValue().getClass());
-        StringBuilder valueSql = argConverter.buildSql(type, new StringBuilder(), configuration, obj.getValue(),
-                mybatisParamHolder);
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (this.appendAlias()) {
             sqlBuilder.append(obj.getTable().getAlias()).append(".");
         }
         String column = fieldInfo.getColumnName();
         sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(column))
-                .append(keywordQM).append(" = ").append(valueSql);
+                .append(keywordQM).append(" = ");
+        argConverter.buildSql(type, obj.getValue(), sqlGenerateContext);
         EzMybatisContent.cleanCurrentAccessField();
-        return sqlBuilder;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
@@ -22,44 +23,41 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_METHOD)
     public String insert(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getInsertSql(configuration, paramHolder, null, entity);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getInsertSql(sqlGenerateContext, null, entity);
     }
 
     @MethodName(INSERT_BY_TABLE_METHOD)
     public String insertByTable(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Object entity = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getInsertSql(configuration, paramHolder, table, entity);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
+        Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getInsertSql(sqlGenerateContext, table, entity);
     }
 
     @MethodName(BATCH_INSERT_METHOD)
     public String batchInsert(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getBatchInsertSql(configuration, paramHolder, null, entitys);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getBatchInsertSql(sqlGenerateContext, null, entities);
     }
 
     @MethodName(BATCH_INSERT_BY_TABLE_METHOD)
     public String batchInsertByTable(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Collection<Object> entitys = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getBatchInsertSql(configuration, paramHolder, table, entitys);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
+        Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getBatchInsertSql(sqlGenerateContext, table, entities);
     }
 
     @MethodName(INSERT_BY_SQL_METHOD)
     public String insertBySql(Map<String, Object> param) {
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
         MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
         String sql = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQL);
@@ -70,11 +68,10 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_BY_QUERY_METHOD)
     public String insertByQuery(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getInsertByQuerySql(configuration, paramHolder, table, query);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getInsertByQuerySql(sqlGenerateContext, table, query);
     }
 }

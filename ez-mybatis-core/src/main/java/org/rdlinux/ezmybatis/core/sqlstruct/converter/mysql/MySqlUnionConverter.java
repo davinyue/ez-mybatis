@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.Union;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -28,23 +28,23 @@ public class MySqlUnionConverter extends AbstractConverter<Union> implements Con
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       Union obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Union obj, SqlGenerateContext sqlGenerateContext) {
         if (obj.getQuery() == null) {
-            return sqlBuilder;
+            return;
         }
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(" UNION ");
         if (obj.isAll()) {
             sqlBuilder.append(" ALL ");
         }
         sqlBuilder.append("\n(");
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         String unionSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, mybatisParamHolder, obj.getQuery());
+                .getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), obj.getQuery());
         if (obj.getQuery().getOrderBy() != null) {
             unionSql = String.format("SELECT * FROM (%s) %s", unionSql, AliasGenerate.getAlias());
         }
         sqlBuilder.append(unionSql).append(") ");
-        return sqlBuilder;
     }
 
     @Override

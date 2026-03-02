@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -27,14 +26,15 @@ public class MySqlEzQueryTableConverter extends AbstractConverter<EzQueryTable> 
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       EzQueryTable table, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, EzQueryTable table, SqlGenerateContext sqlGenerateContext) {
         if (type != Type.SELECT) {
             throw new IllegalArgumentException("EzQueryTable only supports query");
         }
-        String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, mybatisParamHolder, table.getEzQuery());
-        return sqlBuilder.append(" (").append(querySql).append(") ").append(table.getAlias()).append(" ");
+        String querySql = SqlGenerateFactory
+                .getSqlGenerate(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), table.getEzQuery());
+        sqlGenerateContext.getSqlBuilder().append(" (").append(querySql).append(") ").append(table.getAlias())
+                .append(" ");
     }
 
     @Override

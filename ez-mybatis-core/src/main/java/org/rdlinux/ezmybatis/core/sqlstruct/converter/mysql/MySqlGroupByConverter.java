@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -28,24 +27,21 @@ public class MySqlGroupByConverter extends AbstractConverter<GroupBy> implements
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       GroupBy groupBy, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, GroupBy groupBy, SqlGenerateContext sqlGenerateContext) {
         if (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty()) {
-            return sqlBuilder;
-        } else {
-            StringBuilder sql = new StringBuilder(" GROUP BY ");
-            for (int i = 0; i < groupBy.getItems().size(); i++) {
-                Operand groupItem = groupBy.getItems().get(i);
-                Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration,
-                        groupItem.getClass());
-                converter.buildSql(type, sql, configuration, groupItem, mybatisParamHolder);
-                if (i + 1 < groupBy.getItems().size()) {
-                    sql.append(", ");
-                } else {
-                    sql.append(" ");
-                }
+            return;
+        }
+        sqlGenerateContext.getSqlBuilder().append(" GROUP BY ");
+        for (int i = 0; i < groupBy.getItems().size(); i++) {
+            Operand groupItem = groupBy.getItems().get(i);
+            Converter<? extends Operand> converter = EzMybatisContent
+                    .getConverter(sqlGenerateContext.getConfiguration(), groupItem.getClass());
+            converter.buildSql(type, groupItem, sqlGenerateContext);
+            if (i + 1 < groupBy.getItems().size()) {
+                sqlGenerateContext.getSqlBuilder().append(", ");
+            } else {
+                sqlGenerateContext.getSqlBuilder().append(" ");
             }
-            return sqlBuilder.append(sql);
         }
     }
 

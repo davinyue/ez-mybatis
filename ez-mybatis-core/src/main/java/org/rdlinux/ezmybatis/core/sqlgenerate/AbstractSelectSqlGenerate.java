@@ -13,34 +13,36 @@ import java.util.Collection;
 public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
 
     @Override
-    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
-                                   Class<?> ntClass, Object id) {
+    public String getSelectByIdSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass, Object id) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
-                    paramHolder).toString();
+            converter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
+            tableName = sqlGenerateContext.getSqlBuilder().toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
         }
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "SELECT * FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " +
-                paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(), id);
+                sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(ntClass,
+                        entityClassInfo.getPrimaryKeyInfo().getField(), id);
     }
 
     @Override
-    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
-                                    Class<?> ntClass, Collection<?> ids) {
+    public String getSelectByIdsSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass,
+                                    Collection<?> ids) {
         Assert.notEmpty(ids, "ids cannot be null");
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQM(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
-                    paramHolder).toString();
+            converter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
+            tableName = sqlGenerateContext.getSqlBuilder().toString();
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(kwQM);
         }
@@ -49,7 +51,8 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
                 idColumn + kwQM + " IN ( ");
         int i = 0;
         for (Object id : ids) {
-            sqlBuilder.append(paramHolder.getMybatisParamName(ntClass, entityClassInfo.getPrimaryKeyInfo().getField(),
+            sqlBuilder.append(sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(ntClass,
+                    entityClassInfo.getPrimaryKeyInfo().getField(),
                     id));
             if (i + 1 != ids.size()) {
                 sqlBuilder.append(", ");

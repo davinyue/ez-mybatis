@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlEzQueryConverter;
 
 @SuppressWarnings("rawtypes")
@@ -25,10 +24,9 @@ public class OracleEzQueryConverter extends MySqlEzQueryConverter {
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       EzQuery obj, MybatisParamHolder mybatisParamHolder) {
-        String sql = this.ezQueryToSql(configuration, obj, mybatisParamHolder);
-        return sqlBuilder.append(sql);
+    protected void doBuildSql(Type type, EzQuery obj, SqlGenerateContext sqlGenerateContext) {
+        String sql = this.ezQueryToSql(obj, sqlGenerateContext);
+        sqlGenerateContext.getSqlBuilder().append(sql);
     }
 
     @Override

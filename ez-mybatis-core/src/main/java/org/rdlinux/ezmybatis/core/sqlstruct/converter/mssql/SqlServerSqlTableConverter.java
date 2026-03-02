@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
@@ -25,13 +24,11 @@ public class SqlServerSqlTableConverter extends AbstractConverter<SqlTable> impl
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SqlTable table, MybatisParamHolder mybatisParamHolder) {
-        sqlBuilder.append(" (").append(table.getSql()).append(") ");
+    protected void doBuildSql(Type type, SqlTable table, SqlGenerateContext sqlGenerateContext) {
+        sqlGenerateContext.getSqlBuilder().append(" (").append(table.getSql()).append(") ");
         if (type == Type.SELECT) {
-            sqlBuilder.append(table.getAlias()).append(" ");
+            sqlGenerateContext.getSqlBuilder().append(table.getAlias()).append(" ");
         }
-        return sqlBuilder;
     }
 
     @Override

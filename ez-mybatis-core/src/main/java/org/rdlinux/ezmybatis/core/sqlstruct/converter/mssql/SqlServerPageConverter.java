@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,13 +24,12 @@ public class SqlServerPageConverter extends AbstractConverter<Page> implements C
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Page limit,
-                                       MybatisParamHolder mybatisParamHolder) {
-        if (limit == null) {
-            return sqlBuilder;
+    protected void doBuildSql(Type type, Page page, SqlGenerateContext sqlGenerateContext) {
+        if (page == null) {
+            return;
         }
-        return sqlBuilder.append(" OFFSET ").append(limit.getSkip()).append(" ROWS FETCH NEXT ")
-                .append(limit.getSize()).append(" ROWS ONLY ");
+        sqlGenerateContext.getSqlBuilder().append(" OFFSET ").append(page.getSkip()).append(" ROWS FETCH NEXT ")
+                .append(page.getSize()).append(" ROWS ONLY ");
     }
 
     @Override
