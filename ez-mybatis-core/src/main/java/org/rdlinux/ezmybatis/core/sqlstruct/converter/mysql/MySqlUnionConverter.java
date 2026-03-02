@@ -47,6 +47,7 @@ public class MySqlUnionConverter extends AbstractConverter<Union> implements Con
         sqlBuilder.append(unionSql).append(") ");
     }
 
+
     @Override
     public DbType getSupportDbType() {
         return DbType.MYSQL;

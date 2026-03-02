@@ -29,6 +29,12 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
         if (query.getPage() == null) {
             this.limitToSql(sqlGenerateContext, query);
         }
+        this.beforeUnionToSql(sqlGenerateContext, query);
+        this.unionToSql(sqlGenerateContext, query);
+        return sqlGenerateContext.getSqlBuilder().toString();
+    }
+
+    protected void beforeUnionToSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
         if (query.getUnions() != null && !query.getUnions().isEmpty()) {
             if (query.getOrderBy() != null && query.getOrderBy().getItems() != null &&
                     !query.getOrderBy().getItems().isEmpty()) {
@@ -38,8 +44,6 @@ public abstract class AbstractEzQueryToSql implements EzQueryToSql {
                 sqlGenerateContext.getSqlBuilder().insert(0, " (").append(") ");
             }
         }
-        this.unionToSql(sqlGenerateContext, query);
-        return sqlGenerateContext.getSqlBuilder().toString();
     }
 
 
