@@ -15,13 +15,13 @@
     - [x] 1. 创建 `SqlGenerateContext` 类，将原散件参数（`StringBuilder`, `Configuration`, `MybatisParamHolder`）及 `ThreadLocal` 的访问标识栈放入其中。
     - [x] 2. 改造基础接口 `Converter` 的签名 `buildSql` 以及对应的抽象基类 `AbstractConverter`，使其统一接收 `SqlGenerateContext`。
     - [x] 3. 批量扫描项目(通过脚本辅助加速)，完成各具体 Converter 及底层生成器 (`AbstractEzQueryToSql` 等) 的老签名替换，统一使用新上下文对象，并在涉及到访问标识入栈、出栈的逻辑中移除 `EzMybatisContent.CURRENT_ACCESS_FIELD` 强依赖。
-    - [ ] 4. 处理并消除遗留的编译报错信息，确认相关单测顺利通过。
+    - [x] 4. 处理并消除遗留的编译报错信息，确认相关单测顺利通过。
 
 ## 阶段 2：重构多数据库方言支持，符合“开闭原则”（中优先级）
 
 **目标**：消除核心设计硬编码关联，使得新增数据库支持能以插拔方式实现，无需修改引擎源码。
 
-- [ ] **2.1 重构 `SqlGenerateFactory` 与 `EzMybatisContent#initDbType`**
+- [x] **2.1 重构 `SqlGenerateFactory` 与 `EzMybatisContent#initDbType`**
   - 引入 SPI（服务提供者接口）机制。提取并规范化方言生成器接口。
   - 将现有的 `MySqlSqlGenerate`、`OracleSqlGenerate`、`DmSqlGenerate` 等组件重构为符合 SPI 规范的服务提供者并完成服务注册(`META-INF/services/`)。
   - 将基于 `switch` / `if-else` 的静态类加载器模式改造为 `ServiceLoader` 的动态方言发现和匹配逻辑。
