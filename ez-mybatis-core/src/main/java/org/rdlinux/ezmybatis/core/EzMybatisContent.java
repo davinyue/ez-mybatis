@@ -14,7 +14,6 @@ import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
-import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.*;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -22,7 +21,9 @@ import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -35,39 +36,6 @@ public class EzMybatisContent {
      * 转换器映射
      */
     private static final Map<DbType, Map<Class<?>, Converter<?>>> CONVERT_MAP = new HashMap<>();
-    /**
-     * 当前访问filed, 用于查询, 更新, 保存时处理回调以支持用户对参数进行 处理
-     */
-    private static final ThreadLocal<Deque<EntityField>> CURRENT_ACCESS_FIELD = new ThreadLocal<>();
-
-    public static EntityField getCurrentAccessField() {
-        Deque<EntityField> deque = CURRENT_ACCESS_FIELD.get();
-        if (deque == null || deque.isEmpty()) {
-            return null;
-        }
-        return CURRENT_ACCESS_FIELD.get().element();
-    }
-
-    public static void setCurrentAccessField(EntityField entityField) {
-        Deque<EntityField> deque = CURRENT_ACCESS_FIELD.get();
-        if (deque == null) {
-            deque = new LinkedList<>();
-            CURRENT_ACCESS_FIELD.set(deque);
-        }
-        deque.push(entityField);
-    }
-
-    public static void cleanCurrentAccessField() {
-        Deque<EntityField> deque = CURRENT_ACCESS_FIELD.get();
-        if (deque != null) {
-            if (!deque.isEmpty()) {
-                deque.poll();
-            }
-            if (deque.isEmpty()) {
-                CURRENT_ACCESS_FIELD.remove();
-            }
-        }
-    }
 
     /**
      * 注册转换器

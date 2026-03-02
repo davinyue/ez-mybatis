@@ -41,7 +41,7 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
-        EzMybatisContent.setCurrentAccessField(EntityField.of(obj.getEntityTable(), obj.getField()));
+        sqlGenerateContext.pushAccessField(EntityField.of(obj.getEntityTable(), obj.getField()));
         Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                 obj.getValue().getClass());
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
@@ -52,7 +52,7 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
         sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(column))
                 .append(keywordQM).append(" = ");
         argConverter.buildSql(type, obj.getValue(), sqlGenerateContext);
-        EzMybatisContent.cleanCurrentAccessField();
+        sqlGenerateContext.popAccessField();
     }
 
     @Override

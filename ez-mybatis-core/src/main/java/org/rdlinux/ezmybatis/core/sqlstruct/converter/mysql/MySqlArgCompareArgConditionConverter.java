@@ -38,7 +38,7 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
     protected void doBuildSql(Type type, ArgCompareArgCondition obj, SqlGenerateContext sqlGenerateContext) {
         Operand leftValue = obj.getLeftValue();
         if (leftValue instanceof EntityField) {
-            EzMybatisContent.setCurrentAccessField((EntityField) leftValue);
+            sqlGenerateContext.pushAccessField((EntityField) leftValue);
         }
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         Configuration configuration = sqlGenerateContext.getConfiguration();
@@ -59,7 +59,7 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
             ret = this.normalBuild(leftSql, type, obj, sqlGenerateContext);
         }
         if (leftValue instanceof EntityField) {
-            EzMybatisContent.cleanCurrentAccessField();
+            sqlGenerateContext.popAccessField();
         }
         sqlGenerateContext.setSqlBuilder(ret);
     }

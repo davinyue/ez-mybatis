@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
@@ -34,7 +33,7 @@ public class MySqlObjArgConverter extends AbstractConverter<ObjArg> implements C
     protected void doBuildSql(Type type, ObjArg obj, SqlGenerateContext sqlGenerateContext) {
         Class<?> modelType = null;
         Field field = null;
-        EntityField currentAccessField = EzMybatisContent.getCurrentAccessField();
+        EntityField currentAccessField = sqlGenerateContext.getCurrentAccessField();
         if (currentAccessField != null) {
             modelType = currentAccessField.getTable().getEtType();
             EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(sqlGenerateContext.getConfiguration(),
