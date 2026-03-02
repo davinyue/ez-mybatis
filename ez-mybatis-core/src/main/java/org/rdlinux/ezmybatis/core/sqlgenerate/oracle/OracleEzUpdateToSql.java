@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -30,14 +29,13 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
     }
 
     @Override
-    public String toSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Collection<EzUpdate> updates) {
-        String sql = super.toSql(configuration, mybatisParamHolder, updates);
+    public String toSql(SqlGenerateContext sqlGenerateContext, Collection<EzUpdate> updates) {
+        String sql = super.toSql(sqlGenerateContext, updates);
         return "BEGIN \n" + sql + "END;";
     }
 
     @Override
-    protected StringBuilder setToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
-                                     MybatisParamHolder mybatisParamHolder) {
+    protected void setToSql(SqlGenerateContext sqlGenerateContext, EzUpdate update) {
         UpdateSet set = update.getSet();
         if (set != null && set.getItems() != null) {
             List<UpdateItem> items = set.getItems().stream().filter(e -> e.getTable() == update.getTable())
@@ -46,12 +44,10 @@ public class OracleEzUpdateToSql extends AbstractEzUpdateToSql {
             set.getItems().clear();
             set.getItems().addAll(items);
         }
-        return super.setToSql(sqlBuilder, configuration, update, mybatisParamHolder);
+        super.setToSql(sqlGenerateContext, update);
     }
 
     @Override
-    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
-                                       MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder;
+    protected void joinsToSql(SqlGenerateContext sqlGenerateContext, EzUpdate update) {
     }
 }

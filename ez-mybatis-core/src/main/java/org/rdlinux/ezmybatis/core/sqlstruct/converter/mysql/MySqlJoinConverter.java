@@ -1,10 +1,9 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -28,37 +27,34 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Join join,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Join join, SqlGenerateContext sqlGenerateContext) {
         if (join == null) {
-            return sqlBuilder;
+            return;
         }
         if (!join.isSure()) {
-            return sqlBuilder;
+            return;
         }
         String sonSql = "";
         if (join.getJoinType() != JoinType.CrossJoin) {
-            sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
-                    mybatisParamHolder, join.getOnConditions()).toString();
+            sonSql = MySqlWhereConverter.conditionsToSql(type, sqlGenerateContext, join.getOnConditions()).toString();
             if (StringUtils.isBlank(sonSql)) {
-                return sqlBuilder;
+                return;
             }
         }
-        Converter<?> joinTableConverter = EzMybatisContent.getConverter(configuration, join.getJoinTable().getClass());
+        Converter<?> joinTableConverter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(),
+                join.getJoinTable().getClass());
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(join.getJoinType().toSqlStruct());
-        sqlBuilder = joinTableConverter.buildSql(type, sqlBuilder, configuration, join.getJoinTable(),
-                mybatisParamHolder);
+        joinTableConverter.buildSql(type, join.getJoinTable(), sqlGenerateContext);
         if (join.getJoinType() != JoinType.CrossJoin) {
             sqlBuilder.append(" ON ");
         }
         sqlBuilder.append(sonSql);
         if (join.getJoins() != null && !join.getJoins().isEmpty()) {
             for (Join sonJoin : join.getJoins()) {
-                sqlBuilder.append(this.doBuildSql(type, new StringBuilder(), configuration, sonJoin,
-                        mybatisParamHolder));
+                this.doBuildSql(type, sonJoin, sqlGenerateContext);
             }
         }
-        return sqlBuilder;
     }
 
     @Override

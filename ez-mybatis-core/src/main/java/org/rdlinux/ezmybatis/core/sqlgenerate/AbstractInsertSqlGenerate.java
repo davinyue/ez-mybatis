@@ -21,19 +21,21 @@ import java.util.*;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
-    public static String getTableName(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
-                                      Object model) {
+    public static String getTableName(SqlGenerateContext sqlGenerateContext, Table table, Object model) {
         Assert.notNull(model, "model can not be null");
         if (model instanceof Collection) {
             throw new IllegalArgumentException("model can not instanceof Collection");
         }
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, model.getClass());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.buildSql(Converter.Type.INSERT, new StringBuilder(), configuration, table,
-                    mybatisParamHolder).toString();
+            converter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
+            tableName = sqlGenerateContext.getSqlBuilder().toString();
+            sqlGenerateContext.getSqlBuilder().setLength(0);
         } else {
             tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
         }
@@ -41,9 +43,10 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
-    public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
-                               Object entity) {
-        String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table, entity);
+    public String getInsertSql(SqlGenerateContext sqlGenerateContext, Table table, Object entity) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
+        String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, entity);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
@@ -72,12 +75,13 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
-    public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
+    public EzJdbcBatchSql getJdbcBatchInsertSql(SqlGenerateContext sqlGenerateContext, Table table, Collection<?> models) {
         Assert.notEmpty(models, "models can not be empty");
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         Object firstEntity = models.iterator().next();
-        String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table, firstEntity);
+        String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
         StringBuilder columnBuilder = new StringBuilder("( ");
         StringBuilder paramBuilder = new StringBuilder("( ");
@@ -124,25 +128,25 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     }
 
     @Override
-    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
-                                      EzQuery<?> query) {
+    public String getInsertByQuerySql(SqlGenerateContext sqlGenerateContext, Table table, EzQuery<?> query) {
         Assert.notNull(table, "table can not be null");
         Assert.notNull(table, "query can not be null");
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         Converter<? extends Table> tableConverter = EzMybatisContent.getConverter(configuration, table.getClass());
-        StringBuilder sql = new StringBuilder("INSERT INTO ");
-        tableConverter.buildSql(Converter.Type.INSERT, sql, configuration, table, mybatisParamHolder);
+        sqlGenerateContext.getSqlBuilder().append("INSERT INTO ");
+        tableConverter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
         String querySql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, mybatisParamHolder, query);
-        sql.append(" ");
+                .getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), query);
+        sqlGenerateContext.getSqlBuilder().append(" ");
         boolean insertParenthesis = this.insertByQueryAppendParenthesis();
         if (insertParenthesis) {
-            sql.append("(");
+            sqlGenerateContext.getSqlBuilder().append("(");
         }
-        sql.append(querySql);
+        sqlGenerateContext.getSqlBuilder().append(querySql);
         if (insertParenthesis) {
-            sql.append(")");
+            sqlGenerateContext.getSqlBuilder().append(")");
         }
-        return sql.toString();
+        return sqlGenerateContext.getSqlBuilder().toString();
     }
 
     /**

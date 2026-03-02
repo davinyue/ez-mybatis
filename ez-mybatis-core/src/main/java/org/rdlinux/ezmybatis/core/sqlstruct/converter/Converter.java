@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 
 /**
@@ -15,13 +14,10 @@ public interface Converter<Sp extends SqlStruct> {
      * 转换为sql
      *
      * @param type               转换类型
-     * @param sqlBuilder         当前sql
-     * @param configuration      mybatis配置
      * @param sp                 被转换对象
-     * @param mybatisParamHolder mybatis参数持有器
+     * @param sqlGenerateContext sql构建上下文
      */
-    StringBuilder buildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Object sp,
-                           MybatisParamHolder mybatisParamHolder);
+    void buildSql(Type type, Object sp, SqlGenerateContext sqlGenerateContext);
 
     /**
      * 获取支持的数据库

@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzUpdateToSql;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 
 public class SqlServerEzUpdateToSql extends AbstractEzUpdateToSql {
     private static volatile SqlServerEzUpdateToSql instance;
@@ -23,8 +22,6 @@ public class SqlServerEzUpdateToSql extends AbstractEzUpdateToSql {
     }
 
     @Override
-    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzUpdate update,
-                                       MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder;
+    protected void joinsToSql(SqlGenerateContext sqlGenerateContext, EzUpdate update) {
     }
 }

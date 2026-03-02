@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.postgre;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlDeleteSqlGenerate;
 
 import java.util.Collection;
@@ -25,13 +24,13 @@ public class PostgreSqlDeleteSqlGenerate extends MySqlDeleteSqlGenerate {
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, EzDelete delete) {
-        return PostgreSqlEzDeleteToSql.getInstance().toSql(configuration, paramHolder, delete);
+    public String getDeleteSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
+        return PostgreSqlEzDeleteToSql.getInstance().toSql(sqlGenerateContext, delete);
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder,
+    public String getDeleteSql(SqlGenerateContext sqlGenerateContext,
                                Collection<EzDelete> deletes) {
-        return PostgreSqlEzDeleteToSql.getInstance().toSql(configuration, paramHolder, deletes);
+        return PostgreSqlEzDeleteToSql.getInstance().toSql(sqlGenerateContext, deletes);
     }
 }

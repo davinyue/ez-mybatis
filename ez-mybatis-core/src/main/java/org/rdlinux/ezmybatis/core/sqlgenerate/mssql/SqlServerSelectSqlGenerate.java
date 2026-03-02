@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractSelectSqlGenerate;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlEzQueryToSql;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlInsertSqlGenerate;
 
@@ -25,12 +24,12 @@ public class SqlServerSelectSqlGenerate extends AbstractSelectSqlGenerate {
     }
 
     @Override
-    public String getQuerySql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
-        return MySqlEzQueryToSql.getInstance().toSql(configuration, paramHolder, query);
+    public String getQuerySql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
+        return MySqlEzQueryToSql.getInstance().toSql(sqlGenerateContext, query);
     }
 
     @Override
-    public String getQueryCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
-        return MySqlEzQueryToSql.getInstance().toCountSql(configuration, paramHolder, query);
+    public String getQueryCountSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
+        return MySqlEzQueryToSql.getInstance().toCountSql(sqlGenerateContext, query);
     }
 }

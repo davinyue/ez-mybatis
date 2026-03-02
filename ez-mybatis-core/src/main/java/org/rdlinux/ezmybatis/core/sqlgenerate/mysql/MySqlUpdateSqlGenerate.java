@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractUpdateSqlGenerate;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 
 import java.util.Collection;
 
@@ -25,13 +24,12 @@ public class MySqlUpdateSqlGenerate extends AbstractUpdateSqlGenerate {
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, EzUpdate update) {
-        return MySqlEzUpdateToSql.getInstance().toSql(configuration, mybatisParamHolder, update);
+    public String getUpdateSql(SqlGenerateContext sqlGenerateContext, EzUpdate update) {
+        return MySqlEzUpdateToSql.getInstance().toSql(sqlGenerateContext, update);
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                               Collection<EzUpdate> updates) {
-        return MySqlEzUpdateToSql.getInstance().toSql(configuration, mybatisParamHolder, updates);
+    public String getUpdateSql(SqlGenerateContext sqlGenerateContext, Collection<EzUpdate> updates) {
+        return MySqlEzUpdateToSql.getInstance().toSql(sqlGenerateContext, updates);
     }
 }

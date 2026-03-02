@@ -483,12 +483,21 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .where().addFieldCondition(User.Fields.sex, User.Sex.WOMAN).done()
                 .build();
 
+        EzQuery<User> q3 = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .where().addFieldCondition(User.Fields.sex, User.Sex.WOMAN).done()
+                .unionAll(q2)
+                .build();
+
         EzQuery<User> unionQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
                 .where().addFieldCondition(User.Fields.name, "NonExistent").done() // Main query empty
                 .union(q1)
-                .unionAll(q2)
+                .unionAll(q3)
                 .page(1, 10)
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
                 .build();
 
         List<User> users = sqlSession.getMapper(EzMapper.class).query(unionQuery);

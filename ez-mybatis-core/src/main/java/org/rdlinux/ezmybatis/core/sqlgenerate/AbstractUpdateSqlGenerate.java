@@ -22,27 +22,28 @@ import java.util.stream.Collectors;
 public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
-                               Object model, boolean isReplace) {
+    public String getUpdateSql(SqlGenerateContext sqlGenerateContext, Table table, Object model, boolean isReplace) {
         Assert.notNull(model, "model can not be null");
         if (model instanceof Collection) {
             throw new IllegalArgumentException("model can not instanceof Collection");
         }
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, model.getClass());
-        String tableName;
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
+        sqlBuilder.append("UPDATE ");
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            tableName = converter.buildSql(Converter.Type.UPDATE, new StringBuilder(), configuration, table,
-                    mybatisParamHolder).toString();
+            converter.buildSql(Converter.Type.UPDATE, table, sqlGenerateContext);
         } else {
-            tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
+            sqlBuilder.append(entityClassInfo.getTableNameWithSchema(keywordQM));
         }
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         String idColumn = primaryKeyInfo.getColumnName();
         Object idValue = ReflectionUtils.getFieldValue(model, primaryKeyInfo.getField());
-        StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
+        sqlBuilder.append(" SET ");
         boolean invalidSql = true;
         for (String column : columnMapFieldInfo.keySet()) {
             EntityFieldInfo entityFieldInfo = columnMapFieldInfo.get(column);
@@ -61,30 +62,29 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
                 .append(" = ").append(mybatisParamHolder.simpleGetMybatisParamName(model.getClass(),
-                primaryKeyInfo.getField(), idValue));
+                        primaryKeyInfo.getField(), idValue));
         return sqlBuilder.toString();
     }
 
     @Override
-    public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
-                                    Table table, Collection<Object> models, boolean isReplace) {
+    public String getBatchUpdateSql(SqlGenerateContext sqlGenerateContext, Table table, Collection<Object> models,
+                                    boolean isReplace) {
         Assert.notEmpty(models, "models can not be empty");
         StringBuilder sqlBuilder = new StringBuilder();
         for (Object entity : models) {
-            String sqlTmpl = this.getUpdateSql(configuration, mybatisParamHolder, table, entity, isReplace);
+            String sqlTmpl = this.getUpdateSql(SqlGenerateContext.copyOf(sqlGenerateContext), table, entity, isReplace);
             sqlBuilder.append(sqlTmpl).append(";\n");
         }
         return sqlBuilder.toString();
     }
 
     @Override
-    public EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
+    public EzJdbcBatchSql getJdbcBatchUpdateSql(SqlGenerateContext sqlGenerateContext, Table table, Collection<?> models,
                                                 Collection<String> updateFields, boolean isReplace) {
         Assert.notNull(models, "models can not be null");
         Object firstEntity = models.iterator().next();
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
-        String tableName = AbstractInsertSqlGenerate.getTableName(configuration, mybatisParamHolder, table,
-                firstEntity);
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, firstEntity.getClass());

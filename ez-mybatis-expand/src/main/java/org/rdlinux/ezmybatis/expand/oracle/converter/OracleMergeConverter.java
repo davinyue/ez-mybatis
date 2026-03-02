@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.expand.oracle.converter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -30,14 +30,15 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
         return instance;
     }
 
-    protected static void conditionsToSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                          MybatisParamHolder mybatisParamHolder,
-                                          List<Condition> conditions) {
+    protected static void conditionsToSql(Type type, SqlGenerateContext sqlGenerateContext, List<Condition> conditions) {
         boolean lastConditionEmpty = true;
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         for (Condition condition : conditions) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, condition.getClass());
-            String sqlPart = converter.buildSql(type, new StringBuilder(), configuration, condition, mybatisParamHolder)
-                    .toString();
+            SqlGenerateContext sqlPartCt = SqlGenerateContext.copyOf(sqlGenerateContext);
+            converter.buildSql(type, condition, sqlPartCt);
+            String sqlPart = sqlPartCt.getSqlBuilder().toString();
             boolean emptySql = sqlPart.trim().isEmpty();
             if (!lastConditionEmpty && !emptySql) {
                 sqlBuilder.append(condition.getAndOr().name()).append(" ");
@@ -52,17 +53,18 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       Merge merge, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Merge merge, SqlGenerateContext sqlGenerateContext) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(" MERGE INTO ").append(keywordQM).append(merge.getMergeTable().getTableName(configuration))
                 .append(keywordQM).append(" ")
                 .append(merge.getMergeTable().getAlias()).append(" USING ");
         Converter<? extends EzQueryTable> tableConverter = EzMybatisContent.getConverter(configuration,
                 merge.getUseTable().getClass());
-        tableConverter.buildSql(Type.SELECT, sqlBuilder, configuration, merge.getUseTable(), mybatisParamHolder);
+        tableConverter.buildSql(Type.SELECT, merge.getUseTable(), sqlGenerateContext);
         sqlBuilder.append(" ON ( ");
-        conditionsToSql(type, sqlBuilder, configuration, mybatisParamHolder, merge.getOn());
+        conditionsToSql(type, sqlGenerateContext, merge.getOn());
         sqlBuilder.append(" ) WHEN MATCHED THEN UPDATE SET ");
 
         List<UpdateItem> items = merge.getSet().getItems();
@@ -70,13 +72,11 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
             UpdateItem updateItem = items.get(i);
             Converter<? extends UpdateItem> converter = EzMybatisContent.getConverter(configuration,
                     updateItem.getClass());
-            sqlBuilder = converter.buildSql(type, sqlBuilder, configuration, updateItem,
-                    mybatisParamHolder);
+            converter.buildSql(type, updateItem, sqlGenerateContext);
             if (i + 1 < items.size()) {
                 sqlBuilder.append(", ");
             }
         }
-        return sqlBuilder;
     }
 
     @Override

@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -28,8 +28,9 @@ public class SqlServerDbTableConverter extends AbstractConverter<DbTable> implem
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       DbTable table, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, DbTable table, SqlGenerateContext sqlGenerateContext) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         String keywordQM = EzMybatisContent.getKeywordQM(configuration);
         String schema = table.getSchema(configuration);
         if (schema != null && !schema.isEmpty()) {
@@ -38,19 +39,17 @@ public class SqlServerDbTableConverter extends AbstractConverter<DbTable> implem
         sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(table.getTableName(configuration)))
                 .append(keywordQM);
         if (table.getPartition() != null) {
-            sqlBuilder.append(this.partitionToSql(type, new StringBuilder(), configuration, table.getPartition(),
-                    mybatisParamHolder));
+            this.partitionToSql(type, table.getPartition(), sqlGenerateContext);
         }
         if (type == Type.SELECT) {
             sqlBuilder.append(" ").append(table.getAlias()).append(" ");
         }
-        return sqlBuilder;
     }
 
-    protected StringBuilder partitionToSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                           Partition partition, MybatisParamHolder mybatisParamHolder) {
-        Converter<?> converter = EzMybatisContent.getConverter(configuration, partition.getClass());
-        return converter.buildSql(type, sqlBuilder, configuration, partition, mybatisParamHolder);
+    protected void partitionToSql(Type type, Partition partition, SqlGenerateContext sqlGenerateContext) {
+        Converter<?> converter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(),
+                partition.getClass());
+        converter.buildSql(type, partition, sqlGenerateContext);
     }
 
     @Override

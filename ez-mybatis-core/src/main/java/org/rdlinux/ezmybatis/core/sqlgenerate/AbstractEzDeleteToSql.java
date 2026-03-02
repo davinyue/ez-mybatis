@@ -13,57 +13,51 @@ import java.util.Collection;
 
 public abstract class AbstractEzDeleteToSql implements EzDeleteToSql {
     @Override
-    public String toSql(Configuration configuration, MybatisParamHolder paramHolder, EzDelete delete) {
+    public String toSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
         Assert.notNull(delete, "delete can not be null");
-        return this.toSql(configuration, delete, paramHolder);
+        return this.doToSql(sqlGenerateContext, delete);
     }
 
     @Override
-    public String toSql(Configuration configuration, MybatisParamHolder paramHolder, Collection<EzDelete> deletes) {
+    public String toSql(SqlGenerateContext sqlGenerateContext, Collection<EzDelete> deletes) {
         StringBuilder sql = new StringBuilder();
         for (EzDelete delete : deletes) {
-            sql.append(this.toSql(configuration, delete, paramHolder)).append(";\n");
+            sql.append(this.doToSql(SqlGenerateContext.copyOf(sqlGenerateContext), delete)).append(";\n");
         }
         return sql.toString();
     }
 
-    protected String toSql(Configuration configuration, EzDelete delete, MybatisParamHolder mybatisParamHolder) {
-        StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder = this.deleteToSql(sqlBuilder, delete);
-        sqlBuilder = this.fromToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
-        sqlBuilder = this.joinsToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
-        sqlBuilder = this.whereToSql(sqlBuilder, configuration, delete, mybatisParamHolder);
-        return sqlBuilder.toString();
+    protected String doToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
+        this.deleteToSql(sqlGenerateContext, delete);
+        this.fromToSql(sqlGenerateContext, delete);
+        this.joinsToSql(sqlGenerateContext, delete);
+        this.whereToSql(sqlGenerateContext, delete);
+        return sqlGenerateContext.getSqlBuilder().toString();
     }
 
-    protected StringBuilder deleteToSql(StringBuilder sqlBuilder, EzDelete delete) {
-        sqlBuilder.append("DELETE ");
-        return sqlBuilder;
+    protected void deleteToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
+        sqlGenerateContext.getSqlBuilder().append("DELETE ");
     }
 
-    protected StringBuilder fromToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                      MybatisParamHolder mybatisParamHolder) {
+    protected void fromToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
         From from = delete.getFrom();
-        Converter<From> converter = EzMybatisContent.getConverter(configuration, From.class);
-        return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, from, mybatisParamHolder);
+        Converter<From> converter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(), From.class);
+        converter.buildSql(Converter.Type.DELETE, from, sqlGenerateContext);
     }
 
-    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void joinsToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         if (delete.getJoins() != null) {
             Converter<Join> converter = EzMybatisContent.getConverter(configuration, Join.class);
             for (Join join : delete.getJoins()) {
-                sqlBuilder = converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, join,
-                        mybatisParamHolder);
+                converter.buildSql(Converter.Type.DELETE, join, sqlGenerateContext);
             }
         }
-        return sqlBuilder;
     }
 
-    protected StringBuilder whereToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                       MybatisParamHolder paramHolder) {
+    protected void whereToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
         Where where = delete.getWhere();
-        Converter<Where> converter = EzMybatisContent.getConverter(configuration, Where.class);
-        return converter.buildSql(Converter.Type.DELETE, sqlBuilder, configuration, where, paramHolder);
+        Converter<Where> converter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(), Where.class);
+        converter.buildSql(Converter.Type.DELETE, where, sqlGenerateContext);
     }
 }
