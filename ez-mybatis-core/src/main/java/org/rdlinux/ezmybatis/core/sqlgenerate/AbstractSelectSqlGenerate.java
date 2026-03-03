@@ -16,7 +16,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
     public String getSelectByIdSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass, Object id) {
         Configuration configuration = sqlGenerateContext.getConfiguration();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        String kwQM = EzMybatisContent.getKeywordQM(configuration);
+        String kwQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
@@ -37,7 +37,7 @@ public abstract class AbstractSelectSqlGenerate implements SelectSqlGenerate {
         Assert.notEmpty(ids, "ids cannot be null");
         Configuration configuration = sqlGenerateContext.getConfiguration();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        String kwQM = EzMybatisContent.getKeywordQM(configuration);
+        String kwQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());

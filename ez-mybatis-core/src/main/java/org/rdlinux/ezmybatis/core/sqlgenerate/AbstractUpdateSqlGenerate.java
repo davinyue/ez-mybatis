@@ -29,7 +29,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         }
         Configuration configuration = sqlGenerateContext.getConfiguration();
         MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, model.getClass());
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append("UPDATE ");
@@ -86,7 +86,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         Configuration configuration = sqlGenerateContext.getConfiguration();
         String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, firstEntity.getClass());
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();
         List<EntityFieldInfo> updateFieldInfo = new ArrayList<>();

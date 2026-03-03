@@ -41,9 +41,7 @@
 
 **目标**：统一底层操作风格，保证在拦截器链和事务体系下的全生命周期托管与类型安全。
 
-- [ ] **4.1 改造 `JdbcInsertDao` 和 `JdbcUpdateDao`**
-  - 废弃内部直接手控 `java.sql.Connection` 及 `PreparedStatement` 绕过 MyBatis XML 映射的行为。
-  - 调研和切换至 MyBatis 原生的 `ExecutorType.BATCH` 模式结合 `SqlSessionTemplate` 封装批量操作，使其纳入正常的 MyBatis 事务生命周期和插件拦截链。
-- [ ] **4.2 优化隐式类型（字符串到常量的重构）**
-  - 扫描项目中像 `@MethodName(SELECT_BY_ID_METHOD)` 提供者方法的魔法字符串与弱隐式约束。
-  - 研讨向更安全的 MyBatis 语言驱动(LanguageDriver)或类似 jOOQ 类型安全 API 的过渡方案以重构脆弱发射调用的风险。
+- ~~**4.1 改造 `JdbcInsertDao` 和 `JdbcUpdateDao`**~~ （**不需要改造**）
+  - 经分析，虽然内部直接操作 JDBC `PreparedStatement`，但 `Connection` 来自 Spring 管理的 `SqlSessionTemplate`，事务仍由 Spring 统一管理，不存在事务脱管风险。当前原生 JDBC 批量方式（多 VALUES 拼接）性能优于 `ExecutorType.BATCH`，保持现状。
+- ~~**4.2 优化隐式类型（字符串到常量的重构）**~~ （**不需要改造**）
+  - 经分析，方法名和参数名已通过 `public static final String` 常量和 `EzMybatisConstant` 统一管理，不存在魔法字符串。`@XxxProvider.method` 的字符串约束是 MyBatis 框架的固有限制，无法绕过。LanguageDriver/jOOQ 的改造成本远大于收益，保持现状。

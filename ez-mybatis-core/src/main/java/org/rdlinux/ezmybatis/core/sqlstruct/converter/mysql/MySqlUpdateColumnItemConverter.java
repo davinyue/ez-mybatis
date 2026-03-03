@@ -51,7 +51,7 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
         Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(),
                 obj.getValue().getClass());
 
-        String keywordQM = EzMybatisContent.getKeywordQM(sqlGenerateContext.getConfiguration());
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         if (this.appendAlias()) {
             sqlGenerateContext.getSqlBuilder().append(obj.getTable().getAlias()).append(".");
         }

@@ -31,7 +31,7 @@ public class SqlServerDbTableConverter extends AbstractConverter<DbTable> implem
     protected void doBuildSql(Type type, DbTable table, SqlGenerateContext sqlGenerateContext) {
         Configuration configuration = sqlGenerateContext.getConfiguration();
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         String schema = table.getSchema(configuration);
         if (schema != null && !schema.isEmpty()) {
             sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(schema)).append(keywordQM).append(".");

@@ -35,7 +35,7 @@ public class MySqlEntityFieldConverter extends AbstractConverter<EntityField> im
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         Assert.notNull(fieldInfo, "Class " + etInfo.getEntityClass().getName() + "cannot find the filed "
                 + obj.getField());
-        String keywordQM = EzMybatisContent.getKeywordQM(sqlGenerateContext.getConfiguration());
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         sqlGenerateContext.getSqlBuilder().append(obj.getTable().getAlias()).append(".").append(keywordQM)
                 .append(fieldInfo.getColumnName()).append(keywordQM);
     }

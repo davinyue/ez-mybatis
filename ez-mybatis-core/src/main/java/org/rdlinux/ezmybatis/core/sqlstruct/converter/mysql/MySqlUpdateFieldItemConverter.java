@@ -38,7 +38,7 @@ public class MySqlUpdateFieldItemConverter extends AbstractConverter<UpdateField
     @Override
     protected void doBuildSql(Type type, UpdateFieldItem obj, SqlGenerateContext sqlGenerateContext) {
         Configuration configuration = sqlGenerateContext.getConfiguration();
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getEntityTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         sqlGenerateContext.pushAccessField(EntityField.of(obj.getEntityTable(), obj.getField()));

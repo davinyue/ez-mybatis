@@ -36,7 +36,7 @@ public class SqlServerEntityFieldConverter extends AbstractConverter<EntityField
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         Assert.notNull(fieldInfo, "Class " + etInfo.getEntityClass().getName() + "cannot find the filed "
                 + obj.getField());
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (type == Type.SELECT) {
             sqlBuilder.append(obj.getTable().getAlias()).append(".");

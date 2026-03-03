@@ -17,7 +17,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         Configuration configuration = sqlGenerateContext.getConfiguration();
         MybatisParamHolder paramHolder = sqlGenerateContext.getMybatisParamHolder();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        String kwQM = EzMybatisContent.getKeywordQM(configuration);
+        String kwQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
@@ -39,7 +39,7 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         Assert.notEmpty(ids, "ids cannot be empty");
         Configuration configuration = sqlGenerateContext.getConfiguration();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
-        String kwQM = EzMybatisContent.getKeywordQM(configuration);
+        String kwQM = EzMybatisContent.getKeywordQuoteMark(configuration);
 
         String tableName;
         if (table != null) {

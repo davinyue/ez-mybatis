@@ -22,9 +22,7 @@ import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -33,30 +31,23 @@ public class EzMybatisContent {
      * mybatis配置 映射 content配置
      */
     private static final ConcurrentMap<Configuration, EzContentConfig> CFG_CONFIG_MAP = new ConcurrentHashMap<>();
-    /**
-     * 转换器映射
-     */
-    private static final Map<DbType, Map<Class<?>, Converter<?>>> CONVERT_MAP = new HashMap<>();
+
 
     /**
      * 注册转换器
      */
-    public synchronized static <T extends SqlStruct> void addConverter(DbType dbType, Class<T> sqlStruct,
-                                                                       Converter<T> converter) {
-        CONVERT_MAP.putIfAbsent(dbType, new HashMap<>());
-        CONVERT_MAP.get(dbType).put(sqlStruct, converter);
+    public static <T extends SqlStruct> void addConverter(DbType dbType, Class<T> sqlStruct,
+                                                          Converter<T> converter) {
+        DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
+        provider.addConverter(sqlStruct, converter);
     }
 
     /**
      * 获取转换器
      */
-    @SuppressWarnings("unchecked")
     public static <T extends SqlStruct> Converter<T> getConverter(DbType dbType, Class<T> sqlStruct) {
-        Map<Class<?>, Converter<?>> convertMap = CONVERT_MAP.get(dbType);
-        if (convertMap == null) {
-            throw new RuntimeException("cannot find the converter of " + dbType.name());
-        }
-        Converter<T> converter = (Converter<T>) convertMap.get(sqlStruct);
+        DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
+        Converter<T> converter = provider.getConverter(sqlStruct);
         if (converter == null) {
             throw new RuntimeException(String.format("%s cannot find the converter of %s", dbType.name(),
                     sqlStruct.getSimpleName()));
@@ -110,9 +101,15 @@ public class EzMybatisContent {
     }
 
     /**
-     * 获取关键词引号
+     * 获取数据库关键字引号字符（如MySQL用`, Oracle用"）
      */
-    public static String getKeywordQM(Configuration configuration) {
+    public static String getKeywordQuoteMark(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        EzContentConfig ezContentConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(ezContentConfig, "please init");
+        if (!ezContentConfig.getEzMybatisConfig().isEscapeKeyword()) {
+            return "";
+        }
         DbType dbType = getDbType(configuration);
         DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
         return provider.getKeywordQuoteMark();

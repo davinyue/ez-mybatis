@@ -27,7 +27,7 @@ public class MySqlAliasConverter extends AbstractConverter<Alias> implements Con
 
     @Override
     protected void doBuildSql(Type type, Alias obj, SqlGenerateContext sqlGenerateContext) {
-        String keywordQM = EzMybatisContent.getKeywordQM(sqlGenerateContext.getConfiguration());
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         String alias = obj.getAlias();
         alias = SqlEscaping.nameEscaping(alias);
         sqlGenerateContext.getSqlBuilder().append(keywordQM).append(alias).append(keywordQM);

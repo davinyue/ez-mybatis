@@ -51,7 +51,7 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
             fieldInfos = fieldInfos.stream().filter(e -> !ojb.getExcludeField().contains(e.getFieldName()))
                     .collect(Collectors.toList());
             Assert.notEmpty(fieldInfos, "No valid select item");
-            String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+            String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
             for (int i = 0; i < fieldInfos.size(); i++) {
                 EntityFieldInfo fieldInfo = fieldInfos.get(i);
                 sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".").append(keywordQM)
