@@ -6,8 +6,8 @@
 
 **目标**：解决可能导致生产事故的底层隐患，提升框架在复杂生产环境下的健壮性。
 
-- [ ] **1.1 改造 `EzMybatisContent` 中的全局状态管理**
-  - 将静态属性 `CFG_CONFIG_MAP` 替换为更安全的映射方式（如 `WeakHashMap`），或者探寻将 `EzContentConfig` 附加到 MyBatis 原生 `Configuration` 实例中的机制，避免在多数据源或热部署环境下发生 `Configuration` 导致的内存泄漏。
+- ~~**1.1 改造 `EzMybatisContent` 中的全局状态管理**~~ （**不需要改造**）
+  - 经分析，`Configuration` 是随 `SqlSessionFactory` 创建的单例 Bean，生命周期与 Spring `ApplicationContext` 一致，不存在实际的内存泄漏风险。`WeakHashMap` 替换反而可能导致配置被意外 GC，保持现状。
 - [x] **1.2 安全处理与重构 `ThreadLocal` 上下文 (`CURRENT_ACCESS_FIELD`)**
   - **问题分析**：因字段加密等扩展点需求，在解析 `EntityField` 和 `ObjArg` 时存在关联逻辑。当前依靠全局 `ThreadLocal` 传递关联状态且无 `try-finally` 保护，存在内存泄露与脏数据的严重生产隐患。
   - **重构方案**：废弃 `ThreadLocal` 设计。引入 `SqlGenerateContext` 上下文对象替代松散的多个参数传递，并在该上下文内部维护状态栈，使得遍历状态的生命周期严格随方法栈同生共死，从根本上兼顾扩展性与安全性。
@@ -30,12 +30,10 @@
 
 **目标**：隔离业务复杂度，遵循单一职责和接口隔离原则。
 
-- [ ] **3.1 拆分 `EzMapper` 接口隔离**
-  - 剥离核心 CRUD 接口，定义细粒度接口体系：如 `EzBaseReaderMapper`（读操作）、`EzBaseWriterMapper`（写操作）以及 `EzSqlExecutorMapper`（原生 SQL 执行）。
-  - 调整 `EzMapper` 为上述基准接口的继承者，不仅保持现有兼容性，并容许外部业务仅按需实现读或写接口。
-- [ ] **3.2 瘦身并分层 `EzDao`**
-  - 解析 DAO 中耦合过重的方法，分离参数校验和基础 `EzQuery` 等条件的组装构建逻辑。
-  - 探索应用 Repository 模式重构，使 DAO 层转变为更存粹的数据交互桥接层。
+- ~~**3.1 拆分 `EzMapper` 接口隔离**~~ （**不需要改造**）
+  - 经分析，拆分接口会破坏现有公共 API 兼容性，且用户已习惯通过单一 `EzMapper` 进行操作。改造收益有限，保持现状。
+- ~~**3.2 瘦身并分层 `EzDao`**~~ （**不需要改造**）
+  - 经分析，DAO 中的方法虽较多但各自职责明确，均为简单的参数校验+委托调用模式。引入 Repository 模式改造成本大且会增加代码复杂度，保持现状。
 
 ## 阶段 4：收敛 JDBC 底层实现与类型安全增强（长期计划）
 
