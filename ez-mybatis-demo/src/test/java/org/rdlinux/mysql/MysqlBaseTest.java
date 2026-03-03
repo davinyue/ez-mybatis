@@ -48,9 +48,17 @@ public class MysqlBaseTest {
         EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, new EzMybatisOnBuildSqlGetFieldListener() {
             @Override
             public Object onGet(boolean isSimple, Class<?> ntType, Field field, Object value) {
-                if (ntType == User.class && field.getName().equals(User.Fields.name)) {
-                    log.info("处理参数{}的加密", field.getName());
-                    return "enc$" + value;
+                if (isSimple) {
+                    return value;
+                }
+                if (ntType == User.class) {
+                    if (field.getName().equals(User.Fields.name)) {
+                        MysqlBaseTest.log.info("处理参数{}的加密", field.getName());
+                        return "name$" + value;
+                    } else if (field.getName().equals(User.Fields.email)) {
+                        MysqlBaseTest.log.info("处理参数{}的加密", field.getName());
+                        return "email$" + value;
+                    }
                 }
                 return value;
             }
@@ -67,6 +75,10 @@ public class MysqlBaseTest {
                     MysqlBaseTest.log.info("插入事件");
                     ((BaseEntity) entity).setUpdateTime(new Date());
                     ((BaseEntity) entity).setCreateTime(new Date());
+                    if (entity instanceof User) {
+                        ((User) entity).setName("name$" + ((User) entity).getName());
+                        ((User) entity).setEmail("email$" + ((User) entity).getEmail());
+                    }
                 }
             }
 
