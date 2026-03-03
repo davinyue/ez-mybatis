@@ -47,12 +47,7 @@ public class EzMybatisContent {
      */
     public static <T extends SqlStruct> Converter<T> getConverter(DbType dbType, Class<T> sqlStruct) {
         DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
-        Converter<T> converter = provider.getConverter(sqlStruct);
-        if (converter == null) {
-            throw new RuntimeException(String.format("%s cannot find the converter of %s", dbType.name(),
-                    sqlStruct.getSimpleName()));
-        }
-        return converter;
+        return provider.getConverter(sqlStruct);
     }
 
     /**
