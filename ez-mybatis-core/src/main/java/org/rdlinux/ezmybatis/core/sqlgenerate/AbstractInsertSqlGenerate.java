@@ -29,7 +29,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         Configuration configuration = sqlGenerateContext.getConfiguration();
         MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, model.getClass());
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         String tableName;
         if (table != null) {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
@@ -48,7 +48,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
         String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, entity);
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
         StringBuilder columnBuilder = new StringBuilder("( ");
@@ -78,7 +78,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
     public EzJdbcBatchSql getJdbcBatchInsertSql(SqlGenerateContext sqlGenerateContext, Table table, Collection<?> models) {
         Assert.notEmpty(models, "models can not be empty");
         Configuration configuration = sqlGenerateContext.getConfiguration();
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         Object firstEntity = models.iterator().next();
         String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, firstEntity);

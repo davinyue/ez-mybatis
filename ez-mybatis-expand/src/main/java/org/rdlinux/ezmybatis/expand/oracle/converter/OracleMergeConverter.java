@@ -55,7 +55,7 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
     @Override
     protected void doBuildSql(Type type, Merge merge, SqlGenerateContext sqlGenerateContext) {
         Configuration configuration = sqlGenerateContext.getConfiguration();
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(" MERGE INTO ").append(keywordQM).append(merge.getMergeTable().getTableName(configuration))
                 .append(keywordQM).append(" ")

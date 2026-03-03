@@ -44,11 +44,4 @@ public class DbDialectProviderLoader {
         }
         throw new RuntimeException("Cannot match any DbDialectProvider for driver: " + driverClassName);
     }
-
-    /**
-     * 获取所有已加载的 Provider
-     */
-    public static Map<DbType, DbDialectProvider> getAllProviders() {
-        return PROVIDER_MAP;
-    }
 }

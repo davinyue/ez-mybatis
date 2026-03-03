@@ -36,7 +36,7 @@ public class MySqlSelectOperandConverter extends AbstractConverter<SelectOperand
         converter.buildSql(type, obj.getOperand(), sqlGenerateContext);
         String alias = obj.getAlias();
         if (alias != null && !alias.isEmpty()) {
-            String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+            String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
             sqlBuilder.append(" ").append(keywordQM).append(SqlEscaping.nameEscaping(alias)).append(keywordQM)
                     .append(" ");
         }

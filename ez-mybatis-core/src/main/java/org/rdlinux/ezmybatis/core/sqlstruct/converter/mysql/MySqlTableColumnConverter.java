@@ -27,7 +27,7 @@ public class MySqlTableColumnConverter extends AbstractConverter<TableColumn> im
 
     @Override
     protected void doBuildSql(Type type, TableColumn obj, SqlGenerateContext sqlGenerateContext) {
-        String keywordQM = EzMybatisContent.getKeywordQM(sqlGenerateContext.getConfiguration());
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         sqlGenerateContext.getSqlBuilder().append(obj.getTable().getAlias()).append(".").append(keywordQM)
                 .append(SqlEscaping.nameEscaping(obj.getColumn()))
                 .append(keywordQM);

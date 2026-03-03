@@ -27,7 +27,7 @@ public class SqlServerTableColumnConverter extends AbstractConverter<TableColumn
 
     @Override
     protected void doBuildSql(Type type, TableColumn obj, SqlGenerateContext sqlGenerateContext) {
-        String keywordQM = EzMybatisContent.getKeywordQM(sqlGenerateContext.getConfiguration());
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         if (type == Type.SELECT) {
             sqlGenerateContext.getSqlBuilder().append(obj.getTable().getAlias()).append(".");
         }

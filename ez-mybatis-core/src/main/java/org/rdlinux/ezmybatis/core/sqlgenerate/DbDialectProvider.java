@@ -1,6 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
+import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
 /**
  * 数据库方言提供者SPI接口
@@ -34,4 +36,14 @@ public interface DbDialectProvider {
      * 获取数据库关键字引号字符（如MySQL用`, Oracle用"）
      */
     String getKeywordQuoteMark();
+
+    /**
+     * 注册转换器
+     */
+    <T extends SqlStruct> void addConverter(Class<T> sqlStruct, Converter<T> converter);
+
+    /**
+     * 获取转换器
+     */
+    <T extends SqlStruct> Converter<T> getConverter(Class<T> sqlStruct);
 }

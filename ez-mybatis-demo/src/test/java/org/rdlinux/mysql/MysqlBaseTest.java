@@ -40,6 +40,7 @@ public class MysqlBaseTest {
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
         EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
+        ezMybatisConfig.setEscapeKeyword(true);
         EzMybatisContent.init(ezMybatisConfig);
         EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
             @Override

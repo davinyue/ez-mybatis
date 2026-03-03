@@ -30,7 +30,7 @@ public class MySqlDbTableConverter extends AbstractConverter<DbTable> implements
     @Override
     protected void doBuildSql(Type type, DbTable table, SqlGenerateContext sqlGenerateContext) {
         Configuration configuration = sqlGenerateContext.getConfiguration();
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         String schema = table.getSchema(configuration);
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (schema != null && !schema.isEmpty()) {
