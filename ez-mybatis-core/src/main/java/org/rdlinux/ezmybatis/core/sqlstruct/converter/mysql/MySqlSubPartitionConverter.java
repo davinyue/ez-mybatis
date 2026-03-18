@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
@@ -25,10 +24,8 @@ public class MySqlSubPartitionConverter extends AbstractConverter<SubPartition> 
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SubPartition partition, MybatisParamHolder mybatisParamHolder) {
-        return MySqlNormalPartitionConverter.getInstance().doBuildSql(type, sqlBuilder, configuration, partition,
-                mybatisParamHolder);
+    protected void doBuildSql(Type type, SubPartition partition, SqlGenerateContext sqlGenerateContext) {
+        MySqlNormalPartitionConverter.getInstance().doBuildSql(type, partition, sqlGenerateContext);
     }
 
     @Override

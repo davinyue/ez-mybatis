@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
@@ -30,27 +30,27 @@ public class OracleArgCompareArgConditionConverter extends MySqlArgCompareArgCon
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       ArgCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
-
+    protected void doBuildSql(Type type, ArgCompareArgCondition obj, SqlGenerateContext sqlGenerateContext) {
         Operator operator = obj.getOperator();
         if (operator == Operator.regexp) {
             Operand leftValue = obj.getLeftValue();
             if (leftValue instanceof EntityField) {
-                EzMybatisContent.setCurrentAccessField((EntityField) leftValue);
+                sqlGenerateContext.pushAccessField((EntityField) leftValue);
             }
-            Converter<? extends Operand> leftConverter = EzMybatisContent.getConverter(configuration, leftValue.getClass());
-            StringBuilder leftSql = new StringBuilder();
-            leftSql.append(" REGEXP_LIKE(").append(leftConverter.buildSql(type, new StringBuilder(), configuration, leftValue,
-                    mybatisParamHolder)).append(", ");
+            Configuration configuration = sqlGenerateContext.getConfiguration();
+            Converter<? extends Operand> leftConverter = EzMybatisContent.getConverter(configuration,
+                    leftValue.getClass());
+            StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
+            sqlBuilder.append(" REGEXP_LIKE(");
+            leftConverter.buildSql(type, leftValue, sqlGenerateContext);
+            sqlBuilder.append(", ");
             Operand value = obj.getRightValue();
             Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                     value.getClass());
-            leftSql.append(argConverter.buildSql(type, new StringBuilder(), configuration, value, mybatisParamHolder))
-                    .append(") ");
-            return sqlBuilder.append(leftSql);
+            argConverter.buildSql(type, value, sqlGenerateContext);
+            sqlBuilder.append(") ");
         } else {
-            return super.doBuildSql(type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            super.doBuildSql(type, obj, sqlGenerateContext);
         }
 
     }

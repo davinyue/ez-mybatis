@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.WindowFunction;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
@@ -483,12 +484,21 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .where().addFieldCondition(User.Fields.sex, User.Sex.WOMAN).done()
                 .build();
 
+        EzQuery<User> q3 = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+                .select().addAll().done()
+                .where().addFieldCondition(User.Fields.sex, User.Sex.WOMAN).done()
+                .unionAll(q2)
+                .build();
+
         EzQuery<User> unionQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
                 .where().addFieldCondition(User.Fields.name, "NonExistent").done() // Main query empty
                 .union(q1)
-                .unionAll(q2)
+                .unionAll(q3)
                 .page(1, 10)
+                .orderBy()
+                .addField(User.Fields.name)
+                .done()
                 .build();
 
         List<User> users = sqlSession.getMapper(EzMapper.class).query(unionQuery);
@@ -590,6 +600,84 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .select().addAll().done().limit(1).build();
         User user = sqlSession.getMapper(EzMapper.class).queryOne(query);
         log.info("EzQuery One: {}", JacksonUtils.toJsonString(user));
+        sqlSession.close();
+    }
+
+    @Test
+    public void ezQueryWindowFunction() {
+        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        this.ensureData(sqlSession);
+        EntityTable table = EntityTable.of(User.class);
+
+        // 1. 无 partition, 无 order, 无 frame
+        Function countFunc1 = Function.builder(table).setFunName("COUNT").addFieldArg(BaseEntity.Fields.id).build();
+        WindowFunction wf1 = WindowFunction.builder(table, countFunc1).build();
+
+        // 2. 多个 partition, 多个 order
+        Function rowNumFunc = Function.builder(table).setFunName("ROW_NUMBER").build();
+        WindowFunction wf2 = WindowFunction.builder(table, rowNumFunc)
+                .partitionByField(User.Fields.sex)
+                .partitionByField(User.Fields.userAge)
+                .orderByField(User.Fields.name, OrderType.ASC)
+                .orderByField(BaseEntity.Fields.createTime, OrderType.DESC)
+                .build();
+
+        // 3. ROWS 各种场景
+        Function sumAgeFunc = Function.builder(table).setFunName("SUM").addFieldArg(User.Fields.userAge).build();
+
+        // UNBOUNDED PRECEDING to CURRENT ROW
+        WindowFunction wf3 = WindowFunction.builder(table, sumAgeFunc)
+                .partitionByField(User.Fields.sex)
+                .orderByField(User.Fields.userAge, OrderType.ASC)
+                .rowsBetween(WindowFunction.WindowFrameBound.unboundedPreceding(), WindowFunction.WindowFrameBound.currentRow())
+                .build();
+
+        // 2 PRECEDING to 2 FOLLOWING
+        WindowFunction wf4 = WindowFunction.builder(table, sumAgeFunc)
+                .partitionByField(User.Fields.sex)
+                .orderByField(User.Fields.userAge, OrderType.ASC)
+                .rowsBetween(WindowFunction.WindowFrameBound.preceding(2), WindowFunction.WindowFrameBound.following(2))
+                .build();
+
+        // CURRENT ROW to UNBOUNDED FOLLOWING
+        WindowFunction wf5 = WindowFunction.builder(table, sumAgeFunc)
+                .partitionByField(User.Fields.sex)
+                .orderByField(User.Fields.userAge, OrderType.ASC)
+                .rowsBetween(WindowFunction.WindowFrameBound.currentRow(), WindowFunction.WindowFrameBound.unboundedFollowing())
+                .build();
+
+        // UNBOUNDED PRECEDING to UNBOUNDED FOLLOWING
+        WindowFunction wf6 = WindowFunction.builder(table, sumAgeFunc)
+                .partitionByField(User.Fields.sex)
+                .orderByField(User.Fields.userAge, OrderType.ASC)
+                .rowsBetween(WindowFunction.WindowFrameBound.unboundedPreceding(), WindowFunction.WindowFrameBound.unboundedFollowing())
+                .build();
+
+        // 4. RANGE 场景
+        WindowFunction wf7 = WindowFunction.builder(table, sumAgeFunc)
+                .partitionByField(User.Fields.sex)
+                .orderByField(User.Fields.userAge, OrderType.ASC)
+                .rangeBetween(WindowFunction.WindowFrameBound.unboundedPreceding(), WindowFunction.WindowFrameBound.currentRow())
+                .build();
+
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+                .select()
+                .addField(User.Fields.name)
+                .addField(User.Fields.sex)
+                .addField(User.Fields.userAge)
+                .addWindowFunction(wf1, "totalCount")
+                .addWindowFunction(wf2, "rn")
+                .addWindowFunction(wf3, "sumAge_unbounded_current")
+                .addWindowFunction(wf4, "sumAge_2_preceding_following")
+                .addWindowFunction(wf5, "sumAge_current_unbounded")
+                .addWindowFunction(wf6, "sumAge_unbounded_unbounded")
+                .addWindowFunction(wf7, "sumAge_range")
+                .done()
+                .limit(10)
+                .build();
+
+        List<StringHashMap> maps = sqlSession.getMapper(EzMapper.class).query(query);
+        log.info("EzQuery WindowFunction: {}", JacksonUtils.toJsonString(maps));
         sqlSession.close();
     }
 }

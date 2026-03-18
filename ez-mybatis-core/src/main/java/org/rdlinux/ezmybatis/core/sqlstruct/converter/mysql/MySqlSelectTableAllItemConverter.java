@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
@@ -35,14 +35,15 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SelectTableAllItem ojb, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, SelectTableAllItem ojb, SqlGenerateContext sqlGenerateContext) {
         boolean execExcludeField = false;
         if (ojb.getTable() instanceof EntityTable) {
-            if (ojb.getExcludeField() != null && ojb.getExcludeField().size() > 0) {
+            if (ojb.getExcludeField() != null && !ojb.getExcludeField().isEmpty()) {
                 execExcludeField = true;
             }
         }
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (execExcludeField) {
             EntityTable table = (EntityTable) ojb.getTable();
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, table.getEtType());
@@ -50,7 +51,7 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
             fieldInfos = fieldInfos.stream().filter(e -> !ojb.getExcludeField().contains(e.getFieldName()))
                     .collect(Collectors.toList());
             Assert.notEmpty(fieldInfos, "No valid select item");
-            String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+            String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
             for (int i = 0; i < fieldInfos.size(); i++) {
                 EntityFieldInfo fieldInfo = fieldInfos.get(i);
                 sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".").append(keywordQM)
@@ -61,9 +62,8 @@ public class MySqlSelectTableAllItemConverter extends AbstractConverter<SelectTa
                     sqlBuilder.append(" ");
                 }
             }
-            return sqlBuilder;
         } else {
-            return sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".* ");
+            sqlBuilder.append(" ").append(ojb.getTable().getAlias()).append(".* ");
         }
     }
 

@@ -12,15 +12,18 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisOnBuildSqlGetFieldListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
 import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
+import org.rdlinux.ezmybatis.demo.entity.User;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
 
@@ -31,16 +34,40 @@ public class MysqlBaseTest {
     static {
 
         String resource = "mybatis-config-mysql.xml";
-        Reader reader = null;
+        Reader reader;
         try {
             reader = Resources.getResourceAsReader(resource);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         XMLConfigBuilder parser = new XMLConfigBuilder(reader, null, null);
         Configuration configuration = parser.parse();
         EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
+        ezMybatisConfig.setEscapeKeyword(true);
         EzMybatisContent.init(ezMybatisConfig);
+        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, new EzMybatisOnBuildSqlGetFieldListener() {
+            @Override
+            public Object onGet(boolean isSimple, Class<?> ntType, Field field, Object value) {
+                if (isSimple) {
+                    return value;
+                }
+                if (ntType == User.class) {
+                    if (field.getName().equals(User.Fields.name)) {
+                        MysqlBaseTest.log.info("处理参数{}的加密", field.getName());
+                        return "name$" + value;
+                    } else if (field.getName().equals(User.Fields.email)) {
+                        MysqlBaseTest.log.info("处理参数{}的加密", field.getName());
+                        return "email$" + value;
+                    }
+                }
+                return value;
+            }
+
+            @Override
+            public int order() {
+                return 1;
+            }
+        });
         EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
             @Override
             public void onInsert(Object entity) {
@@ -48,6 +75,10 @@ public class MysqlBaseTest {
                     MysqlBaseTest.log.info("插入事件");
                     ((BaseEntity) entity).setUpdateTime(new Date());
                     ((BaseEntity) entity).setCreateTime(new Date());
+                    if (entity instanceof User) {
+                        ((User) entity).setName("name$" + ((User) entity).getName());
+                        ((User) entity).setEmail("email$" + ((User) entity).getEmail());
+                    }
                 }
             }
 
@@ -124,7 +155,8 @@ public class MysqlBaseTest {
                 ezUpdates.forEach(this::onEzUpdate);
             }
         });
-        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (originObj, ntType, field, value) -> {
+        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (originObj, ntType,
+                                                                         field, value) -> {
             log.info("构建sql时获取{}类的{}属性值为{}", ntType.getSimpleName(), field.getName(), value);
             return value;
         });

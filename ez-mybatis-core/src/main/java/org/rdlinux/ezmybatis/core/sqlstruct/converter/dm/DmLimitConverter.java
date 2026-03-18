@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,12 +24,11 @@ public class DmLimitConverter extends AbstractConverter<Limit> implements Conver
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Limit limit, SqlGenerateContext sqlGenerateContext) {
         if (limit == null) {
-            return sqlBuilder;
+            return;
         }
-        return sqlBuilder.append(" FETCH FIRST ").append(limit.getSize()).append(" ROWS ONLY ");
+        sqlGenerateContext.getSqlBuilder().append(" FETCH FIRST ").append(limit.getSize()).append(" ROWS ONLY ");
     }
 
     @Override

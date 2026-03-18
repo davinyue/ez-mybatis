@@ -7,7 +7,6 @@ import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbKeywordQMFactory;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.ArrayList;
@@ -33,10 +32,6 @@ public class EzContentConfig {
      * mybatis update拦截器
      */
     private EzMybatisUpdateInterceptor updateInterceptor;
-    /**
-     * 关键词转义符号获取工厂
-     */
-    private DbKeywordQMFactory dbKeywordQMFactory;
     /**
      * 数据库类型
      */

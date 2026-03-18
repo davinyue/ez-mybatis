@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter;
 
-import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
@@ -10,7 +9,7 @@ public abstract class AbstractConverter<Obj extends SqlStruct> implements Conver
     /**
      * 实体类型
      */
-    private Class<?> objClass;
+    private final Class<?> objClass;
 
     public AbstractConverter() {
         this.objClass = ReflectionUtils.getGenericSuperclass(this.getClass(), 0);
@@ -18,21 +17,20 @@ public abstract class AbstractConverter<Obj extends SqlStruct> implements Conver
 
     @Override
     @SuppressWarnings("unchecked")
-    public StringBuilder buildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Object struct,
-                                  MybatisParamHolder mybatisParamHolder) {
+    public void buildSql(Type type, Object sp, SqlGenerateContext sqlGenerateContext) {
         Assert.notNull(type, "type can not be null");
-        Assert.notNull(sqlBuilder, "sqlBuilder can not be null");
-        Assert.notNull(configuration, "configuration can not be null");
-        Assert.notNull(mybatisParamHolder, "mybatisParamHolder can not be null");
-        if (struct == null) {
-            return sqlBuilder;
+        Assert.notNull(sqlGenerateContext, "sqlGenerateContext can not be null");
+        Assert.notNull(sqlGenerateContext.getSqlBuilder(), "sqlBuilder can not be null");
+        Assert.notNull(sqlGenerateContext.getConfiguration(), "configuration can not be null");
+        Assert.notNull(sqlGenerateContext.getMybatisParamHolder(), "mybatisParamHolder can not be null");
+        if (sp == null) {
+            return;
         }
-        if (!this.objClass.isAssignableFrom(struct.getClass())) {
+        if (!this.objClass.isAssignableFrom(sp.getClass())) {
             throw new IllegalArgumentException("Unsupported operation");
         }
-        return this.doBuildSql(type, sqlBuilder, configuration, (Obj) struct, mybatisParamHolder);
+        this.doBuildSql(type, (Obj) sp, sqlGenerateContext);
     }
 
-    protected abstract StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                                Obj obj, MybatisParamHolder mybatisParamHolder);
+    protected abstract void doBuildSql(Type type, Obj obj, SqlGenerateContext sqlGenerateContext);
 }

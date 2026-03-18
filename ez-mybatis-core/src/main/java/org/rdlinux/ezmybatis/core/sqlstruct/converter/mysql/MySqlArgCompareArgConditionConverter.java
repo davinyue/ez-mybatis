@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.MultipleRetOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
@@ -35,52 +35,58 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       ArgCompareArgCondition obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, ArgCompareArgCondition obj, SqlGenerateContext sqlGenerateContext) {
         Operand leftValue = obj.getLeftValue();
         if (leftValue instanceof EntityField) {
-            EzMybatisContent.setCurrentAccessField((EntityField) leftValue);
+            sqlGenerateContext.pushAccessField((EntityField) leftValue);
         }
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         Converter<? extends Operand> leftConverter = EzMybatisContent.getConverter(configuration, leftValue.getClass());
-        StringBuilder leftSql = new StringBuilder();
-        leftSql.append(" ").append(leftConverter.buildSql(type, new StringBuilder(), configuration, leftValue,
-                mybatisParamHolder)).append(" ");
+        StringBuilder leftSql = new StringBuilder(" ");
+        SqlGenerateContext leftSqlContent = SqlGenerateContext.copyOf(sqlGenerateContext, leftSql);
+        leftConverter.buildSql(type, leftValue, leftSqlContent);
+        leftSql.append(" ");
         Operator operator = obj.getOperator();
         StringBuilder ret;
         if (operator == Operator.isNull || operator == Operator.isNotNull) {
             ret = this.isNullBuild(leftSql, sqlBuilder, obj);
         } else if (operator == Operator.between || operator == Operator.notBetween) {
-            ret = this.isBetweenBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            ret = this.isBetweenBuild(leftSql, type, obj, sqlGenerateContext);
         } else if (operator == Operator.in || operator == Operator.notIn) {
-            ret = this.inBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            ret = this.inBuild(leftSql, type, obj, sqlGenerateContext);
         } else {
-            ret = this.normalBuild(leftSql, type, sqlBuilder, configuration, obj, mybatisParamHolder);
+            ret = this.normalBuild(leftSql, type, obj, sqlGenerateContext);
         }
         if (leftValue instanceof EntityField) {
-            EzMybatisContent.cleanCurrentAccessField();
+            sqlGenerateContext.popAccessField();
         }
-        return ret;
+        sqlGenerateContext.setSqlBuilder(ret);
     }
 
-    private StringBuilder normalBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                      Configuration configuration, ArgCompareArgCondition obj,
-                                      MybatisParamHolder mybatisParamHolder) {
+    private StringBuilder normalBuild(StringBuilder leftSql, Type type, ArgCompareArgCondition obj,
+                                      SqlGenerateContext sqlGenerateContext) {
         Operator operator = obj.getOperator();
         Operand value = obj.getRightValue();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                 value.getClass());
+        SqlGenerateContext argSqlCt = SqlGenerateContext.copyOf(sqlGenerateContext);
+        argConverter.buildSql(type, value, argSqlCt);
         return sqlBuilder.append(" ")
                 .append(leftSql)
                 .append(" ")
                 .append(this.getOperatorStr(operator))
                 .append(" ")
-                .append(argConverter.buildSql(type, new StringBuilder(), configuration, value, mybatisParamHolder))
+                .append(argSqlCt.getSqlBuilder())
                 .append(" ");
     }
 
-    private StringBuilder inBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                  Configuration configuration, ArgCompareArgCondition obj,
-                                  MybatisParamHolder mybatisParamHolder) {
+    private StringBuilder inBuild(StringBuilder leftSql, Type type, ArgCompareArgCondition obj,
+                                  SqlGenerateContext sqlGenerateContext) {
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         Operator operator = obj.getOperator();
         if (obj.getRightValues().size() == 1) {
             if (!(obj.getRightValues().get(0) instanceof MultipleRetOperand)) {
@@ -104,8 +110,9 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
             Operand arg = obj.getRightValues().get(i);
             Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
                     arg.getClass());
-            sqlBuilder.append(argConverter.buildSql(type, new StringBuilder(), configuration, arg,
-                    mybatisParamHolder));
+            SqlGenerateContext argSqlCt = SqlGenerateContext.copyOf(sqlGenerateContext);
+            argConverter.buildSql(type, arg, argSqlCt);
+            sqlBuilder.append(argSqlCt.getSqlBuilder());
             if (i + 1 < obj.getRightValues().size()) {
                 sqlBuilder.append(", ");
             }
@@ -117,24 +124,30 @@ public class MySqlArgCompareArgConditionConverter extends AbstractConverter<ArgC
         return sqlBuilder;
     }
 
-    private StringBuilder isBetweenBuild(StringBuilder leftSql, Type type, StringBuilder sqlBuilder,
-                                         Configuration configuration, ArgCompareArgCondition obj,
-                                         MybatisParamHolder mybatisParamHolder) {
+    private StringBuilder isBetweenBuild(StringBuilder leftSql, Type type, ArgCompareArgCondition obj,
+                                         SqlGenerateContext sqlGenerateContext) {
         Operator operator = obj.getOperator();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+
         Converter<? extends Operand> minArgConverter = EzMybatisContent.getConverter(configuration,
                 obj.getMinValue().getClass());
         Converter<? extends Operand> maxArgConverter = EzMybatisContent.getConverter(configuration,
                 obj.getMaxValue().getClass());
+
+        SqlGenerateContext minSqlCt = SqlGenerateContext.copyOf(sqlGenerateContext);
+        minArgConverter.buildSql(type, obj.getMinValue(), minSqlCt);
+
+        SqlGenerateContext maxSqlCt = SqlGenerateContext.copyOf(sqlGenerateContext);
+        maxArgConverter.buildSql(type, obj.getMaxValue(), maxSqlCt);
         return sqlBuilder.append(" ")
                 .append(leftSql)
                 .append(" ")
                 .append(this.getOperatorStr(operator))
                 .append(" ")
-                .append(minArgConverter.buildSql(type, new StringBuilder(), configuration, obj.getMinValue(),
-                        mybatisParamHolder))
+                .append(minSqlCt.getSqlBuilder())
                 .append(" AND ")
-                .append(maxArgConverter.buildSql(type, new StringBuilder(), configuration, obj.getMaxValue(),
-                        mybatisParamHolder)).append(" ");
+                .append(maxSqlCt.getSqlBuilder()).append(" ");
     }
 
     private StringBuilder isNullBuild(StringBuilder leftSql, StringBuilder sqlBuilder, ArgCompareArgCondition obj) {

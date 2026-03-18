@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,13 +24,13 @@ public class SqlServerLimitConverter extends AbstractConverter<Limit> implements
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Limit limit, SqlGenerateContext sqlGenerateContext) {
         if (limit == null) {
-            return sqlBuilder;
+            return;
         }
         //OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
-        return sqlBuilder.append("OFFSET 0 ROWS FETCH NEXT ").append(limit.getSize()).append(" ROWS ONLY ");
+        sqlGenerateContext.getSqlBuilder().append("OFFSET 0 ROWS FETCH NEXT ").append(limit.getSize())
+                .append(" ROWS ONLY ");
     }
 
     @Override

@@ -5,20 +5,20 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.TypeHandler;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * JDBC-based update operations.
@@ -145,7 +145,7 @@ public class JdbcUpdateDao {
     /**
      * Batch update records in the specified table
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private int doUpdate(Table table, Collection<?> models, Collection<String> updateFields, boolean isReplace) {
         Connection connection = this.sqlSession.getConnection();
         Configuration configuration = this.sqlSession.getConfiguration();
@@ -159,9 +159,13 @@ public class JdbcUpdateDao {
                 }
             }
         }
+        Map<String, Object> mybatisParam = new HashMap<>();
+        mybatisParam.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, configuration);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(mybatisParam);
         long start = System.currentTimeMillis();
-        EzJdbcBatchSql jdbcBatchSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getJdbcBatchUpdateSql(configuration, table, models, updateFields, isReplace);
+        EzJdbcBatchSql jdbcBatchSql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+                .getSqlGenerate()
+                .getJdbcBatchUpdateSql(sqlGenerateContext, table, models, updateFields, isReplace);
         long end = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
             log.debug("SQL construction takes: " + (end - start) + "ms");
@@ -186,7 +190,7 @@ public class JdbcUpdateDao {
             int[] intRets;
             if (jdbcBatchSql.getBatchParams().size() == 1) {
                 statement.execute();
-                intRets = new int[] { 1 };
+                intRets = new int[]{1};
             } else {
                 intRets = statement.executeBatch();
             }
@@ -211,7 +215,7 @@ public class JdbcUpdateDao {
             return ret;
         } catch (SQLException e) {
             log.error(String.format("SQL execution failed,  the SQL statement is \"%s\"," +
-                    " the error message is \"%s\", the error code is %d", jdbcBatchSql.getSql(), e.getMessage(),
+                            " the error message is \"%s\", the error code is %d", jdbcBatchSql.getSql(), e.getMessage(),
                     e.getErrorCode()));
             throw new RuntimeException(e);
         }
