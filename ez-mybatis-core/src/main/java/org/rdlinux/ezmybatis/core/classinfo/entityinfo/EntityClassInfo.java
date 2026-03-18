@@ -36,6 +36,13 @@ public interface EntityClassInfo {
      */
     Map<String, EntityFieldInfo> getColumnMapFieldInfo();
 
+
+    /**
+     * 获取列与属性信息映射
+     */
+    Map<String, EntityFieldInfo> getFiledNameMapFieldInfo();
+
+
     /**
      * 根据列名获取属性名
      */

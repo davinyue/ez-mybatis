@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -30,8 +29,8 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Function ojb,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Function ojb, SqlGenerateContext sqlGenerateContext) {
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(" ").append(SqlEscaping.nameEscaping(ojb.getFunName())).append("(");
         List<Function.FunArg> funArgs = ojb.getFunArgs();
         if (funArgs != null && !funArgs.isEmpty()) {
@@ -40,16 +39,15 @@ public class MySqlFunctionConverter extends AbstractConverter<Function> implemen
                 if (arg.isDistinct()) {
                     sqlBuilder.append(" DISTINCT ");
                 }
-                Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration,
-                        arg.getArgValue().getClass());
-                converter.buildSql(type, sqlBuilder, configuration, arg.getArgValue(), mybatisParamHolder);
+                Converter<? extends Operand> converter = EzMybatisContent
+                        .getConverter(sqlGenerateContext.getConfiguration(), arg.getArgValue().getClass());
+                converter.buildSql(type, arg.getArgValue(), sqlGenerateContext);
                 if (i + 1 < funArgs.size()) {
                     sqlBuilder.append(", ");
                 }
             }
         }
         sqlBuilder.append(") ");
-        return sqlBuilder;
     }
 
     @Override

@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -27,13 +26,12 @@ public class SqlServerTableColumnConverter extends AbstractConverter<TableColumn
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       TableColumn obj, MybatisParamHolder mybatisParamHolder) {
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+    protected void doBuildSql(Type type, TableColumn obj, SqlGenerateContext sqlGenerateContext) {
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         if (type == Type.SELECT) {
-            sqlBuilder.append(obj.getTable().getAlias()).append(".");
+            sqlGenerateContext.getSqlBuilder().append(obj.getTable().getAlias()).append(".");
         }
-        return sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(obj.getColumn()))
+        sqlGenerateContext.getSqlBuilder().append(keywordQM).append(SqlEscaping.nameEscaping(obj.getColumn()))
                 .append(keywordQM);
     }
 

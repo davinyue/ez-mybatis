@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.SqlCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,9 +24,8 @@ public class MySqlSqlConditionConverter extends AbstractConverter<SqlCondition> 
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SqlCondition obj, MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder.append(" ").append(obj.getSql()).append(" ");
+    protected void doBuildSql(Type type, SqlCondition obj, SqlGenerateContext sqlGenerateContext) {
+        sqlGenerateContext.getSqlBuilder().append(" ").append(obj.getSql()).append(" ");
     }
 
     @Override

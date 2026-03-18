@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
@@ -25,9 +24,8 @@ public class MySqlSelectAllItemConverter extends AbstractConverter<SelectAllItem
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration
-            , SelectAllItem ojb, MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder.append(" * ");
+    protected void doBuildSql(Type type, SelectAllItem ojb, SqlGenerateContext sqlGenerateContext) {
+        sqlGenerateContext.getSqlBuilder().append(" * ");
     }
 
     @Override

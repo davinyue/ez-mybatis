@@ -5,9 +5,9 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ColumnHandler {
+public @interface TypeHandler {
     /**
-     * 指定类需要继承自{@link org.apache.ibatis.type.TypeHandler}
+     * 指定的类型处理器需要继承自{@code org.apache.ibatis.type.TypeHandler}
      */
     Class<?> value();
 }

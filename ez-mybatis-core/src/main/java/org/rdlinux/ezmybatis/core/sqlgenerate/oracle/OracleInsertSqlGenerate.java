@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
@@ -26,12 +25,12 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
     }
 
     @Override
-    public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+    public String getBatchInsertSql(SqlGenerateContext sqlGenerateContext,
                                     Table table, Collection<Object> models) {
         Assert.notEmpty(models, "models cannot be empty");
         StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
         for (Object entity : models) {
-            String insertSql = this.getInsertSql(configuration, mybatisParamHolder, table, entity);
+            String insertSql = this.getInsertSql(sqlGenerateContext, table, entity);
             sqlBuilder.append(insertSql).append(";\n");
         }
         sqlBuilder.append("END;");

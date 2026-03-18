@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.QueryRetOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -28,18 +28,18 @@ public class MySqlSelectOperandConverter extends AbstractConverter<SelectOperand
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SelectOperand obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, SelectOperand obj, SqlGenerateContext sqlGenerateContext) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         Converter<? extends QueryRetOperand> converter = EzMybatisContent.getConverter(configuration,
                 obj.getOperand().getClass());
-        converter.buildSql(type, sqlBuilder, configuration, obj.getOperand(), mybatisParamHolder);
+        converter.buildSql(type, obj.getOperand(), sqlGenerateContext);
         String alias = obj.getAlias();
         if (alias != null && !alias.isEmpty()) {
-            String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+            String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
             sqlBuilder.append(" ").append(keywordQM).append(SqlEscaping.nameEscaping(alias)).append(keywordQM)
                     .append(" ");
         }
-        return sqlBuilder;
     }
 
     @Override
