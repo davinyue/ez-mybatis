@@ -79,6 +79,7 @@ public class DmDialectProvider extends AbstractDbDialectProvider {
         addConverter(Formula.class, DmFormulaConverter.getInstance());
         addConverter(GroupFormulaElement.class, DmGroupFormulaElementConverter.getInstance());
         addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
+        addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
         addConverter(Union.class, DmUnionConverter.getInstance());
         addConverter(Alias.class, MySqlAliasConverter.getInstance());
         addConverter(TableColumn.class, MySqlTableColumnConverter.getInstance());

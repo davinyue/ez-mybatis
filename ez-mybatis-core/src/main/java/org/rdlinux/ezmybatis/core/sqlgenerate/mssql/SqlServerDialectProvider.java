@@ -78,6 +78,7 @@ public class SqlServerDialectProvider extends AbstractDbDialectProvider {
         addConverter(Formula.class, MySqlFormulaConverter.getInstance());
         addConverter(GroupFormulaElement.class, MySqlGroupFormulaElementConverter.getInstance());
         addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
+        addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
         addConverter(Union.class, MySqlUnionConverter.getInstance());
         addConverter(Alias.class, MySqlAliasConverter.getInstance());
         addConverter(TableColumn.class, SqlServerTableColumnConverter.getInstance());

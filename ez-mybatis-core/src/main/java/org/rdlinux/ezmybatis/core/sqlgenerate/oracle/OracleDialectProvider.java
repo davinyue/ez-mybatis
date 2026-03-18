@@ -78,6 +78,7 @@ public class OracleDialectProvider extends AbstractDbDialectProvider {
         addConverter(Formula.class, OracleFormulaConverter.getInstance());
         addConverter(GroupFormulaElement.class, OracleGroupFormulaElementConverter.getInstance());
         addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
+        addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
         addConverter(Union.class, OracleUnionConverter.getInstance());
         addConverter(Alias.class, MySqlAliasConverter.getInstance());
         addConverter(TableColumn.class, MySqlTableColumnConverter.getInstance());
