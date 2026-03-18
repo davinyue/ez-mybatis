@@ -1,12 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -37,33 +36,31 @@ public class MySqlUpdateColumnItemConverter extends AbstractConverter<UpdateColu
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       UpdateColumnItem obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, UpdateColumnItem obj, SqlGenerateContext sqlGenerateContext) {
         String column = obj.getColumn();
         EntityFieldInfo entityFieldInfo = null;
         if (obj.getTable() instanceof EntityTable) {
-            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration,
+            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(sqlGenerateContext.getConfiguration(),
                     ((EntityTable) obj.getTable()).getEtType());
             entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(column);
             if (entityFieldInfo != null) {
-                EzMybatisContent.setCurrentAccessField(EntityField.of((EntityTable) obj.getTable(),
+                sqlGenerateContext.pushAccessField(EntityField.of((EntityTable) obj.getTable(),
                         entityFieldInfo.getFieldName()));
             }
         }
-        Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(configuration,
+        Converter<? extends Operand> argConverter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(),
                 obj.getValue().getClass());
-        StringBuilder valueSql = argConverter.buildSql(type, new StringBuilder(), configuration, obj.getValue(),
-                mybatisParamHolder);
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         if (this.appendAlias()) {
-            sqlBuilder.append(obj.getTable().getAlias()).append(".");
+            sqlGenerateContext.getSqlBuilder().append(obj.getTable().getAlias()).append(".");
         }
-        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(column))
-                .append(keywordQM).append(" = ").append(valueSql);
+        sqlGenerateContext.getSqlBuilder().append(keywordQM).append(SqlEscaping.nameEscaping(column))
+                .append(keywordQM).append(" = ");
+        argConverter.buildSql(type, obj.getValue(), sqlGenerateContext);
         if (entityFieldInfo != null) {
-            EzMybatisContent.cleanCurrentAccessField();
+            sqlGenerateContext.popAccessField();
         }
-        return sqlBuilder;
     }
 
     @Override

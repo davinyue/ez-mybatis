@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 @Getter
@@ -50,5 +51,9 @@ public abstract class AbstractTable implements Table {
     @Override
     public String getSchema(Configuration configuration) {
         return this.schema;
+    }
+
+    public TableColumn column(String column) {
+        return TableColumn.of(this, column);
     }
 }

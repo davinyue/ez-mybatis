@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.From;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -27,14 +26,15 @@ public class MySqlFromConverter extends AbstractConverter<From> implements Conve
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, From from,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, From from, SqlGenerateContext sqlGenerateContext) {
         Table fromTable = from.getTable();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (type == Type.SELECT || type == Type.DELETE) {
             sqlBuilder.append(" FROM ");
         }
-        Converter<?> converter = EzMybatisContent.getConverter(configuration, fromTable.getClass());
-        return converter.buildSql(type, sqlBuilder, configuration, fromTable, mybatisParamHolder);
+        Converter<?> converter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(),
+                fromTable.getClass());
+        converter.buildSql(type, fromTable, sqlGenerateContext);
     }
 
     @Override

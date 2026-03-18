@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -26,9 +25,8 @@ public class MySqlKeywordsConverter extends AbstractConverter<Keywords> implemen
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       Keywords obj, MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder.append(SqlEscaping.nameEscaping(obj.getKeywords()));
+    protected void doBuildSql(Type type, Keywords obj, SqlGenerateContext sqlGenerateContext) {
+        sqlGenerateContext.getSqlBuilder().append(SqlEscaping.nameEscaping(obj.getKeywords()));
     }
 
     @Override

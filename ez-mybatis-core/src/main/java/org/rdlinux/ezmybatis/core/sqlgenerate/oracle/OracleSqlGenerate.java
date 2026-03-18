@@ -1,12 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -29,105 +28,100 @@ public class OracleSqlGenerate implements SqlGenerate {
     }
 
     @Override
-    public String getInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+    public String getInsertSql(SqlGenerateContext sqlGenerateContext, Table table,
                                Object entity) {
-        return OracleInsertSqlGenerate.getInstance().getInsertSql(configuration, mybatisParamHolder, table, entity);
+        return OracleInsertSqlGenerate.getInstance().getInsertSql(sqlGenerateContext, table, entity);
     }
 
     @Override
-    public String getBatchInsertSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+    public String getBatchInsertSql(SqlGenerateContext sqlGenerateContext,
                                     Table table, Collection<Object> models) {
-        return OracleInsertSqlGenerate.getInstance().getBatchInsertSql(configuration, mybatisParamHolder, table,
-                models);
+        return OracleInsertSqlGenerate.getInstance().getBatchInsertSql(sqlGenerateContext, table, models);
     }
 
     @Override
-    public EzJdbcBatchSql getJdbcBatchInsertSql(Configuration configuration, Table table, Collection<?> models) {
-        return OracleInsertSqlGenerate.getInstance().getJdbcBatchInsertSql(configuration, table, models);
+    public EzJdbcBatchSql getJdbcBatchInsertSql(SqlGenerateContext sqlGenerateContext, Table table, Collection<?> models) {
+        return OracleInsertSqlGenerate.getInstance().getJdbcBatchInsertSql(sqlGenerateContext, table, models);
     }
 
     @Override
-    public String getInsertByQuerySql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+    public String getInsertByQuerySql(SqlGenerateContext sqlGenerateContext, Table table,
                                       EzQuery<?> query) {
-        return OracleInsertSqlGenerate.getInstance().getInsertByQuerySql(configuration, mybatisParamHolder, table,
+        return OracleInsertSqlGenerate.getInstance().getInsertByQuerySql(sqlGenerateContext, table,
                 query);
     }
 
     @Override
-    public String getSelectByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
-                                   Class<?> ntClass, Object id) {
-        return OracleSelectSqlGenerate.getInstance().getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
+    public String getSelectByIdSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass, Object id) {
+        return OracleSelectSqlGenerate.getInstance().getSelectByIdSql(sqlGenerateContext, table, ntClass, id);
     }
 
     @Override
-    public String getSelectByIdsSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
-                                    Class<?> ntClass, Collection<?> ids) {
-        return OracleSelectSqlGenerate.getInstance().getSelectByIdsSql(configuration, paramHolder, table, ntClass, ids);
+    public String getSelectByIdsSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass,
+                                    Collection<?> ids) {
+        return OracleSelectSqlGenerate.getInstance().getSelectByIdsSql(sqlGenerateContext, table, ntClass, ids);
     }
 
     @Override
-    public String getQuerySql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
-        return OracleSelectSqlGenerate.getInstance().getQuerySql(configuration, paramHolder, query);
+    public String getQuerySql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
+        return OracleSelectSqlGenerate.getInstance().getQuerySql(sqlGenerateContext, query);
     }
 
     @Override
-    public String getQueryCountSql(Configuration configuration, MybatisParamHolder paramHolder, EzQuery<?> query) {
-        return OracleSelectSqlGenerate.getInstance().getQueryCountSql(configuration, paramHolder, query);
+    public String getQueryCountSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
+        return OracleSelectSqlGenerate.getInstance().getQueryCountSql(sqlGenerateContext, query);
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, Table table,
+    public String getUpdateSql(SqlGenerateContext sqlGenerateContext, Table table,
                                Object entity, boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, table, entity,
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(sqlGenerateContext, table, entity,
                 isReplace);
     }
 
     @Override
-    public String getBatchUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+    public String getBatchUpdateSql(SqlGenerateContext sqlGenerateContext,
                                     Table table, Collection<Object> models, boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(configuration, mybatisParamHolder, table,
-                models, isReplace);
+        return OracleUpdateSqlGenerate.getInstance().getBatchUpdateSql(sqlGenerateContext, table, models, isReplace);
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder, EzUpdate update) {
-        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, update);
+    public String getUpdateSql(SqlGenerateContext sqlGenerateContext, EzUpdate update) {
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(sqlGenerateContext, update);
     }
 
     @Override
-    public String getUpdateSql(Configuration configuration, MybatisParamHolder mybatisParamHolder,
+    public String getUpdateSql(SqlGenerateContext sqlGenerateContext,
                                Collection<EzUpdate> updates) {
-        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(configuration, mybatisParamHolder, updates);
+        return OracleUpdateSqlGenerate.getInstance().getUpdateSql(sqlGenerateContext, updates);
     }
 
     @Override
-    public EzJdbcBatchSql getJdbcBatchUpdateSql(Configuration configuration, Table table, Collection<?> models,
+    public EzJdbcBatchSql getJdbcBatchUpdateSql(SqlGenerateContext sqlGenerateContext, Table table, Collection<?> models,
                                                 Collection<String> updateFields, boolean isReplace) {
-        return OracleUpdateSqlGenerate.getInstance().getJdbcBatchUpdateSql(configuration, table, models, updateFields,
+        return OracleUpdateSqlGenerate.getInstance().getJdbcBatchUpdateSql(sqlGenerateContext, table, models, updateFields,
                 isReplace);
     }
 
     @Override
-    public String getDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
-                                   Class<?> ntClass, Object id) {
-        return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(configuration, paramHolder, table, ntClass, id);
+    public String getDeleteByIdSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass, Object id) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteByIdSql(sqlGenerateContext, table, ntClass, id);
     }
 
     @Override
-    public String getBatchDeleteByIdSql(Configuration configuration, MybatisParamHolder paramHolder, Table table,
-                                        Class<?> ntClass, Collection<?> ids) {
-        return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(configuration, paramHolder, table, ntClass,
+    public String getBatchDeleteByIdSql(SqlGenerateContext sqlGenerateContext, Table table, Class<?> ntClass,
+                                        Collection<?> ids) {
+        return OracleDeleteSqlGenerate.getInstance().getBatchDeleteByIdSql(sqlGenerateContext, table, ntClass,
                 ids);
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder, EzDelete delete) {
-        return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, delete);
+    public String getDeleteSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteSql(sqlGenerateContext, delete);
     }
 
     @Override
-    public String getDeleteSql(Configuration configuration, MybatisParamHolder paramHolder,
-                               Collection<EzDelete> deletes) {
-        return OracleDeleteSqlGenerate.getInstance().getDeleteSql(configuration, paramHolder, deletes);
+    public String getDeleteSql(SqlGenerateContext sqlGenerateContext, Collection<EzDelete> deletes) {
+        return OracleDeleteSqlGenerate.getInstance().getDeleteSql(sqlGenerateContext, deletes);
     }
 }

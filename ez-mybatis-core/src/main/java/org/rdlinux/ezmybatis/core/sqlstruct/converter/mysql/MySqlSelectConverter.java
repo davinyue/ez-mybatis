@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -30,16 +30,17 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Select select,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Select select, SqlGenerateContext sqlGenerateContext) {
         if (select == null) {
-            return sqlBuilder;
+            return;
         }
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append("SELECT ");
         if (select.getSqlHint() != null) {
             Converter<? extends SqlHint> sqlHintConverter = EzMybatisContent.getConverter(configuration,
                     select.getSqlHint().getClass());
-            sqlHintConverter.buildSql(type, sqlBuilder, configuration, select.getSqlHint(), mybatisParamHolder);
+            sqlHintConverter.buildSql(type, select.getSqlHint(), sqlGenerateContext);
         }
         if (select.isDistinct()) {
             sqlBuilder.append("DISTINCT ");
@@ -51,13 +52,12 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
             for (int i = 0; i < selectFields.size(); i++) {
                 SelectItem selectItem = selectFields.get(i);
                 Converter<?> converter = EzMybatisContent.getConverter(configuration, selectItem.getClass());
-                sqlBuilder = converter.buildSql(type, sqlBuilder, configuration, selectItem, mybatisParamHolder);
+                converter.buildSql(type, selectItem, sqlGenerateContext);
                 if (i + 1 < selectFields.size()) {
                     sqlBuilder.append(", ");
                 }
             }
         }
-        return sqlBuilder;
     }
 
     @Override

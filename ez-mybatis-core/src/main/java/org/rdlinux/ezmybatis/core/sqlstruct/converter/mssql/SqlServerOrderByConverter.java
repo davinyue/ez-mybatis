@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlOrderByConverter;
@@ -26,16 +25,15 @@ public class SqlServerOrderByConverter extends MySqlOrderByConverter implements 
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       OrderBy orderBy, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, OrderBy orderBy, SqlGenerateContext sqlGenerateContext) {
         EzQuery<?> query = orderBy.getQuery();
         if (query.getPage() == null && query.getLimit() == null) {
-            return sqlBuilder;
+            return;
         }
         if (orderBy.getItems() == null || orderBy.getItems().isEmpty()) {
-            return sqlBuilder.append(" ORDER BY 1 ");
+            sqlGenerateContext.getSqlBuilder().append(" ORDER BY 1 ");
         } else {
-            return super.doBuildSql(type, sqlBuilder, configuration, orderBy, mybatisParamHolder);
+            super.doBuildSql(type, orderBy, sqlGenerateContext);
         }
     }
 

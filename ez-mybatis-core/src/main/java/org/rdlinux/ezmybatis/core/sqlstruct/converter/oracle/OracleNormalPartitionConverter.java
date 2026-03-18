@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
@@ -25,13 +24,11 @@ public class OracleNormalPartitionConverter extends AbstractConverter<NormalPart
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       NormalPartition partition, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, NormalPartition partition, SqlGenerateContext sqlGenerateContext) {
         if (partition == null || partition.getPartitions() == null || partition.getPartitions().isEmpty()) {
-            return sqlBuilder;
+            return;
         }
-        sqlBuilder.append(" PARTITION(").append(partition.getPartitions().get(0)).append(") ");
-        return sqlBuilder;
+        sqlGenerateContext.getSqlBuilder().append(" PARTITION(").append(partition.getPartitions().get(0)).append(") ");
     }
 
     @Override

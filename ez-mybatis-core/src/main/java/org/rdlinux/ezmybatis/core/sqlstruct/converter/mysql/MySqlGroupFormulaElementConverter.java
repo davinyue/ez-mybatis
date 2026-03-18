@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.FormulaElement;
@@ -28,17 +27,15 @@ public class MySqlGroupFormulaElementConverter extends AbstractConverter<GroupFo
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       GroupFormulaElement obj,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, GroupFormulaElement obj, SqlGenerateContext sqlGenerateContext) {
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(" ").append(obj.getOperator().getSymbol()).append(" (");
         for (FormulaElement element : obj.getElements()) {
-            Converter<? extends FormulaElement> converter = EzMybatisContent.getConverter(configuration,
-                    element.getClass());
-            converter.buildSql(type, sqlBuilder, configuration, element, mybatisParamHolder);
+            Converter<? extends FormulaElement> converter = EzMybatisContent
+                    .getConverter(sqlGenerateContext.getConfiguration(), element.getClass());
+            converter.buildSql(type, element, sqlGenerateContext);
         }
         sqlBuilder.append(") ");
-        return sqlBuilder;
     }
 
     @Override
