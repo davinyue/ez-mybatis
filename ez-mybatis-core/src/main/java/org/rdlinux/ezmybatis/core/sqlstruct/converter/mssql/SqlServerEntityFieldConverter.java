@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -30,17 +30,18 @@ public class SqlServerEntityFieldConverter extends AbstractConverter<EntityField
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       EntityField obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, EntityField obj, SqlGenerateContext sqlGenerateContext) {
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         EntityClassInfo etInfo = EzEntityClassInfoFactory.forClass(configuration, obj.getTable().getEtType());
         EntityFieldInfo fieldInfo = etInfo.getFieldInfo(obj.getField());
         Assert.notNull(fieldInfo, "Class " + etInfo.getEntityClass().getName() + "cannot find the filed "
                 + obj.getField());
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (type == Type.SELECT) {
             sqlBuilder.append(obj.getTable().getAlias()).append(".");
         }
-        return sqlBuilder.append(keywordQM).append(fieldInfo.getColumnName()).append(keywordQM);
+        sqlBuilder.append(keywordQM).append(fieldInfo.getColumnName()).append(keywordQM);
     }
 
     @Override

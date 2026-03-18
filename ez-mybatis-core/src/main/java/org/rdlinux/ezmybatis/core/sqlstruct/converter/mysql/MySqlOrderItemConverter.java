@@ -3,7 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy.OrderItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -28,16 +28,15 @@ public class MySqlOrderItemConverter extends AbstractConverter<OrderItem> implem
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, OrderItem obj,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, OrderItem obj, SqlGenerateContext sqlGenerateContext) {
         if (obj.getOrderType() == null) {
             obj.setOrderType(OrderType.ASC);
         }
         Operand operand = obj.getValue();
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration, operand.getClass());
-        converter.buildSql(type, sqlBuilder, configuration, operand, mybatisParamHolder);
-        sqlBuilder.append(" ").append(obj.getOrderType().name()).append(" ");
-        return sqlBuilder;
+        converter.buildSql(type, operand, sqlGenerateContext);
+        sqlGenerateContext.getSqlBuilder().append(" ").append(obj.getOrderType().name()).append(" ");
     }
 
     @Override

@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,9 +24,7 @@ public class PostgreSqlHintConverter extends AbstractConverter<SqlHint> implemen
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SqlHint obj, MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder;
+    protected void doBuildSql(Type type, SqlHint obj, SqlGenerateContext sqlGenerateContext) {
     }
 
     @Override

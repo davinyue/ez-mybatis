@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -27,12 +26,11 @@ public class MySqlAliasConverter extends AbstractConverter<Alias> implements Con
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       Alias obj, MybatisParamHolder mybatisParamHolder) {
-        String keywordQM = EzMybatisContent.getKeywordQM(configuration);
+    protected void doBuildSql(Type type, Alias obj, SqlGenerateContext sqlGenerateContext) {
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
         String alias = obj.getAlias();
         alias = SqlEscaping.nameEscaping(alias);
-        return sqlBuilder.append(keywordQM).append(alias).append(keywordQM);
+        sqlGenerateContext.getSqlBuilder().append(keywordQM).append(alias).append(keywordQM);
     }
 
     @Override

@@ -24,6 +24,10 @@ public class User extends BaseEntity {
     private Sex sex;
     @Column(name = "age")
     private Integer userAge;
+    /**
+     * 用户邮箱
+     */
+    private String email;
     @Transient
     private String ignore;
 

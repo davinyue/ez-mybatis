@@ -1,11 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.utils.AliasGenerate;
@@ -29,18 +28,18 @@ public class MySqlEzQueryConverter extends AbstractConverter<EzQuery> implements
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       EzQuery obj, MybatisParamHolder mybatisParamHolder) {
-        String sql = this.ezQueryToSql(configuration, obj, mybatisParamHolder);
+    protected void doBuildSql(Type type, EzQuery obj, SqlGenerateContext sqlGenerateContext) {
+        String sql = this.ezQueryToSql(obj, sqlGenerateContext);
         if (obj.getPage() != null) {
             sql = " (SELECT * FROM " + sql + AliasGenerate.getAlias() + ") ";
         }
-        return sqlBuilder.append(sql);
+        sqlGenerateContext.getSqlBuilder().append(sql);
     }
 
-    protected String ezQueryToSql(Configuration configuration, EzQuery<?> obj, MybatisParamHolder mybatisParamHolder) {
-        return " (" + SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, mybatisParamHolder, obj) + ") ";
+    protected String ezQueryToSql(EzQuery<?> obj, SqlGenerateContext sqlGenerateContext) {
+        return " (" + DbDialectProviderLoader.getProvider(EzMybatisContent
+                        .getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), obj) + ") ";
     }
 
     @Override

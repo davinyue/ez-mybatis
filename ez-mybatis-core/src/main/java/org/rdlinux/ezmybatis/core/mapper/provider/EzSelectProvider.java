@@ -5,8 +5,9 @@ import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -62,45 +63,40 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_ID_METHOD)
     public String selectById(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getSelectByIdSql(configuration, paramHolder, null, ntClass, id);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Object id = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ID);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getSelectByIdSql(sqlGenerateContext, null, ntClass, id);
     }
 
     @MethodName(SELECT_BY_TABLE_AND_ID_METHOD)
     public String selectByTableAndId(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        Object id = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ID);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getSelectByIdSql(configuration, paramHolder, table, ntClass, id);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        Object id = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ID);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getSelectByIdSql(sqlGenerateContext, table, ntClass, id);
     }
 
     @MethodName(SELECT_BY_IDS_METHOD)
     public String selectByIds(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getSelectByIdsSql(configuration, paramHolder, null, ntClass, ids);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Collection<Object> ids = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_IDS);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getSelectByIdsSql(sqlGenerateContext, null, ntClass, ids);
     }
 
     @MethodName(SELECT_BY_TABLE_AND_IDS_METHOD)
     public String selectByTableAndIds(Map<String, Object> param) {
-
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        Class<?> ntClass = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-        Table table = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        Collection<Object> ids = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_IDS);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getSelectByIdsSql(configuration, paramHolder, table, ntClass, ids);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+        Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        Collection<Object> ids = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_IDS);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getSelectByIdsSql(sqlGenerateContext, table, ntClass, ids);
     }
 
     @MethodName(SELECT_BY_SQL_METHOD)
@@ -116,19 +112,17 @@ public class EzSelectProvider {
 
     @MethodName(QUERY_METHOD)
     public String query(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQuerySql(configuration, paramHolder, query);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getQuerySql(sqlGenerateContext, query);
     }
 
     @MethodName(QUERY_COUNT_METHOD)
     public String queryCount(Map<String, Object> param) {
-        Configuration configuration = (Configuration) param.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
-        MybatisParamHolder paramHolder = new MybatisParamHolder(configuration, param);
-        EzQuery<?> query = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
-        return SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getQueryCountSql(configuration, paramHolder, query);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+                .getSqlGenerate().getQueryCountSql(sqlGenerateContext, query);
     }
 }

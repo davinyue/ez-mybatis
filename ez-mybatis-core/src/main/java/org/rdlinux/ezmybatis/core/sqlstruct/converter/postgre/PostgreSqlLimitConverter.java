@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -26,16 +25,15 @@ public class PostgreSqlLimitConverter extends AbstractConverter<Limit> implement
 
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Limit limit,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Limit limit, SqlGenerateContext sqlGenerateContext) {
         if (limit == null) {
-            return sqlBuilder;
+            return;
         }
         if (type != Type.SELECT) {
             throw new UnsupportedOperationException("PostgreSQL does not support the LIMIT clause for " +
                     "UPDATE and DELETE and INSERT operations.");
         } else {
-            return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" ");
+            sqlGenerateContext.getSqlBuilder().append(" LIMIT ").append(limit.getSize()).append(" ");
         }
     }
 

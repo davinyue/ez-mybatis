@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzDeleteToSql;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 
 import java.util.Collection;
 
@@ -26,14 +25,12 @@ public class OracleEzDeleteToSql extends AbstractEzDeleteToSql {
 
 
     @Override
-    public String toSql(Configuration configuration, MybatisParamHolder paramHolder, Collection<EzDelete> deletes) {
-        String sql = super.toSql(configuration, paramHolder, deletes);
+    public String toSql(SqlGenerateContext sqlGenerateContext, Collection<EzDelete> deletes) {
+        String sql = super.toSql(sqlGenerateContext, deletes);
         return "BEGIN \n" + sql + "END;";
     }
 
     @Override
-    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                       MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder;
+    protected void joinsToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
     }
 }
