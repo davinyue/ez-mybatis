@@ -1,11 +1,10 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzQueryToSql;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
@@ -30,46 +29,42 @@ public class OracleEzQueryToSql extends AbstractEzQueryToSql {
     }
 
     @Override
-    protected StringBuilder onWhereToSqlEnd(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
-                                            EzQuery<?> query, MybatisParamHolder paramHolder) {
+    protected void onWhereToSqlEnd(boolean isPage, SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
         if (!isPage || query.getPage() != null) {
-            return sqlBuilder;
+            return;
         }
         Limit limit = query.getLimit();
         if (limit == null) {
-            return sqlBuilder;
+            return;
         }
         if (query.getWhere() == null) {
-            sqlBuilder.append(" WHERE 1 = 1 ");
+            sqlGenerateContext.getSqlBuilder().append(" WHERE 1 = 1 ");
         }
-        Converter<Limit> converter = EzMybatisContent.getConverter(configuration, Limit.class);
-        return converter.buildSql(Converter.Type.SELECT, sqlBuilder, configuration, limit, paramHolder);
+        Converter<Limit> converter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(), Limit.class);
+        converter.buildSql(Converter.Type.SELECT, limit, sqlGenerateContext);
     }
 
     @Override
-    protected StringBuilder whereToSql(boolean isPage, StringBuilder sqlBuilder, Configuration configuration,
-                                       EzQuery<?> query, MybatisParamHolder mybatisParamHolder) {
-        StringBuilder sql = super.whereToSql(isPage, sqlBuilder, configuration, query, mybatisParamHolder);
+    protected void whereToSql(boolean isPage, SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
+        super.whereToSql(isPage, sqlGenerateContext, query);
         Page page = query.getPage();
         GroupBy groupBy = query.getGroupBy();
         OrderBy orderBy = query.getOrderBy();
-        EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();
+        EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(sqlGenerateContext.getConfiguration())
+                .getEzMybatisConfig();
         if (isPage && !ezMybatisConfig.isEnableOracleOffsetFetchPage() && page != null &&
                 (groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
                 && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
             if (query.getWhere() == null) {
-                sql.append(" WHERE ");
+                sqlGenerateContext.getSqlBuilder().append(" WHERE ");
             } else {
-                sql.append(" AND ");
+                sqlGenerateContext.getSqlBuilder().append(" AND ");
             }
-            sql.append(" ROWNUM <= ").append(page.getSkip() + page.getSize());
+            sqlGenerateContext.getSqlBuilder().append(" ROWNUM <= ").append(page.getSkip() + page.getSize());
         }
-        return sql;
     }
 
     @Override
-    protected StringBuilder limitToSql(StringBuilder sqlBuilder, Configuration configuration, EzQuery<?> query,
-                                       MybatisParamHolder paramHolder) {
-        return sqlBuilder;
+    protected void limitToSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
     }
 }

@@ -56,6 +56,11 @@ public abstract class AbstractEntityClassInfo implements EntityClassInfo {
     }
 
     @Override
+    public Map<String, EntityFieldInfo> getFiledNameMapFieldInfo() {
+        return this.filedNameMapFieldInfo;
+    }
+
+    @Override
     public String getFieldNameByColumn(String column) {
         //先根据原始列名查询
         EntityFieldInfo entityFieldInfo = this.columnMapFieldInfo.get(column);

@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -28,36 +27,35 @@ public class MySqlCaseWhenConverter extends AbstractConverter<CaseWhen> implemen
         return instance;
     }
 
-    private void handleValue(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                             CaseWhen.CaseWhenData caseWhenDatum, MybatisParamHolder mybatisParamHolder) {
+    private void handleValue(Type type, CaseWhen.CaseWhenData caseWhenDatum, SqlGenerateContext sqlGenerateContext) {
         Operand value = caseWhenDatum.getValue();
-        Converter<? extends Operand> converter = EzMybatisContent.getConverter(configuration, value.getClass());
-        converter.buildSql(type, sqlBuilder, configuration, value, mybatisParamHolder);
+        Converter<? extends Operand> converter = EzMybatisContent.getConverter(sqlGenerateContext.getConfiguration(),
+                value.getClass());
+        converter.buildSql(type, value, sqlGenerateContext);
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       CaseWhen caseWhen, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, CaseWhen caseWhen, SqlGenerateContext sqlGenerateContext) {
         if (caseWhen == null || caseWhen.getCaseWhenData() == null || caseWhen.getCaseWhenData().isEmpty()) {
-            return sqlBuilder;
+            return;
         }
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         sqlBuilder.append(" (CASE ");
         List<CaseWhen.CaseWhenData> caseWhenData = caseWhen.getCaseWhenData();
         for (CaseWhen.CaseWhenData caseWhenDatum : caseWhenData) {
             sqlBuilder.append(" WHEN ");
-            StringBuilder whenSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
-                    mybatisParamHolder, caseWhenDatum.getConditions());
+            StringBuilder whenSql = MySqlWhereConverter.conditionsToSql(type, sqlGenerateContext,
+                    caseWhenDatum.getConditions());
             sqlBuilder.append(whenSql).append(" ");
             sqlBuilder.append(" THEN ");
-            this.handleValue(type, sqlBuilder, configuration, caseWhenDatum, mybatisParamHolder);
+            this.handleValue(type, caseWhenDatum, sqlGenerateContext);
         }
         CaseWhen.CaseWhenData els = caseWhen.getEls();
         if (els != null) {
             sqlBuilder.append(" ELSE ");
-            this.handleValue(type, sqlBuilder, configuration, els, mybatisParamHolder);
+            this.handleValue(type, els, sqlGenerateContext);
         }
         sqlBuilder.append(" END) ");
-        return sqlBuilder;
     }
 
     @Override

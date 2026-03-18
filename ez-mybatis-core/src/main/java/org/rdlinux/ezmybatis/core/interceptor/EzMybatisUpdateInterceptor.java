@@ -186,24 +186,28 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
                 log.debug("on batch delete");
                 this.onBatchDelete((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
             } else {
-                String className = statementId.substring(0, statementId.lastIndexOf("."));
-                Class<?> mapperClass = Class.forName(className);
-                Class<?> etType;
-                //如果是baseMapper, 实例类型从接口泛型参数上获取
-                if (declaringClass.equals(EzBaseMapper.class.getName())) {
-                    etType = ReflectionUtils.getGenericSuperinterface(mapperClass,
-                            0, 0);
-                }
-                //如果是ezMapper, 实体类型从入参获取
-                else {
-                    etType = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
-                }
-                if (statementId.endsWith("." + EzMybatisConstant.DELETE_BY_ID_METHOD_NAME)) {
-                    log.debug("on delete by primary key");
-                    this.onDeleteById(param.get(EzMybatisConstant.MAPPER_PARAM_ID), etType);
-                } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_DELETE_BY_ID_METHOD_NAME)) {
-                    log.debug("on batch delete by primary key");
-                    this.onBatchDeleteById((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_IDS), etType);
+                if (statementId.endsWith("." + EzMybatisConstant.DELETE_BY_ID_METHOD_NAME) ||
+                        statementId.endsWith("." + EzMybatisConstant.BATCH_DELETE_BY_ID_METHOD_NAME)) {
+                    String className = statementId.substring(0, statementId.lastIndexOf("."));
+                    Class<?> mapperClass = Class.forName(className);
+                    Class<?> etType;
+                    //如果是baseMapper, 实例类型从接口泛型参数上获取
+                    if (declaringClass.equals(EzBaseMapper.class.getName())) {
+                        etType = ReflectionUtils.getGenericSuperinterface(mapperClass,
+                                0, 0);
+                    }
+                    //如果是ezMapper, 实体类型从入参获取
+                    else {
+                        etType = (Class<?>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
+                    }
+                    if (statementId.endsWith("." + EzMybatisConstant.DELETE_BY_ID_METHOD_NAME)) {
+                        log.debug("on delete by primary key");
+                        this.onDeleteById(param.get(EzMybatisConstant.MAPPER_PARAM_ID), etType);
+                    } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_DELETE_BY_ID_METHOD_NAME)) {
+                        log.debug("on batch delete by primary key");
+                        this.onBatchDeleteById((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_IDS),
+                                etType);
+                    }
                 }
             }
         }

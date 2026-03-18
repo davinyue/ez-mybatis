@@ -5,6 +5,7 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.utils.Assert;
+import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +20,7 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
     /**
      * 实体信息映射
      */
-    protected static final ConcurrentMap<Configuration, ConcurrentMap<String, EntityClassInfo>> ENTITY_INFO_MAP =
-            new ConcurrentHashMap<>();
+    protected static final ConcurrentMap<Configuration, ConcurrentMap<String, EntityClassInfo>> ENTITY_INFO_MAP = new ConcurrentHashMap<>();
     private static final String CLASS_TAG = "target" + File.separator + "classes";
     private static final String CLASS_TEST_TAG = "target" + File.separator + "test-classes";
     private static final Log log = LogFactory.getLog(DefaultEzMybatisEntityInfoCache.class);
@@ -30,13 +30,13 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
     }
 
     private List<Path> findPath() {
-        //当前项目运行路径
+        // 当前项目运行路径
         Path currentRunPath = Paths.get("").toAbsolutePath();
         Path parent = currentRunPath.getParent();
         File parentFile = new File(parent.toUri());
-        //当前路径下的文件夹
+        // 当前路径下的文件夹
         File[] currentFiles = parentFile.listFiles((dir, name) -> !name.startsWith("."));
-        //下级路径
+        // 下级路径
         File currentFile = new File(currentRunPath.toUri());
         File[] sonFiles = currentFile.listFiles((dir, name) -> !name.startsWith("."));
         List<File> listenFiles = new LinkedList<>();
@@ -84,25 +84,25 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
             log.debug("Hot reloading of class information is only supported for the built artifact directories " +
                     "in the project's \"target/classes\" and \"target/test-classes\".");
         }
-        List<Path> allPath = this.findPath();
-        if (allPath.isEmpty()) {
-            return;
-        }
         Thread cleanThread = new Thread(() -> {
+            List<Path> allPath = this.findPath();
+            if (allPath.isEmpty()) {
+                return;
+            }
             try {
-                //创建监视服务类
+                // 创建监视服务类
                 WatchService ws = FileSystems.getDefault().newWatchService();
                 // 删除和修改事件
                 WatchEvent.Kind<?>[] kinds = {
                         StandardWatchEventKinds.ENTRY_DELETE,
-                        StandardWatchEventKinds.ENTRY_MODIFY};
+                        StandardWatchEventKinds.ENTRY_MODIFY };
                 Map<WatchKey, Path> keys = new HashMap<>(16);
                 // 注册子目录到监视服务
                 for (Path path : allPath) {
                     Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                         @Override
                         public FileVisitResult preVisitDirectory(Path dir,
-                                                                 BasicFileAttributes attrs) throws IOException {
+                                BasicFileAttributes attrs) throws IOException {
                             keys.put(dir.register(ws, kinds), dir);
                             return FileVisitResult.CONTINUE;
                         }
@@ -124,6 +124,12 @@ public class DefaultEzMybatisEntityInfoCache implements EzMybatisEntityInfoCache
                                     .replace(File.separator, ".");
                             String className = event.context().toString().split("\\.")[0];
                             String key = packageStr + "." + className;
+                            try {
+                                Class<?> clazz = Class.forName(key);
+                                ReflectionUtils.clearCache(clazz);
+                            } catch (Throwable e) {
+                                // ignore
+                            }
                             for (ConcurrentMap<String, EntityClassInfo> cache : ENTITY_INFO_MAP.values()) {
                                 EntityClassInfo classInfo = cache.remove(key);
                                 if (classInfo != null && log.isDebugEnabled()) {

@@ -1,12 +1,15 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
+import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 public class EntityTable extends DbTable {
-    private Class<?> etType;
-    private String tableName;
+    @Getter
+    private final Class<?> etType;
+    private final String tableName;
 
     private EntityTable(Class<?> etType) {
         this(null, etType, null);
@@ -68,10 +71,6 @@ public class EntityTable extends DbTable {
     }
 
 
-    public Class<?> getEtType() {
-        return this.etType;
-    }
-
     @Override
     public String getTableName(Configuration configuration) {
         if (this.tableName != null && !this.tableName.isEmpty()) {
@@ -87,5 +86,9 @@ public class EntityTable extends DbTable {
             return schema;
         }
         return EzEntityClassInfoFactory.forClass(configuration, this.etType).getSchema();
+    }
+
+    public EntityField field(String filed) {
+        return EntityField.of(this, filed);
     }
 }

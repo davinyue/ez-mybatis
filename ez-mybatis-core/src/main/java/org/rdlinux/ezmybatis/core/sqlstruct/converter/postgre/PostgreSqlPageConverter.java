@@ -1,8 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -25,13 +24,12 @@ public class PostgreSqlPageConverter extends AbstractConverter<Page> implements 
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Page limit,
-                                       MybatisParamHolder mybatisParamHolder) {
-        if (limit == null) {
-            return sqlBuilder;
+    protected void doBuildSql(Type type, Page page, SqlGenerateContext sqlGenerateContext) {
+        if (page == null) {
+            return;
         }
-        return sqlBuilder.append(" LIMIT ").append(limit.getSize()).append(" OFFSET ").append(limit.getSkip())
-                .append(" ");
+        sqlGenerateContext.getSqlBuilder().append(" LIMIT ").append(page.getSize()).append(" OFFSET ")
+                .append(page.getSkip()).append(" ");
     }
 
     @Override

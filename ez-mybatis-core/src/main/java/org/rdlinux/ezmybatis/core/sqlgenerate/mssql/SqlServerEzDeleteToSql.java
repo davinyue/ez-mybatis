@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mssql;
 
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzDeleteToSql;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 
 public class SqlServerEzDeleteToSql extends AbstractEzDeleteToSql {
     private static volatile SqlServerEzDeleteToSql instance;
@@ -23,8 +22,6 @@ public class SqlServerEzDeleteToSql extends AbstractEzDeleteToSql {
     }
 
     @Override
-    protected StringBuilder joinsToSql(StringBuilder sqlBuilder, Configuration configuration, EzDelete delete,
-                                       MybatisParamHolder mybatisParamHolder) {
-        return sqlBuilder;
+    protected void joinsToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
     }
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis</artifactId>
-        <version>0.9.6.plus352</version>
+        <version>1.0.2.plus352</version>
     </parent>
 
     <artifactId>ez-mybatis-to-plus-spring-boot-start</artifactId>
@@ -117,13 +117,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>3.2.8</version>
                 <executions>
                     <execution>
+                        <id>sign-artifacts</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -5,11 +5,11 @@ package org.rdlinux.ezmybatis.constant;
  */
 public enum TableNamePattern {
     /**
-     * 小写，该模式把结果列转换为小写
+     * 小写，把表名称转换为小写
      */
     LOWER_CASE,
     /**
-     * 大写, 该模式把结果列转换为大写
+     * 大写, 把表名称转换为大写
      */
     UPPER_CASE,
     /**

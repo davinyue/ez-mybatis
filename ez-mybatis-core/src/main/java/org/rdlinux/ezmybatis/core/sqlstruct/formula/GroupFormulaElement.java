@@ -11,7 +11,7 @@ public class GroupFormulaElement extends AbstractFormulaElement {
     /**
      * 子表达式
      */
-    private List<FormulaElement> elements;
+    private final List<FormulaElement> elements;
 
     public GroupFormulaElement(FormulaOperator operator, List<FormulaElement> elements) {
         super(operator);

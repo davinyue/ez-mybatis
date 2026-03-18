@@ -27,7 +27,7 @@ public class EzUpdate extends EzParam<Integer> {
     }
 
     public static class EzUpdateBuilder {
-        private EzUpdate ezUpdate;
+        private final EzUpdate ezUpdate;
 
         private EzUpdateBuilder(Table table) {
             this.ezUpdate = new EzUpdate();

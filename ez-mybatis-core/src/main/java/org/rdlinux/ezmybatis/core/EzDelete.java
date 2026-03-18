@@ -13,7 +13,7 @@ import java.util.List;
 
 @Getter
 public class EzDelete extends EzParam<Integer> {
-    private List<Table> deletes = new LinkedList<>();
+    private final List<Table> deletes = new LinkedList<>();
     private List<Join> joins;
 
     private EzDelete() {
@@ -25,7 +25,7 @@ public class EzDelete extends EzParam<Integer> {
     }
 
     public static class EzDeleteBuilder {
-        private EzDelete delete;
+        private final EzDelete delete;
 
         private EzDeleteBuilder(Table table) {
             this.delete = new EzDelete();

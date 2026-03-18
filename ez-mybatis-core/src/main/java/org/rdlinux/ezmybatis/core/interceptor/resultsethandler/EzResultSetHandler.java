@@ -1312,7 +1312,8 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         if (!(metaObject.getOriginalObject() instanceof Map)) {
             EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(this.configuration,
                     metaObject.getOriginalObject().getClass());
-            EntityFieldInfo entityFieldInfo = entityClassInfo.getColumnMapFieldInfo().get(property);
+
+            EntityFieldInfo entityFieldInfo = entityClassInfo.getFiledNameMapFieldInfo().get(property);
             if (entityFieldInfo != null && entityFieldInfo.getTypeHandler() != null) {
                 typeHandler = entityFieldInfo.getTypeHandler();
             }

@@ -1,8 +1,16 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.interceptor.executor.TypeHandlerInitLogic;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.lang.reflect.Field;
@@ -20,6 +28,11 @@ public class MybatisParamHolder {
      */
     private static final int ARRAY_MAX_PARAM = 47427;
     /**
+     * 原始mybatis参数映射
+     */
+    private final Map<String, Object> mybatisParam;
+    private final Configuration configuration;
+    /**
      * 当前数组
      */
     private ArrayList<Object> currentArray;
@@ -27,11 +40,6 @@ public class MybatisParamHolder {
      * 当前数组名称下标
      */
     private int currentArrayIndex = -1;
-    /**
-     * 原始mybatis参数映射
-     */
-    private Map<String, Object> mybatisParam;
-    private Configuration configuration;
 
     public MybatisParamHolder(Configuration configuration, Map<String, Object> mybatisParam) {
         Assert.notNull(mybatisParam, "mybatisParam can not be null");
@@ -86,7 +94,7 @@ public class MybatisParamHolder {
             paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, Boolean.FALSE, modelType, field,
                     paramValue);
         }
-        return this.getMybatisParamName(paramValue);
+        return this.getMybatisParamNameWithRegisterTypeHandler(modelType, field, paramValue);
     }
 
     /**
@@ -99,7 +107,26 @@ public class MybatisParamHolder {
             paramValue = EzMybatisContent.onBuildSqlGetField(this.configuration, Boolean.TRUE, modelType, field,
                     paramValue);
         }
-        return this.getMybatisParamName(paramValue);
+        return this.getMybatisParamNameWithRegisterTypeHandler(modelType, field, paramValue);
+    }
+
+    /**
+     * 获取mybatis 参数名称, 并且注册类型处理器
+     */
+    private String getMybatisParamNameWithRegisterTypeHandler(Class<?> modelType, Field field, Object paramValue) {
+        MybatisParamInfo mybatisParamInfo = this.getMybatisParamName(paramValue);
+        String formatedName = mybatisParamInfo.getFormatedName();
+        if (this.configuration != null && modelType != null && field != null) {
+            EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(this.configuration, modelType);
+            EntityFieldInfo entityFieldInfo = entityClassInfo.getFieldInfo(field.getName());
+            if (entityFieldInfo != null) {
+                TypeHandler<?> typeHandler = entityFieldInfo.getTypeHandler();
+                if (typeHandler != null) {
+                    TypeHandlerInitLogic.registerTypeHandler(mybatisParamInfo.getParamName(), typeHandler);
+                }
+            }
+        }
+        return formatedName;
     }
 
     /**
@@ -107,9 +134,11 @@ public class MybatisParamHolder {
      *
      * @param paramValue 参数值
      */
-    public String getMybatisParamName(Object paramValue) {
+    public MybatisParamInfo getMybatisParamName(Object paramValue) {
         if (paramValue == null) {
-            return "NULL";
+            return new MybatisParamInfo()
+                    .setParamName("NULL")
+                    .setFormatedName("NULL");
         }
         if (this.currentArray.size() >= ARRAY_MAX_PARAM) {
             this.transposeArray();
@@ -117,6 +146,16 @@ public class MybatisParamHolder {
         this.currentArray.add(paramValue);
         String escape = getEscapeChar(paramValue);
         String mybatisParamName = this.getCurrentHashKeyName() + "[" + (this.currentArray.size() - 1) + "]";
-        return escape + "{" + mybatisParamName + "}";
+        return new MybatisParamInfo()
+                .setParamName(mybatisParamName)
+                .setFormatedName(escape + "{" + mybatisParamName + "}");
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class MybatisParamInfo {
+        private String formatedName;
+        private String paramName;
     }
 }

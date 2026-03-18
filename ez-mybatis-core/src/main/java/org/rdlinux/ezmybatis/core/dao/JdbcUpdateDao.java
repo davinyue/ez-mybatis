@@ -5,23 +5,26 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.TypeHandler;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
- * 使用jdbc批量更新
+ * JDBC-based update operations.
+ * This class provides efficient batch update and replace functionality using
+ * native JDBC PreparedStatement,
+ * bypassing MyBatis XML mapping for better performance with large datasets.
  */
 public class JdbcUpdateDao {
     private static final Log log = LogFactory.getLog(JdbcUpdateDao.class);
@@ -34,16 +37,18 @@ public class JdbcUpdateDao {
     }
 
     /**
-     * 单条更新, 本方法会先获取对象所有属性值, 判定哪些属性不为空, 再更新
+     * Update a single record. This method retrieves all property values of the
+     * object,
+     * determines which properties are not null, and then updates them.
      */
     public int update(Object model) {
         return this.updateByTable(null, model);
     }
 
     /**
-     * 单条更新,指定需要更新的属性
+     * Update a single record with specified fields
      *
-     * @param updateFields 需要更新的属性
+     * @param updateFields Fields to be updated
      */
     public int update(Object model, Collection<String> updateFields) {
         Assert.notEmpty(updateFields, "updateFields can not be empty");
@@ -51,16 +56,16 @@ public class JdbcUpdateDao {
     }
 
     /**
-     * 单条更新, 指定表
+     * Update a single record in the specified table
      */
     public int updateByTable(Table table, Object model) {
         return this.doUpdate(table, Collections.singleton(model), null, Boolean.FALSE);
     }
 
     /**
-     * 单条更新, 指定表, 指定需要更新的属性
+     * Update a single record in the specified table with specified fields
      *
-     * @param updateFields 需要更新的属性
+     * @param updateFields Fields to be updated
      */
     public int updateByTable(Table table, Object model, Collection<String> updateFields) {
         Assert.notEmpty(updateFields, "updateFields can not be empty");
@@ -68,17 +73,20 @@ public class JdbcUpdateDao {
     }
 
     /**
-     * 批量更新, 遍历集合内每个元素的非空字段作为每行数据的更新字段, 如果一个字段在有的元素里面不为空,
-     * 其它元素中为空时, 也将更新所有元素该字段
+     * Batch update records. Iterates through each element in the collection and
+     * uses non-null fields
+     * as update fields for each row. If a field is not null in some elements but
+     * null in others,
+     * all elements will still have that field updated.
      */
     public int batchUpdate(Collection<?> models) {
         return this.doUpdate(null, models, null, Boolean.FALSE);
     }
 
     /**
-     * 批量更新, 指定需要更新的属性
+     * Batch update records with specified fields
      *
-     * @param updateFields 需要更新的属性
+     * @param updateFields Fields to be updated
      */
     public int batchUpdate(Collection<?> models, Collection<String> updateFields) {
         Assert.notEmpty(updateFields, "updateFields can not be empty");
@@ -86,56 +94,56 @@ public class JdbcUpdateDao {
     }
 
     /**
-     * 指定表批量更新, 遍历集合内每个元素的非空字段作为每行数据的更新字段, 如果一个字段在有的元素里面不为空,
-     * * 其它元素中为空时, 也将更新所有元素该字段
+     * Batch update records in the specified table. Iterates through each element in
+     * the collection
+     * and uses non-null fields as update fields for each row. If a field is not
+     * null in some elements
+     * but null in others, all elements will still have that field updated.
      */
     public int batchUpdateByTable(Table table, Collection<?> models) {
         return this.doUpdate(table, models, null, Boolean.FALSE);
     }
 
     /**
-     * 指定表批量更新, 指定需要更新的属性
+     * Batch update records in the specified table with specified fields
      *
-     * @param updateFields 需要更新的属性
+     * @param updateFields Fields to be updated
      */
     public int batchUpdateByTable(Table table, Collection<?> models, Collection<String> updateFields) {
         Assert.notEmpty(updateFields, "updateFields can not be empty");
         return this.doUpdate(table, models, updateFields, Boolean.FALSE);
     }
 
-
     /**
-     * 单条替换
+     * Replace a single record
      */
     public int replace(Object model) {
         return this.replaceByTable(null, model);
     }
 
-
     /**
-     * 单条替换, 指定表
+     * Replace a single record in the specified table
      */
     public int replaceByTable(Table table, Object model) {
         return this.doUpdate(table, Collections.singleton(model), null, Boolean.TRUE);
     }
 
     /**
-     * 批量替换
+     * Batch replace records
      */
     public int batchReplace(Collection<?> models) {
         return this.doUpdate(null, models, null, Boolean.TRUE);
     }
 
     /**
-     * 批量替换, 指定表
+     * Batch replace records in the specified table
      */
     public int batchReplaceByTable(Table table, Collection<?> models) {
         return this.doUpdate(table, models, null, Boolean.TRUE);
     }
 
-
     /**
-     * 批量更新, 指定表
+     * Batch update records in the specified table
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private int doUpdate(Table table, Collection<?> models, Collection<String> updateFields, boolean isReplace) {
@@ -151,9 +159,13 @@ public class JdbcUpdateDao {
                 }
             }
         }
+        Map<String, Object> mybatisParam = new HashMap<>();
+        mybatisParam.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, configuration);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(mybatisParam);
         long start = System.currentTimeMillis();
-        EzJdbcBatchSql jdbcBatchSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getJdbcBatchUpdateSql(configuration, table, models, updateFields, isReplace);
+        EzJdbcBatchSql jdbcBatchSql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+                .getSqlGenerate()
+                .getJdbcBatchUpdateSql(sqlGenerateContext, table, models, updateFields, isReplace);
         long end = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
             log.debug("SQL construction takes: " + (end - start) + "ms");

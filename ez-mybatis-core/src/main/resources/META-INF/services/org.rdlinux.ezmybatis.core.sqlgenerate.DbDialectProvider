@@ -1,0 +1,5 @@
+org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlDialectProvider
+org.rdlinux.ezmybatis.core.sqlgenerate.oracle.OracleDialectProvider
+org.rdlinux.ezmybatis.core.sqlgenerate.dm.DmDialectProvider
+org.rdlinux.ezmybatis.core.sqlgenerate.postgre.PostgreDialectProvider
+org.rdlinux.ezmybatis.core.sqlgenerate.mssql.SqlServerDialectProvider
