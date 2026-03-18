@@ -33,7 +33,7 @@ public class Formula implements QueryRetNeedAlias {
     }
 
     public static class FormulaBuilder {
-        private Formula formula;
+        private final Formula formula;
 
         public FormulaBuilder(Table table, List<FormulaElement> elements) {
             this.formula = new Formula();

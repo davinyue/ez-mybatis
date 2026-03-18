@@ -1,9 +1,13 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.utils.AliasGenerate;
 import org.rdlinux.ezmybatis.utils.Assert;
 
+@Setter
+@Getter
 public class SqlTable extends AbstractTable {
     private String sql;
 
@@ -30,13 +34,5 @@ public class SqlTable extends AbstractTable {
     @Override
     public String getSchema(Configuration configuration) {
         return null;
-    }
-
-    public String getSql() {
-        return this.sql;
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
     }
 }

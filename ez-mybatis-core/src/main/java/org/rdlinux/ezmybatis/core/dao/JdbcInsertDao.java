@@ -5,28 +5,31 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.type.TypeHandler;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
-import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateFactory;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
- * 使用jdbc批量插入
+ * JDBC-based insert operations.
+ * This class provides efficient batch insert functionality using native JDBC
+ * PreparedStatement,
+ * bypassing MyBatis XML mapping for better performance with large datasets.
  */
 public class JdbcInsertDao {
     private static final Log log = LogFactory.getLog(JdbcInsertDao.class);
 
-    private SqlSession sqlSession;
+    private final SqlSession sqlSession;
 
     public JdbcInsertDao(SqlSession sqlSession) {
         Assert.notNull(sqlSession, "sqlSession can not be null");
@@ -34,33 +37,36 @@ public class JdbcInsertDao {
     }
 
     /**
-     * 单条插入
+     * Insert a single record
      */
     public int insert(Object model) {
         return this.insertByTable(null, model);
     }
 
     /**
-     * 单条插入, 指定表
+     * Insert a single record into the specified table
      */
     public int insertByTable(Table table, Object model) {
         return this.batchInsertByTable(table, Collections.singleton(model));
     }
 
     /**
-     * 批量插入
+     * Batch insert records
      */
     public int batchInsert(Collection<?> models) {
         return this.batchInsertByTable(null, models);
     }
 
     /**
-     * 批量插入, 指定表
+     * Batch insert records into the specified table
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public int batchInsertByTable(Table table, Collection<?> models) {
         Connection connection = this.sqlSession.getConnection();
         Configuration configuration = this.sqlSession.getConfiguration();
+        Map<String, Object> mybatisParam = new HashMap<>();
+        mybatisParam.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, configuration);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(mybatisParam);
         List<EzMybatisInsertListener> listeners = EzMybatisContent.getInsertListeners(configuration);
         if (listeners != null) {
             for (EzMybatisInsertListener listener : listeners) {
@@ -68,8 +74,10 @@ public class JdbcInsertDao {
             }
         }
         long start = System.currentTimeMillis();
-        EzJdbcBatchSql jdbcBatchSql = SqlGenerateFactory.getSqlGenerate(EzMybatisContent.getDbType(configuration))
-                .getJdbcBatchInsertSql(configuration, table, models);
+
+        EzJdbcBatchSql jdbcBatchSql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+                .getSqlGenerate()
+                .getJdbcBatchInsertSql(sqlGenerateContext, table, models);
         long end = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
             log.debug("SQL construction takes: " + (end - start) + "ms");

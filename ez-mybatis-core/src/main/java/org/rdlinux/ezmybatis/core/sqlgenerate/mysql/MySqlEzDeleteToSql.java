@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractEzDeleteToSql;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.List;
@@ -24,15 +25,14 @@ public class MySqlEzDeleteToSql extends AbstractEzDeleteToSql {
     }
 
     @Override
-    protected StringBuilder deleteToSql(StringBuilder sqlBuilder, EzDelete delete) {
-        StringBuilder sql = super.deleteToSql(sqlBuilder, delete);
+    protected void deleteToSql(SqlGenerateContext sqlGenerateContext, EzDelete delete) {
+        super.deleteToSql(sqlGenerateContext, delete);
         List<Table> deleteTables = delete.getDeletes();
         for (int i = 0; i < deleteTables.size(); i++) {
-            sql.append(deleteTables.get(i).getAlias());
+            sqlGenerateContext.getSqlBuilder().append(deleteTables.get(i).getAlias());
             if (i + 1 < deleteTables.size()) {
-                sql.append(", ");
+                sqlGenerateContext.getSqlBuilder().append(", ");
             }
         }
-        return sql;
     }
 }

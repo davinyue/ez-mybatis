@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Having;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -26,24 +25,24 @@ public class MySqlHavingConverter extends AbstractConverter<Having> implements C
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Having having,
-                                       MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, Having having, SqlGenerateContext sqlGenerateContext) {
         if (type != Type.SELECT) {
             throw new UnsupportedOperationException(String.format("%s model unsupported", type.name()));
         }
         if (having == null) {
-            return sqlBuilder;
+            return;
         }
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (having.getConditions() == null || having.getConditions().isEmpty()) {
-            return sqlBuilder.append(" HAVING 1 = 1 ");
+            sqlBuilder.append(" HAVING 1 = 1 ");
+            return;
         }
-        String sonSql = MySqlWhereConverter.conditionsToSql(type, new StringBuilder(), configuration,
-                mybatisParamHolder, having.getConditions()).toString();
+        String sonSql = MySqlWhereConverter.conditionsToSql(type, sqlGenerateContext, having.getConditions())
+                .toString();
         if (StringUtils.isBlank(sonSql)) {
             sonSql = " 1 = 1 ";
         }
         sqlBuilder.append(" HAVING ").append(sonSql);
-        return sqlBuilder;
     }
 
     @Override

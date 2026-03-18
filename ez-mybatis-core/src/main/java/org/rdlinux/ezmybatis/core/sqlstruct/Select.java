@@ -43,10 +43,10 @@ public class Select implements SqlStruct {
     }
 
     public static class EzSelectBuilder<T> {
-        private List<SelectItem> selectFields;
-        private T target;
-        private Table table;
-        private Select select;
+        private final List<SelectItem> selectFields;
+        private final T target;
+        private final Table table;
+        private final Select select;
 
         public EzSelectBuilder(T target, Select select, Table table) {
             if (select.getSelectFields() == null) {
@@ -402,6 +402,17 @@ public class Select implements SqlStruct {
 
         public EzSelectBuilder<T> addCaseWhen(CaseWhen caseWhen, String alias) {
             return this.addCaseWhen(true, caseWhen, alias);
+        }
+
+        public EzSelectBuilder<T> addWindowFunction(boolean sure, WindowFunction windowFunction, String alias) {
+            if (sure) {
+                this.selectFields.add(new SelectOperand(windowFunction, alias));
+            }
+            return this;
+        }
+
+        public EzSelectBuilder<T> addWindowFunction(WindowFunction windowFunction, String alias) {
+            return this.addWindowFunction(true, windowFunction, alias);
         }
 
         public EzSelectBuilder<T> addValue(boolean sure, Object value, String alias) {

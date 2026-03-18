@@ -16,7 +16,7 @@ public class Having implements SqlStruct {
     /**
      * 条件
      */
-    private List<Condition> conditions;
+    private final List<Condition> conditions;
 
     public Having(List<Condition> conditions) {
         this.conditions = conditions;

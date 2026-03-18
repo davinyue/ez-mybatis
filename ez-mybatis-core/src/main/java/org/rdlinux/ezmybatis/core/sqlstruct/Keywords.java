@@ -1,12 +1,14 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * 关键词
  */
+@Getter
 public class Keywords implements QueryRetOperand {
-    private String keywords;
+    private final String keywords;
 
     private Keywords(String keywords) {
         if (StringUtils.isBlank(keywords)) {
@@ -17,9 +19,5 @@ public class Keywords implements QueryRetOperand {
 
     public static Keywords of(String keywords) {
         return new Keywords(keywords);
-    }
-
-    public String getKeywords() {
-        return this.keywords;
     }
 }

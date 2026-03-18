@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.GroupBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.OrderBy;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
@@ -32,39 +32,41 @@ public class OraclePageConverter extends AbstractConverter<Page> implements Conv
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration, Page limit,
-                                       MybatisParamHolder mybatisParamHolder) {
-        if (limit == null) {
-            return sqlBuilder;
+    protected void doBuildSql(Type type, Page page, SqlGenerateContext sqlGenerateContext) {
+        if (page == null) {
+            return;
         }
         GroupBy groupBy = null;
         OrderBy orderBy = null;
-        EzQuery<?> query = limit.getQuery();
+        EzQuery<?> query = page.getQuery();
         if (query != null) {
             groupBy = query.getGroupBy();
             orderBy = query.getOrderBy();
         }
+        Configuration configuration = sqlGenerateContext.getConfiguration();
         EzMybatisConfig ezMybatisConfig = EzMybatisContent.getContentConfig(configuration).getEzMybatisConfig();
+        StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         if (ezMybatisConfig.isEnableOracleOffsetFetchPage()) {
-            return sqlBuilder.append(" OFFSET ").append(limit.getSkip()).append(" ROWS FETCH NEXT ")
-                    .append(limit.getSize()).append(" ROWS ONLY ");
+            sqlBuilder.append(" OFFSET ").append(page.getSkip()).append(" ROWS FETCH NEXT ")
+                    .append(page.getSize()).append(" ROWS ONLY ");
+            return;
         }
         //不排序, 不分组时
         if ((groupBy == null || groupBy.getItems() == null || groupBy.getItems().isEmpty())
                 && (orderBy == null || orderBy.getItems() == null || orderBy.getItems().isEmpty())) {
             //如果查询第一页, 不需要判断rownum > 0的问题
-            if (limit.getSkip() == 0) {
-                return sqlBuilder;
+            if (page.getSkip() == 0) {
+                return;
             }
             //需要判断rownum > 0的问题
             else {
                 String bodyAlias = AliasGenerate.getAlias();
-                return new StringBuilder("SELECT ").append(bodyAlias).append(".* ")
-                        .append(" FROM ( ").append(sqlBuilder).append(" ) ").append(bodyAlias)
+                sqlBuilder.insert(0, "SELECT ").append(bodyAlias).append(".*  FROM ( ")
+                        .append(" ) ").append(bodyAlias)
                         .append(" WHERE ").append(bodyAlias).append(".\"")
                         .append(EzMybatisConstant.ORACLE_ROW_NUM_ALIAS)
                         .append("\" > ")
-                        .append(limit.getSkip());
+                        .append(page.getSkip());
             }
         }
         //排序和分组时, 需要将原始查询嵌套为子查询后再进行分页操作
@@ -72,20 +74,21 @@ public class OraclePageConverter extends AbstractConverter<Page> implements Conv
             String bodyAlias = AliasGenerate.getAlias();
             StringBuilder outSqlBuilder = new StringBuilder("SELECT ").append(bodyAlias).append(".*");
             //当不查询第一页是, 才查询出rownum
-            if (limit.getSkip() > 0) {
+            if (page.getSkip() > 0) {
                 outSqlBuilder.append(", ROWNUM \"").append(EzMybatisConstant.ORACLE_ROW_NUM_ALIAS).append("\"");
             }
             outSqlBuilder.append(" FROM (").append(sqlBuilder).append(") ").append(bodyAlias)
-                    .append(" WHERE ROWNUM <= ").append(limit.getSkip() + limit.getSize()).append(" ");
+                    .append(" WHERE ROWNUM <= ").append(page.getSkip() + page.getSize()).append(" ");
             String outAlias = AliasGenerate.getAlias();
             String outSqlHead = "";
             String outSqlTail = "";
-            if (limit.getSkip() > 0) {
+            if (page.getSkip() > 0) {
                 outSqlHead = "SELECT " + outAlias + ".* FROM ( ";
                 outSqlTail = " ) " + outAlias + " WHERE " + outAlias + ".\""
-                        + EzMybatisConstant.ORACLE_ROW_NUM_ALIAS + "\" > " + limit.getSkip();
+                        + EzMybatisConstant.ORACLE_ROW_NUM_ALIAS + "\" > " + page.getSkip();
             }
-            return new StringBuilder().append(outSqlHead).append(outSqlBuilder).append(outSqlTail);
+            sqlGenerateContext.getSqlBuilder().setLength(0);
+            sqlGenerateContext.getSqlBuilder().append(outSqlHead).append(outSqlBuilder).append(outSqlTail);
         }
     }
 

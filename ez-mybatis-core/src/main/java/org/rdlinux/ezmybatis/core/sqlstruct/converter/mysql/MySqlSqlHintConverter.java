@@ -1,9 +1,8 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.constant.DbType;
-import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
+import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -26,12 +25,11 @@ public class MySqlSqlHintConverter extends AbstractConverter<SqlHint> implements
     }
 
     @Override
-    protected StringBuilder doBuildSql(Type type, StringBuilder sqlBuilder, Configuration configuration,
-                                       SqlHint obj, MybatisParamHolder mybatisParamHolder) {
+    protected void doBuildSql(Type type, SqlHint obj, SqlGenerateContext sqlGenerateContext) {
         if (obj == null || StringUtils.isEmpty(obj.getHint())) {
-            return sqlBuilder;
+            return;
         }
-        return sqlBuilder.append(" /*+ ").append(obj.getHint()).append(" */ ");
+        sqlGenerateContext.getSqlBuilder().append(" /*+ ").append(obj.getHint()).append(" */ ");
     }
 
     @Override
