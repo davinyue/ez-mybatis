@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table;
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 
 public class EntityTable extends DbTable {
@@ -85,5 +86,9 @@ public class EntityTable extends DbTable {
             return schema;
         }
         return EzEntityClassInfoFactory.forClass(configuration, this.etType).getSchema();
+    }
+
+    public EntityField field(String filed) {
+        return EntityField.of(this, filed);
     }
 }
