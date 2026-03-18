@@ -35,5 +35,4 @@ public class SqlTable extends AbstractTable {
     public String getSchema(Configuration configuration) {
         return null;
     }
-
 }
