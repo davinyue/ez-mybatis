@@ -88,7 +88,7 @@ public class EntityTable extends DbTable {
         return EzEntityClassInfoFactory.forClass(configuration, this.etType).getSchema();
     }
 
-    public EntityField field(String filed) {
-        return EntityField.of(this, filed);
+    public EntityField field(String field) {
+        return EntityField.of(this, field);
     }
 }
