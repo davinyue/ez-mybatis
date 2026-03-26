@@ -1,5 +1,7 @@
 package org.rdlinux.oracle;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
+import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -295,7 +297,7 @@ public class OracleUpdateTest extends OracleBaseTest {
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set()
-                .setField(User.Fields.userAge, CaseWhen.builder(table).when()
+                .setField(User.Fields.userAge, CaseWhen.builder().when()
                         .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
                 .done()
                 .where().addFieldCondition("id", "1").done()
@@ -353,16 +355,16 @@ public class OracleUpdateTest extends OracleBaseTest {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
 
-            CaseWhen sonCaseWhen = CaseWhen.builder(table)
+            CaseWhen sonCaseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .els("王二1");
 
-            CaseWhen caseWhen = CaseWhen.builder(table)
+            CaseWhen caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
                     .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
@@ -371,35 +373,23 @@ public class OracleUpdateTest extends OracleBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsCaseWhen(sonCaseWhen);
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .els(sonCaseWhen);
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .build();
-            ezUpdate = EzUpdate.update(table)
-                    .set().setField(User.Fields.name, caseWhen).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
-                    .build();
-            mapper.ezUpdate(ezUpdate);
-
-            caseWhen = CaseWhen.builder(table)
-                    .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
-                    .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
                     .build();
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
@@ -407,24 +397,36 @@ public class OracleUpdateTest extends OracleBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsFunc(Function.builder(table).setFunName("TO_CHAR").addColumnArg("name").build());
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .build();
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsFunc(Function.builder(table).setFunName("TO_CHAR").addFieldArg(User.Fields.name).build());
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .els(Function.builder("TO_CHAR").addArg(TableColumn.of(table, "name")).build());
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder()
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .els(Function.builder("TO_CHAR").addArg(EntityField.of(table, User.Fields.name)).build());
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
@@ -446,7 +448,7 @@ public class OracleUpdateTest extends OracleBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+            Formula formula = Formula.builder(EntityField.of(table, User.Fields.userAge)).add(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, formula).done()
                     .where()

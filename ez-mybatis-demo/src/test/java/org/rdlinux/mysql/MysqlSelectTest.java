@@ -1,5 +1,6 @@
 package org.rdlinux.mysql;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
@@ -440,7 +441,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.userAge)
-                .addFieldCount(BaseEntity.Fields.id, "count")
+                .add(Function.builder("COUNT").addArg(EntityField.of(table, BaseEntity.Fields.id)).build(), "count")
                 .done()
                 .groupBy().addField(User.Fields.userAge).done()
                 .having().addAliasCondition("count", Operator.ge, 0).done()
@@ -535,19 +536,19 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         // Formula: age + 1
-        Formula agePlusOne = Formula.builder(table).withField(User.Fields.userAge).addValue(1).done().build();
+        Formula agePlusOne = Formula.builder(table.field(User.Fields.userAge)).add(1).done().build();
 
         // Function: CONCAT(name, ' - ', age)
-        Function nameDesc = Function.builder(table).setFunName("CONCAT")
-                .addFieldArg(User.Fields.name)
-                .addValueArg(" - ")
-                .addFieldArg(User.Fields.userAge)
+        Function nameDesc = Function.builder("CONCAT")
+                .addArg(EntityField.of(table, User.Fields.name))
+                .addArg(" - ")
+                .addArg(EntityField.of(table, User.Fields.userAge))
                 .build();
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
-                .addFormula(agePlusOne, "nextYearAge")
-                .addFunc(nameDesc, "description")
+                .add(agePlusOne, "nextYearAge")
+                .add(nameDesc, "description")
                 .done()
                 .limit(2)
                 .build();
@@ -563,15 +564,15 @@ public class MysqlSelectTest extends MysqlBaseTest {
         this.ensureData(sqlSession);
         EntityTable table = EntityTable.of(User.class);
 
-        CaseWhen ageGroup = CaseWhen.builder(table)
-                .when().addFieldCondition(User.Fields.userAge, Operator.lt, 18).then("Young")
-                .when().addFieldCondition(User.Fields.userAge, Operator.ge, 18).then("Adult")
+        CaseWhen ageGroup = CaseWhen.builder()
+                .when().addFieldCondition(table, User.Fields.userAge, Operator.lt, 18).then("Young")
+                .when().addFieldCondition(table, User.Fields.userAge, Operator.ge, 18).then("Adult")
                 .els("Unknown");
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.name)
-                .addCaseWhen(ageGroup, "ageGroup")
+                .add(ageGroup, "ageGroup")
                 .done()
                 .limit(5)
                 .build();
@@ -610,11 +611,11 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         // 1. 无 partition, 无 order, 无 frame
-        Function countFunc1 = Function.builder(table).setFunName("COUNT").addFieldArg(BaseEntity.Fields.id).build();
+        Function countFunc1 = Function.builder("COUNT").addArg(EntityField.of(table, BaseEntity.Fields.id)).build();
         WindowFunction wf1 = WindowFunction.builder(table, countFunc1).build();
 
         // 2. 多个 partition, 多个 order
-        Function rowNumFunc = Function.builder(table).setFunName("ROW_NUMBER").build();
+        Function rowNumFunc = Function.builder("ROW_NUMBER").build();
         WindowFunction wf2 = WindowFunction.builder(table, rowNumFunc)
                 .partitionByField(User.Fields.sex)
                 .partitionByField(User.Fields.userAge)
@@ -623,7 +624,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .build();
 
         // 3. ROWS 各种场景
-        Function sumAgeFunc = Function.builder(table).setFunName("SUM").addFieldArg(User.Fields.userAge).build();
+        Function sumAgeFunc = Function.builder("SUM").addArg(EntityField.of(table, User.Fields.userAge)).build();
 
         // UNBOUNDED PRECEDING to CURRENT ROW
         WindowFunction wf3 = WindowFunction.builder(table, sumAgeFunc)
@@ -665,13 +666,13 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .addField(User.Fields.name)
                 .addField(User.Fields.sex)
                 .addField(User.Fields.userAge)
-                .addWindowFunction(wf1, "totalCount")
-                .addWindowFunction(wf2, "rn")
-                .addWindowFunction(wf3, "sumAge_unbounded_current")
-                .addWindowFunction(wf4, "sumAge_2_preceding_following")
-                .addWindowFunction(wf5, "sumAge_current_unbounded")
-                .addWindowFunction(wf6, "sumAge_unbounded_unbounded")
-                .addWindowFunction(wf7, "sumAge_range")
+                .add(wf1, "totalCount")
+                .add(wf2, "rn")
+                .add(wf3, "sumAge_unbounded_current")
+                .add(wf4, "sumAge_2_preceding_following")
+                .add(wf5, "sumAge_current_unbounded")
+                .add(wf6, "sumAge_unbounded_unbounded")
+                .add(wf7, "sumAge_range")
                 .done()
                 .limit(10)
                 .build();

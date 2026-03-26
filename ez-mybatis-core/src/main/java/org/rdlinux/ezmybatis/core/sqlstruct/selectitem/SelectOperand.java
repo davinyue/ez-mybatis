@@ -3,11 +3,10 @@ package org.rdlinux.ezmybatis.core.sqlstruct.selectitem;
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.QueryRetNeedAlias;
 import org.rdlinux.ezmybatis.core.sqlstruct.QueryRetOperand;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
-public class SelectOperand extends AbstractSelectItem implements SqlStruct {
+public class SelectOperand extends AbstractSelectItem {
     protected QueryRetOperand operand;
 
     public SelectOperand(QueryRetOperand operand, String alias) {

@@ -1,5 +1,7 @@
 package org.rdlinux.pg;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
+import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
@@ -439,10 +441,10 @@ public class PgSqlSelectTest extends PgSqlBaseTest {
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.userAge)
-                .addFieldCount(BaseEntity.Fields.id, "count")
+                .add(Function.builder("COUNT").addArg(EntityField.of(table, BaseEntity.Fields.id)).build(), "count")
                 .done()
                 .groupBy().addField(User.Fields.userAge).done()
-                .having().addCondition(Function.builder(table).setFunName("COUNT").addKeywordsArg("*").build(),
+                .having().addCondition(Function.builder("COUNT").addArg(Keywords.of("*")).build(),
                         Operator.ge, 0).done()
                 .build();
 
@@ -526,19 +528,19 @@ public class PgSqlSelectTest extends PgSqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         // Formula: age + 1
-        Formula agePlusOne = Formula.builder(table).withField(User.Fields.userAge).addValue(1).done().build();
+        Formula agePlusOne = Formula.builder(EntityField.of(table, User.Fields.userAge)).add(1).done().build();
 
         // Function: CONCAT(name, ' - ', age)
-        Function nameDesc = Function.builder(table).setFunName("CONCAT")
-                .addFieldArg(User.Fields.name)
-                .addValueArg(" - ")
-                .addFieldArg(User.Fields.userAge)
+        Function nameDesc = Function.builder("CONCAT")
+                .addArg(EntityField.of(table, User.Fields.name))
+                .addArg(" - ")
+                .addArg(EntityField.of(table, User.Fields.userAge))
                 .build();
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
-                .addFormula(agePlusOne, "nextYearAge")
-                .addFunc(nameDesc, "description")
+                .add(agePlusOne, "nextYearAge")
+                .add(nameDesc, "description")
                 .done()
                 .limit(2)
                 .build();
@@ -554,15 +556,15 @@ public class PgSqlSelectTest extends PgSqlBaseTest {
         this.ensureData(sqlSession);
         EntityTable table = EntityTable.of(User.class);
 
-        CaseWhen ageGroup = CaseWhen.builder(table)
-                .when().addFieldCondition(User.Fields.userAge, Operator.lt, 18).then("Young")
-                .when().addFieldCondition(User.Fields.userAge, Operator.ge, 18).then("Adult")
+        CaseWhen ageGroup = CaseWhen.builder()
+                .when().addFieldCondition(table, User.Fields.userAge, Operator.lt, 18).then("Young")
+                .when().addFieldCondition(table, User.Fields.userAge, Operator.ge, 18).then("Adult")
                 .els("Unknown");
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.name)
-                .addCaseWhen(ageGroup, "ageGroup")
+                .add(ageGroup, "ageGroup")
                 .done()
                 .limit(5)
                 .build();
