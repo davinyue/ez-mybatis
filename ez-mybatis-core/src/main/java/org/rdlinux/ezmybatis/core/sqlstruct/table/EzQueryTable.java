@@ -36,4 +36,9 @@ public class EzQueryTable extends AbstractTable implements Table {
     public String getSchema(Configuration configuration) {
         return null;
     }
+
+    @Override
+    public EzQueryTable as(String alias) {
+        return (EzQueryTable) super.as(alias);
+    }
 }

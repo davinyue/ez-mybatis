@@ -1,5 +1,7 @@
 package org.rdlinux.pg;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -295,7 +297,7 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set()
-                .setField(User.Fields.userAge, CaseWhen.builder(table).when()
+                .setField(User.Fields.userAge, CaseWhen.builder().when()
                         .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
                 .setColumn("name", "张三")
                 .done()
@@ -354,16 +356,16 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
 
-            CaseWhen sonCaseWhen = CaseWhen.builder(table)
+            CaseWhen sonCaseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .els("王二1");
 
-            CaseWhen caseWhen = CaseWhen.builder(table)
+            CaseWhen caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
                     .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
@@ -372,35 +374,23 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsCaseWhen(sonCaseWhen);
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .els(sonCaseWhen);
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .build();
-            ezUpdate = EzUpdate.update(table)
-                    .set().setField(User.Fields.name, caseWhen).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
-                    .build();
-            mapper.ezUpdate(ezUpdate);
-
-            caseWhen = CaseWhen.builder(table)
-                    .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
-                    .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
                     .build();
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
@@ -408,24 +398,36 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsColumn("name");
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .build();
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder(table)
+            caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
-                    .elsField(User.Fields.name);
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .els(TableColumn.of(table, "name"));
+            ezUpdate = EzUpdate.update(table)
+                    .set().setField(User.Fields.name, caseWhen).done()
+                    .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
+                    .build();
+            mapper.ezUpdate(ezUpdate);
+
+            caseWhen = CaseWhen.builder()
+                    .when()
+                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .when()
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .els(EntityField.of(table, User.Fields.name));
             ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.name, caseWhen).done()
                     .where().addFieldCondition(BaseEntity.Fields.id, "03512cd707384c8ab1b813077b9ab891").done()
@@ -447,7 +449,7 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+            Formula formula = Formula.builder(EntityField.of(table, User.Fields.userAge)).add(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, formula).done()
                     .where()
@@ -469,10 +471,10 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
-                    .addValueArg(100).build();
+            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, User.Fields.userAge))
+                    .addArg(100).build();
 
-            Function updateTimeFunction = Function.builder(table).setFunName("now").build();
+            Function updateTimeFunction = Function.builder("now").build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, function)
                     .setField(BaseEntity.Fields.updateTime, updateTimeFunction)

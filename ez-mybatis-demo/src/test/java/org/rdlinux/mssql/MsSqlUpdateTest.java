@@ -1,5 +1,6 @@
 package org.rdlinux.mssql;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -352,29 +353,29 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(table).withValue(1).addValue(100).done().build();
+            Formula formula = Formula.builder(table).with(1).add(100).done().build();
             // GREATEST is not standard in MSSQL (use MAX or nested CASE WHEN).
             // But if function name matches DB func, it works. MSSQL does not have greatest/least generally.
             // Using MAX for demo or assuming EzMybatis handles it.
             // Converting to "MAX" logic or just keeping it to see if it works (common SQL issue).
             // MSSQL 2022 supports GREATEST. Older versions don't.
             // I'll keep it for now, if it fails I'll change.
-            Function function = Function.builder(table).setFunName("GREATEST").addValueArg(1).addValueArg(2).build();
+            Function function = Function.builder("GREATEST").addArg(1).addArg(2).build();
 
-            CaseWhen sonCaseWhen = CaseWhen.builder(table)
+            CaseWhen sonCaseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .els("王二1");
 
-            CaseWhen caseWhen = CaseWhen.builder(table)
+            CaseWhen caseWhen = CaseWhen.builder()
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").thenFunc(function)
+                    .addFieldCondition(User.Fields.name, "张三1").then(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenFormula(formula)
+                    .addFieldCondition(User.Fields.name, "王二1").then(formula)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").thenCaseWhen(sonCaseWhen)
+                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
                     .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
@@ -400,7 +401,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(table).withField(User.Fields.userAge).addValue(10).done().build();
+            Formula formula = Formula.builder(EntityField.of(table, User.Fields.userAge)).add(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, formula).done()
                     .where()
@@ -422,10 +423,10 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Function function = Function.builder(table).setFunName("GREATEST").addFieldArg(User.Fields.userAge)
-                    .addValueArg(100).build();
+            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, User.Fields.userAge))
+                    .addArg(100).build();
 
-            Function updateTimeFunction = Function.builder(table).setFunName("GETDATE").build(); // MSSQL uses GETDATE() not now() usually
+            Function updateTimeFunction = Function.builder("GETDATE").build(); // MSSQL uses GETDATE() not now() usually
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().setField(User.Fields.userAge, function)
                     .setField(BaseEntity.Fields.updateTime, updateTimeFunction)

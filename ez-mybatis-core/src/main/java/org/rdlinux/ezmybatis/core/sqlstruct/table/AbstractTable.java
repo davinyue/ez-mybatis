@@ -56,4 +56,9 @@ public abstract class AbstractTable implements Table {
     public TableColumn column(String column) {
         return TableColumn.of(this, column);
     }
+
+    public AbstractTable as(String alias) {
+        this.alias = alias;
+        return this;
+    }
 }

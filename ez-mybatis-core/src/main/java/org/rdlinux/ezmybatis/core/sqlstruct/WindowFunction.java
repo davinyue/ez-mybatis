@@ -63,15 +63,7 @@ public class WindowFunction implements QueryRetNeedAlias {
         return new WindowFunctionBuilder(table, function);
     }
 
-    /**
-     * 获取窗口函数构造器
-     *
-     * @param function 聚合函数或窗口控制函数 (例如 ROW_NUMBER(), SUM() 等), 自动获取其中的 Table
-     * @return 窗口函数构造器
-     */
-    public static WindowFunctionBuilder builder(Function function) {
-        return new WindowFunctionBuilder(function.getTable(), function);
-    }
+
 
     /**
      * 窗口帧类型

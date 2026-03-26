@@ -88,7 +88,13 @@ public class EntityTable extends DbTable {
         return EzEntityClassInfoFactory.forClass(configuration, this.etType).getSchema();
     }
 
+
     public EntityField field(String field) {
         return EntityField.of(this, field);
+    }
+
+    @Override
+    public EntityTable as(String alias) {
+        return (EntityTable) super.as(alias);
     }
 }

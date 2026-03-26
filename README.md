@@ -287,7 +287,7 @@ public void conditionalUpdate() {
             .setField(User.Fields.userAge, EntityField.of(entityTable, User.Fields.userAge))
             // 年龄加 1
             .setField(User.Fields.userAge,
-                    Formula.builder(entityTable).addField(User.Fields.userAge).addValue(1))
+                    Formula.builder(entityTable).addField(User.Fields.userAge).add(1))
             .done()
             .where()
             // 条件：ID = 1
@@ -307,7 +307,7 @@ public void formulaUpdate() {
     // 创建表达式：年龄 + 10
     Formula formula = Formula.builder(table)
             .withField(User.Fields.userAge)
-            .addValue(10)
+            .add(10)
             .done()
             .build();
 
@@ -331,15 +331,13 @@ public void functionUpdate() {
     EntityTable table = EntityTable.of(User.class);
 
     // GREATEST 函数：取最大值
-    Function ageFunction = Function.builder(table)
-            .setFunName("GREATEST")
-            .addFieldArg(User.Fields.userAge)
-            .addValueArg(100)
+    Function ageFunction = Function.builder("GREATEST")
+            .addArg(EntityField.of(table, User.Fields.userAge))
+            .addArg(100)
             .build();
 
     // NOW 函数：当前时间
-    Function timeFunction = Function.builder(table)
-            .setFunName("now")
+    Function timeFunction = Function.builder("now")
             .build();
 
     EzUpdate ezUpdate = EzUpdate.update(table)
@@ -363,27 +361,26 @@ public void caseWhenUpdate() {
     EntityTable table = EntityTable.of(User.class);
 
     // 假设有函数或表达式
-    Function someFunction = Function.builder(table)
-            .setFunName("UPPER")
-            .addFieldArg(User.Fields.name)
+    Function someFunction = Function.builder("UPPER")
+            .addArg(EntityField.of(table, User.Fields.name))
             .build();
     Formula someFormula = Formula.builder(table)
             .withField(User.Fields.userAge)
-            .addValue(5)
+            .add(5)
             .done()
             .build();
 
     // 嵌套的 CASE WHEN
-    CaseWhen nestedCaseWhen = CaseWhen.builder(table)
-            .when().addFieldCondition(User.Fields.name, "张三1").then("李四")
+    CaseWhen nestedCaseWhen = CaseWhen.builder()
+            .when().addFieldCondition(table, User.Fields.name, "张三1").then("李四")
             .els("王二1");
 
     // 主 CASE WHEN
-    CaseWhen caseWhen = CaseWhen.builder(table)
-            .when().addFieldCondition(User.Fields.name, "张三1").then("李四")
-            .when().addFieldCondition(User.Fields.name, "张三2").thenFunc(someFunction)
-            .when().addFieldCondition(User.Fields.name, "王二1").thenFormula(someFormula)
-            .when().addFieldCondition(User.Fields.name, "王二2").thenCaseWhen(nestedCaseWhen)
+    CaseWhen caseWhen = CaseWhen.builder()
+            .when().addFieldCondition(table, User.Fields.name, "张三1").then("李四")
+            .when().addFieldCondition(table, User.Fields.name, "张三2").then(someFunction)
+            .when().addFieldCondition(table, User.Fields.name, "王二1").then(someFormula)
+            .when().addFieldCondition(table, User.Fields.name, "王二2").then(nestedCaseWhen)
             .els("默认值");
 
     EzUpdate ezUpdate = EzUpdate.update(table)
@@ -475,8 +472,8 @@ public void selectSpecificFields() {
             .select()
             .addField(User.Fields.userAge)        // 查询年龄字段
             .addField(User.Fields.name)           // 查询姓名字段
-            .addValue("二三班", "class")           // 添加常量值
-            .addValue(123.12, "balance")          // 添加数值常量
+            .add("二三班", "class")           // 添加常量值
+            .add(123.12, "balance")          // 添加数值常量
             .done()
             .build();
 
@@ -513,9 +510,8 @@ public void groupByQuery() {
     EntityTable table = EntityTable.of(User.class);
 
     // COUNT(*) 函数
-    Function countFunc = Function.builder(table)
-            .setFunName("COUNT")
-            .addKeywordsArg("*")
+    Function countFunc = Function.builder("COUNT")
+            .addArg(Keywords.of("*"))
             .build();
 
     EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
