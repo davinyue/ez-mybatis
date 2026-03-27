@@ -227,7 +227,7 @@ public class OracleDeleteTest extends OracleBaseTest {
         EntityTable uoTable = EntityTable.of(UserOrg.class);
         EzDelete delete = EzDelete.delete(userTable).delete(uoTable)
                 .join(uoTable)
-                .addFieldCompareCondition("id", "userId")
+                .addCondition(userTable.field("id").eq(uoTable.field("userId")))
                 .done()
                 .where()
                 .addFieldCondition("id", "56")

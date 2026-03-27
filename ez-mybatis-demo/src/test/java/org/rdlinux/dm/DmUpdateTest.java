@@ -1,7 +1,5 @@
 package org.rdlinux.dm;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
-import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -9,7 +7,9 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
+import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
@@ -297,7 +297,7 @@ public class DmUpdateTest extends DmBaseTest {
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set()
-                .setField(User.Fields.userAge, CaseWhen.builder().when()
+                .setField(User.Fields.userAge, CaseWhen.builder(table).when()
                         .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
                 .done()
                 .where().addFieldCondition("id", "1").done()
@@ -357,12 +357,12 @@ public class DmUpdateTest extends DmBaseTest {
             Formula formula = Formula.builder(table).with(1).add(100).done().build();
             Function function = Function.builder("GREATEST").addArg(1).addArg(2).build();
 
-            CaseWhen sonCaseWhen = CaseWhen.builder()
+            CaseWhen sonCaseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .els("王二1");
 
-            CaseWhen caseWhen = CaseWhen.builder()
+            CaseWhen caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
@@ -379,7 +379,7 @@ public class DmUpdateTest extends DmBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder()
+            caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
@@ -395,7 +395,7 @@ public class DmUpdateTest extends DmBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder()
+            caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
@@ -411,7 +411,7 @@ public class DmUpdateTest extends DmBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder()
+            caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
@@ -427,7 +427,7 @@ public class DmUpdateTest extends DmBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder()
+            caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()
@@ -443,7 +443,7 @@ public class DmUpdateTest extends DmBaseTest {
                     .build();
             mapper.ezUpdate(ezUpdate);
 
-            caseWhen = CaseWhen.builder()
+            caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()

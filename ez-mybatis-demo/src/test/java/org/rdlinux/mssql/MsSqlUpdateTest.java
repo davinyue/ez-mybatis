@@ -1,6 +1,5 @@
 package org.rdlinux.mssql;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -8,6 +7,7 @@ import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -362,12 +362,12 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             // I'll keep it for now, if it fails I'll change.
             Function function = Function.builder("GREATEST").addArg(1).addArg(2).build();
 
-            CaseWhen sonCaseWhen = CaseWhen.builder()
+            CaseWhen sonCaseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .els("王二1");
 
-            CaseWhen caseWhen = CaseWhen.builder()
+            CaseWhen caseWhen = CaseWhen.builder(table)
                     .when()
                     .addFieldCondition(User.Fields.name, "张三1").then("李四")
                     .when()

@@ -1,7 +1,5 @@
 package org.rdlinux.mssql;
 
-import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
-import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
@@ -10,6 +8,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
+import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
@@ -309,102 +308,103 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         this.ensureData(sqlSession);
         EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EntityTable userTable = EntityTable.of(User.class);
 
         // 1. EQ (=)
-        EzQuery<User> eqQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> eqQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.sex, Operator.eq, User.Sex.MAN).done()
+                .where().addCondition(userTable.field(User.Fields.sex).eq(User.Sex.MAN)).done()
                 .page(1, 1).build();
         log.info("EzQuery EQ: {}", JacksonUtils.toJsonString(mapper.query(eqQuery)));
 
         // 2. NE (!=)
-        EzQuery<User> neQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> neQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.ne, -1).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).ne(-1)).done()
                 .page(1, 1).build();
         log.info("EzQuery NE: {}", JacksonUtils.toJsonString(mapper.query(neQuery)));
 
         // 3. GT (>)
-        EzQuery<User> gtQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> gtQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.gt, 10).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).gt(10)).done()
                 .page(1, 1).build();
         log.info("EzQuery GT: {}", JacksonUtils.toJsonString(mapper.query(gtQuery)));
 
         // 4. GE (>=)
-        EzQuery<User> geQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> geQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.ge, 18).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).ge(18)).done()
                 .page(1, 1).build();
         log.info("EzQuery GE: {}", JacksonUtils.toJsonString(mapper.query(geQuery)));
 
         // 5. LT (<)
-        EzQuery<User> ltQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> ltQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.lt, 100).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).lt(100)).done()
                 .page(1, 1).build();
         log.info("EzQuery LT: {}", JacksonUtils.toJsonString(mapper.query(ltQuery)));
 
         // 6. LE (<=)
-        EzQuery<User> leQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> leQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.le, 18).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).le(18)).done()
                 .page(1, 1).build();
         log.info("EzQuery LE: {}", JacksonUtils.toJsonString(mapper.query(leQuery)));
 
         // 7. IS NULL
-        EzQuery<User> isNullQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> isNullQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldIsNullCondition(BaseEntity.Fields.id).done() // Use dedicated method
+                .where().addCondition(userTable.field(BaseEntity.Fields.id).isNull()).done()
                 .page(1, 1).build();
         log.info("EzQuery IS NULL: {}", JacksonUtils.toJsonString(mapper.query(isNullQuery)));
 
         // 8. IS NOT NULL
-        EzQuery<User> isNotNullQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> isNotNullQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldIsNotNullCondition(BaseEntity.Fields.id).done() // Use dedicated method
+                .where().addCondition(userTable.field(BaseEntity.Fields.id).isNotNull()).done()
                 .page(1, 1).build();
         log.info("EzQuery IS NOT NULL: {}", JacksonUtils.toJsonString(mapper.query(isNotNullQuery)));
 
         // 9. IN
-        EzQuery<User> inQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> inQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.in, Arrays.asList(18, 20, 27)).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).in(Arrays.asList(18, 20, 27))).done()
                 .page(1, 1).build();
         log.info("EzQuery IN: {}", JacksonUtils.toJsonString(mapper.query(inQuery)));
 
         // 10. NOT IN
-        EzQuery<User> notInQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> notInQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.notIn, Arrays.asList(-1, -2)).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).notIn(Arrays.asList(-1, -2))).done()
                 .page(1, 1).build();
         log.info("EzQuery NOT IN: {}", JacksonUtils.toJsonString(mapper.query(notInQuery)));
 
         // 11. LIKE
-        EzQuery<User> likeQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> likeQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, Operator.like, "Test%").done()
+                .where().addCondition(userTable.field(User.Fields.name).like("Test%")).done()
                 .page(1, 1).build();
         log.info("EzQuery LIKE: {}", JacksonUtils.toJsonString(mapper.query(likeQuery)));
 
         // 12. NOT LIKE (unlike)
-        EzQuery<User> unlikeQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> unlikeQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, Operator.unlike, "NonExis%").done()
+                .where().addCondition(userTable.field(User.Fields.name).unlike("NonExis%")).done()
                 .page(1, 1).build();
         log.info("EzQuery NOT LIKE: {}", JacksonUtils.toJsonString(mapper.query(unlikeQuery)));
 
         // 13. BETWEEN
-        EzQuery<User> betweenQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> betweenQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldBtCondition(User.Fields.userAge, 10, 30).done() // Use dedicated method
+                .where().addCondition(userTable.field(User.Fields.userAge).between(10, 30)).done()
                 .page(1, 1).build();
         log.info("EzQuery BETWEEN: {}", JacksonUtils.toJsonString(mapper.query(betweenQuery)));
 
         // 14. NOT BETWEEN
-        EzQuery<User> notBetweenQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> notBetweenQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldNotBtCondition(User.Fields.userAge, 100, 200).done() // Use dedicated method
+                .where().addCondition(userTable.field(User.Fields.userAge).notBetween(100, 200)).done()
                 .page(1, 1).build();
         log.info("EzQuery NOT BETWEEN: {}", JacksonUtils.toJsonString(mapper.query(notBetweenQuery)));
 
@@ -437,7 +437,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
                 .from(userTable)
                 .select().addAll().done()
                 .join(userOrgTable)
-                .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)
+                .addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(UserOrg.Fields.userId)))
                 .done()
                 .page(1, 2)
                 .build();
@@ -460,8 +460,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
                 .add(Function.builder("COUNT").addArg(EntityField.of(table, BaseEntity.Fields.id)).build(), "count")
                 .done()
                 .groupBy().addField(User.Fields.userAge).done()
-                .having().addCondition(Function.builder("COUNT").addArg(Keywords.of("*")).build(),
-                        Operator.ge, 0).done()
+                .having().addCondition(org.rdlinux.ezmybatis.core.sqlstruct.Alias.of("count").ge(0)).done()
                 .build();
 
         List<StringHashMap> result = sqlSession.getMapper(EzMapper.class).query(query);
@@ -519,13 +518,15 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
     public void ezQuerySubQuery() {
         SqlSession sqlSession = MsSqlBaseTest.sqlSessionFactory.openSession();
         this.ensureData(sqlSession);
+        EntityTable userTable = EntityTable.of(User.class);
 
         // Select where ID in (Select ID from ...)
-        EzQuery<String> subInfo = EzQuery.builder(String.class).from(EntityTable.of(User.class))
+        EzQuery<String> subInfo = EzQuery.builder(String.class).from(userTable)
                 .select().addField(BaseEntity.Fields.id).done()
+                .where().addCondition(userTable.field(BaseEntity.Fields.id).isNull()).done()
                 .build();
 
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
                 .where()
                 .addColumnCondition(BaseEntity.Fields.id, Operator.in, subInfo)
@@ -573,7 +574,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         this.ensureData(sqlSession);
         EntityTable table = EntityTable.of(User.class);
 
-        CaseWhen ageGroup = CaseWhen.builder()
+        CaseWhen ageGroup = CaseWhen.builder(table)
                 .when().addFieldCondition(table, User.Fields.userAge, Operator.lt, 18).then("Young")
                 .when().addFieldCondition(table, User.Fields.userAge, Operator.ge, 18).then("Adult")
                 .els("Unknown");
