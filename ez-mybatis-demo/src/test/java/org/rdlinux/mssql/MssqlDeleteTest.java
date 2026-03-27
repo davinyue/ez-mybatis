@@ -240,7 +240,6 @@ public class MssqlDeleteTest extends MssqlBaseTest {
 
     @Test
     public void deleteBySql() {
-        String sql = "DELETE FROM user WHERE id = #{id}";
         Map<String, Object> param = new HashMap<>();
         param.put("id", this.getOneUserId());
         String realSql = "DELETE FROM ez_user WHERE id = #{id}";
@@ -252,7 +251,6 @@ public class MssqlDeleteTest extends MssqlBaseTest {
         } catch (Exception e) {
             log.error("Test deleteBySql exception", e);
             throw e;
-        } finally {
         }
     }
 }

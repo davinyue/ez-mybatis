@@ -27,7 +27,7 @@ public class SqlServerArgCompareArgConditionConverter extends MySqlArgCompareArg
     @Override
     protected String getOperatorStr(Operator operator) {
         if (Operator.regexp == operator) {
-            throw new IllegalArgumentException("SQL Server does not support regexp query.");
+            return "LIKE";
         }
         return super.getOperatorStr(operator);
     }
