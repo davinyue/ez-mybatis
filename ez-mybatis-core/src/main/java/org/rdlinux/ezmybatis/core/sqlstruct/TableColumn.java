@@ -5,6 +5,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.enumeration.Operator;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -27,7 +29,7 @@ public class TableColumn implements QueryRetOperand {
     /**
      * 构建数据库表列参数
      *
-     * @param table 表对象
+     * @param table  表对象
      * @param column 表中的列名
      */
     private TableColumn(Table table, String column) {
@@ -40,7 +42,7 @@ public class TableColumn implements QueryRetOperand {
     /**
      * 创建表列的静态工厂方法
      *
-     * @param table 表对象
+     * @param table  表对象
      * @param column 表中的列名
      * @return 表列构建对象
      */
@@ -54,6 +56,7 @@ public class TableColumn implements QueryRetOperand {
      * @param value 要比较的目标值
      * @return 这个列等于指定值的条件对象
      */
+    @Override
     public Condition eq(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.eq, Operand.objToOperand(value));
     }
@@ -64,6 +67,7 @@ public class TableColumn implements QueryRetOperand {
      * @param value 要比较的目标值
      * @return 这个列大于指定值的条件对象
      */
+    @Override
     public Condition gt(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.gt, Operand.objToOperand(value));
     }
@@ -74,6 +78,7 @@ public class TableColumn implements QueryRetOperand {
      * @param value 要比较的目标值
      * @return 这个列小于指定值的条件对象
      */
+    @Override
     public Condition lt(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.lt, Operand.objToOperand(value));
     }
@@ -84,6 +89,7 @@ public class TableColumn implements QueryRetOperand {
      * @param value 要比较的目标值，如 "%abc%"
      * @return 这个列进行模糊匹配的条件对象
      */
+    @Override
     public Condition like(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.like, Operand.objToOperand(value));
     }
@@ -93,6 +99,7 @@ public class TableColumn implements QueryRetOperand {
      *
      * @return 这个列为空的条件对象
      */
+    @Override
     public Condition isNull() {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.isNull);
     }
@@ -102,6 +109,7 @@ public class TableColumn implements QueryRetOperand {
      *
      * @return 这个列不为空的条件对象
      */
+    @Override
     public Condition isNotNull() {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.isNotNull);
     }
@@ -226,5 +234,34 @@ public class TableColumn implements QueryRetOperand {
         return new SelectOperand(this, alias);
     }
 
+    /**
+     * 构建 EzUpdate SET 子句中的更新项，将当前列更新为指定的操作数值。
+     * 操作数可以是普通值（通过 {@link ObjArg#of} 包装）、另一个列、函数、公式等。
+     *
+     * @param operand 要设置的新值操作数
+     * @return 更新项对象，可直接添加到 EzUpdate 的 SET 子句中
+     */
+    public UpdateItem set(Operand operand) {
+        return new UpdateColumnItem(this.table, this.column, operand);
+    }
 
+    /**
+     * 构建 EzUpdate SET 子句中的更新项，将当前列更新为指定的操作数值。
+     * 操作数可以是普通值、另一个字段、函数、公式等。
+     *
+     * @param value 要设置的新值操作数
+     * @return 更新项对象，可直接添加到 EzUpdate 的 SET 子句中
+     */
+    public UpdateItem set(Object value) {
+        return new UpdateColumnItem(this.table, this.column, Operand.objToOperand(value));
+    }
+
+    /**
+     * 构建 EzUpdate SET 子句中的更新项，将当前列更新为 NULL。
+     *
+     * @return 将列设置为 NULL 的更新项对象
+     */
+    public UpdateItem setToNull() {
+        return new UpdateColumnItem(this.table, this.column, null);
+    }
 }

@@ -5,6 +5,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.enumeration.Operator;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -64,6 +66,7 @@ public class EntityField implements QueryRetOperand {
      * @param value 要比较的目标值
      * @return 这个属性等于指定值的条件对象
      */
+    @Override
     public Condition eq(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.eq, Operand.objToOperand(value));
     }
@@ -74,6 +77,7 @@ public class EntityField implements QueryRetOperand {
      * @param value 要比较的目标值
      * @return 这个属性大于指定值的条件对象
      */
+    @Override
     public Condition gt(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.gt, Operand.objToOperand(value));
     }
@@ -84,6 +88,7 @@ public class EntityField implements QueryRetOperand {
      * @param value 要比较的目标值
      * @return 这个属性小于指定值的条件对象
      */
+    @Override
     public Condition lt(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.lt, Operand.objToOperand(value));
     }
@@ -94,6 +99,7 @@ public class EntityField implements QueryRetOperand {
      * @param value 要比较的目标值，如 "%abc%"
      * @return 这个属性进行模糊匹配的条件对象
      */
+    @Override
     public Condition like(Object value) {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.like, Operand.objToOperand(value));
     }
@@ -103,6 +109,7 @@ public class EntityField implements QueryRetOperand {
      *
      * @return 这个属性为空的条件对象
      */
+    @Override
     public Condition isNull() {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.isNull);
     }
@@ -112,6 +119,7 @@ public class EntityField implements QueryRetOperand {
      *
      * @return 这个属性不为空的条件对象
      */
+    @Override
     public Condition isNotNull() {
         return new ArgCompareArgCondition(AndOr.AND, this, Operator.isNotNull);
     }
@@ -226,5 +234,34 @@ public class EntityField implements QueryRetOperand {
         return new SelectOperand(Function.builder("TRIM").addArg(this).build(), alias);
     }
 
+    /**
+     * 构建 EzUpdate SET 子句中的更新项，将当前属性更新为指定的操作数值。
+     * 操作数可以是普通值（通过 {@link ObjArg#of} 包装）、另一个字段、函数、公式等。
+     *
+     * @param operand 要设置的新值操作数
+     * @return 更新项对象，可直接添加到 EzUpdate 的 SET 子句中
+     */
+    public UpdateItem set(Operand operand) {
+        return new UpdateFieldItem(this.table, this.field, operand);
+    }
 
+    /**
+     * 构建 EzUpdate SET 子句中的更新项，将当前属性更新为指定的操作数值。
+     * 操作数可以是普通值、另一个字段、函数、公式等。
+     *
+     * @param value 要设置的新值操作数
+     * @return 更新项对象，可直接添加到 EzUpdate 的 SET 子句中
+     */
+    public UpdateItem set(Object value) {
+        return new UpdateFieldItem(this.table, this.field, Operand.objToOperand(value));
+    }
+
+    /**
+     * 构建 EzUpdate SET 子句中的更新项，将当前属性更新为 NULL。
+     *
+     * @return 将属性设置为 NULL 的更新项对象
+     */
+    public UpdateItem setToNull() {
+        return new UpdateFieldItem(this.table, this.field, null);
+    }
 }

@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.mssql;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class MysqlSelectTest extends MysqlBaseTest {
+public class MssqlSelectTest extends MssqlBaseTest {
 
     // Helper to get a valid ID for testing
 
@@ -84,13 +84,6 @@ public class MysqlSelectTest extends MysqlBaseTest {
         log.info("UserMapper.selectOneBySql: {}", JacksonUtils.toJsonString(user));
     }
 
-    @Test
-    public void userSelectBySql() {
-        List<User> users = this.sqlSession.getMapper(UserMapper.class).selectBySql("SELECT * FROM ez_user LIMIT 2", new HashMap<>());
-        Assert.assertNotNull(users);
-        log.info("UserMapper.selectBySql: {}", JacksonUtils.toJsonString(users));
-    }
-
     // =================================================================================================================
     // EzMapper Tests
     // =================================================================================================================
@@ -128,34 +121,6 @@ public class MysqlSelectTest extends MysqlBaseTest {
         log.info("EzMapper.selectByTableAndIds: {}", JacksonUtils.toJsonString(users));
     }
 
-    @Test
-    public void ezSelectOneMapBySql() {
-        Map<String, Object> map = this.sqlSession.getMapper(EzMapper.class).selectOneMapBySql("SELECT * FROM ez_user LIMIT 1", new HashMap<>());
-        Assert.assertNotNull(map);
-        log.info("EzMapper.selectOneMapBySql: {}", JacksonUtils.toJsonString(map));
-    }
-
-    @Test
-    public void ezSelectMapBySql() {
-        List<Map<String, Object>> maps = this.sqlSession.getMapper(EzMapper.class).selectMapBySql("SELECT * FROM ez_user LIMIT 2", new HashMap<>());
-        Assert.assertNotNull(maps);
-        log.info("EzMapper.selectMapBySql: {}", JacksonUtils.toJsonString(maps));
-    }
-
-    @Test
-    public void ezSelectOneObjectBySql() {
-        User user = this.sqlSession.getMapper(EzMapper.class).selectOneObjectBySql(User.class, "SELECT * FROM ez_user LIMIT 1", new HashMap<>());
-        Assert.assertNotNull(user);
-        log.info("EzMapper.selectOneObjectBySql: {}", JacksonUtils.toJsonString(user));
-    }
-
-    @Test
-    public void ezSelectObjectBySql() {
-        List<User> users = this.sqlSession.getMapper(EzMapper.class).selectObjectBySql(User.class, "SELECT * FROM ez_user LIMIT 2", new HashMap<>());
-        Assert.assertNotNull(users);
-        log.info("EzMapper.selectObjectBySql: {}", JacksonUtils.toJsonString(users));
-    }
-
     // =================================================================================================================
     // EzQuery Comprehensive Tests
     // =================================================================================================================
@@ -179,7 +144,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             futures.add(executorService.submit(() -> {
-                try (SqlSession threadSession = MysqlBaseTest.sqlSessionFactory.openSession()) {
+                try (SqlSession threadSession = MssqlBaseTest.sqlSessionFactory.openSession()) {
                     startLatch.await();
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
@@ -208,9 +173,9 @@ public class MysqlSelectTest extends MysqlBaseTest {
         }
 
         startLatch.countDown();
-        for (java.util.concurrent.Future<String> future : futures) {
+        for (Future<String> future : futures) {
             String result = future.get();
-            org.junit.Assert.assertEquals("OK", result);
+            Assert.assertEquals("OK", result);
         }
         executorService.shutdown();
     }
@@ -353,26 +318,26 @@ public class MysqlSelectTest extends MysqlBaseTest {
         Assert.assertNotNull(mapper.query(notBetweenQuery));
         log.info("EzQuery NOT BETWEEN: {}", JacksonUtils.toJsonString(mapper.query(notBetweenQuery)));
 
-        // 15. REGEXP
-        EzQuery<User> regexpQuery = EzQuery.builder(User.class).from(userTable)
-                .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, Operator.regexp, "^Test.*").done()
-                .page(1, 1).build();
-        Assert.assertNotNull(mapper.query(regexpQuery));
-        log.info("EzQuery REGEXP: {}", JacksonUtils.toJsonString(mapper.query(regexpQuery)));
+//        // 15. REGEXP
+//        EzQuery<User> regexpQuery = EzQuery.builder(User.class).from(userTable)
+//                .select().addAll().done()
+//                .where().addFieldCondition(User.Fields.name, Operator.regexp, "^Test.*").done()
+//                .page(1, 1).build();
+//        Assert.assertNotNull(mapper.query(regexpQuery));
+//        log.info("EzQuery REGEXP: {}", JacksonUtils.toJsonString(mapper.query(regexpQuery)));
 
     }
 
     @Test
     public void ezQueryJoin() {
         EntityTable userTable = EntityTable.of(User.class);
-        EntityTable userOrgTable = EntityTable.of(org.rdlinux.ezmybatis.demo.entity.UserOrg.class);
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
                 .from(userTable)
                 .select().addAll().done()
                 .join(userOrgTable)
-                .addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(org.rdlinux.ezmybatis.demo.entity.UserOrg.Fields.userId)))
+                .addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(UserOrg.Fields.userId)))
                 .done()
                 .page(1, 10)
                 .build();

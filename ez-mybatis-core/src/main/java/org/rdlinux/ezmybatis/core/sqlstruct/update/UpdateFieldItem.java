@@ -1,11 +1,13 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.update;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 
 @Getter
+@Setter
 public class UpdateFieldItem extends UpdateItem {
     private EntityTable entityTable;
     private String field;
