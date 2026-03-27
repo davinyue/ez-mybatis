@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ez-mybatis-demo</artifactId>
-    <name>ez-mybati-demo</name>
+    <name>ez-mybatis-demo</name>
     <url>https://github.com/davinyue/ez-mybatis</url>
     <description>ez-mybatis</description>
     <licenses>
