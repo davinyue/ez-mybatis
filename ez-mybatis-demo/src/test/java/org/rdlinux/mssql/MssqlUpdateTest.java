@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.mssql;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -19,7 +19,7 @@ import org.rdlinux.ezmybatis.demo.mapper.UserMapper;
 import java.util.*;
 
 @Slf4j
-public class MysqlUpdateTest extends MysqlBaseTest {
+public class MssqlUpdateTest extends MssqlBaseTest {
     @Test
     public void userMapperUpdateTest() {
         String id = this.getOneUserId();

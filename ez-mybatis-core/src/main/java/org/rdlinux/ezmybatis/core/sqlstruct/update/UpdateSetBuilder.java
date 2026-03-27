@@ -29,6 +29,18 @@ public class UpdateSetBuilder<ParentBuilder> {
         }
     }
 
+    public UpdateSetBuilder<ParentBuilder> add(boolean sure, UpdateItem updateItem) {
+        if (sure) {
+            this.set.getItems().add(updateItem);
+        }
+        return this;
+    }
+
+    public UpdateSetBuilder<ParentBuilder> add(UpdateItem updateItem) {
+        this.set.getItems().add(updateItem);
+        return this;
+    }
+
     public UpdateSetBuilder<ParentBuilder> setField(boolean sure, EntityTable table, String field, Operand value) {
         if (sure) {
             this.set.getItems().add(new UpdateFieldItem(table, field, value));

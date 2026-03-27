@@ -276,27 +276,34 @@ public void replaceUser() {
 
 ```java
 public void conditionalUpdate() {
-    EntityTable entityTable = EntityTable.of(User.class);
-    EzUpdate ezUpdate = EzUpdate.update(entityTable)
+    EntityTable table = EntityTable.of(User.class);
+    EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
             // 设置年龄为 1
-            .setField(User.Fields.userAge, 1)
+            .add(table.field(User.Fields.userAge).set(1))
             // 设置年龄为原值 (通过列名引用)
-            .setField(User.Fields.userAge, TableColumn.of(entityTable, "age"))
+            .add(table.field(User.Fields.userAge).set(TableColumn.of(table, "age")))
             // 设置年龄为原值 (通过实体字段引用)
-            .setField(User.Fields.userAge, entityTable.field(User.Fields.userAge))
+            .add(table.field(User.Fields.userAge).set(table.field(User.Fields.userAge)))
             // 年龄加 1
-            .setField(User.Fields.userAge,
-                    Formula.builder(entityTable.field(User.Fields.userAge)).add(1).done().build())
+            .add(table.field(User.Fields.userAge).set(
+                    Formula.builder(table.field(User.Fields.userAge)).add(1).done().build()))
+            // 通过列名设置
+            .add(table.column("name").set("张三"))
+            // 将字段设置为 NULL
+            .add(table.field(User.Fields.name).setToNull())
             .done()
             .where()
             // 条件：ID = 1
-            .addCondition(entityTable.field(BaseEntity.Fields.id).eq("1"))
+            .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
             .done()
             .build();
     ezMapper.ezUpdate(ezUpdate);
 }
 ```
+
+> **💡 提示**：`EntityField.set()` 和 `TableColumn.set()` 是新增的 fluent API，可以构建更新项并直接通过 `add()` 添加到 SET 子句中。
+> 旧的 `setField()` / `setColumn()` 方法仍然可用，保持向后兼容。
 
 #### 表达式更新（Formula）
 
@@ -312,7 +319,7 @@ public void formulaUpdate() {
 
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
-            .setField(User.Fields.userAge, formula)  // 年龄增加 10
+            .add(table.field(User.Fields.userAge).set(formula))  // 年龄增加 10
             .done()
             .where()
             .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
@@ -335,14 +342,9 @@ public void functionUpdate() {
             .addArg(100)
             .build();
 
-    // NOW 函数：当前时间
-    Function timeFunction = Function.builder("now")
-            .build();
-
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
-            .setField(User.Fields.userAge, ageFunction)              // 年龄取最大值
-            .setField(BaseEntity.Fields.updateTime, timeFunction)    // 更新时间
+            .add(table.field(User.Fields.userAge).set(ageFunction))  // 年龄取最大值
             .done()
             .where()
             .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
@@ -359,13 +361,9 @@ public void functionUpdate() {
 public void caseWhenUpdate() {
     EntityTable table = EntityTable.of(User.class);
 
-    // 假设有函数或表达式
+    // 假设有函数
     Function someFunction = Function.builder("UPPER")
             .addArg(table.field(User.Fields.name))
-            .build();
-    Formula someFormula = Formula.builder(table.field(User.Fields.userAge))
-            .add(5)
-            .done()
             .build();
 
     // 嵌套的 CASE WHEN
@@ -377,13 +375,12 @@ public void caseWhenUpdate() {
     CaseWhen caseWhen = CaseWhen.builder(table)
             .when().addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
             .when().addCondition(table.field(User.Fields.name).eq("张三2")).then(someFunction)
-            .when().addCondition(table.field(User.Fields.name).eq("王二1")).then(someFormula)
             .when().addCondition(table.field(User.Fields.name).eq("王二2")).then(nestedCaseWhen)
             .els("默认值");
 
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
-            .setField(User.Fields.name, caseWhen)
+            .add(table.field(User.Fields.name).set(caseWhen))
             .done()
             .where()
             .addCondition(table.field(BaseEntity.Fields.id).in(Arrays.asList("1", "2", "3", "4")))
