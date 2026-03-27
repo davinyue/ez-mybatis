@@ -7,10 +7,9 @@ import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 @Getter
-public class ExistsCondition implements Condition, SqlStruct {
-    private AndOr andOr;
-    private EzQuery<?> query;
-    private boolean isNot;
+public class ExistsCondition extends AbstractCondition implements Condition, SqlStruct {
+    private final EzQuery<?> query;
+    private final boolean isNot;
 
     public ExistsCondition(AndOr andOr, EzQuery<?> query, boolean isNot) {
         Assert.notNull(andOr, "andOr can not be null");
@@ -18,10 +17,5 @@ public class ExistsCondition implements Condition, SqlStruct {
         this.andOr = andOr;
         this.query = query;
         this.isNot = isNot;
-    }
-
-    @Override
-    public AndOr getAndOr() {
-        return this.andOr;
     }
 }

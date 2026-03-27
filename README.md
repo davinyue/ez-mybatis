@@ -284,14 +284,14 @@ public void conditionalUpdate() {
             // 设置年龄为原值 (通过列名引用)
             .setField(User.Fields.userAge, TableColumn.of(entityTable, "age"))
             // 设置年龄为原值 (通过实体字段引用)
-            .setField(User.Fields.userAge, EntityField.of(entityTable, User.Fields.userAge))
+            .setField(User.Fields.userAge, entityTable.field(User.Fields.userAge))
             // 年龄加 1
             .setField(User.Fields.userAge,
-                    Formula.builder(entityTable).addField(User.Fields.userAge).add(1))
+                    Formula.builder(entityTable.field(User.Fields.userAge)).add(1).done().build())
             .done()
             .where()
             // 条件：ID = 1
-            .addFieldCondition(BaseEntity.Fields.id, "1")
+            .addCondition(entityTable.field(BaseEntity.Fields.id).eq("1"))
             .done()
             .build();
     ezMapper.ezUpdate(ezUpdate);
@@ -305,8 +305,7 @@ public void formulaUpdate() {
     EntityTable table = EntityTable.of(User.class);
 
     // 创建表达式：年龄 + 10
-    Formula formula = Formula.builder(table)
-            .withField(User.Fields.userAge)
+    Formula formula = Formula.builder(table.field(User.Fields.userAge))
             .add(10)
             .done()
             .build();
@@ -316,7 +315,7 @@ public void formulaUpdate() {
             .setField(User.Fields.userAge, formula)  // 年龄增加 10
             .done()
             .where()
-            .addFieldCondition(BaseEntity.Fields.id, "1")
+            .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
             .done()
             .build();
 
@@ -332,7 +331,7 @@ public void functionUpdate() {
 
     // GREATEST 函数：取最大值
     Function ageFunction = Function.builder("GREATEST")
-            .addArg(EntityField.of(table, User.Fields.userAge))
+            .addArg(table.field(User.Fields.userAge))
             .addArg(100)
             .build();
 
@@ -346,7 +345,7 @@ public void functionUpdate() {
             .setField(BaseEntity.Fields.updateTime, timeFunction)    // 更新时间
             .done()
             .where()
-            .addFieldCondition(BaseEntity.Fields.id, "1")
+            .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
             .done()
             .build();
 
@@ -362,25 +361,24 @@ public void caseWhenUpdate() {
 
     // 假设有函数或表达式
     Function someFunction = Function.builder("UPPER")
-            .addArg(EntityField.of(table, User.Fields.name))
+            .addArg(table.field(User.Fields.name))
             .build();
-    Formula someFormula = Formula.builder(table)
-            .withField(User.Fields.userAge)
+    Formula someFormula = Formula.builder(table.field(User.Fields.userAge))
             .add(5)
             .done()
             .build();
 
     // 嵌套的 CASE WHEN
-    CaseWhen nestedCaseWhen = CaseWhen.builder()
-            .when().addFieldCondition(table, User.Fields.name, "张三1").then("李四")
+    CaseWhen nestedCaseWhen = CaseWhen.builder(table)
+            .when().addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
             .els("王二1");
 
     // 主 CASE WHEN
-    CaseWhen caseWhen = CaseWhen.builder()
-            .when().addFieldCondition(table, User.Fields.name, "张三1").then("李四")
-            .when().addFieldCondition(table, User.Fields.name, "张三2").then(someFunction)
-            .when().addFieldCondition(table, User.Fields.name, "王二1").then(someFormula)
-            .when().addFieldCondition(table, User.Fields.name, "王二2").then(nestedCaseWhen)
+    CaseWhen caseWhen = CaseWhen.builder(table)
+            .when().addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
+            .when().addCondition(table.field(User.Fields.name).eq("张三2")).then(someFunction)
+            .when().addCondition(table.field(User.Fields.name).eq("王二1")).then(someFormula)
+            .when().addCondition(table.field(User.Fields.name).eq("王二2")).then(nestedCaseWhen)
             .els("默认值");
 
     EzUpdate ezUpdate = EzUpdate.update(table)
@@ -388,7 +386,7 @@ public void caseWhenUpdate() {
             .setField(User.Fields.name, caseWhen)
             .done()
             .where()
-            .addFieldCondition(BaseEntity.Fields.id, Operator.in, Arrays.asList("1", "2", "3", "4"))
+            .addCondition(table.field(BaseEntity.Fields.id).in(Arrays.asList("1", "2", "3", "4")))
             .done()
             .build();
 
@@ -433,10 +431,10 @@ public void conditionalDelete() {
 
     EzDelete delete = EzDelete.delete(userTable)
             .where()
-            .addFieldCondition(User.Fields.name, "张三")
+            .addCondition(userTable.field(User.Fields.name).eq("张三"))
             .groupCondition()  // 条件分组
-            .addFieldCondition(User.Fields.userAge, 55)
-            .addFieldCondition(AndOr.OR, User.Fields.userAge, 78)  // OR 条件
+            .addCondition(userTable.field(User.Fields.userAge).eq(55))
+            .orCondition(userTable.field(User.Fields.userAge).eq(78))  // OR 条件
             .done()
             .done()
             .build();
@@ -511,7 +509,7 @@ public void groupByQuery() {
 
     // COUNT(*) 函数
     Function countFunc = Function.builder("COUNT")
-            .addArg(Keywords.of("*"))
+            .addArg(org.rdlinux.ezmybatis.core.sqlstruct.Keywords.of("*"))
             .build();
 
     EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
@@ -519,14 +517,14 @@ public void groupByQuery() {
             .select()
             .addField(User.Fields.userAge)     // 分组字段
             .addField(User.Fields.name)        // 分组字段
-            .addFunc(countFunc, "total")       // 聚合函数
+            .add(countFunc, "total")           // 聚合函数
             .done()
             .groupBy()
             .addField(User.Fields.userAge)     // 按年龄分组
             .addField(User.Fields.name)        // 按姓名分组
             .done()
             .having()
-            .addFuncCompareValueCondition(countFunc, Operator.gt, 1)  // HAVING count > 1
+            .addCondition(countFunc.gt(1))     // HAVING count > 1
             .done()
             .build();
 
@@ -562,17 +560,18 @@ public void orderByQuery() {
 
 ```java
 public void conditionalQuery() {
+    EntityTable userTable = EntityTable.of(User.class);
     EzQuery<User> query = EzQuery.builder(User.class)
-            .from(EntityTable.of(User.class))
+            .from(userTable)
             .select()
             .addAll()
             .done()
             .where()
             // NOT IN 条件
-            .addFieldCondition(User.Fields.name, Operator.notIn, "张三")
-            .addFieldCondition(User.Fields.name, Operator.notIn, Arrays.asList("李四", "王五"))
+            .addCondition(userTable.field(User.Fields.name).notIn("张三"))
+            .addCondition(userTable.field(User.Fields.name).notIn(Arrays.asList("李四", "王五")))
             // 其他条件
-            .addFieldCondition(User.Fields.userAge, Operator.gt, 18)  // 年龄 > 18
+            .addCondition(userTable.field(User.Fields.userAge).gt(18))  // 年龄 > 18
             .done()
             .page(1, 10)
             .build();
@@ -599,12 +598,12 @@ public void joinQuery() {
             .addField(UserOrg.Fields.orgId)                 // 查询组织ID
             .done()
             .join(userOrgTable)                                 // INNER JOIN
-            .addFieldCompareCondition(BaseEntity.Fields.id, UserOrg.Fields.userId)  // ON 条件
-            .addFieldCondition(User.Fields.name, "张三")     // 主表条件
-            .joinTableCondition()                           // 切换到关联表条件
-            .addFieldCondition(UserOrg.Fields.orgId, "2")  // 关联表条件
-            .masterTableCondition()                         // 切换回主表条件
-            .addFieldCondition(User.Fields.userAge, 22)
+            .addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(UserOrg.Fields.userId)))  // ON 条件
+            .done()
+            .where()
+            .addCondition(userTable.field(User.Fields.name).eq("张三"))     // 主表条件
+            .addCondition(userOrgTable.field(UserOrg.Fields.orgId).eq("2")) // 关联表条件
+            .addCondition(userTable.field(User.Fields.userAge).eq(22))
             .done()
             .page(1, 10)
             .build();
@@ -647,11 +646,12 @@ public void dynamicTableOps() {
 
 ```java
 public void dynamicQuery() {
+    EntityTable table = EntityTable.of(User.class, "ez_user_2023");
     EzQuery<User> query = EzQuery.builder(User.class)
-            .from(EntityTable.of(User.class, "ez_user_2023")) // 指定 FROM 表名
+            .from(table) // 指定 FROM 表名
             .select().addAll().done()
             .where()
-            .addFieldCondition(User.Fields.userAge, Operator.gt, 18)
+            .addCondition(table.field(User.Fields.userAge).gt(18))
             .done()
             .build();
 
@@ -665,23 +665,24 @@ public void dynamicQuery() {
 
 ```java
 public void unionQuery() {
+    EntityTable table = EntityTable.of(User.class);
     // 子查询 1
     EzQuery<User> query1 = EzQuery.builder(User.class)
-            .from(EntityTable.of(User.class))
+            .from(table)
             .select().addAll().done()
-            .where().addFieldCondition(User.Fields.userAge, Operator.gt, 18).done()
+            .where().addCondition(table.field(User.Fields.userAge).gt(18)).done()
             .build();
 
     // 子查询 2
     EzQuery<User> query2 = EzQuery.builder(User.class)
-            .from(EntityTable.of(User.class))
+            .from(table)
             .select().addAll().done()
-            .where().addFieldCondition(User.Fields.name, Operator.like, "admin%").done()
+            .where().addCondition(table.field(User.Fields.name).like("admin%")).done()
             .build();
 
     // 构建 UNION 查询
     EzQuery<User> unionQuery = EzQuery.builder(User.class)
-            .from(EntityTable.of(User.class))   // 主结构
+            .from(table)                        // 主结构
             .select().addAll().done()           // 主 Select
             .union(query1)                      // UNION
             .unionAll(query2)                   // UNION ALL
@@ -890,13 +891,14 @@ public class SqlBuildListener implements EzMybatisOnBuildSqlGetFieldListener {
 使用 `groupCondition()` 创建条件分组，构建任意嵌套逻辑：
 
 ```java
+EntityTable table = EntityTable.of(User.class);
 EzQuery<User> query = EzQuery.builder(User.class)
-        .from(EntityTable.of(User.class))
+        .from(table)
         .where()
-        .addFieldCondition(User.Fields.name, "张三")
+        .addCondition(table.field(User.Fields.name).eq("张三"))
         .groupCondition()  // (age > 20 OR age < 60)
-        .addFieldCondition(User.Fields.userAge, Operator.gt, 20)
-        .addFieldCondition(AndOr.OR, User.Fields.userAge, Operator.lt, 60)
+        .addCondition(table.field(User.Fields.userAge).gt(20))
+        .orCondition(table.field(User.Fields.userAge).lt(60))
         .done()
         .done()
         .build();

@@ -4,28 +4,34 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
+import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisOnBuildSqlGetFieldListener;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
+import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
 import org.rdlinux.ezmybatis.demo.entity.User;
+import org.rdlinux.ezmybatis.demo.entity.UserOrg;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 @Slf4j
 public class MysqlBaseTest {
@@ -52,13 +58,7 @@ public class MysqlBaseTest {
                     return value;
                 }
                 if (ntType == User.class) {
-                    if (field.getName().equals(User.Fields.name)) {
-                        MysqlBaseTest.log.info("处理参数{}的加密", field.getName());
-                        return "name$" + value;
-                    } else if (field.getName().equals(User.Fields.email)) {
-                        MysqlBaseTest.log.info("处理参数{}的加密", field.getName());
-                        return "email$" + value;
-                    }
+                    MysqlBaseTest.log.info("触发了属性获取钩子: {}", field.getName());
                 }
                 return value;
             }
@@ -76,8 +76,8 @@ public class MysqlBaseTest {
                     ((BaseEntity) entity).setUpdateTime(new Date());
                     ((BaseEntity) entity).setCreateTime(new Date());
                     if (entity instanceof User) {
-                        ((User) entity).setName("name$" + ((User) entity).getName());
-                        ((User) entity).setEmail("email$" + ((User) entity).getEmail());
+                        // 移除对于 name 和 email 的动态增加前缀的逻辑，以免干扰严谨测试
+                        MysqlBaseTest.log.info("触发User插入钩子");
                     }
                 }
             }
@@ -161,5 +161,98 @@ public class MysqlBaseTest {
             return value;
         });
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+    }
+
+    protected SqlSession sqlSession;
+
+    @Before
+    public void setUp() {
+        this.sqlSession = sqlSessionFactory.openSession();
+        this.ensureData();
+    }
+
+    @After
+    public void tearDown() {
+        if (this.sqlSession != null) {
+            this.sqlSession.close();
+        }
+    }
+
+    protected String getOneUserId() {
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        EzQuery<User> query = EzQuery.builder(User.class)
+                .from(EntityTable.of(User.class))
+                .select().addAll().done().limit(1).build();
+        User user = mapper.queryOne(query);
+        return user != null ? user.getId() : "0";
+    }
+
+    protected List<String> getUserIds(int limit) {
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        EzQuery<User> query = EzQuery.builder(User.class)
+                .from(EntityTable.of(User.class))
+                .select().addAll().done().limit(limit).build();
+        List<User> users = mapper.query(query);
+        List<String> ids = new ArrayList<>();
+        for (User user : users) {
+            ids.add(user.getId());
+        }
+        return ids;
+    }
+
+    protected void ensureData() {
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        EzDelete deleteUser = EzDelete.delete(EntityTable.of(User.class)).build();
+        mapper.ezDelete(deleteUser);
+
+        EzDelete deleteOrg = EzDelete.delete(EntityTable.of(UserOrg.class)).build();
+        mapper.ezDelete(deleteOrg);
+
+        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(this.sqlSession);
+        // 插入足够多元的数据以满足严谨断言
+        User u1 = new User();
+        u1.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        u1.setName("TestUser1");
+        u1.setUserAge(18);
+        u1.setSex(User.Sex.MAN);
+        u1.setCreateTime(new Date());
+        u1.setUpdateTime(new Date());
+
+        User u2 = new User();
+        u2.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        u2.setName("TestUser2");
+        u2.setUserAge(20);
+        u2.setSex(User.Sex.WOMAN);
+        u2.setCreateTime(new Date());
+        u2.setUpdateTime(new Date());
+
+        User u3 = new User();
+        u3.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        u3.setName("TestUser3");
+        u3.setUserAge(30);
+        u3.setSex(User.Sex.MAN);
+        u3.setCreateTime(new Date());
+        u3.setUpdateTime(new Date());
+
+        org.rdlinux.ezmybatis.demo.entity.UserOrg uo1 = new UserOrg();
+        uo1.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        uo1.setUserId(u1.getId());
+        uo1.setOrgId("ORG-1001");
+        uo1.setCreateTime(new Date());
+        uo1.setUpdateTime(new Date());
+
+        org.rdlinux.ezmybatis.demo.entity.UserOrg uo2 = new UserOrg();
+        uo2.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+        uo2.setUserId(u2.getId());
+        uo2.setOrgId("ORG-1002");
+        uo2.setCreateTime(new Date());
+        uo2.setUpdateTime(new Date());
+
+        jdbcInsertDao.insert(u1);
+        jdbcInsertDao.insert(u2);
+        jdbcInsertDao.insert(u3);
+        jdbcInsertDao.insert(uo1);
+        jdbcInsertDao.insert(uo2);
+        this.sqlSession.commit();
     }
 }

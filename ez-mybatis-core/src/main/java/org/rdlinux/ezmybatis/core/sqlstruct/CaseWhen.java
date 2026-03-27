@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +37,8 @@ public class CaseWhen implements QueryRetNeedAlias {
      *
      * @return 构造器实例
      */
-    public static CaseWhenBuilder builder() {
-        return new CaseWhenBuilder();
+    public static CaseWhenBuilder builder(Table table) {
+        return new CaseWhenBuilder(table);
     }
 
     /**
@@ -74,8 +75,8 @@ public class CaseWhen implements QueryRetNeedAlias {
         public static class CaseWhenDataBuilder extends ConditionBuilder<CaseWhenBuilder, CaseWhenDataBuilder> {
             private final CaseWhenData caseWhenData;
 
-            public CaseWhenDataBuilder(CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
-                super(caseWhenBuilder, caseWhenData.getConditions(), null, null);
+            public CaseWhenDataBuilder(Table table, CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
+                super(caseWhenBuilder, caseWhenData.getConditions(), table, null);
                 this.sonBuilder = this;
                 this.caseWhenData = caseWhenData;
             }
@@ -116,8 +117,10 @@ public class CaseWhen implements QueryRetNeedAlias {
      */
     public static class CaseWhenBuilder {
         protected CaseWhen caseWhen;
+        protected Table table;
 
-        private CaseWhenBuilder() {
+        private CaseWhenBuilder(Table table) {
+            this.table = table;
             this.caseWhen = new CaseWhen();
         }
 
@@ -133,7 +136,7 @@ public class CaseWhen implements QueryRetNeedAlias {
             CaseWhenData caseWhenData = new CaseWhenData();
             caseWhenData.setConditions(new LinkedList<>());
             this.caseWhen.getCaseWhenData().add(caseWhenData);
-            return new CaseWhenData.CaseWhenDataBuilder(this, caseWhenData);
+            return new CaseWhenData.CaseWhenDataBuilder(this.table, this, caseWhenData);
         }
 
         /**

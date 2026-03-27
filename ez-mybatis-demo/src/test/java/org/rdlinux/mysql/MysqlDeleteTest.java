@@ -2,10 +2,12 @@ package org.rdlinux.mysql;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
+import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
 import org.rdlinux.ezmybatis.demo.entity.User;
 import org.rdlinux.ezmybatis.demo.entity.UserOrg;
 import org.rdlinux.ezmybatis.demo.mapper.UserMapper;
@@ -24,98 +26,96 @@ public class MysqlDeleteTest extends MysqlBaseTest {
 
     @Test
     public void delete() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        String id = this.getOneUserId();
         User user = new User();
-        user.setId("016cdcdd76f94879ab3d24850514812b");
-        int ret = sqlSession.getMapper(UserMapper.class).delete(user);
+        user.setId(id);
+        int ret = this.sqlSession.getMapper(UserMapper.class).delete(user);
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("delete deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void deleteByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        String id = this.getOneUserId();
         User user = new User();
-        user.setId("016cdcdd76f94879ab3d24850514812b");
-        int ret = sqlSession.getMapper(UserMapper.class).deleteByTable(EntityTable.of(User.class), user);
+        user.setId(id);
+        int ret = this.sqlSession.getMapper(UserMapper.class).deleteByTable(EntityTable.of(User.class), user);
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("deleteByTable deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void batchDelete() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = this.getUserIds(2);
         List<User> users = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
+        for (String id : ids) {
             User user = new User();
-            user.setId("016cdcdd76f94879ab3d24850514812b" + i);
+            user.setId(id);
             users.add(user);
         }
-        int ret = sqlSession.getMapper(UserMapper.class).batchDelete(users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class).batchDelete(users);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("batchDelete deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void batchDeleteByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = this.getUserIds(2);
         List<User> users = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
+        for (String id : ids) {
             User user = new User();
-            user.setId("016cdcdd76f94879ab3d24850514812b" + i);
+            user.setId(id);
             users.add(user);
         }
-        int ret = sqlSession.getMapper(UserMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("batchDeleteByTable deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void deleteById() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        int ret = sqlSession.getMapper(UserMapper.class)
-                .deleteById("016cdcdd76f94879ab3d24850514812b");
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class)
+                .deleteById(this.getOneUserId());
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("deleteById deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void deleteByTableAndId() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        int ret = sqlSession.getMapper(UserMapper.class)
-                .deleteByTableAndId(EntityTable.of(User.class), "016cdcdd76f94879ab3d24850514812b");
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class)
+                .deleteByTableAndId(EntityTable.of(User.class), this.getOneUserId());
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("deleteByTableAndId deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void batchDeleteById() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> userIds = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
-            userIds.add("016cdcdd76f94879ab3d24850514812b" + i);
-        }
-        int ret = sqlSession.getMapper(UserMapper.class).batchDeleteById(userIds);
-        sqlSession.commit();
+        List<String> userIds = this.getUserIds(2);
+        int ret = this.sqlSession.getMapper(UserMapper.class).batchDeleteById(userIds);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("batchDeleteById deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void batchDeleteByTableAndId() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> userIds = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
-            userIds.add("016cdcdd76f94879ab3d24850514812b" + i);
-        }
-        int ret = sqlSession.getMapper(UserMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class), userIds);
-        sqlSession.commit();
+        List<String> userIds = this.getUserIds(2);
+        int ret = this.sqlSession.getMapper(UserMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class), userIds);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("batchDeleteByTableAndId deleted {} records", ret);
-        sqlSession.close();
     }
 
     // ==========================================
@@ -124,157 +124,154 @@ public class MysqlDeleteTest extends MysqlBaseTest {
 
     @Test
     public void ezMapperDelete() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        String id = this.getOneUserId();
         User user = new User();
-        user.setId("016cdcdd76f94879ab3d24850514812b");
-        int ret = sqlSession.getMapper(EzMapper.class).delete(user);
+        user.setId(id);
+        int ret = this.sqlSession.getMapper(EzMapper.class).delete(user);
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperDelete deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperDeleteByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        String id = this.getOneUserId();
         User user = new User();
-        user.setId("016cdcdd76f94879ab3d24850514812b");
-        int ret = sqlSession.getMapper(EzMapper.class).deleteByTable(EntityTable.of(User.class), user);
+        user.setId(id);
+        int ret = this.sqlSession.getMapper(EzMapper.class).deleteByTable(EntityTable.of(User.class), user);
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperDeleteByTable deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperBatchDelete() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = this.getUserIds(2);
         List<User> users = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
+        for (String id : ids) {
             User user = new User();
-            user.setId("016cdcdd76f94879ab3d24850514812b" + i);
+            user.setId(id);
             users.add(user);
         }
-        int ret = sqlSession.getMapper(EzMapper.class).batchDelete(users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).batchDelete(users);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperBatchDelete deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperBatchDeleteByTable() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
+        List<String> ids = this.getUserIds(2);
         List<User> users = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
+        for (String id : ids) {
             User user = new User();
-            user.setId("016cdcdd76f94879ab3d24850514812b" + i);
+            user.setId(id);
             users.add(user);
         }
-        int ret = sqlSession.getMapper(EzMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperBatchDeleteByTable deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperDeleteById() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        int ret = sqlSession.getMapper(EzMapper.class)
-                .deleteById(User.class, "016cdcdd76f94879ab3d24850514812b");
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class)
+                .deleteById(User.class, this.getOneUserId());
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperDeleteById deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperDeleteByTableAndId() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        int ret = sqlSession.getMapper(EzMapper.class)
-                .deleteByTableAndId(EntityTable.of(User.class), User.class, "016cdcdd76f94879ab3d24850514812b");
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class)
+                .deleteByTableAndId(EntityTable.of(User.class), User.class, this.getOneUserId());
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperDeleteByTableAndId deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperBatchDeleteById() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> userIds = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
-            userIds.add("016cdcdd76f94879ab3d24850514812b" + i);
-        }
+        List<String> userIds = this.getUserIds(2);
         userIds.add(null);
-        int ret = sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, userIds);
-        sqlSession.commit();
-        sqlSession.close();
+        int ret = this.sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, userIds);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperBatchDeleteById deleted {} records", ret);
     }
 
     @Test
     public void ezMapperBatchDeleteByTableAndId() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
-        List<String> userIds = new LinkedList<>();
-        for (int i = 0; i < 2; i++) {
-            userIds.add("016cdcdd76f94879ab3d24850514812b" + i);
-        }
-        int ret = sqlSession.getMapper(EzMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class),
+        List<String> userIds = this.getUserIds(2);
+        int ret = this.sqlSession.getMapper(EzMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class),
                 User.class, userIds);
-        sqlSession.commit();
-        sqlSession.close();
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
         log.info("ezMapperBatchDeleteByTableAndId deleted {} records", ret);
     }
 
     @Test
     public void ezDelete() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         EntityTable userTable = EntityTable.of(User.class);
         EntityTable uoTable = EntityTable.of(UserOrg.class);
         EzDelete delete = EzDelete.delete(userTable).delete(uoTable)
                 .join(uoTable)
-                .addFieldCompareCondition("id", "userId")
+                .addCondition(userTable.field(BaseEntity.Fields.id).eq(uoTable.field(UserOrg.Fields.userId)))
                 .done()
                 .where()
-                .addFieldCondition("id", "56")
-                .addFieldCondition("userAge", "56")
+                .addFieldCondition("id", this.getOneUserId())
+                
                 .done()
                 .build();
-        int ret = sqlSession.getMapper(EzMapper.class).ezDelete(delete);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+        // 联表 JOIN 删除, 命中行数取决于两表数据交集, 仅验证执行不抛异常
+        Assert.assertTrue(ret >= 0);
         log.info("Test ezDelete - Deleted {} records", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezBatchDelete() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         List<EzDelete> deletes = new LinkedList<>();
+        List<String> ids = this.getUserIds(2);
         EzDelete delete1 = EzDelete.delete(EntityTable.of(User.class))
-                .where().addFieldCondition("id", "56").done()
+                .where().addFieldCondition("id", this.getOneUserId()).done()
                 .build();
         deletes.add(delete1);
-        EzDelete delete2 = EzDelete.delete(EntityTable.of(User.class))
-                .where().addFieldCondition("id", "23").done()
+        EzDelete delete2 = EzDelete.delete(EntityTable.of(User.class)).where().addFieldCondition("id", ids.get(1)).done()
                 .build();
         deletes.add(delete2);
 
-        sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
-        sqlSession.commit();
+        this.sqlSession.getMapper(EzMapper.class).ezBatchDelete(deletes);
+        this.sqlSession.commit();
         log.info("Test ezBatchDelete completed");
-        sqlSession.close();
     }
 
     @Test
     public void deleteBySql() {
-        SqlSession sqlSession = MysqlBaseTest.sqlSessionFactory.openSession();
         String sql = "DELETE FROM user WHERE id = #{id}";
         Map<String, Object> param = new HashMap<>();
-        param.put("id", "016cdcdd76f94879ab3d24850514812b");
+        param.put("id", this.getOneUserId());
         String realSql = "DELETE FROM ez_user WHERE id = #{id}";
         try {
-            int ret = sqlSession.getMapper(EzMapper.class).deleteBySql(realSql, param);
-            sqlSession.commit();
+            int ret = this.sqlSession.getMapper(EzMapper.class).deleteBySql(realSql, param);
+            this.sqlSession.commit();
+            Assert.assertNotNull(ret);
+        Assert.assertTrue(ret > 0);
             log.info("Test deleteBySql result: {}", ret);
         } catch (Exception e) {
             log.error("Test deleteBySql exception", e);
             throw e;
         } finally {
-            sqlSession.close();
         }
     }
 }

@@ -7,6 +7,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.List;
 
+/**
+ * GROUP BY 分组结构
+ */
 @Getter
 @Setter
 public class GroupBy implements SqlStruct {
@@ -16,6 +19,9 @@ public class GroupBy implements SqlStruct {
         this.items = items;
     }
 
+    /**
+     * GROUP BY 构造器
+     */
     public static class GroupBuilder<T> {
         private final T target;
         private final Table table;
@@ -33,12 +39,23 @@ public class GroupBy implements SqlStruct {
             }
         }
 
+        /**
+         * 添加当前实体表的属性作为分组字段（保留作高频语法糖）
+         *
+         * @param field 实体属性名
+         */
         public GroupBuilder<T> addField(String field) {
             this.checkEntityTable();
             this.groupBy.getItems().add(EntityField.of((EntityTable) this.table, field));
             return this;
         }
 
+        /**
+         * 根据条件添加当前实体表的属性作为分组字段
+         *
+         * @param sure  是否满足条件
+         * @param field 实体属性名
+         */
         public GroupBuilder<T> addField(boolean sure, String field) {
             if (sure) {
                 return this.addField(field);
@@ -46,29 +63,12 @@ public class GroupBy implements SqlStruct {
             return this;
         }
 
-        public GroupBuilder<T> addColumn(String column) {
-            this.groupBy.getItems().add(TableColumn.of(this.table, column));
-            return this;
-        }
-
-        public GroupBuilder<T> addColumn(boolean sure, String column) {
-            if (sure) {
-                return this.addColumn(column);
-            }
-            return this;
-        }
-
-        public GroupBuilder<T> addAlias(boolean sure, String alias) {
-            if (sure) {
-                this.groupBy.getItems().add(Alias.of(alias));
-            }
-            return this;
-        }
-
-        public GroupBuilder<T> addAlias(String alias) {
-            return this.addAlias(true, alias);
-        }
-
+        /**
+         * 根据条件添加通用操作数作为分组项
+         *
+         * @param sure    是否满足条件
+         * @param operand 操作数（如 EntityField, TableColumn, Function 等）
+         */
         public GroupBuilder<T> add(boolean sure, Operand operand) {
             if (sure) {
                 this.groupBy.getItems().add(operand);
@@ -76,10 +76,18 @@ public class GroupBy implements SqlStruct {
             return this;
         }
 
+        /**
+         * 添加通用操作数作为分组项
+         *
+         * @param operand 操作数
+         */
         public GroupBuilder<T> add(Operand operand) {
             return this.add(true, operand);
         }
 
+        /**
+         * 结束 GROUP BY 构造
+         */
         public T done() {
             return this.target;
         }
