@@ -1,7 +1,6 @@
 package org.rdlinux.mysql;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -29,9 +28,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(UserMapper.class).update(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperUpdateTest result: {}", insert);
     }
 
@@ -44,9 +42,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperUpdateByTableTest result: {}", insert);
     }
 
@@ -59,9 +56,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(EzMapper.class).update(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperUpdateTest result: {}", insert);
     }
 
@@ -74,9 +70,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperUpdateByTableTest result: {}", insert);
     }
 
@@ -85,8 +80,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -97,9 +92,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(UserMapper.class).batchUpdate(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperBatchUpdateTest result: {}", insert);
     }
 
@@ -108,8 +102,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -120,9 +114,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(UserMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperBatchUpdateByTableTest result: {}", insert);
     }
 
@@ -131,8 +124,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -143,9 +136,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(EzMapper.class).batchUpdate(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperBatchUpdateTest result: {}", insert);
     }
 
@@ -154,8 +146,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -166,9 +158,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(EzMapper.class).batchUpdateByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperBatchUpdateByTableTest result: {}", insert);
     }
 
@@ -180,9 +171,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setName("王二");
         int insert = this.sqlSession.getMapper(UserMapper.class).replace(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperReplaceTest result: {}", insert);
     }
 
@@ -194,9 +184,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setName("王二");
         int insert = this.sqlSession.getMapper(UserMapper.class).replaceByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperReplaceByTableTest result: {}", insert);
     }
 
@@ -208,9 +197,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setName("王二");
         int insert = this.sqlSession.getMapper(EzMapper.class).replace(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperReplaceTest result: {}", insert);
     }
 
@@ -222,9 +210,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setName("王二");
         int insert = this.sqlSession.getMapper(EzMapper.class).replaceByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperReplaceByTableTest result: {}", insert);
     }
 
@@ -233,8 +220,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -245,9 +232,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(UserMapper.class).batchReplace(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperBatchReplaceTest result: {}", insert);
     }
 
@@ -256,8 +242,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -268,9 +254,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(UserMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("userMapperBatchReplaceByTableTest result: {}", insert);
     }
 
@@ -279,8 +264,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -291,9 +276,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(EzMapper.class).batchReplace(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperBatchReplaceTest result: {}", insert);
     }
 
@@ -302,8 +286,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < 2; i++) {
             String id = this.getOneUserId();
-        User user = new User();
-        user.setId(id);
+            User user = new User();
+            user.setId(id);
             user.setName("芳" + i + 1);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
@@ -314,9 +298,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         }
         int insert = this.sqlSession.getMapper(EzMapper.class).batchReplaceByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
-        Assert.assertTrue(insert > 0);
+
         log.info("ezMapperBatchReplaceByTableTest result: {}", insert);
     }
 
@@ -337,8 +320,8 @@ public class MysqlUpdateTest extends MysqlBaseTest {
                 .build();
         int insert = mapper.ezUpdate(ezUpdate);
         this.sqlSession.commit();
-        Assert.assertNotNull(insert);
         Assert.assertTrue(insert > 0);
+
         log.info("ezMapperUpdateByEzParamTest result: {}", insert);
     }
 
@@ -372,7 +355,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
         } catch (Exception e) {
-            sqlSession.rollback();
+            this.sqlSession.rollback();
             throw new RuntimeException(e);
         } finally {
         }
@@ -490,7 +473,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
 
             this.sqlSession.commit();
         } catch (Exception e) {
-            sqlSession.rollback();
+            this.sqlSession.rollback();
             throw new RuntimeException(e);
         } finally {
         }
@@ -510,7 +493,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
         } catch (Exception e) {
-            sqlSession.rollback();
+            this.sqlSession.rollback();
             throw new RuntimeException(e);
         } finally {
         }
@@ -535,7 +518,7 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
         } catch (Exception e) {
-            sqlSession.rollback();
+            this.sqlSession.rollback();
             throw new RuntimeException(e);
         } finally {
         }
@@ -557,7 +540,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(this.sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
-        Assert.assertNotNull(ct);
         log.info("jdbcUpdateDaoUpdateTest batch result: {}", ct);
         User user = new User();
         user.setUpdateTime(new Date());
@@ -567,7 +549,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setUserAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.update(user);
-        Assert.assertNotNull(sCt);
         Assert.assertTrue(sCt > 0);
         log.info("jdbcUpdateDaoUpdateTest single result: {}", sCt);
         this.sqlSession.commit();
@@ -584,7 +565,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setUserAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
-        Assert.assertNotNull(sCt);
         Assert.assertTrue(sCt > 0);
         log.info("jdbcUpdateDaoPartialUpdateTest single result: {}", sCt);
 
@@ -602,7 +582,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user2.setUserAge(19);
         users.add(user2);
         int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
-        Assert.assertNotNull(ct);
         log.info("jdbcUpdateDaoPartialUpdateTest batch result: {}", ct);
 
 
@@ -631,7 +610,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(this.sqlSession);
         int ct = jdbcInsertDao.batchReplace(users);
-        Assert.assertNotNull(ct);
         log.info("jdbcUpdateDaoReplaceTest batch result: {}", ct);
         User user = new User();
         user.setUpdateTime(new Date());
@@ -641,7 +619,6 @@ public class MysqlUpdateTest extends MysqlBaseTest {
         user.setUserAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.replace(user);
-        Assert.assertNotNull(sCt);
         Assert.assertTrue(sCt > 0);
         log.info("jdbcUpdateDaoReplaceTest single result: {}", sCt);
         this.sqlSession.commit();
@@ -657,11 +634,11 @@ public class MysqlUpdateTest extends MysqlBaseTest {
             param.put("id", this.getOneUserId());
             Integer result = mapper.updateBySql(sql, param);
             Assert.assertNotNull(result);
-        Assert.assertTrue(result > 0);
+            Assert.assertTrue(result > 0);
             log.info("ezMapperUpdateBySqlTest result: {}", result);
             this.sqlSession.commit();
         } catch (Exception e) {
-            sqlSession.rollback();
+            this.sqlSession.rollback();
             throw new RuntimeException(e);
         } finally {
         }

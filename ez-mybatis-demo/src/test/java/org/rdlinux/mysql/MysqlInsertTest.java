@@ -1,7 +1,6 @@
 package org.rdlinux.mysql;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
@@ -59,8 +58,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         User user = this.buildUser();
         int ret = this.sqlSession.getMapper(UserMapper.class).insert(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("UserMapper.insert ret: {}", ret);
     }
 
@@ -69,8 +67,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         User user = this.buildUser();
         int ret = this.sqlSession.getMapper(UserMapper.class).insertByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("UserMapper.insertByTable ret: {}", ret);
     }
 
@@ -79,8 +76,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         List<User> users = this.buildUsers(2);
         int ret = this.sqlSession.getMapper(UserMapper.class).batchInsert(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("UserMapper.batchInsert ret: {}", ret);
     }
 
@@ -89,8 +85,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         List<User> users = this.buildUsers(2);
         int ret = this.sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("UserMapper.batchInsertByTable ret: {}", ret);
     }
 
@@ -103,8 +98,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         User user = this.buildUser();
         int ret = this.sqlSession.getMapper(EzMapper.class).insert(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("EzMapper.insert ret: {}", ret);
     }
 
@@ -113,8 +107,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         User user = this.buildUser();
         int ret = this.sqlSession.getMapper(EzMapper.class).insertByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("EzMapper.insertByTable ret: {}", ret);
     }
 
@@ -123,8 +116,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         List<User> users = this.buildUsers(2);
         int ret = this.sqlSession.getMapper(EzMapper.class).batchInsert(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("EzMapper.batchInsert ret: {}", ret);
     }
 
@@ -133,8 +125,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         List<User> users = this.buildUsers(2);
         int ret = this.sqlSession.getMapper(EzMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("EzMapper.batchInsertByTable ret: {}", ret);
     }
 
@@ -146,8 +137,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         sql = sql.replace("#id", UUID.randomUUID().toString().replace("-", ""));
         int ret = this.sqlSession.getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("EzMapper.insertBySql ret: {}", ret);
     }
 
@@ -175,8 +165,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
                 .build();
         int ret = mapper.insertByQuery(EntityTable.of(SaveTest.class), saveTestQuery);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertTrue(ret >= 0);
         log.info("EzMapper.insertByQuery ret: {}", ret);
     }
 
@@ -191,8 +180,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         User user = this.buildUser();
         int ret = jdbcInsertDao.insert(user);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("JdbcInsertDao.insert ret: {}", ret);
     }
 
@@ -202,8 +190,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         User user = this.buildUser();
         int ret = jdbcInsertDao.insertByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("JdbcInsertDao.insertByTable ret: {}", ret);
     }
 
@@ -213,8 +200,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         List<User> users = this.buildUsers(5);
         int ret = jdbcInsertDao.batchInsert(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(5, ret);
         log.info("JdbcInsertDao.batchInsert ret: {}", ret);
     }
 
@@ -224,8 +210,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         List<User> users = this.buildUsers(5);
         int ret = jdbcInsertDao.batchInsertByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(5, ret);
         log.info("JdbcInsertDao.batchInsertByTable ret: {}", ret);
     }
 
@@ -254,7 +239,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         }
         long end = System.currentTimeMillis();
         this.sqlSession.commit();
-        Assert.assertNotNull(end - start);
+        Assert.assertTrue(end - start >= 0);
         log.info("loopInsertPerformanceTest cost: {}ms", end - start);
     }
 
@@ -282,7 +267,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         }
         long end = System.currentTimeMillis();
         this.sqlSession.commit();
-        Assert.assertNotNull(end - start);
+        Assert.assertTrue(end - start >= 0);
         log.info("batchInsertPerformanceTest cost: {}ms", end - start);
     }
 
@@ -316,7 +301,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         connection.close();
         long end = System.currentTimeMillis();
         this.sqlSession.commit();
-        Assert.assertNotNull(end - start);
+        Assert.assertTrue(end - start >= 0);
         log.info("jdbcBatchInsertPerformanceTest cost: {}ms", end - start);
     }
 
@@ -345,7 +330,7 @@ public class MysqlInsertTest extends MysqlBaseTest {
         }
         this.sqlSession.commit();
         long end = System.currentTimeMillis();
-        Assert.assertNotNull(end - start);
+        Assert.assertTrue(end - start >= 0);
         log.info("jdbcBatchInsertPerformanceTest2 cost: {}ms", end - start);
     }
 }

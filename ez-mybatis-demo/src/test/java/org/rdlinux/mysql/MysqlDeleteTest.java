@@ -1,7 +1,6 @@
 package org.rdlinux.mysql;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzDelete;
@@ -30,8 +29,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         User user = new User();
         user.setId(id);
         int ret = this.sqlSession.getMapper(UserMapper.class).delete(user);
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("delete deleted {} records", ret);
     }
 
@@ -41,8 +39,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         User user = new User();
         user.setId(id);
         int ret = this.sqlSession.getMapper(UserMapper.class).deleteByTable(EntityTable.of(User.class), user);
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("deleteByTable deleted {} records", ret);
     }
 
@@ -57,8 +54,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         }
         int ret = this.sqlSession.getMapper(UserMapper.class).batchDelete(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("batchDelete deleted {} records", ret);
     }
 
@@ -73,8 +69,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         }
         int ret = this.sqlSession.getMapper(UserMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("batchDeleteByTable deleted {} records", ret);
     }
 
@@ -83,8 +78,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         int ret = this.sqlSession.getMapper(UserMapper.class)
                 .deleteById(this.getOneUserId());
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("deleteById deleted {} records", ret);
     }
 
@@ -93,8 +87,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         int ret = this.sqlSession.getMapper(UserMapper.class)
                 .deleteByTableAndId(EntityTable.of(User.class), this.getOneUserId());
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("deleteByTableAndId deleted {} records", ret);
     }
 
@@ -103,8 +96,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         List<String> userIds = this.getUserIds(2);
         int ret = this.sqlSession.getMapper(UserMapper.class).batchDeleteById(userIds);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("batchDeleteById deleted {} records", ret);
     }
 
@@ -113,8 +105,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         List<String> userIds = this.getUserIds(2);
         int ret = this.sqlSession.getMapper(UserMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class), userIds);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("batchDeleteByTableAndId deleted {} records", ret);
     }
 
@@ -128,8 +119,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         User user = new User();
         user.setId(id);
         int ret = this.sqlSession.getMapper(EzMapper.class).delete(user);
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("ezMapperDelete deleted {} records", ret);
     }
 
@@ -139,8 +129,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         User user = new User();
         user.setId(id);
         int ret = this.sqlSession.getMapper(EzMapper.class).deleteByTable(EntityTable.of(User.class), user);
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("ezMapperDeleteByTable deleted {} records", ret);
     }
 
@@ -155,14 +144,13 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         }
         int ret = this.sqlSession.getMapper(EzMapper.class).batchDelete(users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("ezMapperBatchDelete deleted {} records", ret);
     }
 
     @Test
     public void ezMapperBatchDeleteByTable() {
-        List<String> ids = this.getUserIds(2);
+        List<String> ids = this.getUserIds(3);
         List<User> users = new LinkedList<>();
         for (String id : ids) {
             User user = new User();
@@ -171,8 +159,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         }
         int ret = this.sqlSession.getMapper(EzMapper.class).batchDeleteByTable(EntityTable.of(User.class), users);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(3, ret);
         log.info("ezMapperBatchDeleteByTable deleted {} records", ret);
     }
 
@@ -181,8 +168,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         int ret = this.sqlSession.getMapper(EzMapper.class)
                 .deleteById(User.class, this.getOneUserId());
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("ezMapperDeleteById deleted {} records", ret);
     }
 
@@ -191,8 +177,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         int ret = this.sqlSession.getMapper(EzMapper.class)
                 .deleteByTableAndId(EntityTable.of(User.class), User.class, this.getOneUserId());
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(1, ret);
         log.info("ezMapperDeleteByTableAndId deleted {} records", ret);
     }
 
@@ -202,8 +187,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         userIds.add(null);
         int ret = this.sqlSession.getMapper(EzMapper.class).batchDeleteById(User.class, userIds);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("ezMapperBatchDeleteById deleted {} records", ret);
     }
 
@@ -213,8 +197,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         int ret = this.sqlSession.getMapper(EzMapper.class).batchDeleteByTableAndId(EntityTable.of(User.class),
                 User.class, userIds);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+        Assert.assertEquals(2, ret);
         log.info("ezMapperBatchDeleteByTableAndId deleted {} records", ret);
     }
 
@@ -228,12 +211,11 @@ public class MysqlDeleteTest extends MysqlBaseTest {
                 .done()
                 .where()
                 .addFieldCondition("id", this.getOneUserId())
-                
+
                 .done()
                 .build();
         int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
         this.sqlSession.commit();
-        Assert.assertNotNull(ret);
         // 联表 JOIN 删除, 命中行数取决于两表数据交集, 仅验证执行不抛异常
         Assert.assertTrue(ret >= 0);
         log.info("Test ezDelete - Deleted {} records", ret);
@@ -265,8 +247,7 @@ public class MysqlDeleteTest extends MysqlBaseTest {
         try {
             int ret = this.sqlSession.getMapper(EzMapper.class).deleteBySql(realSql, param);
             this.sqlSession.commit();
-            Assert.assertNotNull(ret);
-        Assert.assertTrue(ret > 0);
+            Assert.assertEquals(1, ret);
             log.info("Test deleteBySql result: {}", ret);
         } catch (Exception e) {
             log.error("Test deleteBySql exception", e);

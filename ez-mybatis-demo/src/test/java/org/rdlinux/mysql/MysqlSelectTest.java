@@ -184,15 +184,17 @@ public class MysqlSelectTest extends MysqlBaseTest {
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
                         if (index % 2 == 0) {
-                            List<User> ret = mapper.query(userQuery);
+                            List<?> ret = mapper.query(userQuery);
                             Assert.assertNotNull(ret);
                             if (!ret.isEmpty()) {
+                                Assert.assertNotNull(ret.get(0));
                                 Assert.assertTrue(ret.get(0) instanceof User);
                             }
                         } else {
-                            List<UserOrg> ret = mapper.query(uoQuery);
+                            List<?> ret = mapper.query(uoQuery);
                             Assert.assertNotNull(ret);
                             if (!ret.isEmpty()) {
+                                Assert.assertNotNull(ret.get(0));
                                 Assert.assertTrue(ret.get(0) instanceof UserOrg);
                             }
                         }
@@ -389,8 +391,8 @@ public class MysqlSelectTest extends MysqlBaseTest {
                 .select().addAll().done()
                 .where()
                 .groupCondition()
-                    .addFieldCondition(User.Fields.userAge, Operator.lt, 20)
-                    .addFieldCondition(AndOr.OR, User.Fields.name, Operator.eq, "TestUser3")
+                .addFieldCondition(User.Fields.userAge, Operator.lt, 20)
+                .addFieldCondition(AndOr.OR, User.Fields.name, Operator.eq, "TestUser3")
                 .done()
                 .addFieldCondition(User.Fields.sex, Operator.eq, User.Sex.MAN)
                 .done()
@@ -565,7 +567,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done().build();
         int count = this.sqlSession.getMapper(EzMapper.class).queryCount(query);
-        Assert.assertNotNull(count);
+        Assert.assertTrue(count >= 0);
         log.info("EzQuery Count: {}", count);
     }
 
