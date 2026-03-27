@@ -75,7 +75,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-        <version>1.0.2.RS</version>
+        <version>1.0.3.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -98,7 +98,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-to-plus-spring-boot-starter</artifactId>
-        <version>1.0.2.RS</version>
+        <version>1.0.3.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -111,7 +111,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-        <version>1.0.2.RS</version>
+        <version>1.0.3.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -129,7 +129,7 @@ ez-mybatis:
     <dependency>
         <groupId>org.rdlinux</groupId>
         <artifactId>ez-mybatis-to-plus-spring3-boot-starter</artifactId>
-        <version>1.0.2.RS</version>
+        <version>1.0.3.RS</version>
     </dependency>
 </dependencys>
 ```
@@ -302,7 +302,8 @@ public void conditionalUpdate() {
 }
 ```
 
-> **💡 提示**：`EntityField.set()` 和 `TableColumn.set()` 是新增的 fluent API，可以构建更新项并直接通过 `add()` 添加到 SET 子句中。
+> **💡 提示**：`EntityField.set()` 和 `TableColumn.set()` 是新增的 fluent API，可以构建更新项并直接通过 `add()` 添加到 SET
+> 子句中。
 > 旧的 `setField()` / `setColumn()` 方法仍然可用，保持向后兼容。
 
 #### 表达式更新（Formula）
