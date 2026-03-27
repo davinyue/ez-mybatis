@@ -144,18 +144,12 @@ public class MssqlInsertTest extends MssqlBaseTest {
     @Test
     public void insertByQuery() {
         EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
-        // 先插入一条，确保Query有数据
-        mapper.insert(this.buildUser());
+        // 先往 SaveTest 表插入一条种子数据，确保 SELECT 有结果
+        SaveTest seed = new SaveTest().setA("a1").setB("b1").setC("c1").setD("d1").setE("e1")
+                .setF("f1").setG("g1").setH("h1").setI("i1").setJ("j1");
+        mapper.insert(seed);
 
-        EzQuery<User> query = EzQuery.builder(User.class)
-                .from(EntityTable.of(User.class))
-                .select()
-                .addAll()
-                .done()
-                .page(1, 1)
-                .build();
-
-        // 使用SaveTest作为目标表以避免主键冲突（演示目的）
+        // INSERT INTO save_test SELECT * FROM save_test（从自身查询再插入）
         EzQuery<SaveTest> saveTestQuery = EzQuery.builder(SaveTest.class)
                 .from(EntityTable.of(SaveTest.class))
                 .select()

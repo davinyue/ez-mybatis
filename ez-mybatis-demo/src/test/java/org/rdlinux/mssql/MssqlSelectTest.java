@@ -318,14 +318,13 @@ public class MssqlSelectTest extends MssqlBaseTest {
         Assert.assertNotNull(mapper.query(notBetweenQuery));
         log.info("EzQuery NOT BETWEEN: {}", JacksonUtils.toJsonString(mapper.query(notBetweenQuery)));
 
-//        // 15. REGEXP
-//        EzQuery<User> regexpQuery = EzQuery.builder(User.class).from(userTable)
-//                .select().addAll().done()
-//                .where().addFieldCondition(User.Fields.name, Operator.regexp, "^Test.*").done()
-//                .page(1, 1).build();
-//        Assert.assertNotNull(mapper.query(regexpQuery));
-//        log.info("EzQuery REGEXP: {}", JacksonUtils.toJsonString(mapper.query(regexpQuery)));
-
+        // 15. REGEXP
+        EzQuery<User> regexpQuery = EzQuery.builder(User.class).from(userTable)
+                .select().addAll().done()
+                .where().addFieldCondition(User.Fields.name, Operator.regexp, "^Test.*").done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(regexpQuery));
+        log.info("EzQuery REGEXP: {}", JacksonUtils.toJsonString(mapper.query(regexpQuery)));
     }
 
     @Test
