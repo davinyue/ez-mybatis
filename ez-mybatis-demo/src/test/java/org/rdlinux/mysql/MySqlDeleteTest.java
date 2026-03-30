@@ -210,7 +210,7 @@ public class MySqlDeleteTest extends MySqlBaseTest {
                 .addCondition(userTable.field(BaseEntity.Fields.id).eq(uoTable.field(UserOrg.Fields.userId)))
                 .done()
                 .where()
-                .addFieldCondition("id", this.getOneUserId())
+                .addCondition(userTable.field(BaseEntity.Fields.id).eq(this.getOneUserId()))
 
                 .done()
                 .build();
@@ -225,11 +225,13 @@ public class MySqlDeleteTest extends MySqlBaseTest {
     public void ezBatchDelete() {
         List<EzDelete> deletes = new LinkedList<>();
         List<String> ids = this.getUserIds(2);
-        EzDelete delete1 = EzDelete.delete(EntityTable.of(User.class))
-                .where().addFieldCondition("id", this.getOneUserId()).done()
+        EntityTable userTable = EntityTable.of(User.class);
+        EzDelete delete1 = EzDelete.delete(userTable)
+                .where().addCondition(userTable.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                 .build();
         deletes.add(delete1);
-        EzDelete delete2 = EzDelete.delete(EntityTable.of(User.class)).where().addFieldCondition("id", ids.get(1)).done()
+        EzDelete delete2 = EzDelete.delete(userTable).where()
+                .addCondition(userTable.field(BaseEntity.Fields.id).eq(ids.get(1))).done()
                 .build();
         deletes.add(delete2);
 

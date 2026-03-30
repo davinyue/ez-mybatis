@@ -315,7 +315,7 @@ public class MySqlUpdateTest extends MySqlBaseTest {
                 .add(table.field(User.Fields.userAge).set(1))
                 .add(table.column("name").set("张三"))
                 .done()
-                .where().addFieldCondition("id", this.getOneUserId()).done()
+                .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                 .build();
         int insert = mapper.ezUpdate(ezUpdate);
         this.sqlSession.commit();
@@ -327,7 +327,7 @@ public class MySqlUpdateTest extends MySqlBaseTest {
                 .add(table.field(User.Fields.userAge).set(userAgeFm))
                 .add(table.column("name").set("张三"))
                 .done()
-                .where().addFieldCondition("id", this.getOneUserId()).done()
+                .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                 .build();
         insert = mapper.ezUpdate(ezUpdate);
         this.sqlSession.commit();
@@ -337,10 +337,10 @@ public class MySqlUpdateTest extends MySqlBaseTest {
         ezUpdate = EzUpdate.update(table)
                 .set()
                 .add(table.field(User.Fields.userAge).set(CaseWhen.builder(table).when()
-                        .addFieldCondition(User.Fields.userAge, 2).then(10).els(20)))
+                        .addCondition(table.field(User.Fields.userAge).eq(2)).then(10).els(20)))
                 .add(table.column("name").set("张三"))
                 .done()
-                .where().addFieldCondition("id", this.getOneUserId()).done()
+                .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                 .build();
         insert = mapper.ezUpdate(ezUpdate);
         this.sqlSession.commit();
@@ -356,12 +356,12 @@ public class MySqlUpdateTest extends MySqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set().add(table.field(User.Fields.name).set("张碧澄")).done()
-                .where().addFieldCondition("id", this.getOneUserId()).done()
+                .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                 .build();
         updates.add(ezUpdate);
         ezUpdate = EzUpdate.update(table)
                 .set().add(table.field(User.Fields.name).set("1")).done()
-                .where().addFieldCondition("id", "2").done()
+                .where().addCondition(table.field(BaseEntity.Fields.id).eq("2")).done()
                 .build();
         updates.add(ezUpdate);
         mapper.ezBatchUpdate(updates);
@@ -376,7 +376,7 @@ public class MySqlUpdateTest extends MySqlBaseTest {
             EntityTable table = EntityTable.of(User.class);
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).setToNull()).done()
-                    .where().addFieldCondition("id", this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
@@ -397,92 +397,92 @@ public class MySqlUpdateTest extends MySqlBaseTest {
 
             CaseWhen sonCaseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .els("王二1");
 
             CaseWhen caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then(function)
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then(function)
 
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .addCondition(table.field(User.Fields.name).eq("王二1")).then(sonCaseWhen)
                     .els("王二1");
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).set(caseWhen)).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
             caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then(function)
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .addCondition(table.field(User.Fields.name).eq("王二1")).then(sonCaseWhen)
                     .els(sonCaseWhen);
             ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).set(caseWhen)).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
             caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then(function)
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .addCondition(table.field(User.Fields.name).eq("王二1")).then(sonCaseWhen)
                     .build();
             ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).set(caseWhen)).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
             caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then(function)
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .addCondition(table.field(User.Fields.name).eq("王二1")).then(sonCaseWhen)
                     .els(function);
             ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).set(caseWhen)).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
             caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then(function)
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .addCondition(table.field(User.Fields.name).eq("王二1")).then(sonCaseWhen)
                     .els(TableColumn.of(table, "name"));
             ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).set(caseWhen)).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
             caseWhen = CaseWhen.builder(table)
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then("李四")
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then("李四")
                     .when()
-                    .addFieldCondition(User.Fields.name, "张三1").then(function)
+                    .addCondition(table.field(User.Fields.name).eq("张三1")).then(function)
                     .when()
-                    .addFieldCondition(User.Fields.name, "王二1").then(sonCaseWhen)
+                    .addCondition(table.field(User.Fields.name).eq("王二1")).then(sonCaseWhen)
                     .els(EntityField.of(table, User.Fields.name));
             ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.name).set(caseWhen)).done()
-                    .where().addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
 
@@ -502,7 +502,7 @@ public class MySqlUpdateTest extends MySqlBaseTest {
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.userAge).set(formula)).done()
                     .where()
-                    .addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
@@ -523,7 +523,7 @@ public class MySqlUpdateTest extends MySqlBaseTest {
                     .set().add(table.field(User.Fields.userAge).set(function))
                     .done()
                     .where()
-                    .addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
+                    .addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();

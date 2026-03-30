@@ -6,10 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.sqlstruct.CaseWhen;
-import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
-import org.rdlinux.ezmybatis.core.sqlstruct.Function;
-import org.rdlinux.ezmybatis.core.sqlstruct.WindowFunction;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
@@ -30,14 +27,6 @@ import java.util.concurrent.Future;
 
 @Slf4j
 public class MySqlSelectTest extends MySqlBaseTest {
-
-    // Helper to get a valid ID for testing
-
-    // Helper to get valid IDs
-
-    // Ensure data exists
-
-
     // =================================================================================================================
     // UserMapper Tests (EzBaseMapper Methods)
     // =================================================================================================================
@@ -244,7 +233,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 1. EQ (=)
         EzQuery<User> eqQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.sex, Operator.eq, User.Sex.MAN).done()
+                .where().addCondition(userTable.field(User.Fields.sex).eq(User.Sex.MAN)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(eqQuery));
         log.info("EzQuery EQ: {}", JacksonUtils.toJsonString(mapper.query(eqQuery)));
@@ -252,7 +241,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 2. NE (!=)
         EzQuery<User> neQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.ne, -1).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).ne(-1)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(neQuery));
         log.info("EzQuery NE: {}", JacksonUtils.toJsonString(mapper.query(neQuery)));
@@ -260,7 +249,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 3. GT (>)
         EzQuery<User> gtQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.gt, 10).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).gt(10)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(gtQuery));
         log.info("EzQuery GT: {}", JacksonUtils.toJsonString(mapper.query(gtQuery)));
@@ -268,7 +257,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 4. GE (>=)
         EzQuery<User> geQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.ge, 18).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).ge(18)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(geQuery));
         log.info("EzQuery GE: {}", JacksonUtils.toJsonString(mapper.query(geQuery)));
@@ -276,7 +265,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 5. LT (<)
         EzQuery<User> ltQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.lt, 100).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).lt(100)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(ltQuery));
         log.info("EzQuery LT: {}", JacksonUtils.toJsonString(mapper.query(ltQuery)));
@@ -284,7 +273,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 6. LE (<=)
         EzQuery<User> leQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.le, 18).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).le(18)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(leQuery));
         log.info("EzQuery LE: {}", JacksonUtils.toJsonString(mapper.query(leQuery)));
@@ -308,7 +297,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 9. IN
         EzQuery<User> inQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.in, Arrays.asList(18, 20, 27)).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).in(Arrays.asList(18, 20, 27))).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(inQuery));
         log.info("EzQuery IN: {}", JacksonUtils.toJsonString(mapper.query(inQuery)));
@@ -316,7 +305,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 10. NOT IN
         EzQuery<User> notInQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.notIn, Arrays.asList(-1, -2)).done()
+                .where().addCondition(userTable.field(User.Fields.userAge).notIn(Arrays.asList(-1, -2))).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notInQuery));
         log.info("EzQuery NOT IN: {}", JacksonUtils.toJsonString(mapper.query(notInQuery)));
@@ -324,7 +313,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 11. LIKE
         EzQuery<User> likeQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, Operator.like, "Test%").done()
+                .where().addCondition(userTable.field(User.Fields.name).like("Test%")).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(likeQuery));
         log.info("EzQuery LIKE: {}", JacksonUtils.toJsonString(mapper.query(likeQuery)));
@@ -332,7 +321,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 12. NOT LIKE (unlike)
         EzQuery<User> unlikeQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, Operator.unlike, "NonExis%").done()
+                .where().addCondition(userTable.field(User.Fields.name).unlike("NonExis%")).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(unlikeQuery));
         log.info("EzQuery NOT LIKE: {}", JacksonUtils.toJsonString(mapper.query(unlikeQuery)));
@@ -356,7 +345,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
         // 15. REGEXP
         EzQuery<User> regexpQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, Operator.regexp, "^Test.*").done()
+                .where().addCondition(userTable.field(User.Fields.name).regexp("^Test.*")).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(regexpQuery));
         log.info("EzQuery REGEXP: {}", JacksonUtils.toJsonString(mapper.query(regexpQuery)));
@@ -391,10 +380,10 @@ public class MySqlSelectTest extends MySqlBaseTest {
                 .select().addAll().done()
                 .where()
                 .groupCondition()
-                .addFieldCondition(User.Fields.userAge, Operator.lt, 20)
-                .addFieldCondition(AndOr.OR, User.Fields.name, Operator.eq, "TestUser3")
+                .addCondition(userTable.field(User.Fields.userAge).lt(20))
+                .addCondition(AndOr.OR, userTable.field(User.Fields.name), Operator.eq, "TestUser3")
                 .done()
-                .addFieldCondition(User.Fields.sex, Operator.eq, User.Sex.MAN)
+                .addCondition(userTable.field(User.Fields.sex).eq(User.Sex.MAN))
                 .done()
                 .build();
 
@@ -416,7 +405,7 @@ public class MySqlSelectTest extends MySqlBaseTest {
                 .add(countFn, "count")
                 .done()
                 .groupBy().addField(User.Fields.userAge).done()
-                .having().addCondition(countFn.ge(0)).done()
+                .having().addCondition(Alias.of("count").ge(0)).done()
                 .build();
 
         List<StringHashMap> result = this.sqlSession.getMapper(EzMapper.class).query(query);
@@ -443,25 +432,26 @@ public class MySqlSelectTest extends MySqlBaseTest {
     @Test
     public void ezQueryUnion() {
 
-        EzQuery<User> q1 = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EntityTable userTable = EntityTable.of(User.class);
+        EzQuery<User> q1 = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.sex, User.Sex.MAN).done()
+                .where().addCondition(userTable.field(User.Fields.sex).eq(User.Sex.MAN)).done()
                 .build();
 
-        EzQuery<User> q2 = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> q2 = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.sex, User.Sex.WOMAN).done()
+                .where().addCondition(userTable.field(User.Fields.sex).eq(User.Sex.WOMAN)).done()
                 .build();
 
-        EzQuery<User> q3 = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> q3 = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.sex, User.Sex.WOMAN).done()
+                .where().addCondition(userTable.field(User.Fields.sex).eq(User.Sex.WOMAN)).done()
                 .unionAll(q2)
                 .build();
 
-        EzQuery<User> unionQuery = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EzQuery<User> unionQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.name, "NonExistent").done() // Main query empty
+                .where().addCondition(userTable.field(User.Fields.name).eq("NonExistent")).done()
                 .union(q1)
                 .unionAll(q3)
                 .page(1, 10)
@@ -483,10 +473,11 @@ public class MySqlSelectTest extends MySqlBaseTest {
                 .select().addField(BaseEntity.Fields.id).done()
                 .build();
 
-        EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
+        EntityTable userTable = EntityTable.of(User.class);
+        EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
                 .where()
-                .addColumnCondition(BaseEntity.Fields.id, Operator.in, subInfo)
+                .addCondition(userTable.field(BaseEntity.Fields.id).in(subInfo))
                 .done()
                 .build();
 
@@ -537,8 +528,8 @@ public class MySqlSelectTest extends MySqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         CaseWhen ageGroup = CaseWhen.builder(table)
-                .when().addFieldCondition(table, User.Fields.userAge, Operator.lt, 19).then("Young")
-                .when().addFieldCondition(table, User.Fields.userAge, Operator.ge, 19).then("Adult")
+                .when().addCondition(table.field(User.Fields.userAge).lt(19)).then("Young")
+                .when().addCondition(table.field(User.Fields.userAge).ge(19)).then("Adult")
                 .els("Unknown");
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
