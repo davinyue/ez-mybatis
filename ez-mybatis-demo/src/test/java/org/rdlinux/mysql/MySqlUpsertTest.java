@@ -10,7 +10,7 @@ import org.rdlinux.mssql.MsSqlBaseTest;
 
 import java.util.UUID;
 
-public class MsSqlUpsertTest extends MsSqlBaseTest {
+public class MySqlUpsertTest extends MsSqlBaseTest {
     @Test
     public void upsertUpdateTest() {
         String userId = this.getOneUserId();
