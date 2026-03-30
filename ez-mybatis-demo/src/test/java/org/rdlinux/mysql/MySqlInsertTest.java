@@ -1,4 +1,4 @@
-package org.rdlinux.mssql;
+package org.rdlinux.mysql;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -17,9 +17,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
-public class MssqlInsertTest extends MssqlBaseTest {
+public class MySqlInsertTest extends MySqlBaseTest {
 
-    private static final com.github.javafaker.Faker faker = new com.github.javafaker.Faker(Locale.CHINA);
+    private static final com.github.javafaker.Faker faker = new com.github.javafaker.Faker(java.util.Locale.CHINA);
 
     private User buildUser() {
         User user = new User();
@@ -131,7 +131,7 @@ public class MssqlInsertTest extends MssqlBaseTest {
 
     @Test
     public void insertBySql() {
-        String sql = "INSERT INTO \"ez_user\" (\"id\", \"create_time\", \"update_time\", \"name\", \"sex\", \"age\") " +
+        String sql = "INSERT INTO `ez_user` (`id`, `create_time`, `update_time`, `name`, `sex`, `age`) " +
                 "VALUES ('#id', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
                 "'王二', 1, 27);\n";
         sql = sql.replace("#id", UUID.randomUUID().toString().replace("-", ""));
@@ -268,7 +268,7 @@ public class MssqlInsertTest extends MssqlBaseTest {
     @Test
     public void jdbcBatchInsertPerformanceTest() throws SQLException {
         Connection connection = this.sqlSession.getConnection();
-        String sql = "INSERT INTO save_test ( \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\" ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        String sql = "INSERT INTO save_test ( `a`, `b`, `c`, `d`, `e`, `f`, `g`, `h`, `i`, `j` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
             PreparedStatement statement = connection.prepareStatement(sql);

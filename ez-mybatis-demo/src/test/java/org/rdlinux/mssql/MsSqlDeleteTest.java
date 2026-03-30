@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class MssqlDeleteTest extends MssqlBaseTest {
+public class MsSqlDeleteTest extends MsSqlBaseTest {
 
     // ==========================================
     // UserMapper (EzBaseMapper) Tests

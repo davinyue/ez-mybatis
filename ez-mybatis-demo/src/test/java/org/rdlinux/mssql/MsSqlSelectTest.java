@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class MssqlSelectTest extends MssqlBaseTest {
+public class MsSqlSelectTest extends MsSqlBaseTest {
 
     // Helper to get a valid ID for testing
 
@@ -144,7 +144,7 @@ public class MssqlSelectTest extends MssqlBaseTest {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             futures.add(executorService.submit(() -> {
-                try (SqlSession threadSession = MssqlBaseTest.sqlSessionFactory.openSession()) {
+                try (SqlSession threadSession = MsSqlBaseTest.sqlSessionFactory.openSession()) {
                     startLatch.await();
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
