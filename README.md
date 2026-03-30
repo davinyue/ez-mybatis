@@ -33,7 +33,7 @@ Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis�
 - 🏷️ **JPA 注解支持**：@Table、@Id、@Column、@Transient、@TypeHandler 等常用注解开箱即用。
 - ⚡ **高性能通道**：提供 JDBC 直接操作 DAO（如 `JdbcInsertDao`、`JdbcUpdateDao`），大批量导入/更新更高效。
 - 🔌 **事件机制**：插入、更新、删除、查询、SQL 构建等生命周期点均可注入自定义逻辑（如加解密、审计、埋点）。
-- 🎯 **类型安全 DSL**：所有字段都有常量（如 `User.Fields.userAge`），IDE 自动提示，不怕写错列名。
+- 🎯 **类型安全 DSL**：所有字段都有常量（如 `User.Fields.age`），IDE 自动提示，不怕写错列名。
 - 🧪 **可混用**：Ez-MyBatis DSL 可与原生 MyBatis / MyBatis-Plus 共存，便于渐进式迁移。
 
 ---
@@ -280,14 +280,14 @@ public void conditionalUpdate() {
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
             // 设置年龄为 1
-            .add(table.field(User.Fields.userAge).set(1))
+            .add(table.field(User.Fields.age).set(1))
             // 设置年龄为原值 (通过列名引用)
-            .add(table.field(User.Fields.userAge).set(TableColumn.of(table, "age")))
+            .add(table.field(User.Fields.age).set(TableColumn.of(table, "age")))
             // 设置年龄为原值 (通过实体字段引用)
-            .add(table.field(User.Fields.userAge).set(table.field(User.Fields.userAge)))
+            .add(table.field(User.Fields.age).set(table.field(User.Fields.age)))
             // 年龄加 1
-            .add(table.field(User.Fields.userAge).set(
-                    Formula.builder(table.field(User.Fields.userAge)).add(1).done().build()))
+            .add(table.field(User.Fields.age).set(
+                    Formula.builder(table.field(User.Fields.age)).add(1).done().build()))
             // 通过列名设置
             .add(table.column("name").set("张三"))
             // 将字段设置为 NULL
@@ -313,14 +313,14 @@ public void formulaUpdate() {
     EntityTable table = EntityTable.of(User.class);
 
     // 创建表达式：年龄 + 10
-    Formula formula = Formula.builder(table.field(User.Fields.userAge))
+    Formula formula = Formula.builder(table.field(User.Fields.age))
             .add(10)
             .done()
             .build();
 
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
-            .add(table.field(User.Fields.userAge).set(formula))  // 年龄增加 10
+            .add(table.field(User.Fields.age).set(formula))  // 年龄增加 10
             .done()
             .where()
             .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
@@ -339,13 +339,13 @@ public void functionUpdate() {
 
     // GREATEST 函数：取最大值
     Function ageFunction = Function.builder("GREATEST")
-            .addArg(table.field(User.Fields.userAge))
+            .addArg(table.field(User.Fields.age))
             .addArg(100)
             .build();
 
     EzUpdate ezUpdate = EzUpdate.update(table)
             .set()
-            .add(table.field(User.Fields.userAge).set(ageFunction))  // 年龄取最大值
+            .add(table.field(User.Fields.age).set(ageFunction))  // 年龄取最大值
             .done()
             .where()
             .addCondition(table.field(BaseEntity.Fields.id).eq("1"))
@@ -431,8 +431,8 @@ public void conditionalDelete() {
             .where()
             .addCondition(userTable.field(User.Fields.name).eq("张三"))
             .groupCondition()  // 条件分组
-            .addCondition(userTable.field(User.Fields.userAge).eq(55))
-            .orCondition(userTable.field(User.Fields.userAge).eq(78))  // OR 条件
+            .addCondition(userTable.field(User.Fields.age).eq(55))
+            .orCondition(userTable.field(User.Fields.age).eq(78))  // OR 条件
             .done()
             .done()
             .build();
@@ -466,7 +466,7 @@ public void selectSpecificFields() {
     EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
             .from(EntityTable.of(User.class))
             .select()
-            .addField(User.Fields.userAge)        // 查询年龄字段
+            .addField(User.Fields.age)        // 查询年龄字段
             .addField(User.Fields.name)           // 查询姓名字段
             .add("二三班", "class")           // 添加常量值
             .add(123.12, "balance")          // 添加数值常量
@@ -513,12 +513,12 @@ public void groupByQuery() {
     EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
             .from(table)
             .select()
-            .addField(User.Fields.userAge)     // 分组字段
+            .addField(User.Fields.age)     // 分组字段
             .addField(User.Fields.name)        // 分组字段
             .add(countFunc, "total")           // 聚合函数
             .done()
             .groupBy()
-            .addField(User.Fields.userAge)     // 按年龄分组
+            .addField(User.Fields.age)     // 按年龄分组
             .addField(User.Fields.name)        // 按姓名分组
             .done()
             .having()
@@ -542,7 +542,7 @@ public void orderByQuery() {
             .addAll()
             .done()
             .orderBy()
-            .addField(User.Fields.userAge)                    // 按年龄升序
+            .addField(User.Fields.age)                    // 按年龄升序
             .addField(User.Fields.name, OrderType.DESC)       // 按姓名降序
             .done()
             .page(1, 10)
@@ -569,7 +569,7 @@ public void conditionalQuery() {
             .addCondition(userTable.field(User.Fields.name).notIn("张三"))
             .addCondition(userTable.field(User.Fields.name).notIn(Arrays.asList("李四", "王五")))
             // 其他条件
-            .addCondition(userTable.field(User.Fields.userAge).gt(18))  // 年龄 > 18
+            .addCondition(userTable.field(User.Fields.age).gt(18))  // 年龄 > 18
             .done()
             .page(1, 10)
             .build();
@@ -601,7 +601,7 @@ public void joinQuery() {
             .where()
             .addCondition(userTable.field(User.Fields.name).eq("张三"))     // 主表条件
             .addCondition(userOrgTable.field(UserOrg.Fields.orgId).eq("2")) // 关联表条件
-            .addCondition(userTable.field(User.Fields.userAge).eq(22))
+            .addCondition(userTable.field(User.Fields.age).eq(22))
             .done()
             .page(1, 10)
             .build();
@@ -649,7 +649,7 @@ public void dynamicQuery() {
             .from(table) // 指定 FROM 表名
             .select().addAll().done()
             .where()
-            .addCondition(table.field(User.Fields.userAge).gt(18))
+            .addCondition(table.field(User.Fields.age).gt(18))
             .done()
             .build();
 
@@ -668,7 +668,7 @@ public void unionQuery() {
     EzQuery<User> query1 = EzQuery.builder(User.class)
             .from(table)
             .select().addAll().done()
-            .where().addCondition(table.field(User.Fields.userAge).gt(18)).done()
+            .where().addCondition(table.field(User.Fields.age).gt(18)).done()
             .build();
 
     // 子查询 2
@@ -895,8 +895,8 @@ EzQuery<User> query = EzQuery.builder(User.class)
         .where()
         .addCondition(table.field(User.Fields.name).eq("张三"))
         .groupCondition()  // (age > 20 OR age < 60)
-        .addCondition(table.field(User.Fields.userAge).gt(20))
-        .orCondition(table.field(User.Fields.userAge).lt(60))
+        .addCondition(table.field(User.Fields.age).gt(20))
+        .orCondition(table.field(User.Fields.age).lt(60))
         .done()
         .done()
         .build();

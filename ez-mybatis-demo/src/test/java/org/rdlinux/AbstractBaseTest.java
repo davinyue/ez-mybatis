@@ -10,6 +10,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
+import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.constant.TableNamePattern;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
@@ -48,7 +50,9 @@ public abstract class AbstractBaseTest {
      * @param configResource MyBatis 配置文件资源路径
      * @param escapeKeyword  是否转义关键字
      */
-    protected static void initSqlSessionFactory(String configResource, boolean escapeKeyword) {
+    protected static void initSqlSessionFactory(String configResource, boolean escapeKeyword,
+                                                MapRetKeyPattern mapRetKeyPattern,
+                                                TableNamePattern tableNamePattern) {
         Reader reader;
         try {
             reader = Resources.getResourceAsReader(configResource);
@@ -59,6 +63,8 @@ public abstract class AbstractBaseTest {
         Configuration configuration = parser.parse();
         EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
         ezMybatisConfig.setEscapeKeyword(escapeKeyword);
+        ezMybatisConfig.setMapRetKeyPattern(mapRetKeyPattern);
+        ezMybatisConfig.setTableNamePattern(tableNamePattern);
         EzMybatisContent.init(ezMybatisConfig);
 
         // 插入监听器
@@ -66,7 +72,7 @@ public abstract class AbstractBaseTest {
             @Override
             public void onInsert(Object entity) {
                 if (entity instanceof BaseEntity) {
-                    log.info("插入事件");
+                    AbstractBaseTest.log.info("插入事件");
                     ((BaseEntity) entity).setUpdateTime(new Date());
                     ((BaseEntity) entity).setCreateTime(new Date());
                 }
@@ -82,7 +88,7 @@ public abstract class AbstractBaseTest {
         EzMybatisContent.addDeleteListener(ezMybatisConfig, new EzMybatisDeleteListener() {
             @Override
             public void onDelete(Object entity) {
-                log.info("删除事件");
+                AbstractBaseTest.log.info("删除事件");
             }
 
             @Override
@@ -92,7 +98,7 @@ public abstract class AbstractBaseTest {
 
             @Override
             public void onDeleteById(Object id, Class<?> ntClass) {
-                log.info("删除事件");
+                AbstractBaseTest.log.info("删除事件");
             }
 
             @Override
@@ -104,7 +110,7 @@ public abstract class AbstractBaseTest {
 
             @Override
             public void onEzDelete(EzDelete ezDelete) {
-                log.info("ez_delete删除:{}", ezDelete.getTable().getTableName(configuration));
+                AbstractBaseTest.log.info("ez_delete删除:{}", ezDelete.getTable().getTableName(configuration));
             }
         });
 
@@ -112,22 +118,22 @@ public abstract class AbstractBaseTest {
         EzMybatisContent.addUpdateListener(ezMybatisConfig, new EzMybatisUpdateListener() {
             @Override
             public void onUpdate(Object entity) {
-                log.info("更新事件");
+                AbstractBaseTest.log.info("更新事件");
             }
 
             @Override
             public void onBatchUpdate(Collection<?> models) {
-                log.info("更新事件");
+                AbstractBaseTest.log.info("更新事件");
             }
 
             @Override
             public void onReplace(Object entity) {
-                log.info("替换事件");
+                AbstractBaseTest.log.info("替换事件");
             }
 
             @Override
             public void onBatchReplace(Collection<?> models) {
-                log.info("替换事件");
+                AbstractBaseTest.log.info("替换事件");
             }
 
             @Override
@@ -205,7 +211,7 @@ public abstract class AbstractBaseTest {
         User u1 = new User();
         u1.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         u1.setName("TestUser1");
-        u1.setUserAge(18);
+        u1.setAge(18);
         u1.setSex(User.Sex.MAN);
         u1.setCreateTime(new Date());
         u1.setUpdateTime(new Date());
@@ -213,7 +219,7 @@ public abstract class AbstractBaseTest {
         User u2 = new User();
         u2.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         u2.setName("TestUser2");
-        u2.setUserAge(20);
+        u2.setAge(20);
         u2.setSex(User.Sex.WOMAN);
         u2.setCreateTime(new Date());
         u2.setUpdateTime(new Date());
@@ -221,7 +227,7 @@ public abstract class AbstractBaseTest {
         User u3 = new User();
         u3.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         u3.setName("TestUser3");
-        u3.setUserAge(30);
+        u3.setAge(30);
         u3.setSex(User.Sex.MAN);
         u3.setCreateTime(new Date());
         u3.setUpdateTime(new Date());

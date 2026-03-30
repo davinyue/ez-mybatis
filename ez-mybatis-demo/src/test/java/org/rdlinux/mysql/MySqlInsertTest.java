@@ -25,7 +25,7 @@ public class MySqlInsertTest extends MySqlBaseTest {
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName(faker.name().fullName());
-        user.setUserAge(new Random().nextInt(100));
+        user.setAge(new Random().nextInt(100));
         User.Sex[] sexes = User.Sex.values();
         user.setSex(sexes[new Random().nextInt(sexes.length)]);
         user.setUpdateTime(new Date());
@@ -131,7 +131,7 @@ public class MySqlInsertTest extends MySqlBaseTest {
 
     @Test
     public void insertBySql() {
-        String sql = "INSERT INTO `ez_user` (`id`, `create_time`, `update_time`, `name`, `sex`, `age`) " +
+        String sql = "INSERT INTO ez_user (id, create_time, update_time, name, sex, age) " +
                 "VALUES ('#id', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
                 "'王二', 1, 27);\n";
         sql = sql.replace("#id", UUID.randomUUID().toString().replace("-", ""));
@@ -268,7 +268,7 @@ public class MySqlInsertTest extends MySqlBaseTest {
     @Test
     public void jdbcBatchInsertPerformanceTest() throws SQLException {
         Connection connection = this.sqlSession.getConnection();
-        String sql = "INSERT INTO save_test ( `a`, `b`, `c`, `d`, `e`, `f`, `g`, `h`, `i`, `j` ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
+        String sql = "INSERT INTO save_test ( a, b, c, d, e, f, g, h, i, j ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
             PreparedStatement statement = connection.prepareStatement(sql);

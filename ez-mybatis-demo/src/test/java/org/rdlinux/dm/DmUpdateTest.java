@@ -27,7 +27,7 @@ public class DmUpdateTest extends DmBaseTest {
         user.setId("016cdcdd76f94879ab3d24850514812b");
         user.setName("王二");
         user.setName(null);
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).update(user);
         sqlSession.commit();
@@ -40,7 +40,7 @@ public class DmUpdateTest extends DmBaseTest {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
@@ -53,7 +53,7 @@ public class DmUpdateTest extends DmBaseTest {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).update(user);
         sqlSession.commit();
@@ -66,7 +66,7 @@ public class DmUpdateTest extends DmBaseTest {
         SqlSession sqlSession = DmBaseTest.sqlSessionFactory.openSession();
         User user = new User();
         user.setId("016cdcdd76f94879ab3d24850514812b");
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
         sqlSession.commit();
@@ -85,7 +85,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -106,7 +106,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -127,7 +127,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -148,7 +148,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -217,7 +217,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -238,7 +238,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -259,7 +259,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -280,7 +280,7 @@ public class DmUpdateTest extends DmBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -297,8 +297,8 @@ public class DmUpdateTest extends DmBaseTest {
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set()
-                .setField(User.Fields.userAge, CaseWhen.builder(table).when()
-                        .addFieldCondition(User.Fields.userAge, 2).then(10).els(20))
+                .setField(User.Fields.age, CaseWhen.builder(table).when()
+                        .addFieldCondition(User.Fields.age, 2).then(10).els(20))
                 .done()
                 .where().addFieldCondition("id", "1").done()
                 .build();
@@ -474,9 +474,9 @@ public class DmUpdateTest extends DmBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(EntityField.of(table, User.Fields.userAge)).add(10).done().build();
+            Formula formula = Formula.builder(EntityField.of(table, User.Fields.age)).add(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().setField(User.Fields.userAge, formula).done()
+                    .set().setField(User.Fields.age, formula).done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, "1").done()
                     .build();
@@ -496,12 +496,12 @@ public class DmUpdateTest extends DmBaseTest {
         try {
             EzMapper mapper = sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, User.Fields.userAge))
+            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, User.Fields.age))
                     .addArg(100).build();
 
             Function updateTimeFunction = Function.builder("now").build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().setField(User.Fields.userAge, function)
+                    .set().setField(User.Fields.age, function)
                     .setField(BaseEntity.Fields.updateTime, updateTimeFunction)
                     .done()
                     .where()
@@ -523,14 +523,14 @@ public class DmUpdateTest extends DmBaseTest {
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
-        user1.setUserAge(null);
+        user1.setAge(null);
         user1.setId("08649915562c421f858236f60fd652e5");
         users.add(user1);
 
         User user2 = new User();
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
         user2.setName(null);
-        user2.setUserAge(19);
+        user2.setAge(19);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
@@ -540,7 +540,7 @@ public class DmUpdateTest extends DmBaseTest {
         user.setCreateTime(new Date());
         user.setId("038f530bad3745d3a75f584296368501");
         user.setName("王芳");
-        user.setUserAge(8);
+        user.setAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.update(user);
         log.info("jdbcUpdateDaoUpdateTest single result: {}", sCt);
@@ -557,15 +557,15 @@ public class DmUpdateTest extends DmBaseTest {
         user.setCreateTime(new Date());
         user.setId("038f530bad3745d3a75f584296368501");
         user.setName("王芳");
-        user.setUserAge(8);
+        user.setAge(8);
         user.setSex(User.Sex.MAN);
-        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.age));
         log.info("jdbcUpdateDaoPartialUpdateTest single result: {}", sCt);
 
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
-        user1.setUserAge(20);
+        user1.setAge(20);
         user1.setSex(User.Sex.MAN);
         user1.setId("08649915562c421f858236f60fd652e5");
         users.add(user1);
@@ -573,9 +573,9 @@ public class DmUpdateTest extends DmBaseTest {
         User user2 = new User();
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
         user2.setName("王值1");
-        user2.setUserAge(19);
+        user2.setAge(19);
         users.add(user2);
-        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.age));
         log.info("jdbcUpdateDaoPartialUpdateTest batch result: {}", ct);
 
 
@@ -591,7 +591,7 @@ public class DmUpdateTest extends DmBaseTest {
         user1.setName(null);
         user1.setUpdateTime(new Date());
         user1.setCreateTime(new Date());
-        user1.setUserAge(12);
+        user1.setAge(12);
         user1.setSex(User.Sex.MAN);
         user1.setId("08649915562c421f858236f60fd652e5");
         users.add(user1);
@@ -600,7 +600,7 @@ public class DmUpdateTest extends DmBaseTest {
         user2.setName("杨玉婷");
         user2.setUpdateTime(new Date());
         user2.setCreateTime(new Date());
-        user2.setUserAge(18);
+        user2.setAge(18);
         user2.setSex(User.Sex.WOMAN);
         user2.setId("12e68306a3de4a03b0010b446a5ebd8e");
         users.add(user2);
@@ -612,7 +612,7 @@ public class DmUpdateTest extends DmBaseTest {
         user.setCreateTime(new Date());
         user.setId("038f530bad3745d3a75f584296368501");
         user.setName("王芳");
-        user.setUserAge(8);
+        user.setAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.replace(user);
         log.info("jdbcUpdateDaoReplaceTest single result: {}", sCt);
