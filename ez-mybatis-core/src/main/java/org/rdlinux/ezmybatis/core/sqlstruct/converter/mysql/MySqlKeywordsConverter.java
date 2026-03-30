@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Keywords;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -29,8 +28,4 @@ public class MySqlKeywordsConverter extends AbstractConverter<Keywords> implemen
         sqlGenerateContext.getSqlBuilder().append(SqlEscaping.nameEscaping(obj.getKeywords()));
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

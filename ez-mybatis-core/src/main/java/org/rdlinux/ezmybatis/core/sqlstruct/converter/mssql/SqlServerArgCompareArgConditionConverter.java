@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlArgCompareArgConditionConverter;
@@ -33,8 +32,4 @@ public class SqlServerArgCompareArgConditionConverter extends MySqlArgCompareArg
     }
 
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
-    }
 }

@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
@@ -33,8 +32,4 @@ public class MySqlTableColumnConverter extends AbstractConverter<TableColumn> im
                 .append(keywordQM);
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

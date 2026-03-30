@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
@@ -48,8 +47,4 @@ public class MySqlUnionConverter extends AbstractConverter<Union> implements Con
     }
 
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

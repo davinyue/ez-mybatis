@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
@@ -35,8 +34,4 @@ public class SqlServerTableColumnConverter extends AbstractConverter<TableColumn
                 .append(keywordQM);
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
-    }
 }

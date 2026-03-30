@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -32,8 +31,4 @@ public class PostgreSqlPageConverter extends AbstractConverter<Page> implements 
                 .append(page.getSkip()).append(" ");
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.POSTGRE_SQL;
-    }
 }

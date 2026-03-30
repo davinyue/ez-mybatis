@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -37,8 +36,4 @@ public class PostgreSqlLimitConverter extends AbstractConverter<Limit> implement
         }
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.POSTGRE_SQL;
-    }
 }

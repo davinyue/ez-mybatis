@@ -2,7 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
@@ -92,8 +91,4 @@ public class OraclePageConverter extends AbstractConverter<Page> implements Conv
         }
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.ORACLE;
-    }
 }

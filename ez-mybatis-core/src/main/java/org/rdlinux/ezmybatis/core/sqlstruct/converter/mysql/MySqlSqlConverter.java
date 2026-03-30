@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Sql;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -28,8 +27,4 @@ public class MySqlSqlConverter extends AbstractConverter<Sql> implements Convert
         sqlGenerateContext.getSqlBuilder().append("(").append(obj.getSql()).append(")");
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

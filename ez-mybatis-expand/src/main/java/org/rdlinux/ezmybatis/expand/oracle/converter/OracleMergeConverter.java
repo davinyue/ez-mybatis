@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.expand.oracle.converter;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
@@ -79,8 +78,4 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
         }
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

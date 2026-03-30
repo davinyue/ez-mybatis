@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlUpdateFieldItemConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
@@ -27,8 +26,4 @@ public class PostgreSqlUpdateFieldItemConverter extends MySqlUpdateFieldItemConv
         return false;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.POSTGRE_SQL;
-    }
 }

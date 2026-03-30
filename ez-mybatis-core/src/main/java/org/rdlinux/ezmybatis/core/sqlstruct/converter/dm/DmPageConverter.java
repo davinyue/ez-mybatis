@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlPageConverter;
 
 public class DmPageConverter extends MySqlPageConverter {
@@ -21,8 +20,4 @@ public class DmPageConverter extends MySqlPageConverter {
     }
 
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

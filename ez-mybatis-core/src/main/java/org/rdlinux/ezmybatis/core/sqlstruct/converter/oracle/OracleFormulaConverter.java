@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlFormulaConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
@@ -22,8 +21,4 @@ public class OracleFormulaConverter extends MySqlFormulaConverter implements Con
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.ORACLE;
-    }
 }

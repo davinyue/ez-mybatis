@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleSqlConditionConverter;
 
 public class DmSqlConditionConverter extends OracleSqlConditionConverter {
@@ -20,8 +19,4 @@ public class DmSqlConditionConverter extends OracleSqlConditionConverter {
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -32,8 +31,4 @@ public class SqlServerPageConverter extends AbstractConverter<Page> implements C
                 .append(page.getSize()).append(" ROWS ONLY ");
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
-    }
 }

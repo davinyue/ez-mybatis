@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlSelectAllItemConverter;
 
 public class OracleSelectAllItemConverter extends MySqlSelectAllItemConverter {
@@ -20,8 +19,4 @@ public class OracleSelectAllItemConverter extends MySqlSelectAllItemConverter {
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.ORACLE;
-    }
 }

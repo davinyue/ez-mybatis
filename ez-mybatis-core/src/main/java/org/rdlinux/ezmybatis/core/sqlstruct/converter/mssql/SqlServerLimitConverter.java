@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -33,8 +32,4 @@ public class SqlServerLimitConverter extends AbstractConverter<Limit> implements
                 .append(" ROWS ONLY ");
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
-    }
 }
