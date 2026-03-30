@@ -3,6 +3,7 @@ package org.rdlinux.oracle;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
+import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.dao.JdbcUpdateDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
@@ -12,9 +13,11 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Function;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
 import org.rdlinux.ezmybatis.demo.entity.User;
 import org.rdlinux.ezmybatis.demo.mapper.UserMapper;
+import org.rdlinux.ezmybatis.expand.oracle.update.Merge;
 
 import java.util.*;
 
@@ -585,5 +588,35 @@ public class OracleUpdateTest extends OracleBaseTest {
         } finally {
             sqlSession.close();
         }
+    }
+
+    @Test
+    public void mergeTest() {
+        String oneUserId = this.getOneUserId();
+        EntityTable userTable = EntityTable.of(User.class);
+        EzQuery<User> useQuery = EzQuery.builder(User.class).from(userTable)
+                .select()
+                .addAll()
+                .done()
+                .where()
+                .addCondition(userTable.field(BaseEntity.Fields.id), oneUserId)
+                .done()
+                .build();
+        EzQueryTable useTable = EzQueryTable.of(useQuery);
+        EntityTable mergeTable = EntityTable.of(User.class);
+        Merge merge = Merge.into(mergeTable)
+                .using(useTable)
+                .on()
+                .addCondition(mergeTable.field(BaseEntity.Fields.id), useTable.column("ID"))
+                .done()
+                .set()
+                .add(mergeTable.field(User.Fields.name).set("merge_name_test"))
+                .done()
+                .build();
+        SqlSession sqlSession = OracleBaseTest.sqlSessionFactory.openSession();
+        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        mapper.expandUpdate(merge);
+        sqlSession.commit();
+        sqlSession.close();
     }
 }
