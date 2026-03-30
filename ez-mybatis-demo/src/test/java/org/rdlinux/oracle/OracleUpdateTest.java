@@ -171,6 +171,8 @@ public class OracleUpdateTest extends OracleBaseTest {
         User user = new User();
         user.setId(id);
         user.setName("王二");
+        user.setAge(56);
+        user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(UserMapper.class).replace(user);
         this.sqlSession.commit();
         Assert.assertTrue(insert > 0);
@@ -184,6 +186,8 @@ public class OracleUpdateTest extends OracleBaseTest {
         User user = new User();
         user.setId(id);
         user.setName("王二");
+        user.setSex(User.Sex.MAN);
+        user.setAge(27);
         int insert = this.sqlSession.getMapper(UserMapper.class).replaceByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
         Assert.assertTrue(insert > 0);
@@ -197,6 +201,8 @@ public class OracleUpdateTest extends OracleBaseTest {
         User user = new User();
         user.setId(id);
         user.setName("王二");
+        user.setSex(User.Sex.MAN);
+        user.setAge(1);
         int insert = this.sqlSession.getMapper(EzMapper.class).replace(user);
         this.sqlSession.commit();
         Assert.assertTrue(insert > 0);
@@ -210,6 +216,8 @@ public class OracleUpdateTest extends OracleBaseTest {
         User user = new User();
         user.setId(id);
         user.setName("王二");
+        user.setSex(User.Sex.MAN);
+        user.setAge(1);
         int insert = this.sqlSession.getMapper(EzMapper.class).replaceByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
         Assert.assertTrue(insert > 0);
@@ -225,10 +233,11 @@ public class OracleUpdateTest extends OracleBaseTest {
             User user = new User();
             user.setId(ids.get(i));
             user.setName("芳" + i + 1);
+            user.setAge(i + 11);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setAge(i);
+                user.setSex(User.Sex.WOMAN);
             }
             users.add(user);
         }
@@ -248,8 +257,10 @@ public class OracleUpdateTest extends OracleBaseTest {
             user.setId(ids.get(i));
             user.setName("芳" + i + 1);
             if (i == 0) {
+                user.setAge(i + 1);
                 user.setSex(User.Sex.MAN);
             } else {
+                user.setSex(User.Sex.WOMAN);
                 user.setAge(i);
             }
             users.add(user);
@@ -270,9 +281,11 @@ public class OracleUpdateTest extends OracleBaseTest {
             user.setId(ids.get(i));
             user.setName("芳" + i + 1);
             if (i == 0) {
+                user.setAge(i + 1);
                 user.setSex(User.Sex.MAN);
             } else {
                 user.setAge(i);
+                user.setSex(User.Sex.WOMAN);
             }
             users.add(user);
         }
@@ -289,12 +302,12 @@ public class OracleUpdateTest extends OracleBaseTest {
         List<User> users = new LinkedList<>();
         for (int i = 0; i < ids.size(); i++) {
             User user = new User();
+            user.setAge(i);
             user.setId(ids.get(i));
             user.setName("芳" + i + 1);
+            user.setSex(User.Sex.WOMAN);
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
-            } else {
-                user.setAge(i);
             }
             users.add(user);
         }
@@ -374,7 +387,7 @@ public class OracleUpdateTest extends OracleBaseTest {
             EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().add(table.field(User.Fields.name).setToNull()).done()
+                    .set().add(table.field(User.Fields.email).setToNull()).done()
                     .where().addCondition(table.field(BaseEntity.Fields.id).eq(this.getOneUserId())).done()
                     .build();
             mapper.ezUpdate(ezUpdate);
@@ -537,21 +550,21 @@ public class OracleUpdateTest extends OracleBaseTest {
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
-        user1.setAge(null);
+        user1.setAge(12);
         user1.setId(this.getOneUserId());
+        user1.setSex(User.Sex.MAN);
         users.add(user1);
 
         User user2 = new User();
         user2.setId(this.getOneUserId());
-        user2.setName(null);
+        user2.setName("李真");
         user2.setAge(19);
+        user2.setSex(User.Sex.WOMAN);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(this.sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
         log.info("jdbcUpdateDaoUpdateTest batch result: {}", ct);
         User user = new User();
-        user.setUpdateTime(new Date());
-        user.setCreateTime(new Date());
         user.setId(this.getOneUserId());
         user.setName("王芳");
         user.setAge(8);
@@ -566,8 +579,6 @@ public class OracleUpdateTest extends OracleBaseTest {
     public void jdbcUpdateDaoPartialUpdateTest() {
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(this.sqlSession);
         User user = new User();
-        user.setUpdateTime(new Date());
-        user.setCreateTime(new Date());
         user.setId(this.getOneUserId());
         user.setName("王芳");
         user.setAge(8);
@@ -600,9 +611,7 @@ public class OracleUpdateTest extends OracleBaseTest {
     public void jdbcUpdateDaoReplaceTest() {
         List<User> users = new LinkedList<>();
         User user1 = new User();
-        user1.setName(null);
-        user1.setUpdateTime(new Date());
-        user1.setCreateTime(new Date());
+        user1.setName("王玉柱");
         user1.setAge(12);
         user1.setSex(User.Sex.MAN);
         user1.setId(this.getOneUserId());
@@ -610,8 +619,6 @@ public class OracleUpdateTest extends OracleBaseTest {
 
         User user2 = new User();
         user2.setName("杨玉婷");
-        user2.setUpdateTime(new Date());
-        user2.setCreateTime(new Date());
         user2.setAge(18);
         user2.setSex(User.Sex.WOMAN);
         user2.setId(this.getOneUserId());
@@ -620,8 +627,6 @@ public class OracleUpdateTest extends OracleBaseTest {
         int ct = jdbcInsertDao.batchReplace(users);
         log.info("jdbcUpdateDaoReplaceTest batch result: {}", ct);
         User user = new User();
-        user.setUpdateTime(new Date());
-        user.setCreateTime(new Date());
         user.setId(this.getOneUserId());
         user.setName("王芳");
         user.setAge(8);

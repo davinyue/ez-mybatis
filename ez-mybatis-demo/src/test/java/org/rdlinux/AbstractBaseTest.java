@@ -119,21 +119,28 @@ public abstract class AbstractBaseTest {
             @Override
             public void onUpdate(Object entity) {
                 AbstractBaseTest.log.info("更新事件");
+                if (entity instanceof BaseEntity) {
+                    ((BaseEntity) entity).setUpdateTime(new Date());
+                }
             }
 
             @Override
             public void onBatchUpdate(Collection<?> models) {
-                AbstractBaseTest.log.info("更新事件");
+                models.forEach(this::onUpdate);
             }
 
             @Override
             public void onReplace(Object entity) {
                 AbstractBaseTest.log.info("替换事件");
+                if (entity instanceof BaseEntity) {
+                    ((BaseEntity) entity).setCreateTime(new Date());
+                    ((BaseEntity) entity).setUpdateTime(new Date());
+                }
             }
 
             @Override
             public void onBatchReplace(Collection<?> models) {
-                AbstractBaseTest.log.info("替换事件");
+                models.forEach(this::onReplace);
             }
 
             @Override

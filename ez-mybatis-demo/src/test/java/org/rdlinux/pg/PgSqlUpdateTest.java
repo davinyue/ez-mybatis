@@ -277,6 +277,8 @@ public class PgSqlUpdateTest extends PgSqlBaseTest {
             User user = new User();
             user.setId("016cdcdd76f94879ab3d24850514812b");
             user.setName("芳" + i + 1);
+            user.setCreateTime(new Date());
+            user.setUpdateTime(new Date());
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
