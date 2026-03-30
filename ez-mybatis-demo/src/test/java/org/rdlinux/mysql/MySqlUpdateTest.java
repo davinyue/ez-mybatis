@@ -362,6 +362,31 @@ public class MySqlUpdateTest extends MySqlBaseTest {
     }
 
     @Test
+    public void ezMapperUpdateByLambdaDslTest() {
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        EntityTable table = EntityTable.of(User.class);
+        String userId = this.getOneUserId();
+        boolean updateAge = true;
+
+        EzUpdate ezUpdate = EzUpdate.update(table)
+                .set(s -> {
+                    s.add(table.field(User.Fields.name).set("Lambda Update"));
+                    s.add(updateAge, table.field(User.Fields.age).set(99));
+                })
+                .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(userId)))
+                .build();
+
+        int updated = mapper.ezUpdate(ezUpdate);
+        this.sqlSession.commit();
+        Assert.assertTrue(updated > 0);
+
+        User user = mapper.selectById(User.class, userId);
+        Assert.assertEquals("Lambda Update", user.getName());
+        Assert.assertEquals(Integer.valueOf(99), user.getAge());
+        log.info("ezMapperUpdateByLambdaDslTest result: {}", updated);
+    }
+
+    @Test
     public void ezMapperBatchUpdateByEzParamTest() {
         List<EzUpdate> updates = new LinkedList<>();
         EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);

@@ -222,6 +222,26 @@ public class MySqlDeleteTest extends MySqlBaseTest {
     }
 
     @Test
+    public void ezDeleteLambdaDsl() {
+        EntityTable userTable = EntityTable.of(User.class);
+        EntityTable uoTable = EntityTable.of(UserOrg.class);
+        String userId = this.getOneUserId();
+        boolean includeJoin = true;
+
+        EzDelete delete = EzDelete.delete(userTable)
+                .delete(uoTable)
+                .join(includeJoin, uoTable, j -> j.addCondition(userTable.field(BaseEntity.Fields.id)
+                        .eq(uoTable.field(UserOrg.Fields.userId))))
+                .where(w -> w.addCondition(userTable.field(BaseEntity.Fields.id).eq(userId)))
+                .build();
+
+        int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
+        this.sqlSession.commit();
+        Assert.assertTrue(ret >= 0);
+        log.info("Test ezDeleteLambdaDsl - Deleted {} records", ret);
+    }
+
+    @Test
     public void ezBatchDelete() {
         List<EzDelete> deletes = new LinkedList<>();
         List<String> ids = this.getUserIds(2);

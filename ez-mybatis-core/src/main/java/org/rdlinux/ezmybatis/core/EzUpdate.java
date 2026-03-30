@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class EzUpdate extends EzParam<Integer> {
@@ -48,6 +49,19 @@ public class EzUpdate extends EzParam<Integer> {
             return this.set(true);
         }
 
+        public EzUpdateBuilder set(Consumer<UpdateSetBuilder<EzUpdateBuilder>> consumer) {
+            UpdateSetBuilder<EzUpdateBuilder> builder = this.set();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzUpdateBuilder set(boolean sure, Consumer<UpdateSetBuilder<EzUpdateBuilder>> consumer) {
+            if (sure) {
+                return this.set(consumer);
+            }
+            return this;
+        }
+
         public Join.JoinBuilder<EzUpdateBuilder> join(boolean sure, JoinType joinType, Table joinTable) {
             if (this.ezUpdate.getJoins() == null) {
                 this.ezUpdate.joins = new LinkedList<>();
@@ -73,6 +87,35 @@ public class EzUpdate extends EzParam<Integer> {
 
         public Join.JoinBuilder<EzUpdateBuilder> join(Table joinTable) {
             return this.join(true, JoinType.InnerJoin, joinTable);
+        }
+
+        public EzUpdateBuilder join(Table joinTable, Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
+            Join.JoinBuilder<EzUpdateBuilder> builder = this.join(joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzUpdateBuilder join(JoinType joinType, Table joinTable,
+                                    Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
+            Join.JoinBuilder<EzUpdateBuilder> builder = this.join(joinType, joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzUpdateBuilder join(boolean sure, Table joinTable,
+                                    Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
+            if (sure) {
+                return this.join(joinTable, consumer);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder join(boolean sure, JoinType joinType, Table joinTable,
+                                    Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
+            if (sure) {
+                return this.join(joinType, joinTable, consumer);
+            }
+            return this;
         }
 
         public Where.WhereBuilder<EzUpdateBuilder> where(boolean sure, Table table) {
@@ -101,6 +144,33 @@ public class EzUpdate extends EzParam<Integer> {
 
         public Where.WhereBuilder<EzUpdateBuilder> where() {
             return this.where(true);
+        }
+
+        public EzUpdateBuilder where(Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
+            Where.WhereBuilder<EzUpdateBuilder> builder = this.where();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzUpdateBuilder where(Table table, Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
+            Where.WhereBuilder<EzUpdateBuilder> builder = this.where(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzUpdateBuilder where(boolean sure, Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
+            if (sure) {
+                return this.where(consumer);
+            }
+            return this;
+        }
+
+        public EzUpdateBuilder where(boolean sure, Table table,
+                                     Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
+            if (sure) {
+                return this.where(table, consumer);
+            }
+            return this;
         }
 
         public EzUpdate build() {

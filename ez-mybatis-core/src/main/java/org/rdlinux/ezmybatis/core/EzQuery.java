@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, QueryRetNeedAlias {
@@ -86,6 +87,33 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             return this.select(true);
         }
 
+        public EzQueryBuilder<Rt> select(Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Select.EzSelectBuilder<EzQueryBuilder<Rt>> builder = this.select();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> select(Table table, Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Select.EzSelectBuilder<EzQueryBuilder<Rt>> builder = this.select(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> select(boolean sure, Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.select(consumer);
+            }
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> select(boolean sure, Table table,
+                                         Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.select(table, consumer);
+            }
+            return this;
+        }
+
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, JoinType joinType, Table joinTable) {
             this.checkFromTable();
             if (this.query.getJoins() == null) {
@@ -111,6 +139,35 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, Table joinTable) {
             return this.join(sure, JoinType.InnerJoin, joinTable);
+        }
+
+        public EzQueryBuilder<Rt> join(Table joinTable, Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Join.JoinBuilder<EzQueryBuilder<Rt>> builder = this.join(joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> join(JoinType joinType, Table joinTable,
+                                       Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Join.JoinBuilder<EzQueryBuilder<Rt>> builder = this.join(joinType, joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> join(boolean sure, Table joinTable,
+                                       Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.join(joinTable, consumer);
+            }
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> join(boolean sure, JoinType joinType, Table joinTable,
+                                       Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.join(joinType, joinTable, consumer);
+            }
+            return this;
         }
 
         public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure, Table table) {
@@ -141,6 +198,33 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             return this.where(true);
         }
 
+        public EzQueryBuilder<Rt> where(Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Where.WhereBuilder<EzQueryBuilder<Rt>> builder = this.where();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> where(Table table, Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Where.WhereBuilder<EzQueryBuilder<Rt>> builder = this.where(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> where(boolean sure, Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.where(consumer);
+            }
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> where(boolean sure, Table table,
+                                        Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.where(table, consumer);
+            }
+            return this;
+        }
+
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure, Table table) {
             this.checkFromTable();
             GroupBy groupBy = this.query.groupBy;
@@ -167,6 +251,33 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy() {
             return this.groupBy(true);
+        }
+
+        public EzQueryBuilder<Rt> groupBy(Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
+            GroupBy.GroupBuilder<EzQueryBuilder<Rt>> builder = this.groupBy();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> groupBy(Table table, Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
+            GroupBy.GroupBuilder<EzQueryBuilder<Rt>> builder = this.groupBy(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> groupBy(boolean sure, Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.groupBy(consumer);
+            }
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> groupBy(boolean sure, Table table,
+                                          Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.groupBy(table, consumer);
+            }
+            return this;
         }
 
         public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure, Table table) {
@@ -197,6 +308,33 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             return this.orderBy(true);
         }
 
+        public EzQueryBuilder<Rt> orderBy(Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
+            OrderBy.OrderBuilder<EzQueryBuilder<Rt>> builder = this.orderBy();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> orderBy(Table table, Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
+            OrderBy.OrderBuilder<EzQueryBuilder<Rt>> builder = this.orderBy(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> orderBy(boolean sure, Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.orderBy(consumer);
+            }
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> orderBy(boolean sure, Table table,
+                                          Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.orderBy(table, consumer);
+            }
+            return this;
+        }
+
         public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure, Table table) {
             this.checkFromTable();
             Having having = this.query.having;
@@ -223,6 +361,33 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         public Having.HavingBuilder<EzQueryBuilder<Rt>> having() {
             return this.having(true);
+        }
+
+        public EzQueryBuilder<Rt> having(Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Having.HavingBuilder<EzQueryBuilder<Rt>> builder = this.having();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> having(Table table, Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
+            Having.HavingBuilder<EzQueryBuilder<Rt>> builder = this.having(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> having(boolean sure, Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.having(consumer);
+            }
+            return this;
+        }
+
+        public EzQueryBuilder<Rt> having(boolean sure, Table table,
+                                         Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
+            if (sure) {
+                return this.having(table, consumer);
+            }
+            return this;
         }
 
         /**

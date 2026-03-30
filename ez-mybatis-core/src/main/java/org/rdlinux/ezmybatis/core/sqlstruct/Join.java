@@ -12,6 +12,7 @@ import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Setter
 @Getter
@@ -99,6 +100,35 @@ public class Join implements SqlStruct {
 
         public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, Table joinTable) {
             return this.join(sure, JoinType.InnerJoin, joinTable);
+        }
+
+        public JoinBuilder<Builder> join(Table joinTable, Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            JoinBuilder<JoinBuilder<Builder>> builder = this.join(joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public JoinBuilder<Builder> join(JoinType joinType, Table joinTable,
+                                         Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            JoinBuilder<JoinBuilder<Builder>> builder = this.join(joinType, joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public JoinBuilder<Builder> join(boolean sure, Table joinTable,
+                                         Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            if (sure) {
+                return this.join(joinTable, consumer);
+            }
+            return this;
+        }
+
+        public JoinBuilder<Builder> join(boolean sure, JoinType joinType, Table joinTable,
+                                         Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            if (sure) {
+                return this.join(joinType, joinTable, consumer);
+            }
+            return this;
         }
 
         /**

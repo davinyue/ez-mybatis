@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class EzDelete extends EzParam<Integer> {
@@ -65,6 +66,35 @@ public class EzDelete extends EzParam<Integer> {
             return this.join(true, JoinType.InnerJoin, joinTable);
         }
 
+        public EzDeleteBuilder join(Table joinTable, Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
+            Join.JoinBuilder<EzDeleteBuilder> builder = this.join(joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzDeleteBuilder join(JoinType joinType, Table joinTable,
+                                    Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
+            Join.JoinBuilder<EzDeleteBuilder> builder = this.join(joinType, joinTable);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzDeleteBuilder join(boolean sure, Table joinTable,
+                                    Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
+            if (sure) {
+                return this.join(joinTable, consumer);
+            }
+            return this;
+        }
+
+        public EzDeleteBuilder join(boolean sure, JoinType joinType, Table joinTable,
+                                    Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
+            if (sure) {
+                return this.join(joinType, joinTable, consumer);
+            }
+            return this;
+        }
+
         public Where.WhereBuilder<EzDeleteBuilder> where(boolean sure, Table table) {
             Where where = this.delete.where;
             if (where == null) {
@@ -91,6 +121,33 @@ public class EzDelete extends EzParam<Integer> {
 
         public Where.WhereBuilder<EzDeleteBuilder> where() {
             return this.where(true);
+        }
+
+        public EzDeleteBuilder where(Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
+            Where.WhereBuilder<EzDeleteBuilder> builder = this.where();
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzDeleteBuilder where(Table table, Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
+            Where.WhereBuilder<EzDeleteBuilder> builder = this.where(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public EzDeleteBuilder where(boolean sure, Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
+            if (sure) {
+                return this.where(consumer);
+            }
+            return this;
+        }
+
+        public EzDeleteBuilder where(boolean sure, Table table,
+                                     Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
+            if (sure) {
+                return this.where(table, consumer);
+            }
+            return this;
         }
 
         public EzDelete build() {

@@ -226,6 +226,54 @@ public class MySqlSelectTest extends MySqlBaseTest {
     }
 
     @Test
+    public void ezQueryLambdaDslTest() {
+        EntityTable userTable = EntityTable.of(User.class);
+        boolean includeAge = true;
+        boolean hasNameFilter = true;
+
+        EzQuery<User> query = EzQuery.builder(User.class)
+                .from(userTable)
+                .select(s -> {
+                    s.addField(BaseEntity.Fields.id);
+                    s.addField(User.Fields.name);
+                    s.add(includeAge, userTable.field(User.Fields.age));
+                })
+                .where(w -> w.addCondition(hasNameFilter, userTable.field(User.Fields.name).like("TestUser%")))
+                .orderBy(o -> o.add(userTable.field(User.Fields.age), OrderType.ASC))
+                .limit(2)
+                .build();
+
+        List<User> users = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(users);
+        Assert.assertEquals(2, users.size());
+        Assert.assertEquals("TestUser1", users.get(0).getName());
+        Assert.assertEquals("TestUser2", users.get(1).getName());
+        log.info("EzQuery LambdaDsl: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezQueryLambdaGroupByHavingTest() {
+        EntityTable table = EntityTable.of(User.class);
+        Function countFn = Function.builder("COUNT").addArg(EntityField.of(table, BaseEntity.Fields.id)).build();
+
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+                .from(table)
+                .select(s -> {
+                    s.addField(User.Fields.age);
+                    s.add(countFn, "count");
+                })
+                .groupBy(g -> g.addField(User.Fields.age))
+                .having(h -> h.addCondition(Alias.of("count").ge(1)))
+                .orderBy(o -> o.add(table.field(User.Fields.age), OrderType.ASC))
+                .build();
+
+        List<StringHashMap> result = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(3, result.size());
+        log.info("EzQuery LambdaGroupByHaving: {}", JacksonUtils.toJsonString(result));
+    }
+
+    @Test
     public void ezQueryConditions() {
         EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
         EntityTable userTable = EntityTable.of(User.class);
@@ -370,6 +418,29 @@ public class MySqlSelectTest extends MySqlBaseTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
         log.info("EzQuery Join: {}", JacksonUtils.toJsonString(result));
+    }
+
+    @Test
+    public void ezQueryNestedJoinLambdaDslTest() {
+        EntityTable userTable = EntityTable.of(User.class);
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
+        EntityTable nestedUserOrgTable = EntityTable.of(UserOrg.class);
+
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+                .from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .join(userOrgTable, j -> {
+                    j.addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(UserOrg.Fields.userId)));
+                    j.join(nestedUserOrgTable, jj -> jj.addCondition(
+                            userOrgTable.field(UserOrg.Fields.orgId).eq(nestedUserOrgTable.field(UserOrg.Fields.orgId))));
+                })
+                .limit(10)
+                .build();
+
+        List<StringHashMap> result = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(result);
+        Assert.assertFalse(result.isEmpty());
+        log.info("EzQuery NestedJoinLambdaDsl: {}", JacksonUtils.toJsonString(result));
     }
 
     @Test
