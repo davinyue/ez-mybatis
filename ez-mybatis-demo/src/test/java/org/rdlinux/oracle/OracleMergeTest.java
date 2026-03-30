@@ -15,7 +15,7 @@ import org.rdlinux.ezmybatis.expand.oracle.update.Merge;
 import java.util.Date;
 import java.util.UUID;
 
-public class OracleMergeTests extends OracleBaseTest {
+public class OracleMergeTest extends OracleBaseTest {
     @Test
     public void mergeMatchedUpdateTest() {
         String oneUserId = this.getOneUserId();
@@ -33,7 +33,7 @@ public class OracleMergeTests extends OracleBaseTest {
         User user = new User();
         user.setId(oneUserId);
         user.setName("merge_name_insert_test");
-        user.setUserAge(18);
+        user.setAge(18);
         user.setSex(User.Sex.MAN);
         Merge merge = Merge.into(mergeTable)
                 .using(useTable)
@@ -91,7 +91,7 @@ public class OracleMergeTests extends OracleBaseTest {
         User user = new User();
         user.setId(sourceUserId);
         user.setName("merge_name_insert_test");
-        user.setUserAge(18);
+        user.setAge(18);
         user.setSex(User.Sex.MAN);
 
         Merge merge = Merge.into(mergeTable)
@@ -122,7 +122,7 @@ public class OracleMergeTests extends OracleBaseTest {
         Assert.assertNotNull(inserted);
         Assert.assertEquals(sourceUserId, inserted.getId());
         Assert.assertEquals("merge_name_insert_test", inserted.getName());
-        Assert.assertEquals(Integer.valueOf(18), inserted.getUserAge());
+        Assert.assertEquals(Integer.valueOf(18), inserted.getAge());
         Assert.assertEquals(User.Sex.MAN, inserted.getSex());
     }
 }

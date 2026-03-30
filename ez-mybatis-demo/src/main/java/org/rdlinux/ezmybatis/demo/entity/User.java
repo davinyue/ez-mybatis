@@ -7,7 +7,6 @@ import lombok.experimental.FieldNameConstants;
 import org.rdlinux.ezmybatis.annotation.TypeHandler;
 import org.rdlinux.ezmybatis.demo.typehandler.CustomStringTypeHandler;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -22,8 +21,7 @@ public class User extends BaseEntity {
     @TypeHandler(CustomStringTypeHandler.class)
     private String name;
     private Sex sex;
-    @Column(name = "age")
-    private Integer userAge;
+    private Integer age;
     /**
      * 用户邮箱
      */

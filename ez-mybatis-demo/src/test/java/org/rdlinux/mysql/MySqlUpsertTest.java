@@ -18,7 +18,7 @@ public class MySqlUpsertTest extends MsSqlBaseTest {
         User user = new User();
         user.setId(userId);
         user.setName("mysql_upsert_insert_name");
-        user.setUserAge(18);
+        user.setAge(18);
         user.setSex(User.Sex.MAN);
         MySqlUpsert upsert = MySqlUpsert.insert(user)
                 .onDuplicateKeyUpdate()
@@ -42,7 +42,7 @@ public class MySqlUpsertTest extends MsSqlBaseTest {
         User user = new User();
         user.setId(userId);
         user.setName("mysql_upsert_insert_name");
-        user.setUserAge(18);
+        user.setAge(18);
         user.setSex(User.Sex.MAN);
         MySqlUpsert upsert = MySqlUpsert.into(table)
                 .insert(user)
@@ -58,7 +58,7 @@ public class MySqlUpsertTest extends MsSqlBaseTest {
         User inserted = mapper.selectById(User.class, userId);
         Assert.assertNotNull(inserted);
         Assert.assertEquals("mysql_upsert_insert_name", inserted.getName());
-        Assert.assertEquals(Integer.valueOf(18), inserted.getUserAge());
+        Assert.assertEquals(Integer.valueOf(18), inserted.getAge());
         Assert.assertEquals(User.Sex.MAN, inserted.getSex());
     }
 }

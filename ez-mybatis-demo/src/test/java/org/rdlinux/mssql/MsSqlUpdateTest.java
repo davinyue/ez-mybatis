@@ -27,7 +27,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         user.setId(id);
         user.setName("王二");
         user.setName(null);
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(UserMapper.class).update(user);
         this.sqlSession.commit();
@@ -41,7 +41,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         String id = this.getOneUserId();
         User user = new User();
         user.setId(id);
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(UserMapper.class).updateByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
@@ -55,7 +55,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         String id = this.getOneUserId();
         User user = new User();
         user.setId(id);
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(EzMapper.class).update(user);
         this.sqlSession.commit();
@@ -69,7 +69,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         String id = this.getOneUserId();
         User user = new User();
         user.setId(id);
-        user.setUserAge(27);
+        user.setAge(27);
         user.setSex(User.Sex.MAN);
         int insert = this.sqlSession.getMapper(EzMapper.class).updateByTable(EntityTable.of(User.class), user);
         this.sqlSession.commit();
@@ -89,7 +89,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -111,7 +111,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -133,7 +133,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -155,7 +155,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -229,7 +229,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -251,7 +251,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -273,7 +273,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -295,7 +295,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {
-                user.setUserAge(i);
+                user.setAge(i);
             }
             users.add(user);
         }
@@ -312,7 +312,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
         EzUpdate ezUpdate = EzUpdate.update(table)
                 .set()
-                .add(table.field(User.Fields.userAge).set(1))
+                .add(table.field(User.Fields.age).set(1))
                 .add(table.column("name").set("张三"))
                 .done()
                 .where().addFieldCondition("id", this.getOneUserId()).done()
@@ -321,10 +321,10 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         this.sqlSession.commit();
         Assert.assertTrue(insert > 0);
         log.info("ezMapperUpdateByEzParamTest result: {}", insert);
-        Formula userAgeFm = Formula.builder(table.field(User.Fields.userAge)).add(1).done().build();
+        Formula userAgeFm = Formula.builder(table.field(User.Fields.age)).add(1).done().build();
         ezUpdate = EzUpdate.update(table)
                 .set()
-                .add(table.field(User.Fields.userAge).set(userAgeFm))
+                .add(table.field(User.Fields.age).set(userAgeFm))
                 .add(table.column("name").set("张三"))
                 .done()
                 .where().addFieldCondition("id", this.getOneUserId()).done()
@@ -336,8 +336,8 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
 
         ezUpdate = EzUpdate.update(table)
                 .set()
-                .add(table.field(User.Fields.userAge).set(CaseWhen.builder(table).when()
-                        .addFieldCondition(User.Fields.userAge, 2).then(10).els(20)))
+                .add(table.field(User.Fields.age).set(CaseWhen.builder(table).when()
+                        .addFieldCondition(User.Fields.age, 2).then(10).els(20)))
                 .add(table.column("name").set("张三"))
                 .done()
                 .where().addFieldCondition("id", this.getOneUserId()).done()
@@ -498,9 +498,9 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         try {
             EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(table.field(User.Fields.userAge)).add(10).done().build();
+            Formula formula = Formula.builder(table.field(User.Fields.age)).add(10).done().build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().add(table.field(User.Fields.userAge).set(formula)).done()
+                    .set().add(table.field(User.Fields.age).set(formula)).done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
                     .build();
@@ -517,10 +517,10 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         try {
             EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, User.Fields.userAge))
+            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, User.Fields.age))
                     .addArg(100).build();
             EzUpdate ezUpdate = EzUpdate.update(table)
-                    .set().add(table.field(User.Fields.userAge).set(function))
+                    .set().add(table.field(User.Fields.age).set(function))
                     .done()
                     .where()
                     .addFieldCondition(BaseEntity.Fields.id, this.getOneUserId()).done()
@@ -538,14 +538,14 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
-        user1.setUserAge(null);
+        user1.setAge(null);
         user1.setId(this.getOneUserId());
         users.add(user1);
 
         User user2 = new User();
         user2.setId(this.getOneUserId());
         user2.setName(null);
-        user2.setUserAge(19);
+        user2.setAge(19);
         users.add(user2);
         JdbcUpdateDao jdbcInsertDao = new JdbcUpdateDao(this.sqlSession);
         int ct = jdbcInsertDao.batchUpdate(users);
@@ -555,7 +555,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         user.setCreateTime(new Date());
         user.setId(this.getOneUserId());
         user.setName("王芳");
-        user.setUserAge(8);
+        user.setAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.update(user);
         Assert.assertTrue(sCt > 0);
@@ -571,16 +571,16 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         user.setCreateTime(new Date());
         user.setId(this.getOneUserId());
         user.setName("王芳");
-        user.setUserAge(8);
+        user.setAge(8);
         user.setSex(User.Sex.MAN);
-        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        int sCt = jdbcInsertDao.update(user, Arrays.asList(User.Fields.name, User.Fields.age));
         Assert.assertTrue(sCt > 0);
         log.info("jdbcUpdateDaoPartialUpdateTest single result: {}", sCt);
 
         List<User> users = new LinkedList<>();
         User user1 = new User();
         user1.setName("王值");
-        user1.setUserAge(20);
+        user1.setAge(20);
         user1.setSex(User.Sex.MAN);
         user1.setId(this.getOneUserId());
         users.add(user1);
@@ -588,9 +588,9 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         User user2 = new User();
         user2.setId(this.getOneUserId());
         user2.setName("王值1");
-        user2.setUserAge(19);
+        user2.setAge(19);
         users.add(user2);
-        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.userAge));
+        int ct = jdbcInsertDao.batchUpdate(users, Arrays.asList(User.Fields.name, User.Fields.age));
         log.info("jdbcUpdateDaoPartialUpdateTest batch result: {}", ct);
 
 
@@ -604,7 +604,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         user1.setName(null);
         user1.setUpdateTime(new Date());
         user1.setCreateTime(new Date());
-        user1.setUserAge(12);
+        user1.setAge(12);
         user1.setSex(User.Sex.MAN);
         user1.setId(this.getOneUserId());
         users.add(user1);
@@ -613,7 +613,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         user2.setName("杨玉婷");
         user2.setUpdateTime(new Date());
         user2.setCreateTime(new Date());
-        user2.setUserAge(18);
+        user2.setAge(18);
         user2.setSex(User.Sex.WOMAN);
         user2.setId(this.getOneUserId());
         users.add(user2);
@@ -625,7 +625,7 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
         user.setCreateTime(new Date());
         user.setId(this.getOneUserId());
         user.setName("王芳");
-        user.setUserAge(8);
+        user.setAge(8);
         user.setSex(User.Sex.MAN);
         int sCt = jdbcInsertDao.replace(user);
         Assert.assertTrue(sCt > 0);

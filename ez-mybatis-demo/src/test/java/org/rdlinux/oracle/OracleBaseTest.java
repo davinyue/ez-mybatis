@@ -1,9 +1,12 @@
 package org.rdlinux.oracle;
 
 import org.rdlinux.AbstractBaseTest;
+import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.constant.TableNamePattern;
 
 public class OracleBaseTest extends AbstractBaseTest {
     static {
-        initSqlSessionFactory("mybatis-config-oracle.xml", false);
+        AbstractBaseTest.initSqlSessionFactory("mybatis-config-oracle.xml", true,
+                MapRetKeyPattern.HUMP, TableNamePattern.UPPER_CASE);
     }
 }

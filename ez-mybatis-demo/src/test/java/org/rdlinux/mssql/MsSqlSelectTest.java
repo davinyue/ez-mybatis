@@ -217,7 +217,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 2. NE (!=)
         EzQuery<User> neQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.ne, -1).done()
+                .where().addFieldCondition(User.Fields.age, Operator.ne, -1).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(neQuery));
         log.info("EzQuery NE: {}", JacksonUtils.toJsonString(mapper.query(neQuery)));
@@ -225,7 +225,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 3. GT (>)
         EzQuery<User> gtQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.gt, 10).done()
+                .where().addFieldCondition(User.Fields.age, Operator.gt, 10).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(gtQuery));
         log.info("EzQuery GT: {}", JacksonUtils.toJsonString(mapper.query(gtQuery)));
@@ -233,7 +233,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 4. GE (>=)
         EzQuery<User> geQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.ge, 18).done()
+                .where().addFieldCondition(User.Fields.age, Operator.ge, 18).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(geQuery));
         log.info("EzQuery GE: {}", JacksonUtils.toJsonString(mapper.query(geQuery)));
@@ -241,7 +241,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 5. LT (<)
         EzQuery<User> ltQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.lt, 100).done()
+                .where().addFieldCondition(User.Fields.age, Operator.lt, 100).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(ltQuery));
         log.info("EzQuery LT: {}", JacksonUtils.toJsonString(mapper.query(ltQuery)));
@@ -249,7 +249,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 6. LE (<=)
         EzQuery<User> leQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.le, 18).done()
+                .where().addFieldCondition(User.Fields.age, Operator.le, 18).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(leQuery));
         log.info("EzQuery LE: {}", JacksonUtils.toJsonString(mapper.query(leQuery)));
@@ -273,7 +273,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 9. IN
         EzQuery<User> inQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.in, Arrays.asList(18, 20, 27)).done()
+                .where().addFieldCondition(User.Fields.age, Operator.in, Arrays.asList(18, 20, 27)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(inQuery));
         log.info("EzQuery IN: {}", JacksonUtils.toJsonString(mapper.query(inQuery)));
@@ -281,7 +281,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 10. NOT IN
         EzQuery<User> notInQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addFieldCondition(User.Fields.userAge, Operator.notIn, Arrays.asList(-1, -2)).done()
+                .where().addFieldCondition(User.Fields.age, Operator.notIn, Arrays.asList(-1, -2)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notInQuery));
         log.info("EzQuery NOT IN: {}", JacksonUtils.toJsonString(mapper.query(notInQuery)));
@@ -305,7 +305,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 13. BETWEEN
         EzQuery<User> betweenQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addCondition(userTable.field(User.Fields.userAge).between(10, 30)).done() // Use dedicated method
+                .where().addCondition(userTable.field(User.Fields.age).between(10, 30)).done() // Use dedicated method
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(betweenQuery));
         log.info("EzQuery BETWEEN: {}", JacksonUtils.toJsonString(mapper.query(betweenQuery)));
@@ -313,7 +313,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         // 14. NOT BETWEEN
         EzQuery<User> notBetweenQuery = EzQuery.builder(User.class).from(userTable)
                 .select().addAll().done()
-                .where().addCondition(userTable.field(User.Fields.userAge).notBetween(100, 200)).done() // Use dedicated method
+                .where().addCondition(userTable.field(User.Fields.age).notBetween(100, 200)).done() // Use dedicated method
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notBetweenQuery));
         log.info("EzQuery NOT BETWEEN: {}", JacksonUtils.toJsonString(mapper.query(notBetweenQuery)));
@@ -355,7 +355,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
                 .select().addAll().done()
                 .where()
                 .groupCondition()
-                .addFieldCondition(User.Fields.userAge, Operator.lt, 20)
+                .addFieldCondition(User.Fields.age, Operator.lt, 20)
                 .addFieldCondition(AndOr.OR, User.Fields.name, Operator.eq, "TestUser3")
                 .done()
                 .addFieldCondition(User.Fields.sex, Operator.eq, User.Sex.MAN)
@@ -376,10 +376,10 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         Function countFn = Function.builder("COUNT").addArg(EntityField.of(table, BaseEntity.Fields.id)).build();
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
-                .addField(User.Fields.userAge)
+                .addField(User.Fields.age)
                 .add(countFn, "count")
                 .done()
-                .groupBy().addField(User.Fields.userAge).done()
+                .groupBy().addField(User.Fields.age).done()
                 .having().addCondition(countFn.ge(0)).done()
                 .build();
 
@@ -394,7 +394,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         EzQuery<User> query = EzQuery.builder(User.class).from(EntityTable.of(User.class))
                 .select().addAll().done()
                 .orderBy()
-                .addField(User.Fields.userAge, OrderType.ASC)
+                .addField(User.Fields.age, OrderType.ASC)
                 .addField(BaseEntity.Fields.createTime, OrderType.DESC)
                 .done()
                 .page(1, 5)
@@ -464,13 +464,13 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         // Formula: age + 1
-        Formula agePlusOne = Formula.builder(table.field(User.Fields.userAge)).add(1).done().build();
+        Formula agePlusOne = Formula.builder(table.field(User.Fields.age)).add(1).done().build();
 
         // Function: CONCAT(name, ' - ', age)
         Function nameDesc = Function.builder("CONCAT")
                 .addArg(EntityField.of(table, User.Fields.name))
                 .addArg(" - ")
-                .addArg(EntityField.of(table, User.Fields.userAge))
+                .addArg(EntityField.of(table, User.Fields.age))
                 .build();
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
@@ -501,17 +501,17 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         CaseWhen ageGroup = CaseWhen.builder(table)
-                .when().addFieldCondition(table, User.Fields.userAge, Operator.lt, 19).then("Young")
-                .when().addFieldCondition(table, User.Fields.userAge, Operator.ge, 19).then("Adult")
+                .when().addFieldCondition(table, User.Fields.age, Operator.lt, 19).then("Young")
+                .when().addFieldCondition(table, User.Fields.age, Operator.ge, 19).then("Adult")
                 .els("Unknown");
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select()
                 .addField(User.Fields.name)
-                .addField(User.Fields.userAge)
+                .addField(User.Fields.age)
                 .add(ageGroup, "ageGroup")
                 .done()
-                .orderBy().addField(User.Fields.userAge, OrderType.ASC).done()
+                .orderBy().addField(User.Fields.age, OrderType.ASC).done()
                 .limit(5)
                 .build();
 
@@ -557,46 +557,46 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         Function rowNumFunc = Function.builder("ROW_NUMBER").build();
         WindowFunction wf2 = WindowFunction.builder(rowNumFunc)
                 .partitionBy(EntityField.of(table, User.Fields.sex))
-                .partitionBy(EntityField.of(table, User.Fields.userAge))
+                .partitionBy(EntityField.of(table, User.Fields.age))
                 .orderBy(EntityField.of(table, User.Fields.name), OrderType.ASC)
                 .orderBy(EntityField.of(table, BaseEntity.Fields.createTime), OrderType.DESC)
                 .build();
 
         // 3. ROWS 各种场景
-        Function sumAgeFunc = Function.builder("SUM").addArg(EntityField.of(table, User.Fields.userAge)).build();
+        Function sumAgeFunc = Function.builder("SUM").addArg(EntityField.of(table, User.Fields.age)).build();
 
         // UNBOUNDED PRECEDING to CURRENT ROW
         WindowFunction wf3 = WindowFunction.builder(sumAgeFunc)
                 .partitionBy(EntityField.of(table, User.Fields.sex))
-                .orderBy(EntityField.of(table, User.Fields.userAge), OrderType.ASC)
+                .orderBy(EntityField.of(table, User.Fields.age), OrderType.ASC)
                 .rowsBetween(WindowFunction.WindowFrameBound.unboundedPreceding(), WindowFunction.WindowFrameBound.currentRow())
                 .build();
 
         // 2 PRECEDING to 2 FOLLOWING
         WindowFunction wf4 = WindowFunction.builder(sumAgeFunc)
                 .partitionBy(EntityField.of(table, User.Fields.sex))
-                .orderBy(EntityField.of(table, User.Fields.userAge), OrderType.ASC)
+                .orderBy(EntityField.of(table, User.Fields.age), OrderType.ASC)
                 .rowsBetween(WindowFunction.WindowFrameBound.preceding(2), WindowFunction.WindowFrameBound.following(2))
                 .build();
 
         // CURRENT ROW to UNBOUNDED FOLLOWING
         WindowFunction wf5 = WindowFunction.builder(sumAgeFunc)
                 .partitionBy(EntityField.of(table, User.Fields.sex))
-                .orderBy(EntityField.of(table, User.Fields.userAge), OrderType.ASC)
+                .orderBy(EntityField.of(table, User.Fields.age), OrderType.ASC)
                 .rowsBetween(WindowFunction.WindowFrameBound.currentRow(), WindowFunction.WindowFrameBound.unboundedFollowing())
                 .build();
 
         // UNBOUNDED PRECEDING to UNBOUNDED FOLLOWING
         WindowFunction wf6 = WindowFunction.builder(sumAgeFunc)
                 .partitionBy(EntityField.of(table, User.Fields.sex))
-                .orderBy(EntityField.of(table, User.Fields.userAge), OrderType.ASC)
+                .orderBy(EntityField.of(table, User.Fields.age), OrderType.ASC)
                 .rowsBetween(WindowFunction.WindowFrameBound.unboundedPreceding(), WindowFunction.WindowFrameBound.unboundedFollowing())
                 .build();
 
         // 4. RANGE 场景
         WindowFunction wf7 = WindowFunction.builder(sumAgeFunc)
                 .partitionBy(EntityField.of(table, User.Fields.sex))
-                .orderBy(EntityField.of(table, User.Fields.userAge), OrderType.ASC)
+                .orderBy(EntityField.of(table, User.Fields.age), OrderType.ASC)
                 .rangeBetween(WindowFunction.WindowFrameBound.unboundedPreceding(), WindowFunction.WindowFrameBound.currentRow())
                 .build();
 
@@ -604,7 +604,7 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
                 .select()
                 .addField(User.Fields.name)
                 .addField(User.Fields.sex)
-                .addField(User.Fields.userAge)
+                .addField(User.Fields.age)
                 .add(wf1, "totalCount")
                 .add(wf2, "rn")
                 .add(wf3, "sumAge_unbounded_current")

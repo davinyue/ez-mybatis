@@ -25,7 +25,7 @@ public class MsSqlInsertTest extends MsSqlBaseTest {
         User user = new User();
         user.setId(UUID.randomUUID().toString().replaceAll("-", ""));
         user.setName(faker.name().fullName());
-        user.setUserAge(new Random().nextInt(100));
+        user.setAge(new Random().nextInt(100));
         User.Sex[] sexes = User.Sex.values();
         user.setSex(sexes[new Random().nextInt(sexes.length)]);
         user.setUpdateTime(new Date());
