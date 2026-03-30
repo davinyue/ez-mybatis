@@ -21,6 +21,39 @@ import java.util.*;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
+    public static InsertSqlParts getInsertSqlParts(SqlGenerateContext sqlGenerateContext, Object entity) {
+        Assert.notNull(sqlGenerateContext, "sqlGenerateContext can not be null");
+        Assert.notNull(entity, "entity can not be null");
+        if (entity instanceof Collection) {
+            throw new IllegalArgumentException("entity can not instanceof Collection");
+        }
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
+        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
+        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
+        Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
+        StringBuilder columnBuilder = new StringBuilder("( ");
+        StringBuilder valueBuilder = new StringBuilder("( ");
+        int i = 1;
+        for (String column : columnMapFieldInfo.keySet()) {
+            EntityFieldInfo fieldInfo = columnMapFieldInfo.get(column);
+            Method fieldGetMethod = fieldInfo.getFieldGetMethod();
+            Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
+            columnBuilder.append(keywordQM).append(column).append(keywordQM);
+            valueBuilder.append(mybatisParamHolder.simpleGetMybatisParamName(entity.getClass(), fieldInfo.getField(),
+                    fieldValue));
+            if (i < columnMapFieldInfo.size()) {
+                columnBuilder.append(", ");
+                valueBuilder.append(", ");
+            } else {
+                columnBuilder.append(" )");
+                valueBuilder.append(" )");
+            }
+            i++;
+        }
+        return new InsertSqlParts(columnBuilder.toString(), valueBuilder.toString());
+    }
+
     public static String getTableName(SqlGenerateContext sqlGenerateContext, Table table, Object model) {
         Assert.notNull(model, "model can not be null");
         if (model instanceof Collection) {
@@ -44,33 +77,10 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
     @Override
     public String getInsertSql(SqlGenerateContext sqlGenerateContext, Table table, Object entity) {
-        Configuration configuration = sqlGenerateContext.getConfiguration();
-        MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
         String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, entity);
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, entity.getClass());
-        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
-        Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
-        StringBuilder columnBuilder = new StringBuilder("( ");
-        StringBuilder paramBuilder = new StringBuilder("( ");
-        int i = 1;
-        for (String column : columnMapFieldInfo.keySet()) {
-            EntityFieldInfo fieldInfo = columnMapFieldInfo.get(column);
-            Method fieldGetMethod = fieldInfo.getFieldGetMethod();
-            Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
-            columnBuilder.append(keywordQM).append(column).append(keywordQM);
-            paramBuilder.append(mybatisParamHolder.simpleGetMybatisParamName(entity.getClass(), fieldInfo.getField(),
-                    fieldValue));
-            if (i < columnMapFieldInfo.size()) {
-                columnBuilder.append(", ");
-                paramBuilder.append(", ");
-            } else {
-                columnBuilder.append(" )");
-                paramBuilder.append(" )");
-            }
-            i++;
-        }
-        sqlBuilder.append(columnBuilder).append(" VALUES ").append(paramBuilder);
+        InsertSqlParts insertSqlParts = getInsertSqlParts(sqlGenerateContext, entity);
+        sqlBuilder.append(insertSqlParts.getColumnsSql()).append(" VALUES ").append(insertSqlParts.getValuesSql());
         return sqlBuilder.toString();
     }
 
@@ -154,5 +164,23 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
      */
     protected boolean insertByQueryAppendParenthesis() {
         return true;
+    }
+
+    public static class InsertSqlParts {
+        private final String columnsSql;
+        private final String valuesSql;
+
+        public InsertSqlParts(String columnsSql, String valuesSql) {
+            this.columnsSql = columnsSql;
+            this.valuesSql = valuesSql;
+        }
+
+        public String getColumnsSql() {
+            return columnsSql;
+        }
+
+        public String getValuesSql() {
+            return valuesSql;
+        }
     }
 }

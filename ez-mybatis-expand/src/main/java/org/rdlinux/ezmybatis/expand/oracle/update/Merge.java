@@ -8,15 +8,20 @@ import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.enumeration.AndOr;
+import org.rdlinux.ezmybatis.expand.mssql.converter.SqlServerMergeConverter;
 import org.rdlinux.ezmybatis.expand.oracle.converter.OracleMergeConverter;
+import org.rdlinux.ezmybatis.expand.postgre.converter.PostgreMergeConverter;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * merge update
@@ -27,6 +32,8 @@ public class Merge implements SqlExpand {
     static {
         EzMybatisContent.addConverter(DbType.ORACLE, Merge.class, OracleMergeConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Merge.class, OracleMergeConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.POSTGRE_SQL, Merge.class, PostgreMergeConverter.getInstance());
+        EzMybatisContent.addConverter(DbType.SQL_SERVER, Merge.class, SqlServerMergeConverter.getInstance());
     }
 
     /**
@@ -45,6 +52,7 @@ public class Merge implements SqlExpand {
      * 更新列
      */
     private UpdateSet set;
+    private Object notMatchedInsertEntity;
 
     private Merge() {
     }
@@ -69,7 +77,8 @@ public class Merge implements SqlExpand {
             if (left == null || right == null) {
                 return false;
             }
-            return false;
+            return Objects.equals(left.getAlias(), right.getAlias())
+                    && Objects.equals(left.getClass(), right.getClass());
         }
 
         public MergeBuilder using(EzQueryTable table) {
@@ -95,6 +104,11 @@ public class Merge implements SqlExpand {
             return new UpdateSetBuilder<>(this, this.merge.mergeTable, this.merge.set);
         }
 
+        public MergeBuilder whenNotMatchedThenInsert(Object entity) {
+            this.merge.notMatchedInsertEntity = entity;
+            return this;
+        }
+
         public Merge build() {
             this.validate();
             return this.merge;
@@ -115,6 +129,7 @@ public class Merge implements SqlExpand {
             }
             this.validateSetItems();
             this.validateOnConditions();
+            this.validateInsertEntity();
         }
 
         private void validateSetItems() {
@@ -187,6 +202,28 @@ public class Merge implements SqlExpand {
                 return;
             }
             throw new IllegalStateException("Merge ON conditions can only reference merge table and using table");
+        }
+
+        private void validateInsertEntity() {
+            Object entity = this.merge.notMatchedInsertEntity;
+            if (entity == null) {
+                return;
+            }
+            if (entity instanceof java.util.Collection) {
+                throw new IllegalStateException("Merge insert entity can not be a collection");
+            }
+            if (entity instanceof Map) {
+                throw new IllegalStateException("Merge insert entity can not be a map");
+            }
+            if (entity.getClass().isArray()) {
+                throw new IllegalStateException("Merge insert entity can not be an array");
+            }
+            if (this.merge.mergeTable instanceof EntityTable) {
+                Class<?> etType = ((EntityTable) this.merge.mergeTable).getEtType();
+                if (etType != null && !etType.isAssignableFrom(entity.getClass())) {
+                    throw new IllegalStateException("Merge insert entity type must match merge table entity type");
+                }
+            }
         }
 
         private static class OnConditionTableUsage {
