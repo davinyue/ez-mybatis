@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class MysqlSelectTest extends MysqlBaseTest {
+public class MySqlSelectTest extends MySqlBaseTest {
 
     // Helper to get a valid ID for testing
 
@@ -179,7 +179,7 @@ public class MysqlSelectTest extends MysqlBaseTest {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             futures.add(executorService.submit(() -> {
-                try (SqlSession threadSession = MysqlBaseTest.sqlSessionFactory.openSession()) {
+                try (SqlSession threadSession = MySqlBaseTest.sqlSessionFactory.openSession()) {
                     startLatch.await();
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
