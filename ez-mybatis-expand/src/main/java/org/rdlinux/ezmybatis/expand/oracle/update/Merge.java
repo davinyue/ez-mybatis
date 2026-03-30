@@ -3,13 +3,14 @@ package org.rdlinux.ezmybatis.expand.oracle.update;
 import lombok.Getter;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
-import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
+import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.expand.oracle.converter.OracleMergeConverter;
@@ -53,12 +54,22 @@ public class Merge implements SqlExpand {
     }
 
     public static class MergeBuilder {
-        private Merge merge;
+        private final Merge merge;
 
         private MergeBuilder(Table table) {
             this.merge = new Merge();
             this.merge.mergeTable = table;
             this.merge.set = new UpdateSet();
+        }
+
+        private static boolean sameTable(Table left, Table right) {
+            if (left == right) {
+                return true;
+            }
+            if (left == null || right == null) {
+                return false;
+            }
+            return false;
         }
 
         public MergeBuilder using(EzQueryTable table) {
@@ -85,7 +96,102 @@ public class Merge implements SqlExpand {
         }
 
         public Merge build() {
+            this.validate();
             return this.merge;
+        }
+
+        private void validate() {
+            if (this.merge.mergeTable == null) {
+                throw new IllegalStateException("Merge target table can not be null");
+            }
+            if (this.merge.useTable == null) {
+                throw new IllegalStateException("Merge using table can not be null");
+            }
+            if (this.merge.on == null || this.merge.on.isEmpty()) {
+                throw new IllegalStateException("Merge ON conditions can not be empty");
+            }
+            if (this.merge.set == null || this.merge.set.getItems() == null || this.merge.set.getItems().isEmpty()) {
+                throw new IllegalStateException("Merge SET items can not be empty");
+            }
+            this.validateSetItems();
+            this.validateOnConditions();
+        }
+
+        private void validateSetItems() {
+            for (UpdateItem item : this.merge.set.getItems()) {
+                if (item == null) {
+                    throw new IllegalStateException("Merge SET item can not be null");
+                }
+                if (!sameTable(item.getTable(), this.merge.mergeTable)) {
+                    throw new IllegalStateException("Merge SET target must belong to merge table");
+                }
+            }
+        }
+
+        private void validateOnConditions() {
+            OnConditionTableUsage usage = new OnConditionTableUsage();
+            for (Condition condition : this.merge.on) {
+                this.validateCondition(condition, usage);
+            }
+            if (!usage.mergeTableUsed) {
+                throw new IllegalStateException("Merge ON conditions must reference merge table");
+            }
+            if (!usage.useTableUsed) {
+                throw new IllegalStateException("Merge ON conditions must reference using table");
+            }
+        }
+
+        private void validateCondition(Condition condition, OnConditionTableUsage usage) {
+            if (condition == null) {
+                return;
+            }
+            if (condition instanceof GroupCondition) {
+                for (Condition child : ((GroupCondition) condition).getConditions()) {
+                    this.validateCondition(child, usage);
+                }
+                return;
+            }
+            if (condition instanceof ArgCompareArgCondition) {
+                ArgCompareArgCondition compare = (ArgCompareArgCondition) condition;
+                this.validateOperand(compare.getLeftValue(), usage);
+                this.validateOperand(compare.getRightValue(), usage);
+                this.validateOperand(compare.getMinValue(), usage);
+                this.validateOperand(compare.getMaxValue(), usage);
+                if (compare.getRightValues() != null) {
+                    for (Operand operand : compare.getRightValues()) {
+                        this.validateOperand(operand, usage);
+                    }
+                }
+            }
+        }
+
+        private void validateOperand(Operand operand, OnConditionTableUsage usage) {
+            if (operand == null) {
+                return;
+            }
+            Table table = null;
+            if (operand instanceof EntityField) {
+                table = ((EntityField) operand).getTable();
+            } else if (operand instanceof TableColumn) {
+                table = ((TableColumn) operand).getTable();
+            }
+            if (table == null) {
+                return;
+            }
+            if (sameTable(table, this.merge.mergeTable)) {
+                usage.mergeTableUsed = true;
+                return;
+            }
+            if (sameTable(table, this.merge.useTable)) {
+                usage.useTableUsed = true;
+                return;
+            }
+            throw new IllegalStateException("Merge ON conditions can only reference merge table and using table");
+        }
+
+        private static class OnConditionTableUsage {
+            private boolean mergeTableUsed;
+            private boolean useTableUsed;
         }
 
         public static class MergeOnBuilder<Builder> extends ConditionBuilder<Builder, MergeOnBuilder<Builder>> {
