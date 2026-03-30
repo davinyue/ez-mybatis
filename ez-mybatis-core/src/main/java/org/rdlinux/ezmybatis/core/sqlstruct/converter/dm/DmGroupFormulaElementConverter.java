@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleGroupFormulaElementConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.GroupFormulaElement;
@@ -24,8 +23,4 @@ public class DmGroupFormulaElementConverter extends OracleGroupFormulaElementCon
     }
 
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

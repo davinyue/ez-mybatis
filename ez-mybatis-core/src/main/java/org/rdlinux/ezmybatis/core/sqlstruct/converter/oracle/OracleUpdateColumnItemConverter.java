@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlUpdateColumnItemConverter;
 
 public class OracleUpdateColumnItemConverter extends MySqlUpdateColumnItemConverter {
@@ -20,8 +19,4 @@ public class OracleUpdateColumnItemConverter extends MySqlUpdateColumnItemConver
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.ORACLE;
-    }
 }

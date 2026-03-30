@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleSqlHintConverter;
@@ -22,8 +21,4 @@ public class DmSqlHintConverter extends OracleSqlHintConverter implements Conver
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

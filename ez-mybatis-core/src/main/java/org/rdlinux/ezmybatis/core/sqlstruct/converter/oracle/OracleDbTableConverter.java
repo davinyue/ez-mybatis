@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlDbTableConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
@@ -22,8 +21,4 @@ public class OracleDbTableConverter extends MySqlDbTableConverter implements Con
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.ORACLE;
-    }
 }

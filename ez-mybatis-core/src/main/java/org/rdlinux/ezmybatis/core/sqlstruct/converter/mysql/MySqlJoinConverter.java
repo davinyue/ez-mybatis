@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Join;
@@ -57,8 +56,4 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         }
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

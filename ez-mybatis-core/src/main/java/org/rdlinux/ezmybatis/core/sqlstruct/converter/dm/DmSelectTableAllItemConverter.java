@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleSelectTableAllItemConverter;
 
 public class DmSelectTableAllItemConverter extends OracleSelectTableAllItemConverter {
@@ -20,8 +19,4 @@ public class DmSelectTableAllItemConverter extends OracleSelectTableAllItemConve
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

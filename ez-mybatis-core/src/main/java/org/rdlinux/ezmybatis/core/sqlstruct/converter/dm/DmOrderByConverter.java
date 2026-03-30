@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.oracle.OracleOrderByConverter;
 
 public class DmOrderByConverter extends OracleOrderByConverter {
@@ -20,8 +19,4 @@ public class DmOrderByConverter extends OracleOrderByConverter {
         return instance;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }
