@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.expand.oracle.converter;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -75,6 +76,14 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
             if (i + 1 < items.size()) {
                 sqlBuilder.append(", ");
             }
+        }
+        if (merge.getNotMatchedInsertEntity() != null) {
+            AbstractInsertSqlGenerate.InsertSqlParts insertSqlParts = AbstractInsertSqlGenerate.getInsertSqlParts(
+                    sqlGenerateContext, merge.getNotMatchedInsertEntity());
+            sqlBuilder.append(" WHEN NOT MATCHED THEN INSERT ")
+                    .append(insertSqlParts.getColumnsSql())
+                    .append(" VALUES ")
+                    .append(insertSqlParts.getValuesSql());
         }
     }
 
