@@ -15,7 +15,7 @@ import org.rdlinux.ezmybatis.expand.oracle.update.Merge;
 import java.util.Date;
 import java.util.UUID;
 
-public class PgSqlMergeTests extends PgSqlBaseTest {
+public class PgMergeTest extends PgBaseTest {
     @Test
     public void mergeMatchedUpdateTest() {
         String oneUserId = this.getOneUserId();
@@ -38,7 +38,7 @@ public class PgSqlMergeTests extends PgSqlBaseTest {
         Merge merge = Merge.into(mergeTable)
                 .using(useTable)
                 .on()
-                .addCondition(mergeTable.field(BaseEntity.Fields.id), useTable.column("ID"))
+                .addCondition(mergeTable.field(BaseEntity.Fields.id), useTable.column("id"))
                 .done()
                 .set()
                 .add(mergeTable.field(User.Fields.name).set("merge_name_test"))
@@ -90,6 +90,8 @@ public class PgSqlMergeTests extends PgSqlBaseTest {
         EntityTable mergeTable = EntityTable.of(User.class);
         User user = new User();
         user.setId(sourceUserId);
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
         user.setName("merge_name_insert_test");
         user.setAge(18);
         user.setSex(User.Sex.MAN);
@@ -97,7 +99,7 @@ public class PgSqlMergeTests extends PgSqlBaseTest {
         Merge merge = Merge.into(mergeTable)
                 .using(useTable)
                 .on()
-                .addCondition(mergeTable.field(BaseEntity.Fields.id), useTable.column("USER_ID"))
+                .addCondition(mergeTable.field(BaseEntity.Fields.id), useTable.column("user_id"))
                 .done()
                 .set()
                 .add(mergeTable.field(User.Fields.name).set("merge_name_test"))

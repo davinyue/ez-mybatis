@@ -1,7 +1,7 @@
 package org.rdlinux.pg;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSession;
+import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Slf4j
-public class PgSqlInsertTest extends PgSqlBaseTest {
+public class PgInsertTest extends PgBaseTest {
 
     private static final com.github.javafaker.Faker faker = new com.github.javafaker.Faker(Locale.CHINA);
 
@@ -55,42 +55,38 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
 
     @Test
     public void insert() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         User user = this.buildUser();
-        int ret = sqlSession.getMapper(UserMapper.class).insert(user);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class).insert(user);
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("UserMapper.insert ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void insertByTable() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         User user = this.buildUser();
-        int ret = sqlSession.getMapper(UserMapper.class).insertByTable(EntityTable.of(User.class), user);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class).insertByTable(EntityTable.of(User.class), user);
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("UserMapper.insertByTable ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void batchInsert() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = this.buildUsers(2);
-        int ret = sqlSession.getMapper(UserMapper.class).batchInsert(users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class).batchInsert(users);
+        this.sqlSession.commit();
+        Assert.assertEquals(2, ret);
         log.info("UserMapper.batchInsert ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void batchInsertByTable() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = this.buildUsers(2);
-        int ret = sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(UserMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
+        this.sqlSession.commit();
+        Assert.assertEquals(2, ret);
         log.info("UserMapper.batchInsertByTable ret: {}", ret);
-        sqlSession.close();
     }
 
     // =================================================================================================================
@@ -99,73 +95,61 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
 
     @Test
     public void ezMapperInsert() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         User user = this.buildUser();
-        int ret = sqlSession.getMapper(EzMapper.class).insert(user);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).insert(user);
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("EzMapper.insert ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperInsertByTable() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         User user = this.buildUser();
-        int ret = sqlSession.getMapper(EzMapper.class).insertByTable(EntityTable.of(User.class), user);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).insertByTable(EntityTable.of(User.class), user);
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("EzMapper.insertByTable ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperBatchInsert() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = this.buildUsers(2);
-        int ret = sqlSession.getMapper(EzMapper.class).batchInsert(users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).batchInsert(users);
+        this.sqlSession.commit();
+        Assert.assertEquals(2, ret);
         log.info("EzMapper.batchInsert ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void ezMapperBatchInsertByTable() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         List<User> users = this.buildUsers(2);
-        int ret = sqlSession.getMapper(EzMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).batchInsertByTable(EntityTable.of(User.class), users);
+        this.sqlSession.commit();
+        Assert.assertEquals(2, ret);
         log.info("EzMapper.batchInsertByTable ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void insertBySql() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
         String sql = "INSERT INTO ez_user (id, create_time, update_time, name, sex, age) " +
                 "VALUES ('#id', '2021-12-30 11:58:23', '2021-12-30 11:58:23', " +
                 "'王二', 1, 27);\n";
         sql = sql.replace("#id", UUID.randomUUID().toString().replace("-", ""));
-        int ret = sqlSession.getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
-        sqlSession.commit();
+        int ret = this.sqlSession.getMapper(EzMapper.class).insertBySql(sql, new HashMap<>());
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("EzMapper.insertBySql ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void insertByQuery() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
-        // 先插入一条，确保Query有数据
-        mapper.insert(this.buildUser());
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        // 先往 SaveTest 表插入一条种子数据，确保 SELECT 有结果
+        SaveTest seed = new SaveTest().setA("a1").setB("b1").setC("c1").setD("d1").setE("e1")
+                .setF("f1").setG("g1").setH("h1").setI("i1").setJ("j1");
+        mapper.insert(seed);
 
-        EzQuery<User> query = EzQuery.builder(User.class)
-                .from(EntityTable.of(User.class))
-                .select()
-                .addAll()
-                .done()
-                .page(1, 1)
-                .build();
-
-        // 使用SaveTest作为目标表以避免主键冲突（演示目的）
+        // INSERT INTO save_test SELECT * FROM save_test（从自身查询再插入）
         EzQuery<SaveTest> saveTestQuery = EzQuery.builder(SaveTest.class)
                 .from(EntityTable.of(SaveTest.class))
                 .select()
@@ -174,9 +158,9 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
                 .page(1, 1)
                 .build();
         int ret = mapper.insertByQuery(EntityTable.of(SaveTest.class), saveTestQuery);
-        sqlSession.commit();
+        this.sqlSession.commit();
+        Assert.assertTrue(ret >= 0);
         log.info("EzMapper.insertByQuery ret: {}", ret);
-        sqlSession.close();
     }
 
 
@@ -186,46 +170,42 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
 
     @Test
     public void jdbcInsert() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(sqlSession);
+        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(this.sqlSession);
         User user = this.buildUser();
         int ret = jdbcInsertDao.insert(user);
-        sqlSession.commit();
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("JdbcInsertDao.insert ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void jdbcInsertByTable() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(sqlSession);
+        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(this.sqlSession);
         User user = this.buildUser();
         int ret = jdbcInsertDao.insertByTable(EntityTable.of(User.class), user);
-        sqlSession.commit();
+        this.sqlSession.commit();
+        Assert.assertEquals(1, ret);
         log.info("JdbcInsertDao.insertByTable ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void jdbcBatchInsert() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(sqlSession);
+        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(this.sqlSession);
         List<User> users = this.buildUsers(5);
         int ret = jdbcInsertDao.batchInsert(users);
-        sqlSession.commit();
+        this.sqlSession.commit();
+        Assert.assertEquals(5, ret);
         log.info("JdbcInsertDao.batchInsert ret: {}", ret);
-        sqlSession.close();
     }
 
     @Test
     public void jdbcBatchInsertByTable() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(sqlSession);
+        JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(this.sqlSession);
         List<User> users = this.buildUsers(5);
         int ret = jdbcInsertDao.batchInsertByTable(EntityTable.of(User.class), users);
-        sqlSession.commit();
+        this.sqlSession.commit();
+        Assert.assertEquals(5, ret);
         log.info("JdbcInsertDao.batchInsertByTable ret: {}", ret);
-        sqlSession.close();
     }
 
 
@@ -235,8 +215,7 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
 
     @Test
     public void loopInsertPerformanceTest() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();
         for (int i = 0; i < 1; i++) {
@@ -253,15 +232,14 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
             mapper.insert(entity);
         }
         long end = System.currentTimeMillis();
-        sqlSession.commit();
-        sqlSession.close();
+        this.sqlSession.commit();
+        Assert.assertTrue(end - start >= 0);
         log.info("loopInsertPerformanceTest cost: {}ms", end - start);
     }
 
     @Test
     public void batchInsertPerformanceTest() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();
         for (int h = 0; h < 2; h++) {
@@ -282,20 +260,19 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
             mapper.batchInsert(models);
         }
         long end = System.currentTimeMillis();
-        sqlSession.commit();
-        sqlSession.close();
+        this.sqlSession.commit();
+        Assert.assertTrue(end - start >= 0);
         log.info("batchInsertPerformanceTest cost: {}ms", end - start);
     }
 
     @Test
     public void jdbcBatchInsertPerformanceTest() throws SQLException {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        Connection connection = sqlSession.getConnection();
+        Connection connection = this.sqlSession.getConnection();
         String sql = "INSERT INTO save_test ( a, b, c, d, e, f, g, h, i, j ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
         long start = System.currentTimeMillis();
         for (int h = 0; h < 1; h++) {
             PreparedStatement statement = connection.prepareStatement(sql);
-            EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+            EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
             this.preheat(mapper);
             for (int i = 0; i < 1; i++) {
                 String id = UUID.randomUUID().toString().replaceAll("-", "");
@@ -317,18 +294,17 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
         connection.commit();
         connection.close();
         long end = System.currentTimeMillis();
-        sqlSession.commit();
-        sqlSession.close();
+        this.sqlSession.commit();
+        Assert.assertTrue(end - start >= 0);
         log.info("jdbcBatchInsertPerformanceTest cost: {}ms", end - start);
     }
 
     @Test
     public void jdbcBatchInsertPerformanceTest2() {
-        SqlSession sqlSession = PgSqlBaseTest.sqlSessionFactory.openSession();
-        EzMapper mapper = sqlSession.getMapper(EzMapper.class);
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
         this.preheat(mapper);
         long start = System.currentTimeMillis();
-        JdbcInsertDao jdbcBatchInsertDao = new JdbcInsertDao(sqlSession);
+        JdbcInsertDao jdbcBatchInsertDao = new JdbcInsertDao(this.sqlSession);
         for (int h = 0; h < 2; h++) {
             List<SaveTest> models = new LinkedList<>();
             for (int i = 0; i < 5; i++) {
@@ -346,9 +322,9 @@ public class PgSqlInsertTest extends PgSqlBaseTest {
             }
             jdbcBatchInsertDao.batchInsert(models);
         }
-        sqlSession.commit();
-        sqlSession.close();
+        this.sqlSession.commit();
         long end = System.currentTimeMillis();
+        Assert.assertTrue(end - start >= 0);
         log.info("jdbcBatchInsertPerformanceTest2 cost: {}ms", end - start);
     }
 }
