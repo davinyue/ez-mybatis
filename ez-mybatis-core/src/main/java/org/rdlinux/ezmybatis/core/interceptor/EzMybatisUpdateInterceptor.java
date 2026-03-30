@@ -155,13 +155,15 @@ public class EzMybatisUpdateInterceptor implements Interceptor {
             if (statementId.endsWith("." + EzMybatisConstant.UPDATE_METHOD_NAME)) {
                 log.debug("on update");
                 this.onUpdate(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
-            } else if (statementId.endsWith("." + EzMybatisConstant.REPLACE_METHOD_NAME)) {
+            } else if (statementId.endsWith("." + EzMybatisConstant.REPLACE_METHOD_NAME) ||
+                    statementId.endsWith("." + EzMybatisConstant.REPLACE_BY_TABLE_METHOD_NAME)) {
                 log.debug("on replace");
                 this.onReplace(param.get(EzMybatisConstant.MAPPER_PARAM_ENTITY));
             } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_UPDATE_METHOD_NAME)) {
                 log.debug("on batch update");
                 this.onBatchUpdate((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
-            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_REPLACE_METHOD_NAME)) {
+            } else if (statementId.endsWith("." + EzMybatisConstant.BATCH_REPLACE_METHOD_NAME) ||
+                    statementId.endsWith("." + EzMybatisConstant.BATCH_REPLACE_BY_TABLE_METHOD_NAME)) {
                 log.debug("on batch replace");
                 this.onBatchReplace((Collection<Object>) param.get(EzMybatisConstant.MAPPER_PARAM_ENTITYS));
             } else if (statementId.endsWith("." + EzMybatisConstant.EZ_UPDATE_METHOD_NAME)) {

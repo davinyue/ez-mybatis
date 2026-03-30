@@ -292,6 +292,8 @@ public class MsSqlUpdateTest extends MsSqlBaseTest {
             User user = new User();
             user.setId(id);
             user.setName("芳" + i + 1);
+            user.setCreateTime(new Date());
+            user.setUpdateTime(new Date());
             if (i == 0) {
                 user.setSex(User.Sex.MAN);
             } else {

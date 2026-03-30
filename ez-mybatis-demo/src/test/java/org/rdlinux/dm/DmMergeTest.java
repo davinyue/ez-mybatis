@@ -15,7 +15,7 @@ import org.rdlinux.ezmybatis.expand.oracle.update.Merge;
 import java.util.Date;
 import java.util.UUID;
 
-public class DmMergeTests extends DmBaseTest {
+public class DmMergeTest extends DmBaseTest {
     @Test
     public void mergeMatchedUpdateTest() {
         String oneUserId = this.getOneUserId();
@@ -90,6 +90,8 @@ public class DmMergeTests extends DmBaseTest {
         EntityTable mergeTable = EntityTable.of(User.class);
         User user = new User();
         user.setId(sourceUserId);
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
         user.setName("merge_name_insert_test");
         user.setAge(18);
         user.setSex(User.Sex.MAN);
