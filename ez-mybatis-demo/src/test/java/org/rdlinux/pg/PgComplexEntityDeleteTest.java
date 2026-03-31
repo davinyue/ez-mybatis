@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.demo.entity.*;
 import org.rdlinux.ezmybatis.demo.mapper.ComplexUserMapper;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -27,7 +28,8 @@ public class PgComplexEntityDeleteTest extends PgBaseTest {
         user.setUserType((short) 1);
         user.setScore(faker.number().randomNumber());
         user.setAccountBalance(faker.number().randomDouble(2, 0, 10000));
-        user.setSalary(new BigDecimal(faker.number().randomDouble(2, 3000, 50000)));
+        user.setSalary(new BigDecimal(faker.number().randomDouble(2, 3000, 50000))
+                .setScale(2, RoundingMode.DOWN));
         user.setIsActive(new Random().nextBoolean());
 
         ComplexUser.UserStatus[] statuses = ComplexUser.UserStatus.values();

@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.constant.TableNamePattern;
 
 public class OracleBaseTest extends AbstractBaseTest {
     static {
-        AbstractBaseTest.initSqlSessionFactory("mybatis-config-oracle.xml", true,
+        AbstractBaseTest.initSqlSessionFactory("mybatis-config-oracle.xml", false,
                 MapRetKeyPattern.HUMP, TableNamePattern.UPPER_CASE);
     }
 }

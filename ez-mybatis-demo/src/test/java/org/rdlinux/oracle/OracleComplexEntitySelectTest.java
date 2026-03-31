@@ -19,6 +19,7 @@ import org.rdlinux.ezmybatis.utils.StringHashMap;
 import org.rdlinux.luava.json.JacksonUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -52,7 +53,8 @@ public class OracleComplexEntitySelectTest extends OracleBaseTest {
         user.setUserType((short) 1);
         user.setScore(faker.number().randomNumber());
         user.setAccountBalance(faker.number().randomDouble(2, 100, 10000));
-        user.setSalary(new BigDecimal(faker.number().randomDouble(2, 3000, 50000)));
+        user.setSalary(new BigDecimal(faker.number().randomDouble(2, 3000, 50000))
+                .setScale(2, RoundingMode.DOWN));
         user.setIsActive(true);
 
         ComplexUser.UserStatus[] statuses = ComplexUser.UserStatus.values();
