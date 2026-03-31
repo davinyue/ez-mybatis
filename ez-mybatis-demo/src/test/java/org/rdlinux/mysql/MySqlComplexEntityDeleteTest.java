@@ -1,5 +1,6 @@
 package org.rdlinux.mysql;
 
+import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import java.util.*;
 @Slf4j
 public class MySqlComplexEntityDeleteTest extends MySqlBaseTest {
 
-    private static final com.github.javafaker.Faker faker = new com.github.javafaker.Faker(java.util.Locale.CHINA);
+    private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
     private ComplexUser buildComplexUser() {
         ComplexUser user = new ComplexUser();

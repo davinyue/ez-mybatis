@@ -1,5 +1,6 @@
 package org.rdlinux.mysql;
 
+import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
@@ -28,7 +29,7 @@ import java.util.concurrent.Future;
 @Slf4j
 public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
-    private static final com.github.javafaker.Faker faker = new com.github.javafaker.Faker(java.util.Locale.CHINA);
+    private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
     // =================================================================================================================
     // 测试数据建造与填充

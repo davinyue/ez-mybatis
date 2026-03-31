@@ -1,5 +1,6 @@
 package org.rdlinux.mysql;
 
+import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,7 +24,7 @@ import java.util.*;
 @Slf4j
 public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
 
-    private static final com.github.javafaker.Faker faker = new com.github.javafaker.Faker(java.util.Locale.CHINA);
+    private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
     private ComplexUser buildComplexUser() {
         ComplexUser user = new ComplexUser();
@@ -113,7 +114,7 @@ public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
 
     @Test
     public void ezBaseMapperBatchUpdate() {
-        List<String> ids = this.insertAndGetComplexUserIds(2);
+        List<String> ids = this.insertAndGetComplexUserIds(3);
         List<ComplexUser> users = new LinkedList<>();
         for (int i = 0; i < ids.size(); i++) {
             ComplexUser user = new ComplexUser();
@@ -274,6 +275,68 @@ public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
         this.sqlSession.commit();
         Assert.assertTrue(ret != 0);
         log.info("ezMapperBatchReplace result: {}", ret);
+    }
+
+    @Test
+    public void ezMapperUpdateByTable() {
+        String id = this.insertAndGetComplexUserId();
+        ComplexUser user = new ComplexUser();
+        user.setId(id);
+        user.setAge(27);
+        int ret = this.sqlSession.getMapper(EzMapper.class)
+                .updateByTable(EntityTable.of(ComplexUser.class), user);
+        this.sqlSession.commit();
+        Assert.assertTrue(ret > 0);
+        log.info("ezMapperUpdateByTable result: {}", ret);
+    }
+
+    @Test
+    public void ezMapperBatchUpdateByTable() {
+        List<String> ids = this.insertAndGetComplexUserIds(2);
+        List<ComplexUser> users = new LinkedList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            ComplexUser user = new ComplexUser();
+            user.setId(ids.get(i));
+            user.setAge(i + 10);
+            users.add(user);
+        }
+        int ret = this.sqlSession.getMapper(EzMapper.class)
+                .batchUpdateByTable(EntityTable.of(ComplexUser.class), users);
+        this.sqlSession.commit();
+        Assert.assertTrue(ret != 0);
+        log.info("ezMapperBatchUpdateByTable result: {}", ret);
+    }
+
+    @Test
+    public void ezMapperReplaceByTable() {
+        String id = this.insertAndGetComplexUserId();
+        ComplexUser user = new ComplexUser();
+        user.setId(id);
+        user.setUsername("覆盖_EzMapper_ByTable");
+        user.setAge(1);
+        int ret = this.sqlSession.getMapper(EzMapper.class)
+                .replaceByTable(EntityTable.of(ComplexUser.class), user);
+        this.sqlSession.commit();
+        Assert.assertTrue(ret > 0);
+        log.info("ezMapperReplaceByTable result: {}", ret);
+    }
+
+    @Test
+    public void ezMapperBatchReplaceByTable() {
+        List<String> ids = this.insertAndGetComplexUserIds(2);
+        List<ComplexUser> users = new LinkedList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            ComplexUser user = new ComplexUser();
+            user.setId(ids.get(i));
+            user.setUsername("全量覆芳_ByTable" + i);
+            user.setAge(i + 11);
+            users.add(user);
+        }
+        int ret = this.sqlSession.getMapper(EzMapper.class)
+                .batchReplaceByTable(EntityTable.of(ComplexUser.class), users);
+        this.sqlSession.commit();
+        Assert.assertTrue(ret != 0);
+        log.info("ezMapperBatchReplaceByTable result: {}", ret);
     }
 
     // ==========================================

@@ -40,7 +40,9 @@
   - [x] 验证并发查询返回类型的一致性。
 - [x] 【已完成】强化 `Where`、`Join`、`Having` 的 Lambda 构建能力
   - [x] 为 `groupCondition` 增加 `Consumer` 闭包重载，支持嵌套条件的自然表达。
+- [x] 补齐 `MySqlComplexEntityUpdateTest` 中 EzMapper 层遗漏的 4 个 `ByTable` 变体方法（updateByTable, batchUpdateByTable, replaceByTable, batchReplaceByTable）。
+- [x] 新建 `MySqlComplexEntityUpsertTest` 迁移 `MySqlUpsertTest` 的 2 个 Upsert 测试用例（upsertUpdateTest, upsertInsertTest）。
 - [ ] 补齐其它数据库方言（Oracle, PostgreSQL, MsSQL, DM）的复杂实体测试用例。
 
 ## 完成进度
-部分完成。MySQL 环境下的 Insert, Delete, Update, Select 核心动作已全部重构至 ComplexEntity 体系，并完成了核心构建器的 Lambda 强化。后续需将其余数据库方言的测试代码按此标准进行平移。
+部分完成。MySQL 环境下的 Insert, Delete, Update, Select, Upsert 全部动作已完整迁移至 ComplexEntity 体系（含先前遗漏的 EzMapper ByTable 系列及 Upsert），并完成了核心构建器的 Lambda 强化。后续需将其余数据库方言的测试代码按此标准进行平移。

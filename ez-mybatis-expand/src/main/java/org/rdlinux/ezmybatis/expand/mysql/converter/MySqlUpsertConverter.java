@@ -5,10 +5,10 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
-import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -43,6 +43,13 @@ public class MySqlUpsertConverter extends AbstractConverter<MySqlUpsert> impleme
     protected void doBuildSql(Type type, MySqlUpsert upsert, SqlGenerateContext sqlGenerateContext) {
         String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, upsert.getTable(),
                 upsert.getInsertEntity());
+        List<EzMybatisInsertListener> listeners = EzMybatisContent
+                .getInsertListeners(sqlGenerateContext.getConfiguration());
+        if (listeners != null) {
+            for (EzMybatisInsertListener listener : listeners) {
+                listener.onInsert(upsert.getInsertEntity());
+            }
+        }
         AbstractInsertSqlGenerate.InsertSqlParts insertSqlParts = AbstractInsertSqlGenerate.getInsertSqlParts(
                 sqlGenerateContext, upsert.getInsertEntity());
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
