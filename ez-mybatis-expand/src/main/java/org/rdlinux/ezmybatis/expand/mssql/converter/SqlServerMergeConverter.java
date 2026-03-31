@@ -5,11 +5,11 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
-import org.rdlinux.ezmybatis.core.sqlstruct.TableColumn;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -17,7 +17,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
-import org.rdlinux.ezmybatis.expand.oracle.converter.OracleMergeConverter;
 import org.rdlinux.ezmybatis.expand.oracle.update.Merge;
 import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
@@ -63,6 +62,13 @@ public class SqlServerMergeConverter extends AbstractConverter<Merge> implements
             }
         }
         if (merge.getNotMatchedInsertEntity() != null) {
+            List<EzMybatisInsertListener> listeners = EzMybatisContent
+                    .getInsertListeners(sqlGenerateContext.getConfiguration());
+            if (listeners != null) {
+                for (EzMybatisInsertListener listener : listeners) {
+                    listener.onInsert(merge.getNotMatchedInsertEntity());
+                }
+            }
             AbstractInsertSqlGenerate.InsertSqlParts insertSqlParts = AbstractInsertSqlGenerate.getInsertSqlParts(
                     sqlGenerateContext, merge.getNotMatchedInsertEntity());
             sqlBuilder.append(" WHEN NOT MATCHED THEN INSERT ")
