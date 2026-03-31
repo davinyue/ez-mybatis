@@ -3,10 +3,7 @@ package org.rdlinux.ezmybatis.core.sqlgenerate;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
-import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
-import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
-import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.*;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
@@ -40,7 +37,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             Method fieldGetMethod = fieldInfo.getFieldGetMethod();
             Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
             columnBuilder.append(keywordQM).append(column).append(keywordQM);
-            valueBuilder.append(mybatisParamHolder.simpleGetMybatisParamName(entity.getClass(), fieldInfo.getField(),
+            valueBuilder.append(mybatisParamHolder.entityPersistGetMybatisParamName(entity.getClass(), fieldInfo.getField(),
                     fieldValue));
             if (i < columnMapFieldInfo.size()) {
                 columnBuilder.append(", ");
@@ -123,8 +120,8 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             for (Object entity : models) {
                 Object fieldValue = ReflectionUtils.invokeMethod(entity, fieldGetMethod);
                 JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
-                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, Boolean.TRUE, entity.getClass(),
-                        fieldInfo.getField(), fieldValue);
+                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, FieldAccessScope.ENTITY_PERSIST,
+                        entity.getClass(), fieldInfo.getField(), fieldValue);
                 EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
                 params.get(eti).add(param);
                 eti++;
@@ -176,11 +173,11 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         }
 
         public String getColumnsSql() {
-            return columnsSql;
+            return this.columnsSql;
         }
 
         public String getValuesSql() {
-            return valuesSql;
+            return this.valuesSql;
         }
     }
 }
