@@ -1,6 +1,7 @@
 package org.rdlinux.mysql;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
@@ -10,6 +11,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.*;
 import org.rdlinux.ezmybatis.demo.mapper.ComplexUserMapper;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
+import org.rdlinux.ezmybatis.enumeration.Operator;
 import org.rdlinux.ezmybatis.enumeration.OrderType;
 import org.rdlinux.ezmybatis.utils.StringHashMap;
 import org.rdlinux.luava.json.JacksonUtils;
@@ -17,6 +20,10 @@ import org.rdlinux.luava.json.JacksonUtils;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Slf4j
 public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
@@ -87,7 +94,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         return ids;
     }
 
-    private ComplexOrder insertAndGetOrder(String userId, ComplexOrder.OrderStatus status) {
+    private void insertOrder(String userId, ComplexOrder.OrderStatus status) {
         ComplexOrder order = new ComplexOrder();
         order.setUserId(userId);
         order.setOrderNo(faker.code().asin());
@@ -95,7 +102,6 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         order.setStatus(status);
         this.sqlSession.getMapper(EzMapper.class).insert(order);
         this.sqlSession.commit();
-        return order;
     }
 
     // =================================================================================================================
@@ -229,7 +235,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         user2.setStatus(ComplexUser.UserStatus.DISABLED);
         this.sqlSession.getMapper(ComplexUserMapper.class).insert(user2);
 
-        ComplexOrder order = this.insertAndGetOrder(user1.getId(), ComplexOrder.OrderStatus.PAID);
+        this.insertOrder(user1.getId(), ComplexOrder.OrderStatus.PAID);
         this.sqlSession.commit();
 
         // 1. EQ (= 枚举匹配)
@@ -239,42 +245,111 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(eqQuery));
 
-        // 2. GT (>)
+        // 2. NE (!=)
+        EzQuery<ComplexUser> neQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.age).ne(-1)).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(neQuery));
+
+        // 3. GT (>)
         EzQuery<ComplexUser> gtQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select().addAll().done()
                 .where().addCondition(userTable.field(ComplexUser.Fields.accountBalance).gt(200.0)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(gtQuery));
 
-        // 3. IS NOT NULL
+        // 4. GE (>=)
+        EzQuery<ComplexUser> geQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.age).ge(18)).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(geQuery));
+
+        // 5. LT (<)
+        EzQuery<ComplexUser> ltQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.age).lt(100)).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(ltQuery));
+
+        // 6. LE (<=)
+        EzQuery<ComplexUser> leQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.age).le(20)).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(leQuery));
+
+        // 7. IS NULL
+        EzQuery<ComplexUser> isNullQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.description).isNull()).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(isNullQuery));
+
+        // 8. IS NOT NULL
         EzQuery<ComplexUser> isNotNullQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select().addAll().done()
                 .where().addCondition(userTable.field(ComplexUser.Fields.departmentId).isNotNull()).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(isNotNullQuery));
 
-        // 4. IN
+        // 9. IN
         EzQuery<ComplexUser> inQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select().addAll().done()
                 .where().addCondition(userTable.field(ComplexUser.Fields.age).in(Arrays.asList(20, 30))).done()
                 .page(1, 2).build();
         Assert.assertNotNull(mapper.query(inQuery));
 
-        // 5. BETWEEN
+        // 10. NOT IN
+        EzQuery<ComplexUser> notInQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.age).notIn(Arrays.asList(-1, -2))).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(notInQuery));
+
+        // 11. LIKE
+        EzQuery<ComplexUser> likeQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.username).like("被查用户_%")).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(likeQuery));
+
+        // 12. NOT LIKE (unlike)
+        EzQuery<ComplexUser> unlikeQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.username).unlike("NonExis%")).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(unlikeQuery));
+
+        // 13. BETWEEN
         EzQuery<ComplexUser> betweenQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select().addAll().done()
                 .where().addCondition(userTable.field(ComplexUser.Fields.age).between(18, 25)).done()
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(betweenQuery));
 
-        // 6. EXISTS (关联查询)
+        // 14. NOT BETWEEN
+        EzQuery<ComplexUser> notBetweenQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.age).notBetween(100, 200)).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(notBetweenQuery));
+
+        // 15. REGEXP
+        EzQuery<ComplexUser> regexpQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().addCondition(userTable.field(ComplexUser.Fields.username).regexp("^被查.*")).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(regexpQuery));
+
+        // 16. EXISTS (关联查询)
         EntityTable orderTableCondition = EntityTable.of(ComplexOrder.class);
         EzQuery<ComplexOrder> orderSubQuery = EzQuery.builder(ComplexOrder.class)
                 .from(orderTableCondition).select().addField(BaseEntity.Fields.id).done()
-                .where(e -> {
-                    e.addCondition(orderTableCondition.field(ComplexOrder.Fields.userId)
-                            .eq(userTable.field(BaseEntity.Fields.id)));
-                })
+                .where(e ->
+                        e.addCondition(orderTableCondition.field(ComplexOrder.Fields.userId)
+                                .eq(userTable.field(BaseEntity.Fields.id))))
                 .build();
 
         EzQuery<ComplexUser> existsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
@@ -284,6 +359,14 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         List<ComplexUser> existsRet = mapper.query(existsQuery);
         Assert.assertNotNull(existsRet);
         log.info("EzQuery EXISTS: {}", JacksonUtils.toJsonString(existsRet));
+
+        // 17. NOT EXISTS
+        EzQuery<ComplexUser> notExistsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select().addAll().done()
+                .where().notExists(orderSubQuery).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(notExistsQuery));
+        log.info("EzQuery NOT EXISTS: {}", JacksonUtils.toJsonString(mapper.query(notExistsQuery)));
     }
 
     @Test
@@ -313,7 +396,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     public void ezQueryNestedJoinLambdaDslTest() {
         ComplexDepartment dept = this.insertAndGetDepartment();
         String uId = this.insertAndGetComplexUserId(dept.getId());
-        this.insertAndGetOrder(uId, ComplexOrder.OrderStatus.PENDING);
+        this.insertOrder(uId, ComplexOrder.OrderStatus.PENDING);
 
         EntityTable userTable = EntityTable.of(ComplexUser.class);
         EntityTable deptTable = EntityTable.of(ComplexDepartment.class);
@@ -460,5 +543,305 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         Assert.assertNotNull(maps);
         Assert.assertFalse(maps.isEmpty());
         log.info("EzQuery WindowFunction: {}", JacksonUtils.toJsonString(maps));
+    }
+
+    // =================================================================================================================
+    // Supplemented Missing Tests (BaseMapper, EzMapper, Advanced EzQuery)
+    // =================================================================================================================
+
+    @Test
+    public void ezBaseMapperSelectByTableAndId() {
+        String deptId = this.insertAndGetDepartment().getId();
+        String id = this.insertAndGetComplexUserId(deptId);
+        ComplexUser user = this.sqlSession.getMapper(ComplexUserMapper.class).selectByTableAndId(EntityTable.of(ComplexUser.class), id);
+        Assert.assertNotNull(user);
+        log.info("ComplexUserMapper.selectByTableAndId: {}", JacksonUtils.toJsonString(user));
+    }
+
+    @Test
+    public void ezBaseMapperSelectByTableAndIds() {
+        String deptId = this.insertAndGetDepartment().getId();
+        List<String> ids = this.insertAndGetComplexUserIds(2, deptId);
+        List<ComplexUser> users = this.sqlSession.getMapper(ComplexUserMapper.class).selectByTableAndIds(EntityTable.of(ComplexUser.class), ids);
+        Assert.assertNotNull(users);
+        Assert.assertEquals(2, users.size());
+        log.info("ComplexUserMapper.selectByTableAndIds: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezBaseMapperSelectBySql() {
+        String deptId = this.insertAndGetDepartment().getId();
+        this.insertAndGetComplexUserIds(2, deptId);
+        List<ComplexUser> users = this.sqlSession.getMapper(ComplexUserMapper.class).selectBySql("SELECT * FROM ez_complex_user LIMIT 2", new HashMap<>());
+        Assert.assertNotNull(users);
+        Assert.assertEquals(2, users.size());
+        log.info("ComplexUserMapper.selectBySql: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezSelectById() {
+        String deptId = this.insertAndGetDepartment().getId();
+        String id = this.insertAndGetComplexUserId(deptId);
+        ComplexUser user = this.sqlSession.getMapper(EzMapper.class).selectById(ComplexUser.class, id);
+        Assert.assertNotNull(user);
+        log.info("EzMapper.selectById: {}", JacksonUtils.toJsonString(user));
+    }
+
+    @Test
+    public void ezSelectByIds() {
+        String deptId = this.insertAndGetDepartment().getId();
+        List<String> ids = this.insertAndGetComplexUserIds(2, deptId);
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).selectByIds(ComplexUser.class, ids);
+        Assert.assertNotNull(users);
+        Assert.assertEquals(2, users.size());
+        log.info("EzMapper.selectByIds: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezSelectByTableAndIds() {
+        String deptId = this.insertAndGetDepartment().getId();
+        List<String> ids = this.insertAndGetComplexUserIds(2, deptId);
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).selectByTableAndIds(EntityTable.of(ComplexUser.class), ComplexUser.class, ids);
+        Assert.assertNotNull(users);
+        Assert.assertEquals(2, users.size());
+        log.info("EzMapper.selectByTableAndIds: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezSelectOneMapBySql() {
+        String deptId = this.insertAndGetDepartment().getId();
+        this.insertAndGetComplexUserId(deptId);
+        Map<String, Object> map = this.sqlSession.getMapper(EzMapper.class).selectOneMapBySql("SELECT * FROM ez_complex_user LIMIT 1", new HashMap<>());
+        Assert.assertNotNull(map);
+        log.info("EzMapper.selectOneMapBySql: {}", JacksonUtils.toJsonString(map));
+    }
+
+    @Test
+    public void ezSelectOneObjectBySql() {
+        String deptId = this.insertAndGetDepartment().getId();
+        this.insertAndGetComplexUserId(deptId);
+        ComplexUser user = this.sqlSession.getMapper(EzMapper.class).selectOneObjectBySql(ComplexUser.class, "SELECT * FROM ez_complex_user LIMIT 1", new HashMap<>());
+        Assert.assertNotNull(user);
+        log.info("EzMapper.selectOneObjectBySql: {}", JacksonUtils.toJsonString(user));
+    }
+
+    @Test
+    public void ezSelectObjectBySql() {
+        String deptId = this.insertAndGetDepartment().getId();
+        this.insertAndGetComplexUserIds(2, deptId);
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).selectObjectBySql(ComplexUser.class, "SELECT * FROM ez_complex_user LIMIT 2", new HashMap<>());
+        Assert.assertNotNull(users);
+        Assert.assertEquals(2, users.size());
+        log.info("EzMapper.selectObjectBySql: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezQueryConcurrentSelectRetTypeTest() throws InterruptedException, java.util.concurrent.ExecutionException {
+        EzQuery<ComplexUser> userQuery = EzQuery.builder(ComplexUser.class).from(EntityTable.of(ComplexUser.class))
+                .select(Select.EzSelectBuilder::addAll).page(1, 1).build();
+        EzQuery<ComplexDepartment> deptQuery = EzQuery.builder(ComplexDepartment.class).from(EntityTable.of(ComplexDepartment.class))
+                .select(Select.EzSelectBuilder::addAll).page(1, 1).build();
+
+        int threadCount = 10;
+        int loopCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        List<Future<String>> futures = new ArrayList<>();
+
+        for (int i = 0; i < threadCount; i++) {
+            final int index = i;
+            futures.add(executorService.submit(() -> {
+                try (SqlSession threadSession = MySqlBaseTest.sqlSessionFactory.openSession()) {
+                    startLatch.await();
+                    EzMapper mapper = threadSession.getMapper(EzMapper.class);
+                    for (int j = 0; j < loopCount; j++) {
+                        if (index % 2 == 0) {
+                            List<?> ret = mapper.query(userQuery);
+                            Assert.assertNotNull(ret);
+                            if (!ret.isEmpty()) {
+                                Assert.assertNotNull(ret.get(0));
+                                Assert.assertTrue(ret.get(0) instanceof ComplexUser);
+                            }
+                        } else {
+                            List<?> ret = mapper.query(deptQuery);
+                            Assert.assertNotNull(ret);
+                            if (!ret.isEmpty()) {
+                                Assert.assertNotNull(ret.get(0));
+                                Assert.assertTrue(ret.get(0) instanceof ComplexDepartment);
+                            }
+                        }
+                    }
+                    return "OK";
+                } catch (Exception e) {
+                    log.error("Concurrent test failed", e);
+                    return e.getMessage();
+                }
+            }));
+        }
+
+        startLatch.countDown();
+        for (java.util.concurrent.Future<String> future : futures) {
+            String result = future.get();
+            org.junit.Assert.assertEquals("OK", result);
+        }
+        executorService.shutdown();
+    }
+
+    @Test
+    public void ezQueryLambdaGroupByHavingTest() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(3, dept.getId());
+
+        EntityTable table = EntityTable.of(ComplexUser.class);
+        Function countFn = Function.build("COUNT", f -> f.addArg(EntityField.of(table, BaseEntity.Fields.id)));
+
+        EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+                .from(table)
+                .select(s -> {
+                    s.addField(ComplexUser.Fields.departmentId);
+                    s.add(countFn, "count");
+                })
+                .groupBy(g -> g.addField(ComplexUser.Fields.departmentId))
+                .having(h -> h.addCondition(Alias.of("count").ge(1)))
+                .orderBy(o -> o.add(table.field(ComplexUser.Fields.departmentId), OrderType.ASC))
+                .build();
+
+        List<StringHashMap> result = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(result);
+        log.info("EzQuery LambdaGroupByHaving: {}", JacksonUtils.toJsonString(result));
+    }
+
+    @Test
+    public void ezQueryNestedCondition() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        ComplexUser u1 = this.buildComplexUser(dept.getId());
+        u1.setUsername("TestUser1");
+        u1.setAge(18);
+        u1.setUserType((short) 1);
+        this.sqlSession.getMapper(ComplexUserMapper.class).insert(u1);
+
+        ComplexUser u2 = this.buildComplexUser(dept.getId());
+        u2.setUsername("TestUser3");
+        u2.setAge(25);
+        u2.setUserType((short) 0);
+        this.sqlSession.getMapper(ComplexUserMapper.class).insert(u2);
+        this.sqlSession.commit();
+
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
+
+        // (age < 20 OR username = 'TestUser3') AND userType = 1
+        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w
+                        .groupCondition(g -> g
+                                .addCondition(userTable.field(ComplexUser.Fields.age).lt(20))
+                                .addCondition(AndOr.OR, userTable.field(ComplexUser.Fields.username), Operator.eq, "TestUser3"))
+                        .addCondition(userTable.field(ComplexUser.Fields.userType).eq((short) 1))
+                )
+                .build();
+
+        List<ComplexUser> result = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(result);
+        log.info("EzQuery NestedCondition: {}", JacksonUtils.toJsonString(result));
+    }
+
+    @Test
+    public void ezQueryOrderBy() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(3, dept.getId());
+
+        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(EntityTable.of(ComplexUser.class))
+                .select(Select.EzSelectBuilder::addAll)
+                .orderBy(o -> {
+                    o.add(EntityTable.of(ComplexUser.class).field(ComplexUser.Fields.age), OrderType.ASC);
+                    o.add(EntityTable.of(ComplexUser.class).field(BaseEntity.Fields.createTime), OrderType.DESC);
+                })
+                .page(1, 5)
+                .build();
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(users);
+        log.info("EzQuery OrderBy: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezQueryUnion() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(3, dept.getId());
+
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
+
+        EzQuery<ComplexUser> q1 = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.NORMAL)))
+                .build();
+
+        EzQuery<ComplexUser> q2 = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.DISABLED)))
+                .build();
+
+        EzQuery<ComplexUser> q3 = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.DISABLED)))
+                .unionAll(q2)
+                .build();
+
+        EzQuery<ComplexUser> unionQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.username).eq("NonExistent")))
+                .union(q1)
+                .unionAll(q3)
+                .page(1, 10)
+                .orderBy(o -> o.add(userTable.field(ComplexUser.Fields.username), OrderType.ASC))
+                .build();
+
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).query(unionQuery);
+        Assert.assertNotNull(users);
+        log.info("EzQuery Union: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezQuerySubQuery() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(2, dept.getId());
+
+        // Select where ID in (Select ID from ...)
+        EzQuery<String> subInfo = EzQuery.builder(String.class).from(EntityTable.of(ComplexUser.class))
+                .select(s -> s.addField(BaseEntity.Fields.id))
+                .build();
+
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
+        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.addCondition(userTable.field(BaseEntity.Fields.id).in(subInfo)))
+                .build();
+
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).query(query);
+        Assert.assertNotNull(users);
+        log.info("EzQuery SubQuery: {}", JacksonUtils.toJsonString(users));
+    }
+
+    @Test
+    public void ezQueryCount() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(2, dept.getId());
+
+        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(EntityTable.of(ComplexUser.class))
+                .select(Select.EzSelectBuilder::addAll).build();
+        int count = this.sqlSession.getMapper(EzMapper.class).queryCount(query);
+        Assert.assertTrue(count >= 2);
+        log.info("EzQuery Count: {}", count);
+    }
+
+    @Test
+    public void ezQueryOne() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(2, dept.getId());
+
+        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(EntityTable.of(ComplexUser.class))
+                .select(Select.EzSelectBuilder::addAll).limit(1).build();
+        ComplexUser user = this.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        Assert.assertNotNull(user);
+        log.info("EzQuery One: {}", JacksonUtils.toJsonString(user));
     }
 }

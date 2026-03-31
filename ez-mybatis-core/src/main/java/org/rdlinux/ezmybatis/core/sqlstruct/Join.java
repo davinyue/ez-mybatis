@@ -76,6 +76,29 @@ public class Join implements SqlStruct {
             return this.groupCondition(sure, AndOr.AND);
         }
 
+        /**
+         * 组条件(Lambda 闭包)
+         */
+        public JoinBuilder<Builder> groupCondition(Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            return this.groupCondition(true, AndOr.AND, consumer);
+        }
+
+        public JoinBuilder<Builder> groupCondition(AndOr andOr, Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            return this.groupCondition(true, andOr, consumer);
+        }
+
+        public JoinBuilder<Builder> groupCondition(boolean sure, Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            return this.groupCondition(sure, AndOr.AND, consumer);
+        }
+
+        public JoinBuilder<Builder> groupCondition(boolean sure, AndOr andOr, Consumer<JoinBuilder<JoinBuilder<Builder>>> consumer) {
+            if (sure) {
+                JoinBuilder<JoinBuilder<Builder>> childBuilder = this.groupCondition(true, andOr);
+                consumer.accept(childBuilder);
+            }
+            return this;
+        }
+
         public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, JoinType joinType, Table joinTable) {
             if (this.join.getJoins() == null) {
                 this.join.joins = new LinkedList<>();

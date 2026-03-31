@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.enumeration.AndOr;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Getter
 public class Having implements SqlStruct {
@@ -45,6 +46,29 @@ public class Having implements SqlStruct {
 
         public HavingBuilder<HavingBuilder<Builder>> groupCondition(boolean sure) {
             return this.groupCondition(sure, AndOr.AND);
+        }
+
+        /**
+         * 组条件(Lambda 闭包)
+         */
+        public HavingBuilder<Builder> groupCondition(Consumer<HavingBuilder<HavingBuilder<Builder>>> consumer) {
+            return this.groupCondition(true, AndOr.AND, consumer);
+        }
+
+        public HavingBuilder<Builder> groupCondition(AndOr andOr, Consumer<HavingBuilder<HavingBuilder<Builder>>> consumer) {
+            return this.groupCondition(true, andOr, consumer);
+        }
+
+        public HavingBuilder<Builder> groupCondition(boolean sure, Consumer<HavingBuilder<HavingBuilder<Builder>>> consumer) {
+            return this.groupCondition(sure, AndOr.AND, consumer);
+        }
+
+        public HavingBuilder<Builder> groupCondition(boolean sure, AndOr andOr, Consumer<HavingBuilder<HavingBuilder<Builder>>> consumer) {
+            if (sure) {
+                HavingBuilder<HavingBuilder<Builder>> childBuilder = this.groupCondition(true, andOr);
+                consumer.accept(childBuilder);
+            }
+            return this;
         }
     }
 }

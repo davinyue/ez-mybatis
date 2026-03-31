@@ -34,11 +34,13 @@
   - [x] 基于 `ComplexUser` 搭建 `更新/覆盖式替换(Replace)` 单体测试、多表测试骨架。
   - [x] 改写基于旧设值的 `Formula` (算数)、`Function` (功能)、`CaseWhen` 等 7 种以上高阶 `EzUpdate` 特性测试并验证。
   - [x] 彻底转换 20+ 个方法全面抛弃过时 `.set().done()` 链与对底层数据老旧类的强相关依赖。
-- [x] 【已完成】扩展底层 `Formula` 与 `CaseWhen` 支持 Lambda 构建
-  - [x] `Formula` 新增高纬度 `build(Consumer)` 以及带组的闭包方法 `addGroup(Consumer)` 级联计算。
-  - [x] `CaseWhen` 新增高阶条件与出口方法的闭包构建。
-  - [x] 修改 `MySqlComplexEntityUpdateTest` 进行二次验证并完成。
-- [ ] 补齐其它环境及动作测试用例 (待用户完成：Select及其他扩展支持库的测试代码)。
+- [x] 【已完成】全量重构 `MySQL` 环境的 `MySqlComplexEntitySelectTest.java`
+  - [x] 迁移并对齐 `MySqlSelectTest` 的全部 31 个测试用例，确保功能完全等价。
+  - [x] 涵盖基础 BaseMapper、EzMapper 以及高级 EzQuery（含嵌套条件、Union、WindowFunction、子查询等）。
+  - [x] 验证并发查询返回类型的一致性。
+- [x] 【已完成】强化 `Where`、`Join`、`Having` 的 Lambda 构建能力
+  - [x] 为 `groupCondition` 增加 `Consumer` 闭包重载，支持嵌套条件的自然表达。
+- [ ] 补齐其它数据库方言（Oracle, PostgreSQL, MsSQL, DM）的复杂实体测试用例。
 
 ## 完成进度
-部分完成。MySQL 高级测试实体相关内容已实现，全集测试尚待后续追加其余方言库的测试编写代码。文件已重命名为去掉 `-done` 标记。
+部分完成。MySQL 环境下的 Insert, Delete, Update, Select 核心动作已全部重构至 ComplexEntity 体系，并完成了核心构建器的 Lambda 强化。后续需将其余数据库方言的测试代码按此标准进行平移。

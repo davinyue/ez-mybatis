@@ -10,6 +10,7 @@ import org.rdlinux.ezmybatis.enumeration.AndOr;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * where条件
@@ -50,6 +51,29 @@ public class Where implements SqlStruct {
 
         public WhereBuilder<WhereBuilder<Builder>> groupCondition() {
             return this.groupCondition(true);
+        }
+
+        /**
+         * 组条件(Lambda 闭包)
+         */
+        public WhereBuilder<Builder> groupCondition(Consumer<WhereBuilder<WhereBuilder<Builder>>> consumer) {
+            return this.groupCondition(true, AndOr.AND, consumer);
+        }
+
+        public WhereBuilder<Builder> groupCondition(AndOr andOr, Consumer<WhereBuilder<WhereBuilder<Builder>>> consumer) {
+            return this.groupCondition(true, andOr, consumer);
+        }
+
+        public WhereBuilder<Builder> groupCondition(boolean sure, Consumer<WhereBuilder<WhereBuilder<Builder>>> consumer) {
+            return this.groupCondition(sure, AndOr.AND, consumer);
+        }
+
+        public WhereBuilder<Builder> groupCondition(boolean sure, AndOr andOr, Consumer<WhereBuilder<WhereBuilder<Builder>>> consumer) {
+            if (sure) {
+                WhereBuilder<WhereBuilder<Builder>> childBuilder = this.groupCondition(true, andOr);
+                consumer.accept(childBuilder);
+            }
+            return this;
         }
     }
 
