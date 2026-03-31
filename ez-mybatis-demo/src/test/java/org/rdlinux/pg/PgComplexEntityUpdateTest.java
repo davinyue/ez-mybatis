@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.pg;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
-public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
+public class PgComplexEntityUpdateTest extends PgBaseTest {
 
     private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
@@ -634,3 +634,4 @@ public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
         this.sqlSession.commit();
     }
 }
+

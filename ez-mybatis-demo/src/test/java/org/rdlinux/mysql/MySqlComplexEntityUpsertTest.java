@@ -18,7 +18,6 @@ import java.util.UUID;
 
 /**
  * MySQL 环境下 ComplexUser 的 Upsert (INSERT ... ON DUPLICATE KEY UPDATE) 测试。
- * 迁移自 {@link MySqlUpsertTest}。
  */
 @Slf4j
 public class MySqlComplexEntityUpsertTest extends MySqlBaseTest {

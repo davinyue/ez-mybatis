@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.dm;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
+public class DmComplexEntitySelectTest extends DmBaseTest {
 
     private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
@@ -61,7 +61,6 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         user.setAvatar("binary_avatar_data".getBytes(StandardCharsets.UTF_8));
         user.setDescription(faker.lorem().paragraph());
         user.setIgnoredData("This should be transient");
-        user.setSpecificColumn("SpecificCol_Val");
         user.setSecretContent(faker.internet().password());
 
         ExtInfo extInfo = new ExtInfo();
@@ -156,7 +155,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     @Test
     public void ezSelectMapBySql() {
         this.insertAndGetDepartment();
-        List<Map<String, Object>> maps = this.sqlSession.getMapper(EzMapper.class).selectMapBySql("SELECT * FROM ez_complex_department LIMIT 2", new HashMap<>());
+        List<Map<String, Object>> maps = this.sqlSession.getMapper(EzMapper.class).selectMapBySql("SELECT * FROM ez_complex_department WHERE ROWNUM <= 2", new HashMap<>());
         Assert.assertNotNull(maps);
         Assert.assertEquals(2, maps.size());
         log.info("EzMapper.selectMapBySql: {}", JacksonUtils.toJsonString(maps));
@@ -465,7 +464,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select(s -> {
-                    s.add(agePlusOne, "nextYearAge");
+                    s.add(agePlusOne, "NEXT_YEAR_AGE");
                     s.add(nameDesc, "description");
                 })
                 .limit(2)
@@ -611,7 +610,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     @Test
     public void ezSelectOneMapBySql() {
         this.insertAndGetDepartment();
-        Map<String, Object> map = this.sqlSession.getMapper(EzMapper.class).selectOneMapBySql("SELECT * FROM ez_complex_department LIMIT 1", new HashMap<>());
+        Map<String, Object> map = this.sqlSession.getMapper(EzMapper.class).selectOneMapBySql("SELECT * FROM ez_complex_department WHERE ROWNUM <= 1", new HashMap<>());
         Assert.assertNotNull(map);
         log.info("EzMapper.selectOneMapBySql: {}", JacksonUtils.toJsonString(map));
     }
@@ -651,7 +650,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             futures.add(executorService.submit(() -> {
-                try (SqlSession threadSession = MySqlBaseTest.sqlSessionFactory.openSession()) {
+                try (SqlSession threadSession = DmBaseTest.sqlSessionFactory.openSession()) {
                     startLatch.await();
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
@@ -845,3 +844,4 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         log.info("EzQuery One: {}", JacksonUtils.toJsonString(user));
     }
 }
+

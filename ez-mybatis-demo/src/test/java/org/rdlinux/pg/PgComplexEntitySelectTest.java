@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.pg;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
+public class PgComplexEntitySelectTest extends PgBaseTest {
 
     private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
@@ -651,7 +651,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             futures.add(executorService.submit(() -> {
-                try (SqlSession threadSession = MySqlBaseTest.sqlSessionFactory.openSession()) {
+                try (SqlSession threadSession = PgBaseTest.sqlSessionFactory.openSession()) {
                     startLatch.await();
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
@@ -845,3 +845,4 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         log.info("EzQuery One: {}", JacksonUtils.toJsonString(user));
     }
 }
+

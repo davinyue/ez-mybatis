@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.mssql;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
-public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
+public class MsSqlComplexEntityUpdateTest extends MsSqlBaseTest {
 
     private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
@@ -33,7 +33,7 @@ public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
         user.setUserType((short) 1);
         user.setScore(faker.number().randomNumber());
         user.setAccountBalance(faker.number().randomDouble(2, 0, 10000));
-        user.setSalary(new BigDecimal(faker.number().randomDouble(2, 3000, 50000)));
+        user.setSalary(BigDecimal.valueOf(faker.number().randomDouble(2, 3000, 50000)).setScale(2, java.math.RoundingMode.HALF_UP));
         user.setIsActive(new Random().nextBoolean());
 
         ComplexUser.UserStatus[] statuses = ComplexUser.UserStatus.values();

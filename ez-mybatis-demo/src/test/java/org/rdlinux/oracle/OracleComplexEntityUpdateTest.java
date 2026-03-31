@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.oracle;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
-public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
+public class OracleComplexEntityUpdateTest extends OracleBaseTest {
 
     private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
@@ -42,7 +42,6 @@ public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
         user.setAvatar("binary_avatar_data".getBytes(StandardCharsets.UTF_8));
         user.setDescription(faker.lorem().paragraph());
         user.setIgnoredData("This should be transient");
-        user.setSpecificColumn("SpecificCol_Val");
         user.setSecretContent(faker.internet().password());
 
         ExtInfo extInfo = new ExtInfo();
@@ -634,3 +633,4 @@ public class MySqlComplexEntityUpdateTest extends MySqlBaseTest {
         this.sqlSession.commit();
     }
 }
+

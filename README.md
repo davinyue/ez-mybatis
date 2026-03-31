@@ -372,11 +372,48 @@ EzQuery<User> unionQuery = EzQuery.builder(User.class).from(userTable)
 
 Ez-MyBatis 在数据操作生命周期提供多个监听接口，方便做 **审计、埋点、加解密、缓存、数据脱敏** 等逻辑扩展。只需实现接口并注册为 Spring Bean 即可生效 (`order()` 可控优先级)。
 
-- `EzMybatisInsertListener`: 插入前后监听
-- `EzMybatisUpdateListener`: 更新前后监听
-- `EzMybatisDeleteListener`: 删除前后监听
-- `EzMybatisQueryRetListener`: 查询结果脱敏/转化
-- `EzMybatisOnBuildSqlGetFieldListener`: SQL 构建设值预处理
+| 监听器接口 | 触发时机 | 典型用途 |
+|-----------|---------|---------|
+| `EzMybatisInsertListener` | 插入操作执行前 | ID 生成、创建时间填充、审计字段注入 |
+| `EzMybatisUpdateListener` | 更新/替换操作执行前 | 更新时间填充、乐观锁版本号递增 |
+| `EzMybatisDeleteListener` | 删除操作执行前 | 逻辑删除标记、删除审计日志 |
+| `EzMybatisQueryRetListener` | 查询结果构造完成后 | 数据脱敏、敏感字段解密、关联数据补充 |
+| `EzMybatisOnBuildSqlGetFieldListener` | SQL 构建时读取实体属性值 | 字段级加密/解密、数据掩码 |
+
+### 📌 SQL 构建字段获取监听器（`EzMybatisOnBuildSqlGetFieldListener`）
+
+该监听器在框架构建 SQL 时读取实体属性值的节点触发，通过 `FieldAccessScope` 枚举区分两种不同的访问场景：
+
+| `FieldAccessScope` | 含义 | 典型用途 |
+|---|---|---|
+| `ENTITY_PERSIST` | 整体实体持久化：insert / update / replace 等操作遍历实体字段写入 DB | 对所有持久化字段做统一加密后入库 |
+| `DSL_CONDITION` | DSL 条件构造：EzQuery / EzUpdate / EzDelete 中用户手动绑定的字段值 | where 条件明文值加密后与数据库密文比对；EzUpdate 指定字段设值时加密 |
+
+#### 使用示例：对 `secretContent` 字段透明加解密
+```java
+// 注册监听 — SQL 构建时对指定字段加密
+EzMybatisContent.addOnBuildSqlGetFieldListener(config, (scope, entityType, field, value) -> {
+    if ("secretContent".equals(field.getName()) && value instanceof String) {
+        // 不论 ENTITY_PERSIST 还是 DSL_CONDITION，统一加密
+        return EncryptUtil.encrypt((String) value);
+    }
+    return value;
+});
+
+// 注册监听 — 查询结果返回时对指定字段解密
+EzMybatisContent.addQueryRetListener(config, new EzMybatisQueryRetListener() {
+    @Override
+    public Object onBuildDone(Object model) {
+        if (model instanceof User) {
+            String encrypted = ((User) model).getSecretContent();
+            if (encrypted != null) {
+                ((User) model).setSecretContent(EncryptUtil.decrypt(encrypted));
+            }
+        }
+        return model;
+    }
+});
+```
 
 ---
 

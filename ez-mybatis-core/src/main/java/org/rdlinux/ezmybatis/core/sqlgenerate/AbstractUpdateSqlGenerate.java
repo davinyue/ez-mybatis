@@ -162,6 +162,12 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                 fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, FieldAccessScope.ENTITY_PERSIST,
                         model.getClass(), fieldInfo.getField(), fieldValue);
                 JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
+                if (jdbcType == null || jdbcType == JdbcType.NULL) {
+                    jdbcType = TypeHandlerUtils.getJdbcType(fieldInfo.getField());
+                }
+                if (jdbcType == null) {
+                    jdbcType = configuration.getJdbcTypeForNull();
+                }
                 EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
                 params.get(eti).add(param);
                 eti++;

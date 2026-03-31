@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.constant.TableNamePattern;
 
 public class DmBaseTest extends AbstractBaseTest {
     static {
-        AbstractBaseTest.initSqlSessionFactory("mybatis-config-dm.xml", true,
+        AbstractBaseTest.initSqlSessionFactory("mybatis-config-dm.xml", false,
                 MapRetKeyPattern.HUMP, TableNamePattern.UPPER_CASE);
     }
 }

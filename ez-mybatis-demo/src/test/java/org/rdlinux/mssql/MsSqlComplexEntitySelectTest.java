@@ -1,4 +1,4 @@
-package org.rdlinux.mysql;
+package org.rdlinux.mssql;
 
 import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
+public class MsSqlComplexEntitySelectTest extends MsSqlBaseTest {
 
     private static final Faker faker = new Faker(java.util.Locale.CHINA);
 
@@ -52,7 +52,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         user.setUserType((short) 1);
         user.setScore(faker.number().randomNumber());
         user.setAccountBalance(faker.number().randomDouble(2, 100, 10000));
-        user.setSalary(new BigDecimal(faker.number().randomDouble(2, 3000, 50000)));
+        user.setSalary(BigDecimal.valueOf(faker.number().randomDouble(2, 3000, 50000)).setScale(2, java.math.RoundingMode.HALF_UP));
         user.setIsActive(true);
 
         ComplexUser.UserStatus[] statuses = ComplexUser.UserStatus.values();
@@ -99,7 +99,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         ComplexOrder order = new ComplexOrder();
         order.setUserId(userId);
         order.setOrderNo(faker.code().asin());
-        order.setTotalAmount(new BigDecimal(faker.number().randomDouble(2, 10, 5000)));
+        order.setTotalAmount(BigDecimal.valueOf(faker.number().randomDouble(2, 10, 5000)).setScale(2, java.math.RoundingMode.HALF_UP));
         order.setStatus(status);
         this.sqlSession.getMapper(EzMapper.class).insert(order);
         this.sqlSession.commit();
@@ -156,7 +156,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     @Test
     public void ezSelectMapBySql() {
         this.insertAndGetDepartment();
-        List<Map<String, Object>> maps = this.sqlSession.getMapper(EzMapper.class).selectMapBySql("SELECT * FROM ez_complex_department LIMIT 2", new HashMap<>());
+        List<Map<String, Object>> maps = this.sqlSession.getMapper(EzMapper.class).selectMapBySql("SELECT TOP 2 * FROM ez_complex_department", new HashMap<>());
         Assert.assertNotNull(maps);
         Assert.assertEquals(2, maps.size());
         log.info("EzMapper.selectMapBySql: {}", JacksonUtils.toJsonString(maps));
@@ -573,7 +573,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     public void ezBaseMapperSelectBySql() {
         String deptId = this.insertAndGetDepartment().getId();
         this.insertAndGetComplexUserIds(2, deptId);
-        List<ComplexUser> users = this.sqlSession.getMapper(ComplexUserMapper.class).selectBySql("SELECT * FROM ez_complex_user LIMIT 2", new HashMap<>());
+        List<ComplexUser> users = this.sqlSession.getMapper(ComplexUserMapper.class).selectBySql("SELECT TOP 2 * FROM ez_complex_user", new HashMap<>());
         Assert.assertNotNull(users);
         Assert.assertEquals(2, users.size());
         log.info("ComplexUserMapper.selectBySql: {}", JacksonUtils.toJsonString(users));
@@ -611,7 +611,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     @Test
     public void ezSelectOneMapBySql() {
         this.insertAndGetDepartment();
-        Map<String, Object> map = this.sqlSession.getMapper(EzMapper.class).selectOneMapBySql("SELECT * FROM ez_complex_department LIMIT 1", new HashMap<>());
+        Map<String, Object> map = this.sqlSession.getMapper(EzMapper.class).selectOneMapBySql("SELECT TOP 1 * FROM ez_complex_department", new HashMap<>());
         Assert.assertNotNull(map);
         log.info("EzMapper.selectOneMapBySql: {}", JacksonUtils.toJsonString(map));
     }
@@ -620,7 +620,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     public void ezSelectOneObjectBySql() {
         String deptId = this.insertAndGetDepartment().getId();
         this.insertAndGetComplexUserId(deptId);
-        ComplexUser user = this.sqlSession.getMapper(EzMapper.class).selectOneObjectBySql(ComplexUser.class, "SELECT * FROM ez_complex_user LIMIT 1", new HashMap<>());
+        ComplexUser user = this.sqlSession.getMapper(EzMapper.class).selectOneObjectBySql(ComplexUser.class, "SELECT TOP 1 * FROM ez_complex_user", new HashMap<>());
         Assert.assertNotNull(user);
         log.info("EzMapper.selectOneObjectBySql: {}", JacksonUtils.toJsonString(user));
     }
@@ -629,7 +629,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
     public void ezSelectObjectBySql() {
         String deptId = this.insertAndGetDepartment().getId();
         this.insertAndGetComplexUserIds(2, deptId);
-        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).selectObjectBySql(ComplexUser.class, "SELECT * FROM ez_complex_user LIMIT 2", new HashMap<>());
+        List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).selectObjectBySql(ComplexUser.class, "SELECT TOP 2 * FROM ez_complex_user", new HashMap<>());
         Assert.assertNotNull(users);
         Assert.assertEquals(2, users.size());
         log.info("EzMapper.selectObjectBySql: {}", JacksonUtils.toJsonString(users));
@@ -651,7 +651,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         for (int i = 0; i < threadCount; i++) {
             final int index = i;
             futures.add(executorService.submit(() -> {
-                try (SqlSession threadSession = MySqlBaseTest.sqlSessionFactory.openSession()) {
+                try (SqlSession threadSession = MsSqlBaseTest.sqlSessionFactory.openSession()) {
                     startLatch.await();
                     EzMapper mapper = threadSession.getMapper(EzMapper.class);
                     for (int j = 0; j < loopCount; j++) {
@@ -845,3 +845,4 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         log.info("EzQuery One: {}", JacksonUtils.toJsonString(user));
     }
 }
+
