@@ -397,19 +397,43 @@ public class MySqlSelectTest extends MySqlBaseTest {
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(regexpQuery));
         log.info("EzQuery REGEXP: {}", JacksonUtils.toJsonString(mapper.query(regexpQuery)));
+        // 16. EXISTS
+        EntityTable userOrgTableCondition = EntityTable.of(UserOrg.class);
+        EzQuery<UserOrg> orgSubQuery = EzQuery.builder(UserOrg.class)
+                .from(userOrgTableCondition).select().addField(BaseEntity.Fields.id).done()
+                .where(e -> {
+                    e.addCondition(userOrgTableCondition.field(UserOrg.Fields.userId)
+                            .eq(userTable.field(BaseEntity.Fields.id)));
+                })
+                .build();
+
+        EzQuery<User> existsQuery = EzQuery.builder(User.class).from(userTable)
+                .select().addAll().done()
+                .where().exists(orgSubQuery).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(existsQuery));
+        log.info("EzQuery EXISTS: {}", JacksonUtils.toJsonString(mapper.query(existsQuery)));
+
+        // 17. NOT EXISTS
+        EzQuery<User> notExistsQuery = EzQuery.builder(User.class).from(userTable)
+                .select().addAll().done()
+                .where().notExists(orgSubQuery).done()
+                .page(1, 1).build();
+        Assert.assertNotNull(mapper.query(notExistsQuery));
+        log.info("EzQuery NOT EXISTS: {}", JacksonUtils.toJsonString(mapper.query(notExistsQuery)));
 
     }
 
     @Test
     public void ezQueryJoin() {
         EntityTable userTable = EntityTable.of(User.class);
-        EntityTable userOrgTable = EntityTable.of(org.rdlinux.ezmybatis.demo.entity.UserOrg.class);
+        EntityTable userOrgTable = EntityTable.of(UserOrg.class);
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
                 .from(userTable)
                 .select().addAll().done()
                 .join(userOrgTable)
-                .addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(org.rdlinux.ezmybatis.demo.entity.UserOrg.Fields.userId)))
+                .addCondition(userTable.field(BaseEntity.Fields.id).eq(userOrgTable.field(UserOrg.Fields.userId)))
                 .done()
                 .page(1, 10)
                 .build();
