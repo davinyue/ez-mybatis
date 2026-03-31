@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.enumeration.FormulaOperator;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 计算公式
@@ -21,18 +22,14 @@ public class Formula implements QueryRetNeedAlias {
     private Formula() {
     }
 
-    public static FormulaEleBuilder<FormulaBuilder> builder() {
+    /**
+     * 通过闭包 Lambda 直接构建出一个计算公式，避免后缀链式的 .done().build()
+     */
+    public static Formula build(Consumer<FormulaStartBuilder<FormulaBuilder>> consumer) {
         List<FormulaElement> elements = new LinkedList<>();
         FormulaBuilder formulaBuilder = new FormulaBuilder(elements);
-        return new FormulaEleBuilder<>(formulaBuilder, elements);
-    }
-
-    public static FormulaEleBuilder<FormulaBuilder> builder(Operand value) {
-        return builder().with(value);
-    }
-
-    public static FormulaEleBuilder<FormulaBuilder> builder(Object value) {
-        return builder().with(value);
+        consumer.accept(new FormulaStartBuilder<>(formulaBuilder, elements));
+        return formulaBuilder.build();
     }
 
     public static class FormulaBuilder {
@@ -49,19 +46,17 @@ public class Formula implements QueryRetNeedAlias {
     }
 
     /**
-     * @param <ParentBuilder> 上级构造器, 调用.done时将返回上级构造器
+     * 起始构造器，限定起始操作必须是 with 或 withGroup
+     *
+     * @param <ParentBuilder> 上级构造器
      */
-    public static class FormulaEleBuilder<ParentBuilder> {
+    public static class FormulaStartBuilder<ParentBuilder> {
         protected ParentBuilder parentBuilder;
         protected List<FormulaElement> elements;
 
-        public FormulaEleBuilder(ParentBuilder parentBuilder, List<FormulaElement> elements) {
+        public FormulaStartBuilder(ParentBuilder parentBuilder, List<FormulaElement> elements) {
             this.parentBuilder = parentBuilder;
             this.elements = elements;
-        }
-
-        public ParentBuilder done() {
-            return this.parentBuilder;
         }
 
         /**
@@ -74,7 +69,7 @@ public class Formula implements QueryRetNeedAlias {
             } else {
                 this.elements.set(0, element);
             }
-            return this;
+            return new FormulaEleBuilder<>(this.parentBuilder, this.elements);
         }
 
         /**
@@ -87,7 +82,7 @@ public class Formula implements QueryRetNeedAlias {
         /**
          * 以()开始, 构建计算公式
          */
-        public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> withGroup() {
+        public FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> withGroup() {
             List<FormulaElement> elements = new LinkedList<>();
             GroupFormulaElement element = new GroupFormulaElement(FormulaOperator.EMPTY, elements);
             if (this.elements.isEmpty()) {
@@ -95,7 +90,38 @@ public class Formula implements QueryRetNeedAlias {
             } else {
                 this.elements.set(0, element);
             }
-            return new FormulaEleBuilder<>(this, elements);
+            return new FormulaStartBuilder<>(new FormulaEleBuilder<>(this.parentBuilder, this.elements), elements);
+        }
+
+        /**
+         * 以()开始, 构建计算公式 (Lambda 闭包形式)
+         */
+        public FormulaEleBuilder<ParentBuilder> withGroup(Consumer<FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>>> consumer) {
+            FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> childBuilder = this.withGroup();
+            consumer.accept(childBuilder);
+            return new FormulaEleBuilder<>(this.parentBuilder, this.elements);
+        }
+
+        /**
+         * 以()开始, 构建计算公式 (Lambda 闭包形式，支持带返回值的表达式)
+         */
+        public FormulaEleBuilder<ParentBuilder> withGroup(java.util.function.Function<FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>>, ?> function) {
+            FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> childBuilder = this.withGroup();
+            function.apply(childBuilder);
+            return new FormulaEleBuilder<>(this.parentBuilder, this.elements);
+        }
+    }
+
+    /**
+     * @param <ParentBuilder> 上级构造器, 调用.done时将返回上级构造器
+     */
+    public static class FormulaEleBuilder<ParentBuilder> {
+        protected ParentBuilder parentBuilder;
+        protected List<FormulaElement> elements;
+
+        public FormulaEleBuilder(ParentBuilder parentBuilder, List<FormulaElement> elements) {
+            this.parentBuilder = parentBuilder;
+            this.elements = elements;
         }
 
         /**
@@ -117,11 +143,20 @@ public class Formula implements QueryRetNeedAlias {
         /**
          * 加()
          */
-        public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> addGroup() {
+        private FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> addGroup() {
             List<FormulaElement> elements = new LinkedList<>();
             GroupFormulaElement element = new GroupFormulaElement(FormulaOperator.ADD, elements);
             this.elements.add(element);
-            return new FormulaEleBuilder<>(this, elements);
+            return new FormulaStartBuilder<>(this, elements);
+        }
+
+        /**
+         * 加() (Lambda 闭包形式)
+         */
+        public FormulaEleBuilder<ParentBuilder> addGroup(Consumer<FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>>> consumer) {
+            FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> childBuilder = this.addGroup();
+            consumer.accept(childBuilder);
+            return this;
         }
 
         /**
@@ -143,11 +178,20 @@ public class Formula implements QueryRetNeedAlias {
         /**
          * 减()
          */
-        public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> subtractGroup() {
+        private FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> subtractGroup() {
             List<FormulaElement> elements = new LinkedList<>();
             GroupFormulaElement element = new GroupFormulaElement(FormulaOperator.SUBTRACT, elements);
             this.elements.add(element);
-            return new FormulaEleBuilder<>(this, elements);
+            return new FormulaStartBuilder<>(this, elements);
+        }
+
+        /**
+         * 减() (Lambda 闭包形式)
+         */
+        public FormulaEleBuilder<ParentBuilder> subtractGroup(Consumer<FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>>> consumer) {
+            FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> childBuilder = this.subtractGroup();
+            consumer.accept(childBuilder);
+            return this;
         }
 
         /**
@@ -169,11 +213,20 @@ public class Formula implements QueryRetNeedAlias {
         /**
          * 乘()
          */
-        public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> multiplyGroup() {
+        private FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> multiplyGroup() {
             List<FormulaElement> elements = new LinkedList<>();
             GroupFormulaElement element = new GroupFormulaElement(FormulaOperator.MULTIPLY, elements);
             this.elements.add(element);
-            return new FormulaEleBuilder<>(this, elements);
+            return new FormulaStartBuilder<>(this, elements);
+        }
+
+        /**
+         * 乘() (Lambda 闭包形式)
+         */
+        public FormulaEleBuilder<ParentBuilder> multiplyGroup(Consumer<FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>>> consumer) {
+            FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> childBuilder = this.multiplyGroup();
+            consumer.accept(childBuilder);
+            return this;
         }
 
         /**
@@ -195,11 +248,20 @@ public class Formula implements QueryRetNeedAlias {
         /**
          * 除以()
          */
-        public FormulaEleBuilder<FormulaEleBuilder<ParentBuilder>> divideGroup() {
+        private FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> divideGroup() {
             List<FormulaElement> elements = new LinkedList<>();
             GroupFormulaElement element = new GroupFormulaElement(FormulaOperator.DIVIDE, elements);
             this.elements.add(element);
-            return new FormulaEleBuilder<>(this, elements);
+            return new FormulaStartBuilder<>(this, elements);
+        }
+
+        /**
+         * 除以() (Lambda 闭包形式)
+         */
+        public FormulaEleBuilder<ParentBuilder> divideGroup(Consumer<FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>>> consumer) {
+            FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> childBuilder = this.divideGroup();
+            consumer.accept(childBuilder);
+            return this;
         }
     }
 }

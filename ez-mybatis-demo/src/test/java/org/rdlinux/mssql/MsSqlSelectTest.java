@@ -495,7 +495,8 @@ public class MsSqlSelectTest extends MsSqlBaseTest {
         EntityTable table = EntityTable.of(User.class);
 
         // Formula: age + 1
-        Formula agePlusOne = Formula.builder(table.field(User.Fields.age)).add(1).done().build();
+        Formula agePlusOne = Formula.build(f ->
+                f.with(table.field(User.Fields.age)).add(1));
 
         // Function: CONCAT(name, ' - ', age)
         Function nameDesc = Function.builder("CONCAT")

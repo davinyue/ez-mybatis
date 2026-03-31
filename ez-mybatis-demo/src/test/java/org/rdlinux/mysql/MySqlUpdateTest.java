@@ -333,7 +333,8 @@ public class MySqlUpdateTest extends MySqlBaseTest {
         this.sqlSession.commit();
         Assert.assertTrue(insert > 0);
         log.info("ezMapperUpdateByEzParamTest result: {}", insert);
-        Formula userAgeFm = Formula.builder(table.field(User.Fields.age)).add(1).done().build();
+        Formula userAgeFm = Formula.build(f ->
+                f.with(table.field(User.Fields.age)).add(1));
         ezUpdate = EzUpdate.update(table)
                 .set()
                 .add(table.field(User.Fields.age).set(userAgeFm))
@@ -535,7 +536,8 @@ public class MySqlUpdateTest extends MySqlBaseTest {
         try {
             EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
             EntityTable table = EntityTable.of(User.class);
-            Formula formula = Formula.builder(table.field(User.Fields.age)).add(10).done().build();
+            Formula formula = Formula.build(f ->
+                    f.with(table.field(User.Fields.age)).add(10));
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set().add(table.field(User.Fields.age).set(formula)).done()
                     .where()

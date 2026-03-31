@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 函数
@@ -34,6 +35,19 @@ public class Function implements QueryRetNeedAlias {
      */
     public static FunctionBuilder builder(String funName) {
         return new FunctionBuilder(funName);
+    }
+
+    /**
+     * 通过闭包 Lambda 直接构建出一个函数
+     *
+     * @param funName  函数名称，例如 "MAX", "COUNT", "CONCAT"
+     * @param consumer 函数参数配置闭包
+     * @return 构建完成的 Function 对象
+     */
+    public static Function build(String funName, Consumer<FunctionBuilder> consumer) {
+        FunctionBuilder builder = builder(funName);
+        consumer.accept(builder);
+        return builder.build();
     }
 
     /**

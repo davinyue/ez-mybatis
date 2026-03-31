@@ -75,6 +75,9 @@ public abstract class AbstractBaseTest {
                     AbstractBaseTest.log.info("插入事件");
                     ((BaseEntity) entity).setUpdateTime(new Date());
                     ((BaseEntity) entity).setCreateTime(new Date());
+                    if (((BaseEntity) entity).getId() == null) {
+                        ((BaseEntity) entity).setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                    }
                 }
             }
 

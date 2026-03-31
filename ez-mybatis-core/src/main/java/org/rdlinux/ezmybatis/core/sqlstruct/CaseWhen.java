@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * CASE WHEN 条件表达式，用于在 SQL 中构建条件分支逻辑。
@@ -40,6 +41,16 @@ public class CaseWhen implements QueryRetNeedAlias {
     public static CaseWhenBuilder builder(Table table) {
         return new CaseWhenBuilder(table);
     }
+
+    /**
+     * 通过闭包 Lambda 直接构建出 CaseWhen 结构
+     */
+    public static CaseWhen build(Table table, Consumer<CaseWhenBuilder> consumer) {
+        CaseWhenBuilder builder = builder(table);
+        consumer.accept(builder);
+        return builder.build();
+    }
+
 
     /**
      * CaseWhen条件数据（单个 WHEN ... THEN 分支）
@@ -137,6 +148,25 @@ public class CaseWhen implements QueryRetNeedAlias {
             caseWhenData.setConditions(new LinkedList<>());
             this.caseWhen.getCaseWhenData().add(caseWhenData);
             return new CaseWhenData.CaseWhenDataBuilder(this.table, this, caseWhenData);
+        }
+
+        /**
+         * 闭包模式的 WHEN 条件流以及配套的 THEN 返回执行值
+         * 简化形如 `.when().condition(...).then(val)` 的冗长调用
+         */
+        public CaseWhenBuilder when(Consumer<CaseWhenData.CaseWhenDataBuilder> consumer, Object thenValue) {
+            CaseWhenData.CaseWhenDataBuilder whenBuilder = this.when();
+            consumer.accept(whenBuilder);
+            return whenBuilder.then(thenValue);
+        }
+
+        /**
+         * 闭包模式的 WHEN 条件流以及配套的标准操作数 THEN 返回执行值
+         */
+        public CaseWhenBuilder when(Consumer<CaseWhenData.CaseWhenDataBuilder> consumer, Operand thenValue) {
+            CaseWhenData.CaseWhenDataBuilder whenBuilder = this.when();
+            consumer.accept(whenBuilder);
+            return whenBuilder.then(thenValue);
         }
 
         /**
