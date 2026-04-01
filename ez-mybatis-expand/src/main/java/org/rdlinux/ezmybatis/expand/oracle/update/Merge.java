@@ -100,8 +100,26 @@ public class Merge implements SqlExpand {
             return this.on(this.merge.mergeTable);
         }
 
+        public MergeBuilder on(Table table, java.util.function.Consumer<MergeOnBuilder<MergeBuilder>> consumer) {
+            MergeOnBuilder<MergeBuilder> builder = this.on(table);
+            consumer.accept(builder);
+            return this;
+        }
+
+        public MergeBuilder on(java.util.function.Consumer<MergeOnBuilder<MergeBuilder>> consumer) {
+            MergeOnBuilder<MergeBuilder> builder = this.on();
+            consumer.accept(builder);
+            return this;
+        }
+
         public UpdateSetBuilder<MergeBuilder> set() {
             return new UpdateSetBuilder<>(this, this.merge.mergeTable, this.merge.set);
+        }
+
+        public MergeBuilder set(java.util.function.Consumer<UpdateSetBuilder<MergeBuilder>> consumer) {
+            UpdateSetBuilder<MergeBuilder> builder = this.set();
+            consumer.accept(builder);
+            return this;
         }
 
         public MergeBuilder whenNotMatchedThenInsert(Object entity) {

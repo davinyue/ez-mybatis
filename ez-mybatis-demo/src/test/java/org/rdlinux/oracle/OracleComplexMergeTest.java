@@ -87,13 +87,11 @@ public class OracleComplexMergeTest extends OracleBaseTest {
 
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on()
-                .addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID"))
-                .done()
-                .set()
-                .add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"))
-                .add(userTable.field(ComplexUser.Fields.age).set(35))
-                .done()
+                .on(o -> o.addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
+                .set(s -> {
+                    s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"));
+                    s.add(userTable.field(ComplexUser.Fields.age).set(35));
+                })
                 .whenNotMatchedThenInsert(insertModel)
                 .build();
 
@@ -135,12 +133,10 @@ public class OracleComplexMergeTest extends OracleBaseTest {
 
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on()
-                .addCondition(userTable.field(ComplexUser.Fields.departmentId), sourceTable.column("ID"))
-                .done()
-                .set()
-                .add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update"))
-                .done()
+                .on(o ->
+                        o.addCondition(userTable.field(ComplexUser.Fields.departmentId).eq(sourceTable.column("ID"))))
+                .set(s ->
+                        s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update")))
                 .whenNotMatchedThenInsert(user)
                 .build();
 

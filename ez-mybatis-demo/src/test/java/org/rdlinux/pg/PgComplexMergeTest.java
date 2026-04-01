@@ -133,14 +133,13 @@ public class PgComplexMergeTest extends PgBaseTest {
         user.setAge(28);
         user.setStatus(ComplexUser.UserStatus.NORMAL);
 
+
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on()
-                .addCondition(userTable.field(ComplexUser.Fields.departmentId), sourceTable.column("id"))
-                .done()
-                .set()
-                .add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update"))
-                .done()
+                .on(o ->
+                        o.addCondition(userTable.field(ComplexUser.Fields.departmentId).eq(sourceTable.column("id"))))
+                .set(s ->
+                        s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update")))
                 .whenNotMatchedThenInsert(user)
                 .build();
 

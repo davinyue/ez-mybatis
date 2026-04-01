@@ -13,10 +13,8 @@
 - 你厌倦了维护大量 XML 映射？
 - 想在 **MyBatis + 多数据库** 项目中有统一上层抽象？
 - 需要 **类型安全查询构建器** 避免字段写错？
-- 原生 JOIN 支持，无需手写复杂 SQL, Ez-MyBatis 提供了完整的连表查询 DSL，可无缝替代原生 SQL 的 JOIN 写法，支持：INNER JOIN / LEFT JOIN / RIGHT JOIN 等常用连接方式。并且支持极简的 **Lambda DSL**。
+- 原生 JOIN 支持，无需手写复杂 SQL，Ez-MyBatis 提供了完整的连表查询、连表删除等 DSL，支持 INNER JOIN / LEFT JOIN / RIGHT JOIN 等常用连接方式，并且提供极简的 **Lambda DSL**。
 - 既要轻量，又希望在大批量场景里用 **JDBC 极致性能**？
-
-Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis，可按需渐进接入，低成本迁移、低学习曲线。
 
 ---
 
@@ -24,10 +22,10 @@ Ez-MyBatis 正是为此而生：在不破坏原生态的前提下增强 MyBatis�
 
 - 🔧 **零侵入**：基于拦截器，无需改动现有 MyBatis 配置或 Mapper 接口即可逐步接入。
 - 📊 **多数据库支持**：MySQL、Oracle、达梦、PostgreSQL、SQL Server；亦可通过兼容配置支持其他国产数据库。
-- 🏷️ **JPA 注解支持**：@Table、@Id、@Column、@Transient、@TypeHandler 等常用注解开箱即用。
+- 🏷️ **JPA 注解支持**：`@Table`、`@Id`、`@Column`、`@Transient`、`@TypeHandler` 等常用注解开箱即用。
 - ⚡ **高性能通道**：提供 JDBC 直接操作 DAO（如 `JdbcInsertDao`、`JdbcUpdateDao`），大批量导入/更新/替换更高效。
-- 🎯 **类型安全 DSL**：全面支持 Lambda 风格 DSL（Lambda DSL）以构建查询、更新和删除，并且支持复杂表达式（Formula）、函数（Function）、条件分支（CaseWhen）及窗口函数（WindowFunction）。
-- 🔌 **事件机制**：插入、更新、删除、查询、SQL 构建等生命周期点均可注入自定义逻辑（如加解密、审计、埋点）。
+- 🎯 **类型安全 DSL**：全面支持 Lambda 风格 DSL 以构建 CRUD 操作，并且支持复杂表达式（Formula）、函数（Function）、条件分支（CaseWhen）及窗口函数（WindowFunction）。
+- 🔌 **事件机制**：读写生命周期点均可注入逻辑（如加解密、审计、埋点）。
 - 🧪 **可混用**：Ez-MyBatis DSL 可与原生 MyBatis / MyBatis-Plus 共存，便于渐进式迁移。
 
 ---
@@ -49,11 +47,12 @@ ez-mybatis:
   db-type: POSTGRE_SQL
 ```
 
----
 
-## 🛠️ 快速开始
+## 📋 快速开始
 
-### Spring Boot 2.x 集成 MyBatis
+### 依赖集成
+
+**Spring Boot 2.x 集成 MyBatis**
 ```xml
 <dependency>
     <groupId>org.rdlinux</groupId>
@@ -62,7 +61,7 @@ ez-mybatis:
 </dependency>
 ```
 
-### Spring Boot 3.x 集成 MyBatis
+**Spring Boot 3.x 集成 MyBatis**
 ```xml
 <dependency>
     <groupId>org.rdlinux</groupId>
@@ -73,11 +72,32 @@ ez-mybatis:
 
 ---
 
-## 📝 实体类定义
-
+## 📝 测试模型与实体关联关系
 推荐使用 Lombok（`@Getter @Setter @FieldNameConstants`）自动生成字段常量，便于类型安全 DSL 构建。
 
+为了更好地展示 Ez-MyBatis 的强大功能，本项目测试用例中定义了一套贴近真实业务的实体模型结构。各核心业务模型间的关联主从关系如下：
+
+- **部门模型 (`ComplexDepartment`)**
+  - 代表组织架构中的部门。
+  - **关联关系**：一个部门可以包含多个用户（1 对 N），通过树形结构自身关联 (`parentId`) 描述层级关系。
+- **用户模型 (`ComplexUser`)**
+  - 代表系统的核心用户信息，包含基本属性（`age`, `salary`, `status`）及 JSON 扩展信息的映射（`ExtInfo`）。
+  - **关联关系**：
+    - 归属于某个部门（多对一，依赖 `departmentId` 字段）。
+    - 是多个订单的归属者（一对多）。
+- **订单模型 (`ComplexOrder`)**
+  - 代表用户的消费订单，记录金额及状态等。
+  - **关联关系**：
+    - 属于某一个用户（多对一，依赖 `userId` 字段，关联至 `ComplexUser` 的主键 `id`）。
+    - 包含多个订单明细记录（一对多）。
+- **订单明细模型 (`ComplexOrderItem`)**
+  - 代表订单内购买的具体商品及数量。
+  - **关联关系**：作为归属于某个订单的明细行项存在（多对一，依赖 `orderId` 字段，关联至 `ComplexOrder` 的主键 `id`）。
+
+### 实体类参考示例
+
 ```java
+// 基础实体，统一定义 ID 与公共时间字段
 @Getter
 @Setter
 @FieldNameConstants
@@ -88,282 +108,189 @@ public abstract class BaseEntity {
     private Date updateTime;
 }
 
-@Table(name = "ez_user", schema = "ez_mybatis")
+// 用户实体
+@Table(name = "ez_complex_user")
 @Getter
 @Setter
 @FieldNameConstants
-public class User extends BaseEntity {
-    @TypeHandler(StringTypeHandler.class)
-    private String name;
-    private Sex sex;
-    @Column(name = "age")
-    private Integer userAge;
-    @Transient
-    private String ignore;
+public class ComplexUser extends BaseEntity {
+    private String username;
+    private Integer age;
+    private BigDecimal salary;
+    // ... 其它属性
+    
+    // JSON扩展字段映射
+    @TypeHandler(JsonTypeHandler.class)
+    private ExtInfo extInfo;
+    
+    // 关联部门 ID
+    private String departmentId;
+}
 
-    public enum Sex { WOMAN, MAN }
+// 部门实体
+@Table(name = "ez_complex_department")
+@Getter
+@Setter
+@FieldNameConstants
+public class ComplexDepartment extends BaseEntity {
+    private String name;
+    private String parentId;
 }
 ```
 
 ---
 
-## 💾 数据操作（CRUD）
+## 💾 数据操作（CRUD）实战
 
-Ez-MyBatis 提供了极简且强大的数据操作 API。大部分示例基于全新的 **Lambda DSL**。
+借助 Lambda DSL，你可以安全且直观地对上述实体及其交织的关联结构进行数据操作。
 
 ### 📌 插入数据 (Insert)
 
+你可以使用原生的 `EzMapper` 接口操作对象，或者使用具备极高批量吞吐能力的 `JdbcInsertDao`。
+
 ```java
-// 1. 单条与批量插入 (Mapper方式)
-ezMapper.insert(user);
-ezMapper.batchInsert(users);
+// 1. 标准单条与批量插入
+ezMapper.insert(complexUser);
+ezMapper.batchInsert(complexUsers);
 
-// 2. 动态表名插入
-ezMapper.insertByTable(EntityTable.of(User.class, "dynamic_table"), user);
+// 2. 高性能 JDBC 插入 (直接透传 JDBC 批处理，适合超大批量的导入与高并发性能环境)
+JdbcInsertDao jdbcInsertDao = new JdbcInsertDao(sqlSession);
+jdbcInsertDao.batchInsert(complexUsers);
 
-// 3. 高性能 JDBC 插入 (适合大批量)
-jdbcInsertDao.insert(user);
-jdbcInsertDao.batchInsert(users);
-
-// 4. INSERT INTO ... SELECT 方式
-EzQuery<UserDump> query = EzQuery.builder(UserDump.class).from(EntityTable.of(UserDump.class))
-        .select(s -> s.addAll()).build();
-ezMapper.insertByQuery(EntityTable.of(User.class), query);
+// 3. MySQL 特有 Upsert (INSERT ... ON DUPLICATE KEY UPDATE)
+EntityTable table = EntityTable.of(ComplexUser.class);
+MySqlUpsert upsert = MySqlUpsert.insert(complexUser)
+        .onDuplicateKeyUpdate()
+        .set()
+        .add(table.field(ComplexUser.Fields.username).set("new_name_on_conflict"))
+        .done()
+        .build();
+ezMapper.expandUpdate(upsert);
 ```
 
 ### 📌 更新数据 (Update)
 
-#### 基础更新与替换
+支持对象级全体更新、部分字段更新，以及依托复杂条件或 `CASE WHEN` / `Formula` 构建的灵活表达式更新。另外支持如 Oracle 的 `MERGE INTO` 操作。
+
 ```java
-// 仅更新非空字段 (忽略 null 值)
-ezMapper.update(user);
-ezMapper.batchUpdate(users);
+EntityTable table = EntityTable.of(ComplexUser.class);
 
-// 替换所有字段 (包括 null 值)
-ezMapper.replace(user);
-ezMapper.batchReplace(users);
-
-// 高性能 JDBC 更新/替换
-jdbcUpdateDao.batchUpdate(users);
-jdbcUpdateDao.batchReplace(users);
-// JDBC 指定字段更新
-jdbcUpdateDao.update(user, Arrays.asList(User.Fields.name, User.Fields.age));
-```
-
-#### Lambda DSL 条件更新
-使用全新的 Lambda DSL 构建复杂更新语句，支持动态条件。
-```java
-EntityTable table = EntityTable.of(User.class);
-boolean updateAge = true;
-
+// 1. 根据 Lambda DSL 构造条件更新
 EzUpdate ezUpdate = EzUpdate.update(table)
         .set(s -> {
-            s.add(table.field(User.Fields.name).set("Lambda Update"));
-            // 支持预置条件动态设值
-            s.add(updateAge, table.field(User.Fields.age).set(99));
-            // 将字段置为 NULL
-            s.add(table.field(User.Fields.email).setToNull());
+            s.add(table.field(ComplexUser.Fields.username).set("Updated Value"));
+            // 也可以通过 boolean 动态决定当前 set 条件是否应用
+            s.add(true, table.field(ComplexUser.Fields.age).set(99));
         })
-        .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq("1")))
+        .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq("user_1")))
         .build();
-
 ezMapper.ezUpdate(ezUpdate);
 
-// 多操作并行（批量）处理
-ezMapper.ezBatchUpdate(Arrays.asList(ezUpdate1, ezUpdate2));
-```
-
-#### 函数(Function) / 表达式(Formula) / 分支(CaseWhen) 更新
-```java
-// 表达式 Formula: age + 10
-Formula formula = Formula.builder(table.field(User.Fields.age)).add(10).done().build();
-
-// 函数 Function: GREATEST(age, 100)
+// 2. 表达式或函数更新 (无缝在 DB 层级赋予能力，例如 UPDATE ... SET age = GREATEST(age, 100))
 Function function = Function.builder("GREATEST")
-        .addArg(EntityField.of(table, User.Fields.age)).addArg(100).build();
-
-// 条件分支 CaseWhen
-CaseWhen caseWhen = CaseWhen.builder(table)
-        .when().addCondition(table.field(User.Fields.name).eq("老王")).then("VIP")
-        .els("普通");
-
-EzUpdate update = EzUpdate.update(table)
-        .set(s -> {
-            s.add(table.field(User.Fields.age).set(formula));
-            s.add(table.field(User.Fields.level).set(caseWhen));
-        })
-        .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq("1")))
+        .addArg(EntityField.of(table, ComplexUser.Fields.age))
+        .addArg(100).build();
+        
+EzUpdate funcUpdate = EzUpdate.update(table)
+        .set(s -> s.add(table.field(ComplexUser.Fields.age).set(function)))
+        .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq("user_1")))
         .build();
+ezMapper.ezUpdate(funcUpdate);
 
-ezMapper.ezUpdate(update);
+// 3. 针对 Oracle / 达梦 /PG / MSSQL 等数据库的结构化 MERGE INTO 功能
+EzQueryTable sourceTable = EzQueryTable.of(sourceQuery);
+Merge merge = Merge.into(table)
+        .using(sourceTable) // 指定源表与驱动查询
+        .on(o ->
+                o.addCondition(table.field(ComplexUser.Fields.departmentId).eq(sourceTable.column("ID")))) // 定义 MERGE INTO 的连接条件 (ON)
+        .set(s ->
+                s.add(table.field(ComplexUser.Fields.username).set("dm_merge_should_not_update"))) // Update block
+        .whenNotMatchedThenInsert(insertModel)                         // Insert block
+        .build();
+ezMapper.expandUpdate(merge);
 ```
 
 ### 📌 删除数据 (Delete)
 
+除了按 ID 等基础方式删除外，支持丰富的且复杂的 DSL 判断以及连表支持。
+
 ```java
-// 1. 基础删除
-ezMapper.delete(user);
-ezMapper.deleteById(User.class, "id1");
-ezMapper.batchDeleteById(User.class, Arrays.asList("id1", "id2"));
+EntityTable userTable = EntityTable.of(ComplexUser.class);
+EntityTable orderTable = EntityTable.of(ComplexOrder.class);
 
-// 2. Lambda DSL 条件删除
-EntityTable userTable = EntityTable.of(User.class);
-EzDelete delete = EzDelete.delete(userTable)
-        .where(w -> w.addCondition(userTable.field(User.Fields.name).eq("张三")))
-        .build();
-ezMapper.ezDelete(delete);
+// 1. 基础方式删除
+ezMapper.deleteById(ComplexUser.class, "user_1");
 
-// 批量执行多个复杂删除条件
-ezMapper.ezBatchDelete(Arrays.asList(delete1, delete2));
-
-// 3. 联表删除(联表删除仅支持mysql, 其它数据库只能单表删除)
-EntityTable uoTable = EntityTable.of(UserOrg.class);
-EzDelete joinDelete = EzDelete.delete(userTable).delete(uoTable)
-        .join(true, uoTable, j -> j.addCondition(
-            userTable.field(BaseEntity.Fields.id).eq(uoTable.field(UserOrg.Fields.userId))
+// 2. 强大的联表删除（基于订单的特定状态反向关联删除用户或者同时删除，以下仅为演示语法）
+EzDelete delete = EzDelete.delete(orderTable)
+        .delete(userTable) // 显式标记哪些表将会接受 DELETE 移除行
+        .join(true, userTable, j -> j.addCondition(
+            orderTable.field(ComplexOrder.Fields.userId).eq(userTable.field(BaseEntity.Fields.id))
         ))
-        .where(w -> w.addCondition(userTable.field(BaseEntity.Fields.id).eq("1")))
+        .where(w -> w.addCondition(orderTable.field(ComplexOrder.Fields.status).eq(OrderStatus.CANCELED)))
         .build();
-ezMapper.ezDelete(joinDelete);
+        
+ezMapper.ezDelete(delete);
 ```
 
 ---
 
 ## 🔍 查询数据 (Select)
 
-Ez-MyBatis 的 `EzQuery` 提供了强大的 SQL 构建能力，并全面支持 Lambda 表达式链式调用，使得代码可读性大幅提升。
+`EzQuery` 提供极致的 Lambda 查询连缀体验，内建强类型校验保障质量。包含复杂的多表联查、分组统计和各种窗口函数等构建能力。
 
-### 📌 基础与简单查询
 ```java
-// 按 ID 查询
-User user = ezMapper.selectById(User.class, "id1");
-// 批量 ID 查询
-List<User> users = ezMapper.selectByIds(User.class, Arrays.asList("id1", "id2"));
-// 原生查询
-List<User> sqlUsers = ezMapper.selectObjectBySql(User.class, "SELECT * FROM ez_user LIMIT 2", params);
-```
+EntityTable userTable = EntityTable.of(ComplexUser.class);
+EntityTable deptTable = EntityTable.of(ComplexDepartment.class);
 
-### 📌 Lambda DSL 结构化查询
-```java
-EntityTable userTable = EntityTable.of(User.class);
-boolean hasNameFilter = true;
-
-EzQuery<User> query = EzQuery.builder(User.class)
-        .from(userTable)
-        .select(s -> {
-            s.addField(BaseEntity.Fields.id);
-            s.addField(User.Fields.name);
-            s.add(userTable.field(User.Fields.age));
-        })
-        .where(w -> {
-            // 支持动态条件(Condition)
-            w.addCondition(hasNameFilter, userTable.field(User.Fields.name).like("TestUser%"));
-            w.addCondition(userTable.field(User.Fields.age).between(10, 30)); // 范围查询专用 API
-            w.addCondition(userTable.field(User.Fields.sex).in(Arrays.asList(User.Sex.MAN))); // IN
-        })
-        .orderBy(o -> {
-            o.add(userTable.field(User.Fields.age).asc());
-            o.add(userTable.field(BaseEntity.Fields.createTime).desc());
-        })
-        .page(1, 10)  // 分页
-        .build();
-
-List<User> result = ezMapper.query(query);
-```
-
-### 📌 复杂联表查询 (Join)
-通过 Lambda DSL 支持嵌套多层的联接与精确控制，自动处理联表逻辑。
-```java
-EntityTable userTable = EntityTable.of(User.class);
-EntityTable orgTable = EntityTable.of(UserOrg.class);
-EntityTable nestedTable = EntityTable.of(UserOrg.class);
-
-EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
+// 1. 常规范围及模糊匹配
+EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class)
         .from(userTable)
         .select(Select.EzSelectBuilder::addAll)
-        // 支持嵌套联接构建
-        .join(orgTable, j -> {
-            j.addCondition(userTable.field(BaseEntity.Fields.id).eq(orgTable.field(UserOrg.Fields.userId)));
-            j.join(nestedTable, jj -> jj.addCondition(
-                    orgTable.field(UserOrg.Fields.orgId).eq(nestedTable.field(UserOrg.Fields.orgId))));
+        .where(w -> {
+            w.addCondition(userTable.field(ComplexUser.Fields.username).like("John%"));
+            w.addCondition(userTable.field(ComplexUser.Fields.age).between(18, 30));
         })
+        .orderBy(o -> o.add(userTable.field(ComplexUser.Fields.age).asc()))
+        .page(1, 10)
+        .build();
+List<ComplexUser> users = ezMapper.query(query);
+
+// 2. 嵌套模型联表查询 (JOIN)
+EzQuery<ComplexUser> joinQuery = EzQuery.builder(ComplexUser.class)
+        .from(userTable)
+        .select(Select.EzSelectBuilder::addAll)
+        // 自动完成部门信息至主从查询连结与拼装
+        .join(deptTable, j -> j.addCondition(
+             userTable.field(ComplexUser.Fields.departmentId).eq(deptTable.field(BaseEntity.Fields.id))
+        ))
         .limit(10)
         .build();
-```
 
-### 📌 分组聚合 (GroupBy & Having)
-```java
-Function countFn = Function.builder("COUNT").addArg(EntityField.of(userTable, BaseEntity.Fields.id)).build();
-
-EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(userTable)
+// 3. 统计聚集查询 (GROUP BY / HAVING / Function)
+Function countFn = Function.build("COUNT", f -> f.addArg(userTable.field(BaseEntity.Fields.id)));
+EzQuery<StringHashMap> aggQuery = EzQuery.builder(StringHashMap.class)
+        .from(userTable)
         .select(s -> {
-            s.addField(User.Fields.age);
+            s.addField(ComplexUser.Fields.departmentId);
             s.add(countFn, "userCount");
         })
-        .groupBy(g -> g.addField(User.Fields.age))
+        .groupBy(g -> g.addField(ComplexUser.Fields.departmentId))
         .having(h -> h.addCondition(countFn.ge(1)))
         .build();
-```
 
-### 📌 窗口函数 (Window Function)
-Ez-MyBatis 全面支持复杂的数据库窗口函数，包括 `PARTITION BY`、`ORDER BY` 以及窗口帧定义 (`ROWS` / `RANGE`)。
-```java
-EntityTable table = EntityTable.of(User.class);
-Function rowNumFunc = Function.builder("ROW_NUMBER").build();
-
-// 构建窗口函数：ROW_NUMBER() OVER(PARTITION BY sex ORDER BY create_time DESC)
-WindowFunction wf = WindowFunction.builder(rowNumFunc)
-        .partitionBy(EntityField.of(table, User.Fields.sex))
-        .orderBy(EntityField.of(table, BaseEntity.Fields.createTime).desc())
+// 4. 窗口函数查询 (Window Function / OVER / PARTITION)
+Function rNumFunc = Function.build("ROW_NUMBER", f -> {});
+WindowFunction wf = WindowFunction.builder(rNumFunc)
+        .partitionBy(userTable.field(ComplexUser.Fields.status))
+        .orderBy(userTable.field(BaseEntity.Fields.createTime), OrderType.DESC)
         .build();
 
-// 带有行范围的窗口函数：ROWS BETWEEN 2 PRECEDING AND 2 FOLLOWING
-Function sumAgeFunc = Function.builder("SUM").addArg(EntityField.of(table, User.Fields.age)).build();
-WindowFunction wfRows = WindowFunction.builder(sumAgeFunc)
-        .partitionBy(EntityField.of(table, User.Fields.sex))
-        .orderBy(EntityField.of(table, User.Fields.age).asc())
-        .rowsBetween(WindowFunction.WindowFrameBound.preceding(2), WindowFunction.WindowFrameBound.following(2))
-        .build();
-
-EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
+EzQuery<StringHashMap> winQuery = EzQuery.builder(StringHashMap.class).from(userTable)
         .select(s -> {
-            s.addField(User.Fields.name);
-            s.add(wf, "rn");
-            s.add(wfRows, "sumAge");
-        })
-        .limit(10)
-        .build();
-```
-
-### 📌 子查询, EXISTS 与 UNION
-支持在 `IN` / `EXISTS` 条件中使用子查询以及原生的 `UNION` / `UNION ALL`。
-```java
-// 子查询 IN
-EzQuery<String> subInfo = EzQuery.builder(String.class).from(EntityTable.of(User.class))
-        .select(s -> s.addField(BaseEntity.Fields.id)).build();
-EzQuery<User> query = EzQuery.builder(User.class).from(userTable)
-        .select(s -> s.addAll())
-        .where(w -> w.addCondition(userTable.field(BaseEntity.Fields.id).in(subInfo)))
-        .build();
-
-// EXISTS
-EntityTable userOrgTable = EntityTable.of(UserOrg.class);
-EzQuery<UserOrg> orgSubQuery = EzQuery.builder(UserOrg.class)
-        .from(userOrgTable).select(s -> s.addField(BaseEntity.Fields.id))
-        .where(w -> w.addCondition(userOrgTable.field(UserOrg.Fields.userId).eq(userTable.field(BaseEntity.Fields.id))))
-        .build();
-
-EzQuery<User> existsQuery = EzQuery.builder(User.class).from(userTable)
-        .select(s -> s.addAll())
-        .where(w -> w.exists(orgSubQuery))  // 也支持 .notExists(orgSubQuery)
-        .build();
-
-// UNION 合并
-EzQuery<User> q1 = ...;
-EzQuery<User> unionQuery = EzQuery.builder(User.class).from(userTable)
-        .select(s -> s.addAll())
-        .union(q1)
-        .build();
+            s.addField(ComplexUser.Fields.username);
+            s.add(wf, "userRank");
+        }).build();
 ```
 
 ---
@@ -404,10 +331,10 @@ EzMybatisContent.addOnBuildSqlGetFieldListener(config, (scope, entityType, field
 EzMybatisContent.addQueryRetListener(config, new EzMybatisQueryRetListener() {
     @Override
     public Object onBuildDone(Object model) {
-        if (model instanceof User) {
-            String encrypted = ((User) model).getSecretContent();
+        if (model instanceof ComplexUser) {
+            String encrypted = ((ComplexUser) model).getSecretContent();
             if (encrypted != null) {
-                ((User) model).setSecretContent(EncryptUtil.decrypt(encrypted));
+                ((ComplexUser) model).setSecretContent(EncryptUtil.decrypt(encrypted));
             }
         }
         return model;
@@ -422,14 +349,15 @@ EzMybatisContent.addQueryRetListener(config, new EzMybatisQueryRetListener() {
 ### Q1: 如何处理复杂的查询条件（嵌套 AND / OR）？
 使用 `groupCondition()` 以及支持 Lambda 传入以构建任意嵌套逻辑：
 ```java
-EzQuery<User> query = EzQuery.builder(User.class)
+EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class)
         .from(table)
         .where(w -> {
-            w.addCondition(table.field(User.Fields.sex).eq(User.Sex.MAN));
-            w.groupCondition() // 开始嵌套条件分组 ( age < 20 OR name = 'TestUser' )
-                .addCondition(table.field(User.Fields.age).lt(20))
-                .addCondition(AndOr.OR, table.field(User.Fields.name), Operator.eq, "TestUser")
-                .done(); // 结束分组
+            w.addCondition(table.field(ComplexUser.Fields.sex).eq(User.Sex.MAN));
+            w.groupCondition(c->{
+                // 开始嵌套条件分组 ( age < 20 OR name = 'TestUser' )
+                c.addCondition(table.field(ComplexUser.Fields.age).lt(20));
+                c.addCondition(AndOr.OR, table.field(ComplexUser.Fields.name), Operator.eq, "TestUser");
+            });
         })
         .build();
 ```
@@ -439,7 +367,6 @@ EzQuery<User> query = EzQuery.builder(User.class)
 - **大批量导入/批量更新**：推荐使用极速单向的 `JdbcInsertDao` 与 `JdbcUpdateDao` 以获得原生 JDBC 处理性能，减少对象映射开销。
 
 ---
-
 ## 📄 许可证
 
 本项目基于 **Apache License 2.0** 开源，可自由用于商业与非商业用途，须保留版权与许可证声明。

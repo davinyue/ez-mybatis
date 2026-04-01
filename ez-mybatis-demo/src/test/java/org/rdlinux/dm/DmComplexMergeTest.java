@@ -133,17 +133,15 @@ public class DmComplexMergeTest extends DmBaseTest {
         user.setAge(28);
         user.setStatus(ComplexUser.UserStatus.NORMAL);
 
+
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on()
-                .addCondition(userTable.field(ComplexUser.Fields.departmentId), sourceTable.column("ID"))
-                .done()
-                .set()
-                .add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update"))
-                .done()
+                .on(o ->
+                        o.addCondition(userTable.field(ComplexUser.Fields.departmentId).eq(sourceTable.column("ID"))))
+                .set(s ->
+                        s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update")))
                 .whenNotMatchedThenInsert(user)
                 .build();
-
         EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
         Integer ret = mapper.expandUpdate(merge);
         this.sqlSession.commit();
