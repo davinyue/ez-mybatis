@@ -10,8 +10,8 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
-import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
-import org.rdlinux.ezmybatis.constant.TableNamePattern;
+import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzUpdate;
@@ -32,7 +32,7 @@ import java.util.UUID;
 
 /**
  * 所有数据库测试的公共基类。
- * 子类只需在自己的 static 块中调用 {@link #initSqlSessionFactory(String, boolean, MapRetKeyPattern, TableNamePattern)} 即可完成初始化。
+ * 子类只需在自己的 static 块中调用 {@link #initSqlSessionFactory(String, boolean, MapRetKeyCasePolicy, NameCasePolicy, NameCasePolicy)} 即可完成初始化。
  */
 @Slf4j
 public abstract class AbstractBaseTest {
@@ -48,8 +48,9 @@ public abstract class AbstractBaseTest {
      * @param escapeKeyword  是否转义关键字
      */
     protected static void initSqlSessionFactory(String configResource, boolean escapeKeyword,
-                                                MapRetKeyPattern mapRetKeyPattern,
-                                                TableNamePattern tableNamePattern) {
+                                                MapRetKeyCasePolicy mapRetKeyCasePolicy,
+                                                NameCasePolicy tableNameCasePolicy,
+                                                NameCasePolicy columnNameCasePolicy) {
         Reader reader;
         try {
             reader = Resources.getResourceAsReader(configResource);
@@ -60,8 +61,9 @@ public abstract class AbstractBaseTest {
         Configuration configuration = parser.parse();
         EzMybatisConfig ezMybatisConfig = new EzMybatisConfig(configuration);
         ezMybatisConfig.setEscapeKeyword(escapeKeyword);
-        ezMybatisConfig.setMapRetKeyPattern(mapRetKeyPattern);
-        ezMybatisConfig.setTableNamePattern(tableNamePattern);
+        ezMybatisConfig.setMapRetKeyCasePolicy(mapRetKeyCasePolicy);
+        ezMybatisConfig.setTableNameCasePolicy(tableNameCasePolicy);
+        ezMybatisConfig.setColumnNameCasePolicy(columnNameCasePolicy);
         EzMybatisContent.init(ezMybatisConfig);
 
         // 插入监听器

@@ -1,7 +1,7 @@
 package org.rdlinux.ezmybatis.core.classinfo.entityinfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.constant.TableNamePattern;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
@@ -26,9 +26,9 @@ public class DefaultEntityClassInfo extends AbstractEntityClassInfo {
             }
             this.schema = annotation.schema();
         }
-        if (buildConfig.getTableNamePattern() == TableNamePattern.UPPER_CASE) {
+        if (buildConfig.getTableNameCasePolicy() == NameCasePolicy.UPPER_CASE) {
             this.tableName = this.tableName.toUpperCase();
-        } else if (buildConfig.getTableNamePattern() == TableNamePattern.LOWER_CASE) {
+        } else if (buildConfig.getTableNameCasePolicy() == NameCasePolicy.LOWER_CASE) {
             this.tableName = this.tableName.toLowerCase();
         }
         this.entityClass = entityClass;

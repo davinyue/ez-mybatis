@@ -1,12 +1,12 @@
 package org.rdlinux.dm;
 
 import org.rdlinux.AbstractBaseTest;
-import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
-import org.rdlinux.ezmybatis.constant.TableNamePattern;
+import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 
 public class DmBaseTest extends AbstractBaseTest {
     static {
         AbstractBaseTest.initSqlSessionFactory("mybatis-config-dm.xml", false,
-                MapRetKeyPattern.HUMP, TableNamePattern.UPPER_CASE);
+                MapRetKeyCasePolicy.HUMP, NameCasePolicy.UPPER_CASE, NameCasePolicy.UPPER_CASE);
     }
 }

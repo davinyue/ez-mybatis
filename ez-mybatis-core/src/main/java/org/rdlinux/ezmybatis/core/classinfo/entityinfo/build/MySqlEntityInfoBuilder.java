@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.classinfo.entityinfo.build;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzContentConfig;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.DefaultEntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
@@ -26,13 +25,10 @@ public class MySqlEntityInfoBuilder implements EntityInfoBuilder {
     @Override
     public EntityClassInfo buildInfo(EzContentConfig ezContentConfig, Class<?> ntClass) {
         EntityInfoBuildConfig buildConfig = new EntityInfoBuildConfig(ezContentConfig.getEzMybatisConfig()
-                .getTableNamePattern(), EntityInfoBuildConfig.ColumnHandle.TO_UNDER);
+                .getTableNameCasePolicy(), EntityInfoBuildConfig.ColumnNameBuildPolicy.TO_UNDER,
+                ezContentConfig.getEzMybatisConfig().getColumnNameCasePolicy());
         return new DefaultEntityClassInfo(ntClass, buildConfig);
     }
 
 
-    @Override
-    public DbType getSupportedDbType() {
-        return DbType.MYSQL;
-    }
 }

@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.mp.entity;
 
-import org.rdlinux.ezmybatis.constant.DbType;
-
 public class MpPostgreSqlEntityInfoBuilder extends MpMySqlEntityInfoBuilder {
     private static volatile MpPostgreSqlEntityInfoBuilder instance;
 
@@ -20,8 +18,4 @@ public class MpPostgreSqlEntityInfoBuilder extends MpMySqlEntityInfoBuilder {
     }
 
 
-    @Override
-    public DbType getSupportedDbType() {
-        return DbType.POSTGRE_SQL;
-    }
 }

@@ -2,6 +2,8 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.dm;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.DmEntityInfoBuilder;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractDbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
@@ -49,50 +51,55 @@ public class DmDialectProvider extends AbstractDbDialectProvider {
 
     @Override
     public void registerConverters() {
-        addConverter(Where.class, DmWhereConverter.getInstance());
-        addConverter(Having.class, DmHavingConverter.getInstance());
-        addConverter(Join.class, DmJoinConverter.getInstance());
-        addConverter(From.class, DmFromConverter.getInstance());
-        addConverter(OrderBy.class, DmOrderByConverter.getInstance());
-        addConverter(OrderBy.OrderItem.class, DmOrderItemConverter.getInstance());
-        addConverter(Select.class, DmSelectConverter.getInstance());
-        addConverter(GroupBy.class, DmGroupByConverter.getInstance());
-        addConverter(Page.class, DmPageConverter.getInstance());
-        addConverter(NormalPartition.class, DmNormalPartitionConverter.getInstance());
-        addConverter(SubPartition.class, DmSubPartitionConverter.getInstance());
-        addConverter(DbTable.class, DmDbTableConverter.getInstance());
-        addConverter(EntityTable.class, DmEntityTableConverter.getInstance());
-        addConverter(EzQueryTable.class, DmEzQueryTableConverter.getInstance());
-        addConverter(SqlTable.class, DmSqlTableConverter.getInstance());
-        addConverter(CaseWhen.class, DmCaseWhenConverter.getInstance());
-        addConverter(SelectAllItem.class, DmSelectAllItemConverter.getInstance());
-        addConverter(SelectTableAllItem.class, DmSelectTableAllItemConverter.getInstance());
-        addConverter(SelectOperand.class, MySqlSelectOperandConverter.getInstance());
-        addConverter(UpdateColumnItem.class, DmUpdateColumnItemConverter.getInstance());
-        addConverter(UpdateFieldItem.class, DmUpdateFieldItemConverter.getInstance());
-        addConverter(SqlCondition.class, DmSqlConditionConverter.getInstance());
-        addConverter(GroupCondition.class, DmGroupConditionConverter.getInstance());
-        addConverter(ArgCompareArgCondition.class, OracleArgCompareArgConditionConverter.getInstance());
-        addConverter(ExistsCondition.class, MySqlExistsConverter.getInstance());
-        addConverter(EzQuery.class, DmEzQueryConverter.getInstance());
-        addConverter(Function.class, DmFunctionConverter.getInstance());
-        addConverter(Formula.class, DmFormulaConverter.getInstance());
-        addConverter(GroupFormulaElement.class, DmGroupFormulaElementConverter.getInstance());
-        addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
-        addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
-        addConverter(Union.class, DmUnionConverter.getInstance());
-        addConverter(Alias.class, MySqlAliasConverter.getInstance());
-        addConverter(TableColumn.class, MySqlTableColumnConverter.getInstance());
-        addConverter(EntityField.class, MySqlEntityFieldConverter.getInstance());
-        addConverter(Keywords.class, MySqlKeywordsConverter.getInstance());
-        addConverter(ObjArg.class, MySqlObjArgConverter.getInstance());
-        addConverter(Sql.class, MySqlSqlConverter.getInstance());
-        addConverter(Limit.class, DmLimitConverter.getInstance());
-        addConverter(SqlHint.class, DmSqlHintConverter.getInstance());
+        this.addConverter(Where.class, DmWhereConverter.getInstance());
+        this.addConverter(Having.class, DmHavingConverter.getInstance());
+        this.addConverter(Join.class, DmJoinConverter.getInstance());
+        this.addConverter(From.class, DmFromConverter.getInstance());
+        this.addConverter(OrderBy.class, DmOrderByConverter.getInstance());
+        this.addConverter(OrderBy.OrderItem.class, DmOrderItemConverter.getInstance());
+        this.addConverter(Select.class, DmSelectConverter.getInstance());
+        this.addConverter(GroupBy.class, DmGroupByConverter.getInstance());
+        this.addConverter(Page.class, DmPageConverter.getInstance());
+        this.addConverter(NormalPartition.class, DmNormalPartitionConverter.getInstance());
+        this.addConverter(SubPartition.class, DmSubPartitionConverter.getInstance());
+        this.addConverter(DbTable.class, DmDbTableConverter.getInstance());
+        this.addConverter(EntityTable.class, DmEntityTableConverter.getInstance());
+        this.addConverter(EzQueryTable.class, DmEzQueryTableConverter.getInstance());
+        this.addConverter(SqlTable.class, DmSqlTableConverter.getInstance());
+        this.addConverter(CaseWhen.class, DmCaseWhenConverter.getInstance());
+        this.addConverter(SelectAllItem.class, DmSelectAllItemConverter.getInstance());
+        this.addConverter(SelectTableAllItem.class, DmSelectTableAllItemConverter.getInstance());
+        this.addConverter(SelectOperand.class, MySqlSelectOperandConverter.getInstance());
+        this.addConverter(UpdateColumnItem.class, DmUpdateColumnItemConverter.getInstance());
+        this.addConverter(UpdateFieldItem.class, DmUpdateFieldItemConverter.getInstance());
+        this.addConverter(SqlCondition.class, DmSqlConditionConverter.getInstance());
+        this.addConverter(GroupCondition.class, DmGroupConditionConverter.getInstance());
+        this.addConverter(ArgCompareArgCondition.class, OracleArgCompareArgConditionConverter.getInstance());
+        this.addConverter(ExistsCondition.class, MySqlExistsConverter.getInstance());
+        this.addConverter(EzQuery.class, DmEzQueryConverter.getInstance());
+        this.addConverter(Function.class, DmFunctionConverter.getInstance());
+        this.addConverter(Formula.class, DmFormulaConverter.getInstance());
+        this.addConverter(GroupFormulaElement.class, DmGroupFormulaElementConverter.getInstance());
+        this.addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
+        this.addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
+        this.addConverter(Union.class, DmUnionConverter.getInstance());
+        this.addConverter(Alias.class, MySqlAliasConverter.getInstance());
+        this.addConverter(TableColumn.class, MySqlTableColumnConverter.getInstance());
+        this.addConverter(EntityField.class, MySqlEntityFieldConverter.getInstance());
+        this.addConverter(Keywords.class, MySqlKeywordsConverter.getInstance());
+        this.addConverter(ObjArg.class, MySqlObjArgConverter.getInstance());
+        this.addConverter(Sql.class, MySqlSqlConverter.getInstance());
+        this.addConverter(Limit.class, DmLimitConverter.getInstance());
+        this.addConverter(SqlHint.class, DmSqlHintConverter.getInstance());
     }
 
     @Override
     public String getKeywordQuoteMark() {
         return "\"";
+    }
+
+    @Override
+    public EntityInfoBuilder getEntityInfoBuilder() {
+        return DmEntityInfoBuilder.getInstance();
     }
 }

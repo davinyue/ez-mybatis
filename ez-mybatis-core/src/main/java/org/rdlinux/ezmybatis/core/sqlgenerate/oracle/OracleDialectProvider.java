@@ -2,6 +2,8 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuilder;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.OracleEntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractDbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
@@ -48,50 +50,55 @@ public class OracleDialectProvider extends AbstractDbDialectProvider {
 
     @Override
     public void registerConverters() {
-        addConverter(Where.class, OracleWhereConverter.getInstance());
-        addConverter(Having.class, OracleHavingConverter.getInstance());
-        addConverter(Join.class, OracleJoinConverter.getInstance());
-        addConverter(From.class, OracleFromConverter.getInstance());
-        addConverter(OrderBy.class, OracleOrderByConverter.getInstance());
-        addConverter(OrderBy.OrderItem.class, OracleOrderItemConverter.getInstance());
-        addConverter(Select.class, OracleSelectConverter.getInstance());
-        addConverter(GroupBy.class, OracleGroupByConverter.getInstance());
-        addConverter(Page.class, OraclePageConverter.getInstance());
-        addConverter(NormalPartition.class, OracleNormalPartitionConverter.getInstance());
-        addConverter(SubPartition.class, OracleSubPartitionConverter.getInstance());
-        addConverter(DbTable.class, OracleDbTableConverter.getInstance());
-        addConverter(EntityTable.class, OracleEntityTableConverter.getInstance());
-        addConverter(EzQueryTable.class, OracleEzQueryTableConverter.getInstance());
-        addConverter(SqlTable.class, OracleSqlTableConverter.getInstance());
-        addConverter(CaseWhen.class, OracleCaseWhenConverter.getInstance());
-        addConverter(SelectAllItem.class, OracleSelectAllItemConverter.getInstance());
-        addConverter(SelectTableAllItem.class, OracleSelectTableAllItemConverter.getInstance());
-        addConverter(SelectOperand.class, MySqlSelectOperandConverter.getInstance());
-        addConverter(UpdateColumnItem.class, OracleUpdateColumnItemConverter.getInstance());
-        addConverter(UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
-        addConverter(SqlCondition.class, OracleSqlConditionConverter.getInstance());
-        addConverter(GroupCondition.class, OracleGroupConditionConverter.getInstance());
-        addConverter(ArgCompareArgCondition.class, OracleArgCompareArgConditionConverter.getInstance());
-        addConverter(ExistsCondition.class, MySqlExistsConverter.getInstance());
-        addConverter(EzQuery.class, OracleEzQueryConverter.getInstance());
-        addConverter(Function.class, OracleFunctionConverter.getInstance());
-        addConverter(Formula.class, OracleFormulaConverter.getInstance());
-        addConverter(GroupFormulaElement.class, OracleGroupFormulaElementConverter.getInstance());
-        addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
-        addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
-        addConverter(Union.class, OracleUnionConverter.getInstance());
-        addConverter(Alias.class, MySqlAliasConverter.getInstance());
-        addConverter(TableColumn.class, MySqlTableColumnConverter.getInstance());
-        addConverter(EntityField.class, MySqlEntityFieldConverter.getInstance());
-        addConverter(Keywords.class, MySqlKeywordsConverter.getInstance());
-        addConverter(ObjArg.class, MySqlObjArgConverter.getInstance());
-        addConverter(Sql.class, MySqlSqlConverter.getInstance());
-        addConverter(Limit.class, OracleLimitConverter.getInstance());
-        addConverter(SqlHint.class, OracleSqlHintConverter.getInstance());
+        this.addConverter(Where.class, OracleWhereConverter.getInstance());
+        this.addConverter(Having.class, OracleHavingConverter.getInstance());
+        this.addConverter(Join.class, OracleJoinConverter.getInstance());
+        this.addConverter(From.class, OracleFromConverter.getInstance());
+        this.addConverter(OrderBy.class, OracleOrderByConverter.getInstance());
+        this.addConverter(OrderBy.OrderItem.class, OracleOrderItemConverter.getInstance());
+        this.addConverter(Select.class, OracleSelectConverter.getInstance());
+        this.addConverter(GroupBy.class, OracleGroupByConverter.getInstance());
+        this.addConverter(Page.class, OraclePageConverter.getInstance());
+        this.addConverter(NormalPartition.class, OracleNormalPartitionConverter.getInstance());
+        this.addConverter(SubPartition.class, OracleSubPartitionConverter.getInstance());
+        this.addConverter(DbTable.class, OracleDbTableConverter.getInstance());
+        this.addConverter(EntityTable.class, OracleEntityTableConverter.getInstance());
+        this.addConverter(EzQueryTable.class, OracleEzQueryTableConverter.getInstance());
+        this.addConverter(SqlTable.class, OracleSqlTableConverter.getInstance());
+        this.addConverter(CaseWhen.class, OracleCaseWhenConverter.getInstance());
+        this.addConverter(SelectAllItem.class, OracleSelectAllItemConverter.getInstance());
+        this.addConverter(SelectTableAllItem.class, OracleSelectTableAllItemConverter.getInstance());
+        this.addConverter(SelectOperand.class, MySqlSelectOperandConverter.getInstance());
+        this.addConverter(UpdateColumnItem.class, OracleUpdateColumnItemConverter.getInstance());
+        this.addConverter(UpdateFieldItem.class, OracleUpdateFieldItemConverter.getInstance());
+        this.addConverter(SqlCondition.class, OracleSqlConditionConverter.getInstance());
+        this.addConverter(GroupCondition.class, OracleGroupConditionConverter.getInstance());
+        this.addConverter(ArgCompareArgCondition.class, OracleArgCompareArgConditionConverter.getInstance());
+        this.addConverter(ExistsCondition.class, MySqlExistsConverter.getInstance());
+        this.addConverter(EzQuery.class, OracleEzQueryConverter.getInstance());
+        this.addConverter(Function.class, OracleFunctionConverter.getInstance());
+        this.addConverter(Formula.class, OracleFormulaConverter.getInstance());
+        this.addConverter(GroupFormulaElement.class, OracleGroupFormulaElementConverter.getInstance());
+        this.addConverter(FormulaOperandElement.class, MySqlFormulaOperandElementConverter.getInstance());
+        this.addConverter(WindowFunction.class, MySqlWindowFunctionConverter.getInstance());
+        this.addConverter(Union.class, OracleUnionConverter.getInstance());
+        this.addConverter(Alias.class, MySqlAliasConverter.getInstance());
+        this.addConverter(TableColumn.class, MySqlTableColumnConverter.getInstance());
+        this.addConverter(EntityField.class, MySqlEntityFieldConverter.getInstance());
+        this.addConverter(Keywords.class, MySqlKeywordsConverter.getInstance());
+        this.addConverter(ObjArg.class, MySqlObjArgConverter.getInstance());
+        this.addConverter(Sql.class, MySqlSqlConverter.getInstance());
+        this.addConverter(Limit.class, OracleLimitConverter.getInstance());
+        this.addConverter(SqlHint.class, OracleSqlHintConverter.getInstance());
     }
 
     @Override
     public String getKeywordQuoteMark() {
         return "\"";
+    }
+
+    @Override
+    public EntityInfoBuilder getEntityInfoBuilder() {
+        return OracleEntityInfoBuilder.getInstance();
     }
 }

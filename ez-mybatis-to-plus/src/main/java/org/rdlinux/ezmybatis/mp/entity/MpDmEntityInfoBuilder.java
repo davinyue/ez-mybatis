@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.mp.entity;
 
-import org.rdlinux.ezmybatis.constant.DbType;
-
 public class MpDmEntityInfoBuilder extends MpOracleEntityInfoBuilder {
     private static volatile MpDmEntityInfoBuilder instance;
 
@@ -19,8 +17,4 @@ public class MpDmEntityInfoBuilder extends MpOracleEntityInfoBuilder {
         return instance;
     }
 
-    @Override
-    public DbType getSupportedDbType() {
-        return DbType.DM;
-    }
 }

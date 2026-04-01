@@ -320,4 +320,46 @@ public class EzMybatisContent {
             }
         }
     }
+
+    /**
+     * 获取数据库方言提供者
+     *
+     * @param configuration mybatis配置对象
+     * @return 数据库方言提供者
+     */
+    public static DbDialectProvider getDbDialectProvider(Configuration configuration) {
+        DbType dbType = getDbType(configuration);
+        return DbDialectProviderLoader.getProvider(dbType);
+    }
+
+    /**
+     * 获取数据库方言提供者
+     *
+     * @param dbType 数据库类型
+     * @return 数据库方言提供者
+     */
+    public static DbDialectProvider getDbDialectProvider(DbType dbType) {
+        return DbDialectProviderLoader.getProvider(dbType);
+    }
+
+    /**
+     * 按 DbType 设置 Provider
+     *
+     * @param dbType   数据库类型
+     * @param provider 方言提供者
+     */
+    public static void setProvider(DbType dbType, DbDialectProvider provider) {
+        DbDialectProviderLoader.setProvider(dbType, provider);
+    }
+
+    /**
+     * 按 Configuration 设置 Provider
+     *
+     * @param configuration mybatis配置
+     * @param provider      方言提供者
+     */
+    public static void setProvider(Configuration configuration, DbDialectProvider provider) {
+        DbType dbType = getDbType(configuration);
+        DbDialectProviderLoader.setProvider(dbType, provider);
+    }
 }

@@ -28,7 +28,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
@@ -1263,22 +1263,22 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         String property;
         //如果是map, 则根据配置规则进行推算map属性
         if (metaObject.getOriginalObject() instanceof Map) {
-            MapRetKeyPattern mapRetKeyPattern = EzMybatisContent.getContentConfig(this.configuration)
-                    .getEzMybatisConfig().getMapRetKeyPattern();
-            if (mapRetKeyPattern == null) {
-                mapRetKeyPattern = MapRetKeyPattern.HUMP;
+            MapRetKeyCasePolicy mapRetKeyCasePolicy = EzMybatisContent.getContentConfig(this.configuration)
+                    .getEzMybatisConfig().getMapRetKeyCasePolicy();
+            if (mapRetKeyCasePolicy == null) {
+                mapRetKeyCasePolicy = MapRetKeyCasePolicy.HUMP;
             }
-            if (mapRetKeyPattern == MapRetKeyPattern.HUMP) {
+            if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.HUMP) {
                 if (HumpLineStringUtils.isHump(column)) {
                     property = column;
                 } else {
                     property = HumpLineStringUtils.lineToHump(column.toLowerCase());
                 }
-            } else if (mapRetKeyPattern == MapRetKeyPattern.LOWER_CASE) {
+            } else if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.LOWER_CASE) {
                 property = column.toLowerCase();
-            } else if (mapRetKeyPattern == MapRetKeyPattern.UPPER_CASE) {
+            } else if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.UPPER_CASE) {
                 property = column.toUpperCase();
-            } else if (mapRetKeyPattern == MapRetKeyPattern.ORIGINAL) {
+            } else if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.ORIGINAL) {
                 property = column;
             } else {
                 property = column;
