@@ -846,5 +846,23 @@ public class PgComplexEntitySelectTest extends PgBaseTest {
         Assert.assertNotNull(user);
         log.info("EzQuery One: {}", JacksonUtils.toJsonString(user));
     }
+
+    @Test
+    public void encQuery() {
+        String deptId = this.insertAndGetDepartment().getId();
+        String id = this.insertAndGetComplexUserId(deptId);
+        ComplexUser user = this.sqlSession.getMapper(ComplexUserMapper.class).selectById(id);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.getExtInfo()); // 验证JSON转换
+        EntityTable entityTable = EntityTable.of(ComplexUser.class);
+        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(entityTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w ->
+                        w.addCondition(entityTable.field(ComplexUser.Fields.secretContent).eq(user.getSecretContent())))
+                .page(1, 1)
+                .build();
+        ComplexUser encUser = this.sqlSession.getMapper(EzMapper.class).queryOne(query);
+        log.info("ComplexUserMapper.encTest: {}", JacksonUtils.toJsonString(encUser));
+    }
 }
 

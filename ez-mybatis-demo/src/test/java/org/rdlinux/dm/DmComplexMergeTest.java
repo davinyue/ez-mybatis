@@ -68,6 +68,41 @@ public class DmComplexMergeTest extends DmBaseTest {
     }
 
     @Test
+    public void mergeUpdateTest() {
+        String userId = this.insertAndGetComplexUserId();
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
+        EzQuery<ComplexUser> sourceQuery = EzQuery.builder(ComplexUser.class)
+                .from(userTable)
+                .select()
+                .addAll()
+                .done()
+                .where()
+                .addCondition(userTable.field(BaseEntity.Fields.id), userId)
+                .done()
+                .build();
+        EzQueryTable sourceTable = EzQueryTable.of(sourceQuery);
+
+        Merge merge = Merge.into(userTable)
+                .using(sourceTable)
+                .on(o -> o.addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
+                .set(s -> {
+                    s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"));
+                    s.add(userTable.field(ComplexUser.Fields.age).set(35));
+                })
+                .build();
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        Integer ret = mapper.expandUpdate(merge);
+        this.sqlSession.commit();
+        Assert.assertNotNull(ret);
+
+        ComplexUser updated = mapper.selectById(ComplexUser.class, userId);
+        Assert.assertNotNull(updated);
+        Assert.assertEquals("dm_merge_update_name", updated.getUsername());
+        Assert.assertEquals(Integer.valueOf(35), updated.getAge());
+    }
+
+
+    @Test
     public void mergeMatchedUpdateTest() {
         String userId = this.insertAndGetComplexUserId();
         EntityTable userTable = EntityTable.of(ComplexUser.class);

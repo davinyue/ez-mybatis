@@ -14,21 +14,15 @@ import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
 import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisDeleteListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
-import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisUpdateListener;
-import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
-import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
+import org.rdlinux.ezmybatis.demo.ezlistener.ModelInsertListener;
+import org.rdlinux.ezmybatis.demo.ezlistener.ModelUpdateListener;
+import org.rdlinux.ezmybatis.demo.ezlistener.QueryRetDecrypt;
+import org.rdlinux.ezmybatis.demo.ezlistener.SqlParamEncrypt;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * 所有数据库测试的公共基类。
@@ -67,24 +61,7 @@ public abstract class AbstractBaseTest {
         EzMybatisContent.init(ezMybatisConfig);
 
         // 插入监听器
-        EzMybatisContent.addInsertListener(ezMybatisConfig, new EzMybatisInsertListener() {
-            @Override
-            public void onInsert(Object entity) {
-                if (entity instanceof BaseEntity) {
-                    AbstractBaseTest.log.info("插入事件");
-                    ((BaseEntity) entity).setUpdateTime(new Date());
-                    ((BaseEntity) entity).setCreateTime(new Date());
-                    if (((BaseEntity) entity).getId() == null) {
-                        ((BaseEntity) entity).setId(UUID.randomUUID().toString().replaceAll("-", ""));
-                    }
-                }
-            }
-
-            @Override
-            public void onBatchInsert(Collection<?> models) {
-                models.forEach(this::onInsert);
-            }
-        });
+        EzMybatisContent.addInsertListener(ezMybatisConfig, new ModelInsertListener(configuration));
 
         // 删除监听器
         EzMybatisContent.addDeleteListener(ezMybatisConfig, new EzMybatisDeleteListener() {
@@ -117,57 +94,11 @@ public abstract class AbstractBaseTest {
         });
 
         // 更新监听器
-        EzMybatisContent.addUpdateListener(ezMybatisConfig, new EzMybatisUpdateListener() {
-            @Override
-            public void onUpdate(Object entity) {
-                AbstractBaseTest.log.info("更新事件");
-                if (entity instanceof BaseEntity) {
-                    ((BaseEntity) entity).setUpdateTime(new Date());
-                }
-            }
-
-            @Override
-            public void onBatchUpdate(Collection<?> models) {
-                models.forEach(this::onUpdate);
-            }
-
-            @Override
-            public void onReplace(Object entity) {
-                AbstractBaseTest.log.info("替换事件");
-                if (entity instanceof BaseEntity) {
-                    ((BaseEntity) entity).setCreateTime(new Date());
-                    ((BaseEntity) entity).setUpdateTime(new Date());
-                }
-            }
-
-            @Override
-            public void onBatchReplace(Collection<?> models) {
-                models.forEach(this::onReplace);
-            }
-
-            @Override
-            public void onEzUpdate(EzUpdate ezUpdate) {
-                Table table = ezUpdate.getTable();
-                if (table instanceof EntityTable) {
-                    Class<?> etType = ((EntityTable) table).getEtType();
-                    if (BaseEntity.class.isAssignableFrom(etType)) {
-                        ezUpdate.getSet().getItems().add(new UpdateFieldItem(((EntityTable) table),
-                                BaseEntity.Fields.updateTime, ObjArg.of(new Date())));
-                    }
-                }
-            }
-
-            @Override
-            public void onEzBatchUpdate(Collection<EzUpdate> ezUpdates) {
-                ezUpdates.forEach(this::onEzUpdate);
-            }
-        });
+        EzMybatisContent.addUpdateListener(ezMybatisConfig, new ModelUpdateListener(configuration));
 
         // SQL 构建字段获取监听器
-        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, (originObj, ntType, field, value) -> {
-            log.info("构建sql时获取{}类的{}属性值为{}", ntType.getSimpleName(), field.getName(), value);
-            return value;
-        });
+        EzMybatisContent.addOnBuildSqlGetFieldListener(ezMybatisConfig, new SqlParamEncrypt());
+        EzMybatisContent.addQueryRetListener(ezMybatisConfig, new QueryRetDecrypt(configuration));
 
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }

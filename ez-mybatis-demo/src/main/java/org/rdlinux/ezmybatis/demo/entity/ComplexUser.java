@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import org.rdlinux.ezmybatis.annotation.TypeHandler;
+import org.rdlinux.ezmybatis.demo.enc.DbEncrypt;
 import org.rdlinux.ezmybatis.demo.typehandler.ExtInfoJsonTypeHandler;
 
 import javax.persistence.Column;
@@ -93,6 +94,7 @@ public class ComplexUser extends BaseEntity {
      * 数据加解密测试字段
      * 不使用 TypeHandler，而是预留给事件监听器（如 InsertListener/UpdateListener）进行加解密测试
      */
+    @DbEncrypt
     private String secretContent;
 
     /**

@@ -44,6 +44,7 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
         user.setAvatar("binary_avatar_data".getBytes(StandardCharsets.UTF_8));
         user.setDescription(faker.lorem().paragraph());
         user.setIgnoredData("This should be transient");
+        user.setSpecificColumn("SpecificCol_Val");
         user.setSecretContent(faker.internet().password());
 
         ExtInfo extInfo = new ExtInfo();
