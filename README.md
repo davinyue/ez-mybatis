@@ -281,10 +281,9 @@ EzQuery<StringHashMap> aggQuery = EzQuery.builder(StringHashMap.class)
 
 // 4. 窗口函数查询 (Window Function / OVER / PARTITION)
 Function rNumFunc = Function.build("ROW_NUMBER", f -> {});
-WindowFunction wf = WindowFunction.builder(rNumFunc)
+WindowFunction wf = WindowFunction.build(rNumFunc, w -> w
         .partitionBy(userTable.field(ComplexUser.Fields.status))
-        .orderBy(userTable.field(BaseEntity.Fields.createTime), OrderType.DESC)
-        .build();
+        .orderBy(userTable.field(BaseEntity.Fields.createTime), OrderType.DESC));
 
 EzQuery<StringHashMap> winQuery = EzQuery.builder(StringHashMap.class).from(userTable)
         .select(s -> {

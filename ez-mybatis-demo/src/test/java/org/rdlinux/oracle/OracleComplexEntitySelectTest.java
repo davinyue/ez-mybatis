@@ -520,16 +520,15 @@ public class OracleComplexEntitySelectTest extends OracleBaseTest {
 
         // 1. 无 partition, 无 order, 无 frame
         Function countFunc1 = Function.build("COUNT", f -> f.addArg(EntityField.of(table, BaseEntity.Fields.id)));
-        WindowFunction wf1 = WindowFunction.builder(countFunc1).build();
+        WindowFunction wf1 = WindowFunction.build(countFunc1);
 
         // 2. 多个 partition, 多个 order
         Function rowNumFunc = Function.build("ROW_NUMBER", f -> {
         });
-        WindowFunction wf2 = WindowFunction.builder(rowNumFunc)
+        WindowFunction wf2 = WindowFunction.build(rowNumFunc, w -> w
                 .partitionBy(EntityField.of(table, ComplexUser.Fields.status))
                 .orderBy(EntityField.of(table, ComplexUser.Fields.username), OrderType.ASC)
-                .orderBy(EntityField.of(table, BaseEntity.Fields.createTime), OrderType.DESC)
-                .build();
+                .orderBy(EntityField.of(table, BaseEntity.Fields.createTime), OrderType.DESC));
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select(s -> {
@@ -864,4 +863,3 @@ public class OracleComplexEntitySelectTest extends OracleBaseTest {
         log.info("ComplexUserMapper.encTest: {}", JacksonUtils.toJsonString(encUser));
     }
 }
-

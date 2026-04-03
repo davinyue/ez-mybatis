@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 窗口函数，用于实现 SQL 中的 OVER(...) 子句。
@@ -57,8 +58,14 @@ public class WindowFunction implements QueryRetNeedAlias {
      * @param function 聚合函数或窗口控制函数 (例如 ROW_NUMBER(), SUM() 等)
      * @return 窗口函数构造器
      */
-    public static WindowFunctionBuilder builder(Function function) {
-        return new WindowFunctionBuilder(function);
+    public static WindowFunction build(Function function) {
+        return new WindowFunctionBuilder(function).build();
+    }
+
+    public static WindowFunction build(Function function, Consumer<WindowFunctionBuilder> consumer) {
+        WindowFunctionBuilder builder = new WindowFunctionBuilder(function);
+        consumer.accept(builder);
+        return builder.build();
     }
 
     /**
