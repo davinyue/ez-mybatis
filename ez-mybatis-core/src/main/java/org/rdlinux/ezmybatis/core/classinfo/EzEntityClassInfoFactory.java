@@ -19,6 +19,16 @@ public class EzEntityClassInfoFactory {
      * 默认实体信息缓存
      */
     private static EzMybatisEntityInfoCache ENTITY_INFO_CACHE = new DefaultEzMybatisEntityInfoCache();
+    /**
+     * 默认实体信息热加载通知器
+     */
+    private static EntityInfoReloadNotifier ENTITY_INFO_RELOAD_NOTIFIER =
+            new DefaultEntityInfoReloadNotifier(ENTITY_INFO_CACHE);
+
+    static {
+        new EntityInfoHotReloadManager(new BuildOutputPathResolver(),
+                EzEntityClassInfoFactory::getEntityInfoReloadNotifier).start();
+    }
 
     /**
      * 获取实体信息, 如果没有将构造实体信息返回
@@ -52,5 +62,36 @@ public class EzEntityClassInfoFactory {
     public static void setEntityInfoCache(EzMybatisEntityInfoCache entityInfoCache) {
         Assert.notNull(entityInfoCache, "The entity information cache cannot be null.");
         EzEntityClassInfoFactory.ENTITY_INFO_CACHE = entityInfoCache;
+        EzEntityClassInfoFactory.ENTITY_INFO_RELOAD_NOTIFIER = new DefaultEntityInfoReloadNotifier(entityInfoCache);
+    }
+
+    /**
+     * 获取实体信息热加载通知器
+     */
+    public static EntityInfoReloadNotifier getEntityInfoReloadNotifier() {
+        return ENTITY_INFO_RELOAD_NOTIFIER;
+    }
+
+    /**
+     * 设置实体信息热加载通知器
+     */
+    public static void setEntityInfoReloadNotifier(EntityInfoReloadNotifier entityInfoReloadNotifier) {
+        Assert.notNull(entityInfoReloadNotifier, "The entity information reload notifier cannot be null.");
+        EzEntityClassInfoFactory.ENTITY_INFO_RELOAD_NOTIFIER = entityInfoReloadNotifier;
+    }
+
+    /**
+     * 清理指定 configuration 下的实体信息缓存
+     */
+    public static void clear(Configuration configuration) {
+        Assert.notNull(configuration, "Configuration can not be null");
+        ENTITY_INFO_CACHE.clear(configuration);
+    }
+
+    /**
+     * 清理全部实体信息缓存
+     */
+    public static void clear() {
+        ENTITY_INFO_CACHE.clear();
     }
 }

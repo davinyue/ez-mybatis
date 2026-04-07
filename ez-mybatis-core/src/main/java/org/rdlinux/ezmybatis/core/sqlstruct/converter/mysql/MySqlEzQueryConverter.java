@@ -2,7 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -36,8 +35,7 @@ public class MySqlEzQueryConverter extends AbstractConverter<EzQuery> implements
     }
 
     protected String ezQueryToSql(EzQuery<?> obj, SqlGenerateContext sqlGenerateContext) {
-        return " (" + DbDialectProviderLoader.getProvider(EzMybatisContent
-                        .getDbType(sqlGenerateContext.getConfiguration()))
+        return " (" + EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), obj) + ") ";
     }
 

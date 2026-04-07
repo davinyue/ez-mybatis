@@ -2,7 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.MySqlEntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractDbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
@@ -31,6 +30,9 @@ import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
  * MySQL方言提供者
  */
 public class MySqlDialectProvider extends AbstractDbDialectProvider {
+    public MySqlDialectProvider() {
+        this.setEntityInfoBuilder(MySqlEntityInfoBuilder.getInstance());
+    }
 
     @Override
     public DbType getDbType() {
@@ -94,10 +96,5 @@ public class MySqlDialectProvider extends AbstractDbDialectProvider {
     @Override
     public String getKeywordQuoteMark() {
         return "`";
-    }
-
-    @Override
-    public EntityInfoBuilder getEntityInfoBuilder() {
-        return MySqlEntityInfoBuilder.getInstance();
     }
 }

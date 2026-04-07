@@ -2,7 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Union;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -38,7 +37,7 @@ public class MySqlUnionConverter extends AbstractConverter<Union> implements Con
         }
         sqlBuilder.append("\n(");
         Configuration configuration = sqlGenerateContext.getConfiguration();
-        String unionSql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+        String unionSql = EzMybatisContent.getDbDialectProvider(configuration)
                 .getSqlGenerate().getQuerySql(SqlGenerateContext.copyOf(sqlGenerateContext), obj.getQuery());
         if (obj.getQuery().getOrderBy() != null) {
             unionSql = String.format("SELECT * FROM (%s) %s", unionSql, AliasGenerate.getAlias());

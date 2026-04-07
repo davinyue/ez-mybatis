@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 
 public class MySqlBaseTest extends AbstractBaseTest {
     static {
-        AbstractBaseTest.initSqlSessionFactory("mybatis-config-mysql.xml", true,
+        AbstractBaseTest.initSqlSessionFactory("mybatis-config-mysql.xml", Boolean.TRUE,
                 MapRetKeyCasePolicy.HUMP, NameCasePolicy.LOWER_CASE, NameCasePolicy.LOWER_CASE);
     }
 }

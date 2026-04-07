@@ -52,4 +52,9 @@ public interface DbDialectProvider {
      * 获取实体信息构造器
      */
     EntityInfoBuilder getEntityInfoBuilder();
+
+    /**
+     * 设置实体信息构造器
+     */
+    void setEntityInfoBuilder(EntityInfoBuilder entityInfoBuilder);
 }

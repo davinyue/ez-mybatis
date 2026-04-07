@@ -165,6 +165,16 @@ public class TableColumn implements QueryRetOperand {
     }
 
     /**
+     * 构建基于此列的计数（COUNT distinct）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return COUNT 函数操作数对象
+     */
+    public SelectOperand distinctCount(String alias) {
+        return new SelectOperand(Function.builder("COUNT").addDistinctArg(this).build(), alias);
+    }
+
+    /**
      * 构建基于此列的绝对值（ABS）查询列
      *
      * @param alias 查询结果的列别名，如果不需要别名可以传 null

@@ -2,18 +2,17 @@ package org.rdlinux;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.junit.Assert;
+import org.junit.Test;
 import org.rdlinux.ezmybatis.core.FnField;
 
 public class FnFieldTest {
-    public static void main(String[] args) {
-        String field = FnField.of(User::getName);
-        System.out.println(field);
-        field = FnField.of(User::getFirst_name);
-        System.out.println(field);
-        field = FnField.of(User::getLastName);
-        System.out.println(field);
-        field = FnField.of(User::isWoman);
-        System.out.println(field);
+    @Test
+    public void shouldResolveGetterNamesToFields() {
+        Assert.assertEquals("name", FnField.of(User::getName));
+        Assert.assertEquals("first_name", FnField.of(User::getFirst_name));
+        Assert.assertEquals("lastName", FnField.of(User::getLastName));
+        Assert.assertEquals("woman", FnField.of(User::isWoman));
     }
 
     @Getter

@@ -84,7 +84,7 @@ public class MsSqlComplexMergeTests extends MsSqlBaseTest {
 
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on(o -> o.addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
+                .on(o -> o.addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("id")))
                 .set(s -> {
                     s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"));
                     s.add(userTable.field(ComplexUser.Fields.age).set(35));
@@ -123,7 +123,7 @@ public class MsSqlComplexMergeTests extends MsSqlBaseTest {
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
                 .on()
-                .addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID"))
+                .addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("id"))
                 .done()
                 .set()
                 .add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"))

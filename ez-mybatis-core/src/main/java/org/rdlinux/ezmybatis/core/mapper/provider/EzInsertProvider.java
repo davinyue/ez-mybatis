@@ -4,7 +4,6 @@ import org.rdlinux.ezmybatis.annotation.MethodName;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -24,7 +23,7 @@ public class EzInsertProvider {
     public String insert(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
-        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+        return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getInsertSql(sqlGenerateContext, null, entity);
     }
 
@@ -33,7 +32,7 @@ public class EzInsertProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+        return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getInsertSql(sqlGenerateContext, table, entity);
     }
 
@@ -41,7 +40,7 @@ public class EzInsertProvider {
     public String batchInsert(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
-        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+        return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getBatchInsertSql(sqlGenerateContext, null, entities);
     }
 
@@ -50,7 +49,7 @@ public class EzInsertProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+        return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getBatchInsertSql(sqlGenerateContext, table, entities);
     }
 
@@ -69,7 +68,7 @@ public class EzInsertProvider {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
-        return DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(sqlGenerateContext.getConfiguration()))
+        return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getInsertByQuerySql(sqlGenerateContext, table, query);
     }
 }

@@ -13,6 +13,7 @@ import org.rdlinux.ezmybatis.core.interceptor.EzMybatisStatementHandlerIntercept
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
@@ -54,8 +55,7 @@ public class EzMybatisContent {
      * 获取转换器
      */
     public static <T extends SqlStruct> Converter<T> getConverter(Configuration configuration, Class<T> sqlStruct) {
-        DbType dbType = getDbType(configuration);
-        return getConverter(dbType, sqlStruct);
+        return getDbDialectProvider(configuration).getConverter(sqlStruct);
     }
 
     /**
@@ -66,7 +66,12 @@ public class EzMybatisContent {
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
         Assert.notNull(configurationConfig, "please init");
         configurationConfig.setDbType(dbType);
-        initConverterRegister(dbType);
+        if (configurationConfig.getDbDialectProvider() == null
+                || configurationConfig.getDbDialectProvider().getDbType() != dbType) {
+            DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
+            configurationConfig.setDbDialectProvider(provider);
+        }
+        initConverterRegister(configuration);
     }
 
     /**
@@ -106,8 +111,7 @@ public class EzMybatisContent {
             return "";
         }
         DbType dbType = getDbType(configuration);
-        DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
-        return provider.getKeywordQuoteMark();
+        return getDbDialectProvider(configuration).getKeywordQuoteMark();
     }
 
     /**
@@ -225,17 +229,18 @@ public class EzMybatisContent {
         DbType dbType = DbDialectProviderLoader.matchDbType(driver);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.setDbType(dbType);
-        initConverterRegister(dbType);
+        configurationConfig.setDbDialectProvider(DbDialectProviderLoader.getProvider(dbType));
+        initConverterRegister(config.getConfiguration());
     }
 
     /**
      * 初始化类型转换器
      */
-    private static void initConverterRegister(DbType dbType) {
-        if (dbType == null) {
+    private static void initConverterRegister(Configuration configuration) {
+        DbDialectProvider provider = getDbDialectProvider(configuration);
+        if (provider == null) {
             return;
         }
-        DbDialectProvider provider = DbDialectProviderLoader.getProvider(dbType);
         provider.registerConverters();
     }
 
@@ -328,8 +333,17 @@ public class EzMybatisContent {
      * @return 数据库方言提供者
      */
     public static DbDialectProvider getDbDialectProvider(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(configuration);
+        Assert.notNull(configurationConfig, "please init");
+        DbDialectProvider provider = configurationConfig.getDbDialectProvider();
+        if (provider != null) {
+            return provider;
+        }
         DbType dbType = getDbType(configuration);
-        return DbDialectProviderLoader.getProvider(dbType);
+        provider = DbDialectProviderLoader.getProvider(dbType);
+        configurationConfig.setDbDialectProvider(provider);
+        return provider;
     }
 
     /**
@@ -359,7 +373,28 @@ public class EzMybatisContent {
      * @param provider      方言提供者
      */
     public static void setProvider(Configuration configuration, DbDialectProvider provider) {
-        DbType dbType = getDbType(configuration);
-        DbDialectProviderLoader.setProvider(dbType, provider);
+        Assert.notNull(configuration, "configuration can not be null");
+        Assert.notNull(provider, "provider can not be null");
+        EzContentConfig configurationConfig = getContentConfig(configuration);
+        configurationConfig.setDbType(provider.getDbType());
+        configurationConfig.setDbDialectProvider(provider);
+        initConverterRegister(configuration);
+    }
+
+    /**
+     * 销毁指定 configuration 相关的上下文缓存
+     */
+    public static void destroy(Configuration configuration) {
+        Assert.notNull(configuration, "configuration can not be null");
+        CFG_CONFIG_MAP.remove(configuration);
+        EzEntityClassInfoFactory.clear(configuration);
+    }
+
+    /**
+     * 清理全部上下文缓存
+     */
+    public static void destroyAll() {
+        CFG_CONFIG_MAP.clear();
+        EzEntityClassInfoFactory.clear();
     }
 }

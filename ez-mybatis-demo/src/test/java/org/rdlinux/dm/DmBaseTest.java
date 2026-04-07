@@ -6,7 +6,7 @@ import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 
 public class DmBaseTest extends AbstractBaseTest {
     static {
-        AbstractBaseTest.initSqlSessionFactory("mybatis-config-dm.xml", false,
+        AbstractBaseTest.initSqlSessionFactory("mybatis-config-dm.xml", Boolean.TRUE,
                 MapRetKeyCasePolicy.HUMP, NameCasePolicy.UPPER_CASE, NameCasePolicy.UPPER_CASE);
     }
 }

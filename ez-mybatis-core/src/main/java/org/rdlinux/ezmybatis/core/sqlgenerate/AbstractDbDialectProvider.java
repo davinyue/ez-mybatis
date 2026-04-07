@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
@@ -14,20 +15,31 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractDbDialectProvider implements DbDialectProvider {
 
     private final Map<Class<?>, Converter<?>> converterMap = new ConcurrentHashMap<>();
+    protected EntityInfoBuilder entityInfoBuilder;
 
     @Override
     public <T extends SqlStruct> void addConverter(Class<T> sqlStruct, Converter<T> converter) {
-        converterMap.put(sqlStruct, converter);
+        this.converterMap.put(sqlStruct, converter);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends SqlStruct> Converter<T> getConverter(Class<T> sqlStruct) {
-        Converter<T> converter = (Converter<T>) converterMap.get(sqlStruct);
+        Converter<T> converter = (Converter<T>) this.converterMap.get(sqlStruct);
         if (converter == null) {
             throw new RuntimeException(String.format("%s cannot find the converter of %s",
-                    getDbType().name(), sqlStruct.getSimpleName()));
+                    this.getDbType().name(), sqlStruct.getSimpleName()));
         }
         return converter;
+    }
+
+    @Override
+    public EntityInfoBuilder getEntityInfoBuilder() {
+        return this.entityInfoBuilder;
+    }
+
+    @Override
+    public void setEntityInfoBuilder(EntityInfoBuilder entityInfoBuilder) {
+        this.entityInfoBuilder = entityInfoBuilder;
     }
 }
