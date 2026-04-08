@@ -11,27 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ez-mybatis-expand</artifactId>
     <name>ez-mybatis-expand</name>
-    <url>https://github.com/davinyue/ez-mybatis</url>
-    <description>ez-mybatis</description>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>actable</distribution>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>DavinYue</name>
-            <email>davinyue@outlook.com</email>
-        </developer>
-    </developers>
-    <scm>
-        <tag>master</tag>
-        <connection>https://github.com/davinyue/ez-mybatis</connection>
-        <developerConnection>https://github.com/davinyue</developerConnection>
-        <url>https://github.com/davinyue/ez-mybatis</url>
-    </scm>
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -48,7 +27,6 @@
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
-                <version>${lombok.maven.plugin.version}</version>
             </plugin>
         </plugins>
     </build>

@@ -51,6 +51,11 @@
         <central.publishing.plugin.version>0.7.0</central.publishing.plugin.version>
         <lombok.version>1.18.22</lombok.version>
         <lombok.maven.plugin.version>1.18.4.0</lombok.maven.plugin.version>
+        <mybatis.version>3.5.19</mybatis.version>
+        <commons.lang3.version>3.18.0</commons.lang3.version>
+        <junit.version>4.13.2</junit.version>
+        <javax.persistence.version>2.2</javax.persistence.version>
+        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -60,9 +65,44 @@
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${javax.persistence.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>${lombok.maven.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

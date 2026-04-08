@@ -11,27 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ez-mybatis-to-plus</artifactId>
     <name>ez-mybatis-to-plus</name>
-    <url>https://github.com/davinyue/ez-mybatis</url>
-    <description>ez-mybatis</description>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>actable</distribution>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>DavinYue</name>
-            <email>davinyue@outlook.com</email>
-        </developer>
-    </developers>
-    <scm>
-        <tag>master</tag>
-        <connection>https://github.com/davinyue/ez-mybatis</connection>
-        <developerConnection>https://github.com/davinyue</developerConnection>
-        <url>https://github.com/davinyue/ez-mybatis</url>
-    </scm>
     <properties>
         <mybatis.plus.version>3.5.12</mybatis.plus.version>
     </properties>
@@ -48,8 +27,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-        </plugins>
-    </build>
 </project>
