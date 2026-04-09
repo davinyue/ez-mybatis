@@ -18,14 +18,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Data access object that provides convenient CRUD operations.
- * This class wraps {@link EzMapper} and offers a simplified API for common
- * database operations
- * including querying, inserting, updating, and deleting records.
+ * 便捷数据访问对象。
+ *
+ * <p>对 {@link EzMapper} 做轻量封装，提供常用的查询、插入、更新、删除能力。</p>
  */
 public class EzDao {
+    /**
+     * 底层 Mapper 实现。
+     */
     private final EzMapper ezMapper;
 
+    /**
+     * 创建 DAO 对象。
+     *
+     * @param ezMapper 底层 Mapper
+     */
     public EzDao(EzMapper ezMapper) {
         Assert.notNull(ezMapper, "ezMapper can not be null");
         this.ezMapper = ezMapper;

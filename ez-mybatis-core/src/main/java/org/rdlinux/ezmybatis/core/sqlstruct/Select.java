@@ -37,6 +37,12 @@ public class Select implements SqlStruct {
      */
     private List<SelectItem> selectItems;
 
+    /**
+     * 使用查询对象和查询项初始化 SELECT 结构。
+     *
+     * @param query       所属查询对象
+     * @param selectItems 查询项列表
+     */
     private Select(EzQuery<?> query, List<SelectItem> selectItems) {
         Assert.notNull(query, "query can not be null");
         this.query = query;
@@ -63,12 +69,23 @@ public class Select implements SqlStruct {
         private final Select select;
         private final EzQuery<?> query;
 
+        /**
+         * 使用查询对象和已有查询项初始化构造器。
+         *
+         * @param query       所属查询对象
+         * @param selectItems 查询项列表
+         */
         private EzSelectBuilder(EzQuery<?> query, List<SelectItem> selectItems) {
             this.select = new Select(query, selectItems);
             this.selectItems = selectItems;
             this.query = query;
         }
 
+        /**
+         * 使用查询对象创建空的查询列构造器。
+         *
+         * @param query 所属查询对象
+         */
         private EzSelectBuilder(EzQuery<?> query) {
             this.select = new Select(query, new ArrayList<>());
             this.selectItems = this.select.getSelectItems();

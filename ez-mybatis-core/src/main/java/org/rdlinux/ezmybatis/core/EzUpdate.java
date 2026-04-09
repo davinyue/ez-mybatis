@@ -13,23 +13,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * 更新语句参数对象。
+ */
 @Getter
 public class EzUpdate extends EzParam<Integer> {
+    /**
+     * 更新字段集合。
+     */
     private UpdateSet set;
+    /**
+     * 更新语句中的关联表列表。
+     */
     private List<Join> joins;
 
+    /**
+     * 创建空的更新对象。
+     */
     private EzUpdate() {
         super(Integer.class);
         this.set = new UpdateSet();
     }
 
+    /**
+     * 以指定主表创建更新构造器。
+     *
+     * @param table 更新主表
+     * @return 更新构造器
+     */
     public static EzUpdateBuilder update(Table table) {
         return new EzUpdateBuilder(table);
     }
 
+    /**
+     * {@link EzUpdate} 构造器。
+     */
     public static class EzUpdateBuilder {
+        /**
+         * 当前构建中的更新对象。
+         */
         private final EzUpdate ezUpdate;
 
+        /**
+         * 使用主表初始化更新构造器。
+         *
+         * @param table 更新主表
+         */
         private EzUpdateBuilder(Table table) {
             this.ezUpdate = new EzUpdate();
             this.ezUpdate.table = table;
@@ -37,6 +66,12 @@ public class EzUpdate extends EzParam<Integer> {
             this.ezUpdate.set = new UpdateSet();
         }
 
+        /**
+         * 根据条件创建更新集合构造器。
+         *
+         * @param sure 是否启用当前 set
+         * @return 更新集合构造器
+         */
         public UpdateSetBuilder<EzUpdateBuilder> set(boolean sure) {
             if (sure) {
                 return new UpdateSetBuilder<>(this, this.ezUpdate.table, this.ezUpdate.set);
@@ -45,16 +80,34 @@ public class EzUpdate extends EzParam<Integer> {
             }
         }
 
+        /**
+         * 创建更新集合构造器。
+         *
+         * @return 更新集合构造器
+         */
         public UpdateSetBuilder<EzUpdateBuilder> set() {
             return this.set(true);
         }
 
+        /**
+         * 通过回调构造更新集合。
+         *
+         * @param consumer 更新集合构造回调
+         * @return 当前构造器
+         */
         public EzUpdateBuilder set(Consumer<UpdateSetBuilder<EzUpdateBuilder>> consumer) {
             UpdateSetBuilder<EzUpdateBuilder> builder = this.set();
             consumer.accept(builder);
             return this;
         }
 
+        /**
+         * 根据条件通过回调构造更新集合。
+         *
+         * @param sure     是否启用当前 set
+         * @param consumer 更新集合构造回调
+         * @return 当前构造器
+         */
         public EzUpdateBuilder set(boolean sure, Consumer<UpdateSetBuilder<EzUpdateBuilder>> consumer) {
             if (sure) {
                 return this.set(consumer);
@@ -148,6 +201,11 @@ public class EzUpdate extends EzParam<Integer> {
         }
 
 
+        /**
+         * 完成更新对象构造。
+         *
+         * @return 更新对象
+         */
         public EzUpdate build() {
             return this.ezUpdate;
         }

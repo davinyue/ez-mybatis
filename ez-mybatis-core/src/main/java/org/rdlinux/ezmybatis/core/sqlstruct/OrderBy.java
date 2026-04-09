@@ -16,9 +16,21 @@ import java.util.function.Consumer;
 @Getter
 @Setter
 public class OrderBy implements SqlStruct {
+    /**
+     * 所属查询对象。
+     */
     private EzQuery<?> query;
+    /**
+     * 排序项列表。
+     */
     private List<OrderItem> items;
 
+    /**
+     * 使用查询对象和排序项初始化 ORDER BY 结构。
+     *
+     * @param query 所属查询对象
+     * @param items 排序项列表
+     */
     private OrderBy(EzQuery<?> query, List<OrderItem> items) {
         this.query = query;
         this.items = items;
@@ -57,12 +69,26 @@ public class OrderBy implements SqlStruct {
      * ORDER BY 构造器
      */
     public static class OrderBuilder {
+        /**
+         * 当前构建中的 ORDER BY 对象。
+         */
         private final OrderBy orderBy;
 
+        /**
+         * 使用查询对象和已有排序项初始化构造器。
+         *
+         * @param query 所属查询对象
+         * @param items 排序项列表
+         */
         private OrderBuilder(EzQuery<?> query, List<OrderItem> items) {
             this.orderBy = new OrderBy(query, items);
         }
 
+        /**
+         * 使用查询对象创建空的排序构造器。
+         *
+         * @param query 所属查询对象
+         */
         private OrderBuilder(EzQuery<?> query) {
             this.orderBy = new OrderBy(query, new ArrayList<>());
         }

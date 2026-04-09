@@ -29,6 +29,9 @@ public class CaseWhen implements QueryRetNeedAlias {
      */
     private CaseWhenData els;
 
+    /**
+     * 创建空的 CASE WHEN 结构。
+     */
     private CaseWhen() {
     }
 
@@ -77,6 +80,12 @@ public class CaseWhen implements QueryRetNeedAlias {
             private final CaseWhenData caseWhenData;
             private final CaseWhenBuilder caseWhenBuilder;
 
+            /**
+             * 使用上级构造器和当前分支数据初始化 WHEN 构造器。
+             *
+             * @param caseWhenBuilder 上级 CASE WHEN 构造器
+             * @param caseWhenData    当前 WHEN 分支数据
+             */
             public CaseWhenDataBuilder(CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
                 super(caseWhenData.getConditions());
                 this.caseWhenBuilder = caseWhenBuilder;
@@ -121,6 +130,9 @@ public class CaseWhen implements QueryRetNeedAlias {
         protected CaseWhen caseWhen;
 
 
+        /**
+         * 创建空的 CASE WHEN 构造器。
+         */
         private CaseWhenBuilder() {
             this.caseWhen = new CaseWhen();
         }

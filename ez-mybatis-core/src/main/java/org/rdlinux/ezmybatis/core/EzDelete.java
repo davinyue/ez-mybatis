@@ -29,6 +29,9 @@ public class EzDelete extends EzParam<Integer> {
      */
     private List<Join> joins;
 
+    /**
+     * 创建空的删除对象。
+     */
     private EzDelete() {
         super(Integer.class);
     }
@@ -49,6 +52,11 @@ public class EzDelete extends EzParam<Integer> {
     public static class EzDeleteBuilder {
         private final EzDelete delete;
 
+        /**
+         * 使用主表初始化删除构造器。
+         *
+         * @param table 删除主表
+         */
         private EzDeleteBuilder(Table table) {
             this.delete = new EzDelete();
             this.delete.deletes.add(table);

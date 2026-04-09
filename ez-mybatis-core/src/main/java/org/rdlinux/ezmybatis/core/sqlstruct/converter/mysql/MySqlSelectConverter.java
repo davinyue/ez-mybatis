@@ -11,12 +11,23 @@ import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectItem;
 
 import java.util.List;
 
+/**
+ * MySQL 方言下的 SELECT 转换器。
+ */
 public class MySqlSelectConverter extends AbstractConverter<Select> implements Converter<Select> {
+    /**
+     * 单例实例。
+     */
     private static volatile MySqlSelectConverter instance;
 
     protected MySqlSelectConverter() {
     }
 
+    /**
+     * 返回转换器单例。
+     *
+     * @return 转换器实例
+     */
     public static MySqlSelectConverter getInstance() {
         if (instance == null) {
             synchronized (MySqlSelectConverter.class) {
@@ -28,6 +39,13 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
         return instance;
     }
 
+    /**
+     * 将 SELECT 结构拼接为 MySQL SQL 片段。
+     *
+     * @param type               构建类型
+     * @param select             SELECT 结构
+     * @param sqlGenerateContext SQL 构建上下文
+     */
     @Override
     protected void doBuildSql(Type type, Select select, SqlGenerateContext sqlGenerateContext) {
         if (select == null) {

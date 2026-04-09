@@ -13,8 +13,16 @@ import java.util.function.Consumer;
 @Getter
 @Setter
 public class GroupBy implements SqlStruct {
+    /**
+     * 分组项列表。
+     */
     private List<Operand> items;
 
+    /**
+     * 使用分组项初始化 GROUP BY 结构。
+     *
+     * @param items 分组项列表
+     */
     private GroupBy(List<Operand> items) {
         this.items = items;
     }
@@ -35,12 +43,23 @@ public class GroupBy implements SqlStruct {
      * GROUP BY 构造器
      */
     public static class GroupBuilder {
+        /**
+         * 当前构建中的 GROUP BY 对象。
+         */
         private final GroupBy groupBy;
 
+        /**
+         * 使用已有分组项初始化构造器。
+         *
+         * @param items 分组项列表
+         */
         private GroupBuilder(List<Operand> items) {
             this.groupBy = new GroupBy(items);
         }
 
+        /**
+         * 创建空的分组构造器。
+         */
         private GroupBuilder() {
             this.groupBy = new GroupBy(new ArrayList<>());
         }
