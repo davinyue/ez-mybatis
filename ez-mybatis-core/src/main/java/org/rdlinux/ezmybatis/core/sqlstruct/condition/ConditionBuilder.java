@@ -163,12 +163,12 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
      * @param consumer 条件组构造回调
      * @return 当前构造器
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public SonBuilder addGroup(boolean sure, AndOr andOr, Consumer<ConditionBuilder<SonBuilder>> consumer) {
         if (sure) {
             GroupCondition condition = new GroupCondition(Boolean.TRUE, new LinkedList<>(), andOr);
             this.conditions.add(condition);
-            ConditionBuilder sonBuilder = new ConditionBuilder(condition.getConditions());
+            ConditionBuilder sonBuilder = new ConditionBuilder<>(condition.getConditions());
             consumer.accept(sonBuilder);
         }
         return (SonBuilder) this;
