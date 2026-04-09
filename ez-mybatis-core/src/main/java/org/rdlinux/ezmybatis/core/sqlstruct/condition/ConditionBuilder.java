@@ -163,12 +163,12 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
      * @param consumer 条件组构造回调
      * @return 当前构造器
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public SonBuilder addGroup(boolean sure, AndOr andOr, Consumer<ConditionBuilder<SonBuilder>> consumer) {
+    @SuppressWarnings({"unchecked"})
+    public SonBuilder addGroup(boolean sure, AndOr andOr, Consumer<GroupConditionBuilder> consumer) {
         if (sure) {
             GroupCondition condition = new GroupCondition(Boolean.TRUE, new LinkedList<>(), andOr);
             this.conditions.add(condition);
-            ConditionBuilder sonBuilder = new ConditionBuilder<>(condition.getConditions());
+            GroupConditionBuilder sonBuilder = new GroupConditionBuilder(condition.getConditions());
             consumer.accept(sonBuilder);
         }
         return (SonBuilder) this;
@@ -181,7 +181,7 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
      * @param consumer 条件组构造回调
      * @return 当前构造器
      */
-    public SonBuilder addGroup(AndOr andOr, Consumer<ConditionBuilder<SonBuilder>> consumer) {
+    public SonBuilder addGroup(AndOr andOr, Consumer<GroupConditionBuilder> consumer) {
         return this.addGroup(Boolean.TRUE, andOr, consumer);
     }
 
@@ -192,7 +192,7 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
      * @param consumer 条件组构造回调
      * @return 当前构造器
      */
-    public SonBuilder addGroup(boolean sure, Consumer<ConditionBuilder<SonBuilder>> consumer) {
+    public SonBuilder addGroup(boolean sure, Consumer<GroupConditionBuilder> consumer) {
         return this.addGroup(sure, AndOr.AND, consumer);
     }
 
@@ -202,7 +202,7 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
      * @param consumer 条件组构造回调
      * @return 当前构造器
      */
-    public SonBuilder addGroup(Consumer<ConditionBuilder<SonBuilder>> consumer) {
+    public SonBuilder addGroup(Consumer<GroupConditionBuilder> consumer) {
         return this.addGroup(Boolean.TRUE, consumer);
     }
 
@@ -257,5 +257,19 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
      */
     public SonBuilder addSql(String sql) {
         return this.addSql(true, sql);
+    }
+
+    /**
+     * 组条件构造器
+     */
+    public static class GroupConditionBuilder extends ConditionBuilder<GroupConditionBuilder> {
+        /**
+         * 创建组条件构造器。
+         *
+         * @param conditions 条件列表
+         */
+        public GroupConditionBuilder(List<Condition> conditions) {
+            super(conditions);
+        }
     }
 }

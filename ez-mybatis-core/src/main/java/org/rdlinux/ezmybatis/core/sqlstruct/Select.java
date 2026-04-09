@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.ArrayList;
@@ -128,28 +129,51 @@ public class Select implements SqlStruct {
             return this;
         }
 
+
         /**
-         * 添加当前实体表的所有属性查询项，并支持排除个别属性
-         * 仅在查询主表为 EntityTable 时受支持
+         * 添加指定表的所有属性查询项，并支持排除个别属性
          *
-         * @param excludeField 需要排除的实体属性名列表
+         * @param table        指定表
+         * @param sure         是否满足条件，为 true 才会添加
+         * @param excludeField 仅在指定表为 EntityTable 时受支持
          */
-        public EzSelectBuilder addAll(String... excludeField) {
-            this.selectItems.add(new SelectTableAllItem(this.query.getFrom().getTable(), excludeField));
+        public EzSelectBuilder addAll(boolean sure, Table table, String... excludeField) {
+            if (sure) {
+                this.selectItems.add(new SelectTableAllItem(table, excludeField));
+            }
             return this;
+        }
+
+        /**
+         * 添加指定表的所有属性查询项，并支持排除个别属性
+         *
+         * @param table        指定表
+         * @param excludeField 仅在指定表为 EntityTable 时受支持
+         */
+        public EzSelectBuilder addAll(Table table, String... excludeField) {
+            return this.addAll(Boolean.TRUE, table, excludeField);
         }
 
         /**
          * 根据条件添加当前实体表的所有属性查询项
          *
          * @param sure         是否满足条件，为 true 才会添加
-         * @param excludeField 需要排除的实体属性名列表
+         * @param excludeField 需要排除的实体属性名列表, 仅在查询主表为 EntityTable 时受支持
          */
         public EzSelectBuilder addAll(boolean sure, String... excludeField) {
             if (sure) {
-                return this.addAll(excludeField);
+                this.selectItems.add(new SelectTableAllItem(this.query.getFrom().getTable(), excludeField));
             }
             return this;
+        }
+
+        /**
+         * 添加当前实体表的所有属性查询项，并支持排除个别属性
+         *
+         * @param excludeField 需要排除的实体属性名列表, 仅在查询主表为 EntityTable 时受支持
+         */
+        public EzSelectBuilder addAll(String... excludeField) {
+            return this.addAll(Boolean.TRUE, excludeField);
         }
 
         /**

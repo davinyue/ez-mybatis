@@ -49,7 +49,7 @@ public class MySqlComplexEntityUpsertTest extends MySqlBaseTest {
         extInfo.setRemark("Generated for upsert test");
         user.setExtInfo(extInfo);
 
-        user.setDepartmentId(UUID.randomUUID().toString().replaceAll("-", ""));
+        user.setDepartmentId(UUID.randomUUID().toString().replace("-", ""));
         return user;
     }
 

@@ -186,7 +186,8 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         // Select specific fields
         EzQuery<ComplexUser> querySpecific = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select(s -> s.add(userTable.field(BaseEntity.Fields.id)).add(userTable.field(ComplexUser.Fields.username)))
+                .select(s -> s.add(userTable.field(BaseEntity.Fields.id)))
+                .select(s -> s.add(userTable.field(ComplexUser.Fields.username)))
                 .page(1, 2)
                 .build();
         List<ComplexUser> usersSpecific = this.sqlSession.getMapper(EzMapper.class).query(querySpecific);
@@ -358,7 +359,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EzQuery<ComplexUser> existsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
-                .where(w -> w.add(orderSubQuery.exists()))
+                .where(w -> w.add(orderSubQuery.exists()).add(orderSubQuery.orExists()))
                 .page(1, 10).build();
         List<ComplexUser> existsRet = mapper.query(existsQuery);
         Assert.assertNotNull(existsRet);
@@ -367,7 +368,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         // 17. NOT EXISTS
         EzQuery<ComplexUser> notExistsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
-                .where(w -> w.add(orderSubQuery.notExists()))
+                .where(w -> w.add(orderSubQuery.notExists()).add(orderSubQuery.orNotExists()))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notExistsQuery));
         log.info("EzQuery NOT EXISTS: {}", JacksonUtils.toJsonString(mapper.query(notExistsQuery)));
@@ -401,23 +402,23 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         String uId = this.insertAndGetComplexUserId(dept.getId());
         this.insertOrder(uId, ComplexOrder.OrderStatus.PENDING);
 
-        EntityTable userTable = EntityTable.of(ComplexUser.class);
         EntityTable deptTable = EntityTable.of(ComplexDepartment.class);
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
         EntityTable orderTable = EntityTable.of(ComplexOrder.class);
 
-        EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class)
-                .from(userTable)
+        EzQuery<ComplexDepartment> query = EzQuery.builder(ComplexDepartment.class)
+                .from(deptTable)
                 .select(Select.EzSelectBuilder::addAll)
-                .join(deptTable, j -> {
-                    j.add(userTable.field(ComplexUser.Fields.departmentId).eq(deptTable.field(BaseEntity.Fields.id)));
-                    // 同级连带查询订单
+                .join(userTable, j -> {
+                    j.add(deptTable.field(BaseEntity.Fields.id).eq(userTable.field(ComplexUser.Fields.departmentId)));
+                    // 用户下继续关联订单，体现真正的嵌套 join：部门 -> 用户 -> 订单
                     j.join(orderTable, jj -> jj.add(
                             userTable.field(BaseEntity.Fields.id).eq(orderTable.field(ComplexOrder.Fields.userId))));
                 })
                 .limit(10)
                 .build();
 
-        List<ComplexUser> result = this.sqlSession.getMapper(EzMapper.class).query(query);
+        List<ComplexDepartment> result = this.sqlSession.getMapper(EzMapper.class).query(query);
         Assert.assertNotNull(result);
         Assert.assertFalse(result.isEmpty());
         log.info("EzQuery NestedJoinLambdaDsl: {}", JacksonUtils.toJsonString(result));
@@ -738,6 +739,8 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
                         .addGroup(g -> g
                                 .add(userTable.field(ComplexUser.Fields.age).lt(20))
                                 .add(AndOr.OR, userTable.field(ComplexUser.Fields.username), Operator.eq, "TestUser3"))
+                )
+                .where(w -> w
                         .add(userTable.field(ComplexUser.Fields.userType).eq((short) 1))
                 )
                 .build();

@@ -29,7 +29,7 @@ public class ModelInsertListener extends AbstractEnc implements EzMybatisInsertL
         for (Object entity : entities) {
             if (entity instanceof BaseEntity) {
                 if (((BaseEntity) entity).getId() == null) {
-                    ((BaseEntity) entity).setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                    ((BaseEntity) entity).setId(UUID.randomUUID().toString().replace("-", ""));
                 }
                 ((BaseEntity) entity).setCreateTime(new Date());
                 ((BaseEntity) entity).setUpdateTime(new Date());
