@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.demo.entity.BaseEntity;
@@ -73,18 +74,14 @@ public class OracleComplexMergeTest extends OracleBaseTest {
         EntityTable userTable = EntityTable.of(ComplexUser.class);
         EzQuery<ComplexUser> sourceQuery = EzQuery.builder(ComplexUser.class)
                 .from(userTable)
-                .select()
-                .addAll()
-                .done()
-                .where()
-                .addCondition(userTable.field(BaseEntity.Fields.id), userId)
-                .done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(BaseEntity.Fields.id).eq(userId)))
                 .build();
         EzQueryTable sourceTable = EzQueryTable.of(sourceQuery);
 
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on(o -> o.addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
+                .on(o -> o.add(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
                 .set(s -> {
                     s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"));
                     s.add(userTable.field(ComplexUser.Fields.age).set(35));
@@ -107,12 +104,8 @@ public class OracleComplexMergeTest extends OracleBaseTest {
         EntityTable userTable = EntityTable.of(ComplexUser.class);
         EzQuery<ComplexUser> sourceQuery = EzQuery.builder(ComplexUser.class)
                 .from(userTable)
-                .select()
-                .addAll()
-                .done()
-                .where()
-                .addCondition(userTable.field(BaseEntity.Fields.id), userId)
-                .done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(BaseEntity.Fields.id).eq(userId)))
                 .build();
         EzQueryTable sourceTable = EzQueryTable.of(sourceQuery);
 
@@ -121,7 +114,7 @@ public class OracleComplexMergeTest extends OracleBaseTest {
 
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on(o -> o.addCondition(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
+                .on(o -> o.add(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
                 .set(s -> {
                     s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"));
                     s.add(userTable.field(ComplexUser.Fields.age).set(35));
@@ -149,12 +142,8 @@ public class OracleComplexMergeTest extends OracleBaseTest {
         EntityTable departmentTable = EntityTable.of(ComplexDepartment.class);
         EzQuery<ComplexDepartment> sourceQuery = EzQuery.builder(ComplexDepartment.class)
                 .from(departmentTable)
-                .select()
-                .addAll()
-                .done()
-                .where()
-                .addCondition(departmentTable.field(BaseEntity.Fields.id), department.getId())
-                .done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(departmentTable.field(BaseEntity.Fields.id).eq(department.getId())))
                 .build();
         EzQueryTable sourceTable = EzQueryTable.of(sourceQuery);
 
@@ -168,7 +157,7 @@ public class OracleComplexMergeTest extends OracleBaseTest {
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
                 .on(o ->
-                        o.addCondition(userTable.field(ComplexUser.Fields.departmentId).eq(sourceTable.column("ID"))))
+                        o.add(userTable.field(ComplexUser.Fields.departmentId).eq(sourceTable.column("ID"))))
                 .set(s ->
                         s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_should_not_update")))
                 .whenNotMatchedThenInsert(user)

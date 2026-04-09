@@ -46,9 +46,4 @@ public class DbTable extends AbstractTable {
     public String getTableName(Configuration configuration) {
         return this.tableName;
     }
-
-    @Override
-    public DbTable as(String alias) {
-        return (DbTable) super.as(alias);
-    }
 }

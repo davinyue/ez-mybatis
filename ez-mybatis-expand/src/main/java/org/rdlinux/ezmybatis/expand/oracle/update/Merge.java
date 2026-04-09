@@ -13,7 +13,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
-import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.expand.mssql.converter.SqlServerMergeConverter;
 import org.rdlinux.ezmybatis.expand.oracle.converter.OracleMergeConverter;
 import org.rdlinux.ezmybatis.expand.postgre.converter.PostgreMergeConverter;
@@ -22,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * merge update
@@ -86,28 +86,14 @@ public class Merge implements SqlExpand {
             return this;
         }
 
-        public MergeOnBuilder<MergeBuilder> on(Table table) {
+        public MergeBuilder on(Consumer<MergeOnBuilder> consumer) {
             if (this.merge.useTable == null) {
                 throw new IllegalArgumentException("Please use the 'using' method to initialize the table being used first.");
             }
             if (this.merge.on == null) {
                 this.merge.on = new LinkedList<>();
             }
-            return new MergeOnBuilder<>(this, this.merge.on, table, this.merge.useTable);
-        }
-
-        public MergeOnBuilder<MergeBuilder> on() {
-            return this.on(this.merge.mergeTable);
-        }
-
-        public MergeBuilder on(Table table, java.util.function.Consumer<MergeOnBuilder<MergeBuilder>> consumer) {
-            MergeOnBuilder<MergeBuilder> builder = this.on(table);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public MergeBuilder on(java.util.function.Consumer<MergeOnBuilder<MergeBuilder>> consumer) {
-            MergeOnBuilder<MergeBuilder> builder = this.on();
+            MergeOnBuilder builder = new MergeOnBuilder(this.merge.on);
             consumer.accept(builder);
             return this;
         }
@@ -249,31 +235,13 @@ public class Merge implements SqlExpand {
             private boolean useTableUsed;
         }
 
-        public static class MergeOnBuilder<Builder> extends ConditionBuilder<Builder, MergeOnBuilder<Builder>> {
+        public static class MergeOnBuilder extends ConditionBuilder<MergeOnBuilder> {
 
-            private MergeOnBuilder(Builder builder, List<Condition> on, Table mergeTable, EzQueryTable useTable) {
-                super(builder, on, mergeTable, useTable);
-                this.sonBuilder = this;
+            private MergeOnBuilder(List<Condition> on) {
+                super(on);
             }
 
-            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(boolean sure, AndOr andOr) {
-                GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), andOr);
-                this.conditions.add(condition);
-                return new MergeOnBuilder<>(this, condition.getConditions(), this.table,
-                        (EzQueryTable) this.otherTable);
-            }
 
-            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(AndOr andOr) {
-                return this.groupCondition(true, andOr);
-            }
-
-            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition(boolean sure) {
-                return this.groupCondition(sure, AndOr.AND);
-            }
-
-            public MergeOnBuilder<MergeOnBuilder<Builder>> groupCondition() {
-                return this.groupCondition(true);
-            }
         }
     }
 }

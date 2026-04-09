@@ -8,23 +8,44 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.enumeration.JoinType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * 删除语句参数对象。
+ *
+ * <p>用于描述 delete 语句的主表、待删除表、多表 join 以及 where 条件。</p>
+ */
 @Getter
 public class EzDelete extends EzParam<Integer> {
+    /**
+     * 需要删除的表列表。
+     */
     private final List<Table> deletes = new LinkedList<>();
+    /**
+     * 删除语句中使用的关联表。
+     */
     private List<Join> joins;
 
     private EzDelete() {
         super(Integer.class);
     }
 
+    /**
+     * 以指定主表创建删除构造器。
+     *
+     * @param table 删除语句主表
+     * @return 删除构造器
+     */
     public static EzDeleteBuilder delete(Table table) {
         return new EzDeleteBuilder(table);
     }
 
+    /**
+     * {@link EzDelete} 构造器。
+     */
     public static class EzDeleteBuilder {
         private final EzDelete delete;
 
@@ -35,121 +56,106 @@ public class EzDelete extends EzParam<Integer> {
             this.delete.from = new From(table);
         }
 
+        /**
+         * 添加需要删除的实体表。
+         *
+         * @param table 需要删除的实体表
+         * @return 当前构造器
+         */
         public EzDeleteBuilder delete(EntityTable table) {
             this.delete.deletes.add(table);
             return this;
         }
 
-        public Join.JoinBuilder<EzDeleteBuilder> join(boolean sure, JoinType joinType, Table joinTable) {
-            if (this.delete.getJoins() == null) {
-                this.delete.joins = new LinkedList<>();
-            }
-            Join join = new Join();
-            join.setOnConditions(new LinkedList<>());
-            join.setJoinType(joinType);
-            join.setTable(this.delete.table);
-            join.setSure(sure);
-            join.setJoinTable(joinTable);
-            this.delete.joins.add(join);
-            return new Join.JoinBuilder<>(this, join);
-        }
-
-        public Join.JoinBuilder<EzDeleteBuilder> join(JoinType joinType, Table joinTable) {
-            return this.join(true, joinType, joinTable);
-        }
-
-        public Join.JoinBuilder<EzDeleteBuilder> join(boolean sure, Table joinTable) {
-            return this.join(sure, JoinType.InnerJoin, joinTable);
-        }
-
-        public Join.JoinBuilder<EzDeleteBuilder> join(Table joinTable) {
-            return this.join(true, JoinType.InnerJoin, joinTable);
-        }
-
-        public EzDeleteBuilder join(Table joinTable, Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
-            Join.JoinBuilder<EzDeleteBuilder> builder = this.join(joinTable);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzDeleteBuilder join(JoinType joinType, Table joinTable,
-                                    Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
-            Join.JoinBuilder<EzDeleteBuilder> builder = this.join(joinType, joinTable);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzDeleteBuilder join(boolean sure, Table joinTable,
-                                    Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
+        /**
+         * 添加 join 条件。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzDeleteBuilder join(boolean sure, JoinType joinType, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
             if (sure) {
-                return this.join(joinTable, consumer);
-            }
-            return this;
-        }
-
-        public EzDeleteBuilder join(boolean sure, JoinType joinType, Table joinTable,
-                                    Consumer<Join.JoinBuilder<EzDeleteBuilder>> consumer) {
-            if (sure) {
-                return this.join(joinType, joinTable, consumer);
-            }
-            return this;
-        }
-
-        public Where.WhereBuilder<EzDeleteBuilder> where(boolean sure, Table table) {
-            Where where = this.delete.where;
-            if (where == null) {
-                where = new Where(new LinkedList<>());
-                if (sure) {
-                    this.delete.where = where;
+                if (this.delete.joins == null) {
+                    this.delete.joins = new ArrayList<>();
                 }
-            } else {
-                if (!sure) {
-                    where = new Where(new LinkedList<>());
+                Join join = Join.build(joinType, joinTable, jbc);
+                this.delete.joins.add(join);
+            }
+            return this;
+        }
+
+        /**
+         * 添加 join 条件。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzDeleteBuilder join(boolean sure, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(sure, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+        /**
+         * 添加 join 条件。
+         *
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzDeleteBuilder join(JoinType joinType, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(Boolean.TRUE, joinType, joinTable, jbc);
+        }
+
+        /**
+         * 添加 join 条件。
+         *
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzDeleteBuilder join(Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(Boolean.TRUE, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+        /**
+         * 创建 where 条件构造器。
+         *
+         * @param sure 是否启用当前 where
+         * @param wcb  当前where条件构造器
+         * @return 构造器
+         */
+        public EzDeleteBuilder where(boolean sure, Consumer<Where.WhereBuilder> wcb) {
+            if (sure) {
+                Where where = this.delete.where;
+                if (where == null) {
+                    this.delete.where = Where.build(wcb);
+                } else {
+                    Where.build(wcb, where.getConditions());
                 }
             }
-            return new Where.WhereBuilder<>(this, where, table);
-        }
-
-
-        public Where.WhereBuilder<EzDeleteBuilder> where(Table table) {
-            return this.where(true, table);
-        }
-
-        public Where.WhereBuilder<EzDeleteBuilder> where(boolean sure) {
-            return this.where(sure, this.delete.table);
-        }
-
-        public Where.WhereBuilder<EzDeleteBuilder> where() {
-            return this.where(true);
-        }
-
-        public EzDeleteBuilder where(Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
-            Where.WhereBuilder<EzDeleteBuilder> builder = this.where();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzDeleteBuilder where(Table table, Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
-            Where.WhereBuilder<EzDeleteBuilder> builder = this.where(table);
-            consumer.accept(builder);
-            return this;
+        /**
+         * 创建 where 条件构造器。
+         *
+         * @param wcb 当前where条件构造器
+         * @return 构造器
+         */
+        public EzDeleteBuilder where(Consumer<Where.WhereBuilder> wcb) {
+            return this.where(Boolean.TRUE, wcb);
         }
 
-        public EzDeleteBuilder where(boolean sure, Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
-            if (sure) {
-                return this.where(consumer);
-            }
-            return this;
-        }
-
-        public EzDeleteBuilder where(boolean sure, Table table,
-                                     Consumer<Where.WhereBuilder<EzDeleteBuilder>> consumer) {
-            if (sure) {
-                return this.where(table, consumer);
-            }
-            return this;
-        }
-
+        /**
+         * 构建删除语句对象。
+         *
+         * @return 删除语句对象
+         */
         public EzDelete build() {
             return this.delete;
         }

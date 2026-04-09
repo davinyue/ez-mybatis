@@ -173,9 +173,11 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         ComplexDepartment dept = this.insertAndGetDepartment();
         this.insertAndGetComplexUserIds(2, dept.getId());
 
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
+
         // Select all fields
-        EzQuery<ComplexUser> queryAll = EzQuery.builder(ComplexUser.class).from(EntityTable.of(ComplexUser.class))
-                .select().addAll().done()
+        EzQuery<ComplexUser> queryAll = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
                 .page(1, 2)
                 .build();
         List<ComplexUser> usersAll = this.sqlSession.getMapper(EzMapper.class).query(queryAll);
@@ -183,8 +185,8 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         log.info("EzQuery Basic Select All: {}", JacksonUtils.toJsonString(usersAll));
 
         // Select specific fields
-        EzQuery<ComplexUser> querySpecific = EzQuery.builder(ComplexUser.class).from(EntityTable.of(ComplexUser.class))
-                .select().addField(BaseEntity.Fields.id).addField(ComplexUser.Fields.username).done()
+        EzQuery<ComplexUser> querySpecific = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(s -> s.add(userTable.field(BaseEntity.Fields.id)).add(userTable.field(ComplexUser.Fields.username)))
                 .page(1, 2)
                 .build();
         List<ComplexUser> usersSpecific = this.sqlSession.getMapper(EzMapper.class).query(querySpecific);
@@ -204,11 +206,11 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class)
                 .from(userTable)
                 .select(s -> {
-                    s.addField(BaseEntity.Fields.id);
-                    s.addField(ComplexUser.Fields.username);
+                    s.add(userTable.field(BaseEntity.Fields.id));
+                    s.add(userTable.field(ComplexUser.Fields.username));
                     s.add(includeAge, userTable.field(ComplexUser.Fields.age));
                 })
-                .where(w -> w.addCondition(hasNameFilter, userTable.field(ComplexUser.Fields.username).like("被查用户_%")))
+                .where(w -> w.add(hasNameFilter, userTable.field(ComplexUser.Fields.username).like("被查用户_%")))
                 .orderBy(o -> o.add(userTable.field(ComplexUser.Fields.age), OrderType.ASC))
                 .limit(2)
                 .build();
@@ -242,121 +244,121 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         // 1. EQ (= 枚举匹配)
         EzQuery<ComplexUser> eqQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.NORMAL)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.NORMAL)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(eqQuery));
 
         // 2. NE (!=)
         EzQuery<ComplexUser> neQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).ne(-1)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).ne(-1)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(neQuery));
 
         // 3. GT (>)
         EzQuery<ComplexUser> gtQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.accountBalance).gt(200.0)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.accountBalance).gt(200.0)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(gtQuery));
 
         // 4. GE (>=)
         EzQuery<ComplexUser> geQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).ge(18)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).ge(18)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(geQuery));
 
         // 5. LT (<)
         EzQuery<ComplexUser> ltQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).lt(100)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).lt(100)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(ltQuery));
 
         // 6. LE (<=)
         EzQuery<ComplexUser> leQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).le(20)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).le(20)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(leQuery));
 
         // 7. IS NULL
         EzQuery<ComplexUser> isNullQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.description).isNull()).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.description).isNull()))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(isNullQuery));
 
         // 8. IS NOT NULL
         EzQuery<ComplexUser> isNotNullQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.departmentId).isNotNull()).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.departmentId).isNotNull()))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(isNotNullQuery));
 
         // 9. IN
         EzQuery<ComplexUser> inQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).in(Arrays.asList(20, 30))).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).in(Arrays.asList(20, 30))))
                 .page(1, 2).build();
         Assert.assertNotNull(mapper.query(inQuery));
 
         // 10. NOT IN
         EzQuery<ComplexUser> notInQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).notIn(Arrays.asList(-1, -2))).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).notIn(Arrays.asList(-1, -2))))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notInQuery));
 
         // 11. LIKE
         EzQuery<ComplexUser> likeQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.username).like("被查用户_%")).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.username).like("被查用户_%")))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(likeQuery));
 
         // 12. NOT LIKE (unlike)
         EzQuery<ComplexUser> unlikeQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.username).unlike("NonExis%")).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.username).unlike("NonExis%")))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(unlikeQuery));
 
         // 13. BETWEEN
         EzQuery<ComplexUser> betweenQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).between(18, 25)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).between(18, 25)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(betweenQuery));
 
         // 14. NOT BETWEEN
         EzQuery<ComplexUser> notBetweenQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.age).notBetween(100, 200)).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).notBetween(100, 200)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notBetweenQuery));
 
         // 15. REGEXP
         EzQuery<ComplexUser> regexpQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().addCondition(userTable.field(ComplexUser.Fields.username).regexp("^被查.*")).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.username).regexp("^被查.*")))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(regexpQuery));
 
         // 16. EXISTS (关联查询)
         EntityTable orderTableCondition = EntityTable.of(ComplexOrder.class);
         EzQuery<ComplexOrder> orderSubQuery = EzQuery.builder(ComplexOrder.class)
-                .from(orderTableCondition).select().addField(BaseEntity.Fields.id).done()
+                .from(orderTableCondition).select(s -> s.add(orderTableCondition.field(BaseEntity.Fields.id)))
                 .where(e ->
-                        e.addCondition(orderTableCondition.field(ComplexOrder.Fields.userId)
+                        e.add(orderTableCondition.field(ComplexOrder.Fields.userId)
                                 .eq(userTable.field(BaseEntity.Fields.id))))
                 .build();
 
         EzQuery<ComplexUser> existsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().exists(orderSubQuery).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(orderSubQuery.exists()))
                 .page(1, 10).build();
         List<ComplexUser> existsRet = mapper.query(existsQuery);
         Assert.assertNotNull(existsRet);
@@ -364,8 +366,8 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         // 17. NOT EXISTS
         EzQuery<ComplexUser> notExistsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
-                .select().addAll().done()
-                .where().notExists(orderSubQuery).done()
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(orderSubQuery.notExists()))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notExistsQuery));
         log.info("EzQuery NOT EXISTS: {}", JacksonUtils.toJsonString(mapper.query(notExistsQuery)));
@@ -381,10 +383,9 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class)
                 .from(userTable)
-                .select().addAll().done()
-                .join(deptTable)
-                .addCondition(userTable.field(ComplexUser.Fields.departmentId).eq(deptTable.field(BaseEntity.Fields.id)))
-                .done()
+                .select(Select.EzSelectBuilder::addAll)
+                .join(deptTable, j ->
+                        j.add(userTable.field(ComplexUser.Fields.departmentId).eq(deptTable.field(BaseEntity.Fields.id))))
                 .page(1, 10)
                 .build();
 
@@ -408,9 +409,9 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
                 .from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .join(deptTable, j -> {
-                    j.addCondition(userTable.field(ComplexUser.Fields.departmentId).eq(deptTable.field(BaseEntity.Fields.id)));
+                    j.add(userTable.field(ComplexUser.Fields.departmentId).eq(deptTable.field(BaseEntity.Fields.id)));
                     // 同级连带查询订单
-                    j.join(orderTable, jj -> jj.addCondition(
+                    j.join(orderTable, jj -> jj.add(
                             userTable.field(BaseEntity.Fields.id).eq(orderTable.field(ComplexOrder.Fields.userId))));
                 })
                 .limit(10)
@@ -435,11 +436,11 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select(s -> {
-                    s.addField(ComplexUser.Fields.departmentId);
+                    s.add(table.field(ComplexUser.Fields.departmentId));
                     s.add(countFn, "count");
                 })
-                .groupBy(g -> g.addField(ComplexUser.Fields.departmentId))
-                .having(h -> h.addCondition(countFn.ge(0)))
+                .groupBy(g -> g.add(table.field(ComplexUser.Fields.departmentId)))
+                .having(h -> h.add(countFn.ge(0)))
                 .build();
 
         List<StringHashMap> result = this.sqlSession.getMapper(EzMapper.class).query(query);
@@ -490,16 +491,16 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EntityTable table = EntityTable.of(ComplexUser.class);
 
-        CaseWhen ageGroup = CaseWhen.build(table, c -> c
-                .when(w -> w.addCondition(table.field(ComplexUser.Fields.age).lt(19)), "Young")
-                .when(w -> w.addCondition(table.field(ComplexUser.Fields.age).ge(19)), "Adult")
+        CaseWhen ageGroup = CaseWhen.build(c -> c
+                .when(w -> w.add(table.field(ComplexUser.Fields.age).lt(19)), "Young")
+                .when(w -> w.add(table.field(ComplexUser.Fields.age).ge(19)), "Adult")
                 .els("Unknown")
         );
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select(s -> {
-                    s.addField(ComplexUser.Fields.username);
-                    s.addField(ComplexUser.Fields.age);
+                    s.add(table.field(ComplexUser.Fields.username));
+                    s.add(table.field(ComplexUser.Fields.age));
                     s.add(ageGroup, "ageGroup");
                 })
                 .orderBy(o -> o.add(table.field(ComplexUser.Fields.age), OrderType.ASC))
@@ -533,8 +534,8 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class).from(table)
                 .select(s -> {
-                    s.addField(ComplexUser.Fields.username);
-                    s.addField(ComplexUser.Fields.status);
+                    s.add(table.field(ComplexUser.Fields.username));
+                    s.add(table.field(ComplexUser.Fields.status));
                     s.add(wf1, "totalCount");
                     s.add(wf2, "rn");
                 })
@@ -699,11 +700,11 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
                 .from(table)
                 .select(s -> {
-                    s.addField(ComplexUser.Fields.departmentId);
+                    s.add(table.field(ComplexUser.Fields.departmentId));
                     s.add(countFn, "count");
                 })
-                .groupBy(g -> g.addField(ComplexUser.Fields.departmentId))
-                .having(h -> h.addCondition(countFn.ge(1)))
+                .groupBy(g -> g.add(table.field(ComplexUser.Fields.departmentId)))
+                .having(h -> h.add(countFn.ge(1)))
                 .orderBy(o -> o.add(table.field(ComplexUser.Fields.departmentId), OrderType.ASC))
                 .build();
 
@@ -734,10 +735,10 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w
-                        .groupCondition(g -> g
-                                .addCondition(userTable.field(ComplexUser.Fields.age).lt(20))
-                                .addCondition(AndOr.OR, userTable.field(ComplexUser.Fields.username), Operator.eq, "TestUser3"))
-                        .addCondition(userTable.field(ComplexUser.Fields.userType).eq((short) 1))
+                        .addGroup(g -> g
+                                .add(userTable.field(ComplexUser.Fields.age).lt(20))
+                                .add(AndOr.OR, userTable.field(ComplexUser.Fields.username), Operator.eq, "TestUser3"))
+                        .add(userTable.field(ComplexUser.Fields.userType).eq((short) 1))
                 )
                 .build();
 
@@ -773,23 +774,23 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
 
         EzQuery<ComplexUser> q1 = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(s -> s.addAll(ComplexUser.Fields.avatar, ComplexUser.Fields.description))
-                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.NORMAL)))
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.NORMAL)))
                 .build();
 
         EzQuery<ComplexUser> q2 = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(s -> s.addAll(ComplexUser.Fields.avatar, ComplexUser.Fields.description))
-                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.DISABLED)))
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.DISABLED)))
                 .build();
 
         EzQuery<ComplexUser> q3 = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(s -> s.addAll(ComplexUser.Fields.avatar, ComplexUser.Fields.description))
-                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.DISABLED)))
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.status).eq(ComplexUser.UserStatus.DISABLED)))
                 .unionAll(q2)
                 .build();
 
         EzQuery<ComplexUser> unionQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(s -> s.addAll(ComplexUser.Fields.avatar, ComplexUser.Fields.description))
-                .where(w -> w.addCondition(userTable.field(ComplexUser.Fields.username).eq("NonExistent")))
+                .where(w -> w.add(userTable.field(ComplexUser.Fields.username).eq("NonExistent")))
                 .union(q1)
                 .unionAll(q3)
                 .page(1, 10)
@@ -806,15 +807,17 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         ComplexDepartment dept = this.insertAndGetDepartment();
         this.insertAndGetComplexUserIds(2, dept.getId());
 
+        EntityTable subTable = EntityTable.of(ComplexUser.class);
+
         // Select where ID in (Select ID from ...)
-        EzQuery<String> subInfo = EzQuery.builder(String.class).from(EntityTable.of(ComplexUser.class))
-                .select(s -> s.addField(BaseEntity.Fields.id))
+        EzQuery<String> subInfo = EzQuery.builder(String.class).from(subTable)
+                .select(s -> s.add(subTable.field(BaseEntity.Fields.id)))
                 .build();
 
         EntityTable userTable = EntityTable.of(ComplexUser.class);
         EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
-                .where(w -> w.addCondition(userTable.field(BaseEntity.Fields.id).in(subInfo)))
+                .where(w -> w.add(userTable.field(BaseEntity.Fields.id).in(subInfo)))
                 .build();
 
         List<ComplexUser> users = this.sqlSession.getMapper(EzMapper.class).query(query);
@@ -857,7 +860,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(entityTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w ->
-                        w.addCondition(entityTable.field(ComplexUser.Fields.secretContent).eq(user.getSecretContent())))
+                        w.add(entityTable.field(ComplexUser.Fields.secretContent).eq(user.getSecretContent())))
                 .page(1, 1)
                 .build();
         ComplexUser encUser = this.sqlSession.getMapper(EzMapper.class).queryOne(query);

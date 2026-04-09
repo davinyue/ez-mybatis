@@ -283,10 +283,10 @@ public class MySqlComplexEntityDeleteTest extends MySqlBaseTest {
 
         EzDelete delete = EzDelete.delete(userTable).delete(deptTable)
                 .join(deptTable, e ->
-                        e.addCondition(userTable.field(ComplexUser.Fields.departmentId)
+                        e.add(userTable.field(ComplexUser.Fields.departmentId)
                                 .eq(deptTable.field(BaseEntity.Fields.id))))
                 .where(e ->
-                        e.addCondition(userTable.field(BaseEntity.Fields.id).eq(user.getId())))
+                        e.add(userTable.field(BaseEntity.Fields.id).eq(user.getId())))
                 .build();
         int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
         this.sqlSession.commit();
@@ -314,9 +314,9 @@ public class MySqlComplexEntityDeleteTest extends MySqlBaseTest {
 
         EzDelete delete = EzDelete.delete(itemTable)
                 .delete(orderTable)
-                .join(includeJoin, orderTable, j -> j.addCondition(itemTable.field(ComplexOrderItem.Fields.orderId)
+                .join(includeJoin, orderTable, j -> j.add(itemTable.field(ComplexOrderItem.Fields.orderId)
                         .eq(orderTable.field(BaseEntity.Fields.id))))
-                .where(w -> w.addCondition(orderTable.field(BaseEntity.Fields.id).eq(order.getId())))
+                .where(w -> w.add(orderTable.field(BaseEntity.Fields.id).eq(order.getId())))
                 .build();
 
         int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
@@ -332,12 +332,12 @@ public class MySqlComplexEntityDeleteTest extends MySqlBaseTest {
         EntityTable userTable = EntityTable.of(ComplexUser.class);
 
         EzDelete delete1 = EzDelete.delete(userTable)
-                .where(e -> e.addCondition(userTable.field(BaseEntity.Fields.id).eq(ids.get(0))))
+                .where(e -> e.add(userTable.field(BaseEntity.Fields.id).eq(ids.get(0))))
                 .build();
         deletes.add(delete1);
 
         EzDelete delete2 = EzDelete.delete(userTable)
-                .where(e -> e.addCondition(userTable.field(BaseEntity.Fields.id).eq(ids.get(1))))
+                .where(e -> e.add(userTable.field(BaseEntity.Fields.id).eq(ids.get(1))))
                 .build();
         deletes.add(delete2);
 

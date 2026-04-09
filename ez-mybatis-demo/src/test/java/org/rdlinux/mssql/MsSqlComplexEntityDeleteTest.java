@@ -281,10 +281,10 @@ public class MsSqlComplexEntityDeleteTest extends MsSqlBaseTest {
 
         EzDelete delete = EzDelete.delete(userTable).delete(deptTable)
                 .join(deptTable, e ->
-                        e.addCondition(userTable.field(ComplexUser.Fields.departmentId)
+                        e.add(userTable.field(ComplexUser.Fields.departmentId)
                                 .eq(deptTable.field(BaseEntity.Fields.id))))
                 .where(e ->
-                        e.addCondition(userTable.field(BaseEntity.Fields.id).eq(user.getId())))
+                        e.add(userTable.field(BaseEntity.Fields.id).eq(user.getId())))
                 .build();
         int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
         this.sqlSession.commit();
@@ -302,7 +302,7 @@ public class MsSqlComplexEntityDeleteTest extends MsSqlBaseTest {
         EntityTable itemTable = EntityTable.of(ComplexOrderItem.class);
         EzDelete delete = EzDelete.delete(itemTable)
                 .where(w ->
-                        w.addCondition(itemTable.field(ComplexOrderItem.Fields.orderId).eq(order.getId())))
+                        w.add(itemTable.field(ComplexOrderItem.Fields.orderId).eq(order.getId())))
                 .build();
 
         int ret = this.sqlSession.getMapper(EzMapper.class).ezDelete(delete);
@@ -318,12 +318,12 @@ public class MsSqlComplexEntityDeleteTest extends MsSqlBaseTest {
         EntityTable userTable = EntityTable.of(ComplexUser.class);
 
         EzDelete delete1 = EzDelete.delete(userTable)
-                .where(e -> e.addCondition(userTable.field(BaseEntity.Fields.id).eq(ids.get(0))))
+                .where(e -> e.add(userTable.field(BaseEntity.Fields.id).eq(ids.get(0))))
                 .build();
         deletes.add(delete1);
 
         EzDelete delete2 = EzDelete.delete(userTable)
-                .where(e -> e.addCondition(userTable.field(BaseEntity.Fields.id).eq(ids.get(1))))
+                .where(e -> e.add(userTable.field(BaseEntity.Fields.id).eq(ids.get(1))))
                 .build();
         deletes.add(delete2);
 

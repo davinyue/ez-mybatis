@@ -4,6 +4,7 @@ import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
@@ -77,7 +78,7 @@ public class EzDao {
      * @param ids    Primary key values
      */
     public <Id extends Serializable, NT> List<NT> selectByTableAndIds(Table table, Class<NT> etType,
-            Collection<Id> ids) {
+                                                                      Collection<Id> ids) {
         return this.ezMapper.selectByTableAndIds(table, etType, ids);
     }
 
@@ -90,16 +91,15 @@ public class EzDao {
      * @param field    Entity field name
      * @param value    Field value
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public <RtType> List<RtType> selectByField(Class<RtType> rtType, EntityTable table, String field, Object value) {
         Assert.notNull(rtType, "rtType can not be null");
         Assert.notNull(table, "table can not be null");
         Assert.notNull(field, "field can not be null");
         Assert.notNull(value, "value can not be null");
         EzQuery<?> query = EzQuery.builder(rtType).from(table)
-                .select().addAll().done()
-                .where()
-                .addFieldCondition(field, value).done().build();
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(table.field(field).eq(value))).build();
         return (List<RtType>) this.ezMapper.query(query);
     }
 
@@ -126,7 +126,7 @@ public class EzDao {
      * @param column   Column name
      * @param value    Column value
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public <RtType> List<RtType> selectByColumn(Class<RtType> rtType, Table table, String column, Object value) {
         Assert.notNull(rtType, "rtType can not be null");
         Assert.notNull(table, "table can not be null");
@@ -134,10 +134,9 @@ public class EzDao {
         Assert.notNull(value, "value can not be null");
         EzQuery<?> query = EzQuery.builder(rtType)
                 .from(table)
-                .select().addAll().done()
-                .where()
-                .addColumnCondition(column, value)
-                .done().build();
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> w.add(table.column(column).eq(value)))
+                .build();
         return (List<RtType>) this.ezMapper.query(query);
     }
 
@@ -320,7 +319,8 @@ public class EzDao {
         Assert.notNull(field, "field can not be null");
         Assert.notNull(value, "value can not be null");
         EzDelete delete = EzDelete.delete(table)
-                .where().addFieldCondition(field, value).done().build();
+                .where(w -> w.add(table.field(field).eq(value)))
+                .build();
         return this.ezMapper.ezDelete(delete);
     }
 
@@ -336,7 +336,7 @@ public class EzDao {
         Assert.notNull(column, "column can not be null");
         Assert.notNull(value, "value can not be null");
         EzDelete delete = EzDelete.delete(table)
-                .where().addColumnCondition(column, value).done().build();
+                .where(w -> w.add(table.column(column).eq(value))).build();
         return this.ezMapper.ezDelete(delete);
     }
 

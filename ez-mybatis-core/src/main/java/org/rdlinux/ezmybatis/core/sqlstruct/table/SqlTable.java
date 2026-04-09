@@ -35,9 +35,4 @@ public class SqlTable extends AbstractTable {
     public String getSchema(Configuration configuration) {
         return null;
     }
-
-    @Override
-    public SqlTable as(String alias) {
-        return (SqlTable) super.as(alias);
-    }
 }

@@ -9,7 +9,7 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.enumeration.JoinType;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -62,116 +62,91 @@ public class EzUpdate extends EzParam<Integer> {
             return this;
         }
 
-        public Join.JoinBuilder<EzUpdateBuilder> join(boolean sure, JoinType joinType, Table joinTable) {
-            if (this.ezUpdate.getJoins() == null) {
-                this.ezUpdate.joins = new LinkedList<>();
-            }
-            Join join = new Join();
-            join.setJoinType(joinType);
-            join.setTable(this.ezUpdate.table);
-            join.setJoinTable(joinTable);
-            join.setOnConditions(new LinkedList<>());
-            join.setSure(sure);
-            this.ezUpdate.joins.add(join);
-            return new Join.JoinBuilder<>(this, join);
-        }
-
-
-        public Join.JoinBuilder<EzUpdateBuilder> join(JoinType joinType, Table joinTable) {
-            return this.join(true, joinType, joinTable);
-        }
-
-        public Join.JoinBuilder<EzUpdateBuilder> join(boolean sure, Table joinTable) {
-            return this.join(sure, JoinType.InnerJoin, joinTable);
-        }
-
-        public Join.JoinBuilder<EzUpdateBuilder> join(Table joinTable) {
-            return this.join(true, JoinType.InnerJoin, joinTable);
-        }
-
-        public EzUpdateBuilder join(Table joinTable, Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
-            Join.JoinBuilder<EzUpdateBuilder> builder = this.join(joinTable);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzUpdateBuilder join(JoinType joinType, Table joinTable,
-                                    Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
-            Join.JoinBuilder<EzUpdateBuilder> builder = this.join(joinType, joinTable);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzUpdateBuilder join(boolean sure, Table joinTable,
-                                    Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
+        /**
+         * 添加 join 表。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzUpdateBuilder join(boolean sure, JoinType joinType, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
             if (sure) {
-                return this.join(joinTable, consumer);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder join(boolean sure, JoinType joinType, Table joinTable,
-                                    Consumer<Join.JoinBuilder<EzUpdateBuilder>> consumer) {
-            if (sure) {
-                return this.join(joinType, joinTable, consumer);
-            }
-            return this;
-        }
-
-        public Where.WhereBuilder<EzUpdateBuilder> where(boolean sure, Table table) {
-            Where where = this.ezUpdate.where;
-            if (where == null) {
-                where = new Where(new LinkedList<>());
-                if (sure) {
-                    this.ezUpdate.where = where;
+                if (this.ezUpdate.getJoins() == null) {
+                    this.ezUpdate.joins = new ArrayList<>();
                 }
-            } else {
-                if (!sure) {
-                    where = new Where(new LinkedList<>());
+                Join join = Join.build(joinType, joinTable, jbc);
+                this.ezUpdate.joins.add(join);
+            }
+            return this;
+        }
+
+        /**
+         * 添加 join 表。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzUpdateBuilder join(boolean sure, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(sure, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+        /**
+         * 添加 join 表。
+         *
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzUpdateBuilder join(JoinType joinType, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(Boolean.TRUE, joinType, joinTable, jbc);
+        }
+
+        /**
+         * 添加 join 表。
+         *
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzUpdateBuilder join(Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(Boolean.TRUE, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+
+        /**
+         * 创建 where 条件构造器。
+         *
+         * @param sure 是否启用当前 where
+         * @param wcb  当前where条件构造器
+         * @return 构造器
+         */
+        public EzUpdateBuilder where(boolean sure, Consumer<Where.WhereBuilder> wcb) {
+            if (sure) {
+                Where where = this.ezUpdate.where;
+                if (where == null) {
+                    this.ezUpdate.where = Where.build(wcb);
+                } else {
+                    Where.build(wcb, where.getConditions());
                 }
             }
-            return new Where.WhereBuilder<>(this, where, table);
-        }
-
-
-        public Where.WhereBuilder<EzUpdateBuilder> where(Table table) {
-            return this.where(true, table);
-        }
-
-        public Where.WhereBuilder<EzUpdateBuilder> where(boolean sure) {
-            return this.where(sure, this.ezUpdate.table);
-        }
-
-        public Where.WhereBuilder<EzUpdateBuilder> where() {
-            return this.where(true);
-        }
-
-        public EzUpdateBuilder where(Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
-            Where.WhereBuilder<EzUpdateBuilder> builder = this.where();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzUpdateBuilder where(Table table, Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
-            Where.WhereBuilder<EzUpdateBuilder> builder = this.where(table);
-            consumer.accept(builder);
-            return this;
+        /**
+         * 创建 where 条件构造器。
+         *
+         * @param wcb 当前where条件构造器
+         * @return 构造器
+         */
+        public EzUpdateBuilder where(Consumer<Where.WhereBuilder> wcb) {
+            return this.where(Boolean.TRUE, wcb);
         }
 
-        public EzUpdateBuilder where(boolean sure, Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
-            if (sure) {
-                return this.where(consumer);
-            }
-            return this;
-        }
-
-        public EzUpdateBuilder where(boolean sure, Table table,
-                                     Consumer<Where.WhereBuilder<EzUpdateBuilder>> consumer) {
-            if (sure) {
-                return this.where(table, consumer);
-            }
-            return this;
-        }
 
         public EzUpdate build() {
             return this.ezUpdate;

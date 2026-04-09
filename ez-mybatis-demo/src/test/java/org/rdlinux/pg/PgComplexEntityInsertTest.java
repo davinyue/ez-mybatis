@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.dao.JdbcInsertDao;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.*;
 import org.rdlinux.ezmybatis.demo.mapper.ComplexUserMapper;
@@ -222,10 +223,8 @@ public class PgComplexEntityInsertTest extends PgBaseTest {
         EntityTable orderTable = EntityTable.of(ComplexOrder.class);
         EzQuery<ComplexOrder> query = EzQuery.builder(ComplexOrder.class)
                 .from(orderTable)
-                .select()
-                .addAll()
-                .done()
-                .where(e -> e.addCondition(orderTable.field(BaseEntity.Fields.id).eq(seed.getId())))
+                .select(Select.EzSelectBuilder::addAll)
+                .where(e -> e.add(orderTable.field(BaseEntity.Fields.id).eq(seed.getId())))
                 .build();
 
         // 目标写入表设定为新建立的订单归档表：ez_complex_order_archive

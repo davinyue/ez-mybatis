@@ -44,10 +44,10 @@ public class MySqlSelectConverter extends AbstractConverter<Select> implements C
         if (select.isDistinct()) {
             sqlBuilder.append("DISTINCT ");
         }
-        if (select.getSelectFields() == null || select.getSelectFields().isEmpty()) {
+        if (select.getSelectItems() == null || select.getSelectItems().isEmpty()) {
             sqlBuilder.append(select.getQuery().getFrom().getTable().getAlias()).append(".* ");
         } else {
-            List<SelectItem> selectFields = select.getSelectFields();
+            List<SelectItem> selectFields = select.getSelectItems();
             for (int i = 0; i < selectFields.size(); i++) {
                 SelectItem selectItem = selectFields.get(i);
                 Converter<?> converter = EzMybatisContent.getConverter(configuration, selectItem.getClass());

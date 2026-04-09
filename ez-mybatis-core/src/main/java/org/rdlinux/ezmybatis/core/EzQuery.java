@@ -2,9 +2,12 @@ package org.rdlinux.ezmybatis.core;
 
 import lombok.Getter;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.condition.ExistsCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.enumeration.JoinType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -19,6 +22,22 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
     private Page page;
     private List<Union> unions;
     private Limit limit;
+
+    public ExistsCondition exists() {
+        return new ExistsCondition(AndOr.AND, this, Boolean.FALSE);
+    }
+
+    public ExistsCondition orExists() {
+        return new ExistsCondition(AndOr.OR, this, Boolean.FALSE);
+    }
+
+    public ExistsCondition notExists() {
+        return new ExistsCondition(AndOr.AND, this, Boolean.TRUE);
+    }
+
+    public ExistsCondition orNotExists() {
+        return new ExistsCondition(AndOr.OR, this, Boolean.TRUE);
+    }
 
     private EzQuery(Class<Rt> retType) {
         super(retType);
@@ -37,13 +56,11 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
 
         private EzQueryBuilder(Class<Rt> retType) {
             this.query = new EzQuery<>(retType);
-            this.query.orderBy = new OrderBy(this.query, new LinkedList<>());
         }
 
         public EzQueryBuilder<Rt> from(Table table) {
             this.query.table = table;
             this.query.from = new From(table);
-            this.query.select = new Select(this.query, new LinkedList<>());
             this.fromIsSet = true;
             return this;
         }
@@ -58,336 +75,173 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             }
         }
 
-        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(boolean sure, Table table) {
-            this.checkFromTable();
-            Select select = this.query.select;
-            if (select == null) {
-                select = new Select(this.query, new LinkedList<>());
-                if (sure) {
+        public EzQueryBuilder<Rt> select(boolean sure, Consumer<Select.EzSelectBuilder> sc) {
+            if (sure) {
+                this.checkFromTable();
+                Select select = this.query.select;
+                if (select == null) {
+                    select = Select.build(this.query, sc);
                     this.query.select = select;
-                }
-            } else {
-                if (!sure) {
-                    select = new Select(this.query, new LinkedList<>());
+                } else {
+                    Select.build(this.query, select.getSelectItems(), sc);
                 }
             }
-            return new Select.EzSelectBuilder<>(this, select, table);
-        }
-
-
-        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(Table table) {
-            return this.select(true, table);
-        }
-
-        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select(boolean sure) {
-            return this.select(sure, this.query.table);
-        }
-
-        public Select.EzSelectBuilder<EzQueryBuilder<Rt>> select() {
-            return this.select(true);
-        }
-
-        public EzQueryBuilder<Rt> select(Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Select.EzSelectBuilder<EzQueryBuilder<Rt>> builder = this.select();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzQueryBuilder<Rt> select(Table table, Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Select.EzSelectBuilder<EzQueryBuilder<Rt>> builder = this.select(table);
-            consumer.accept(builder);
-            return this;
+        public EzQueryBuilder<Rt> select(Consumer<Select.EzSelectBuilder> sc) {
+            return this.select(Boolean.TRUE, sc);
         }
 
-        public EzQueryBuilder<Rt> select(boolean sure, Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
+
+        /**
+         * 添加 join 表。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzQueryBuilder<Rt> join(boolean sure, JoinType joinType, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
             if (sure) {
-                return this.select(consumer);
-            }
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> select(boolean sure, Table table,
-                                         Consumer<Select.EzSelectBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.select(table, consumer);
-            }
-            return this;
-        }
-
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, JoinType joinType, Table joinTable) {
-            this.checkFromTable();
-            if (this.query.getJoins() == null) {
-                this.query.joins = new LinkedList<>();
-            }
-            Join join = new Join();
-            join.setJoinType(joinType);
-            join.setTable(this.query.table);
-            join.setJoinTable(joinTable);
-            join.setOnConditions(new LinkedList<>());
-            join.setSure(sure);
-            this.query.joins.add(join);
-            return new Join.JoinBuilder<>(this, join);
-        }
-
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(JoinType joinType, Table joinTable) {
-            return this.join(true, joinType, joinTable);
-        }
-
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(Table joinTable) {
-            return this.join(JoinType.InnerJoin, joinTable);
-        }
-
-        public Join.JoinBuilder<EzQueryBuilder<Rt>> join(boolean sure, Table joinTable) {
-            return this.join(sure, JoinType.InnerJoin, joinTable);
-        }
-
-        public EzQueryBuilder<Rt> join(Table joinTable, Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Join.JoinBuilder<EzQueryBuilder<Rt>> builder = this.join(joinTable);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> join(JoinType joinType, Table joinTable,
-                                       Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Join.JoinBuilder<EzQueryBuilder<Rt>> builder = this.join(joinType, joinTable);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> join(boolean sure, Table joinTable,
-                                       Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.join(joinTable, consumer);
-            }
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> join(boolean sure, JoinType joinType, Table joinTable,
-                                       Consumer<Join.JoinBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.join(joinType, joinTable, consumer);
-            }
-            return this;
-        }
-
-        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure, Table table) {
-            this.checkFromTable();
-            Where where = this.query.where;
-            if (where == null) {
-                where = new Where(new LinkedList<>());
-                if (sure) {
-                    this.query.where = where;
+                if (this.query.getJoins() == null) {
+                    this.query.joins = new ArrayList<>();
                 }
-            } else {
-                if (!sure) {
-                    where = new Where(new LinkedList<>());
+                Join join = Join.build(joinType, joinTable, jbc);
+                this.query.joins.add(join);
+            }
+            return this;
+        }
+
+        /**
+         * 添加 join 表。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzQueryBuilder<Rt> join(boolean sure, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(sure, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+        /**
+         * 添加 join 表。
+         *
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzQueryBuilder<Rt> join(JoinType joinType, Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(Boolean.TRUE, joinType, joinTable, jbc);
+        }
+
+        /**
+         * 添加 join 表。
+         *
+         * @param joinTable 被关联表
+         * @param jbc       join 条件构造回调
+         * @return 当前构造器
+         */
+        public EzQueryBuilder<Rt> join(Table joinTable, Consumer<Join.JoinBuilder> jbc) {
+            return this.join(Boolean.TRUE, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+
+        /**
+         * 创建 where 条件构造器。
+         *
+         * @param sure 是否启用当前 where
+         * @param wcb  当前where条件构造器
+         * @return 构造器
+         */
+        public EzQueryBuilder<Rt> where(boolean sure, Consumer<Where.WhereBuilder> wcb) {
+            if (sure) {
+                Where where = this.query.where;
+                if (where == null) {
+                    this.query.where = Where.build(wcb);
+                } else {
+                    Where.build(wcb, where.getConditions());
                 }
             }
-            return new Where.WhereBuilder<>(this, where, table);
-        }
-
-        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(Table table) {
-            return this.where(true, table);
-        }
-
-        public Where.WhereBuilder<EzQueryBuilder<Rt>> where(boolean sure) {
-            return this.where(sure, this.query.table);
-        }
-
-        public Where.WhereBuilder<EzQueryBuilder<Rt>> where() {
-            return this.where(true);
-        }
-
-        public EzQueryBuilder<Rt> where(Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Where.WhereBuilder<EzQueryBuilder<Rt>> builder = this.where();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzQueryBuilder<Rt> where(Table table, Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Where.WhereBuilder<EzQueryBuilder<Rt>> builder = this.where(table);
-            consumer.accept(builder);
-            return this;
+        /**
+         * 创建 where 条件构造器。
+         *
+         * @param wcb 当前where条件构造器
+         * @return 构造器
+         */
+        public EzQueryBuilder<Rt> where(Consumer<Where.WhereBuilder> wcb) {
+            return this.where(Boolean.TRUE, wcb);
         }
 
-        public EzQueryBuilder<Rt> where(boolean sure, Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
+        public EzQueryBuilder<Rt> groupBy(boolean sure, Consumer<GroupBy.GroupBuilder> gpc) {
             if (sure) {
-                return this.where(consumer);
-            }
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> where(boolean sure, Table table,
-                                        Consumer<Where.WhereBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.where(table, consumer);
-            }
-            return this;
-        }
-
-        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure, Table table) {
-            this.checkFromTable();
-            GroupBy groupBy = this.query.groupBy;
-            if (groupBy == null) {
-                groupBy = new GroupBy(new LinkedList<>());
-                if (sure) {
+                this.checkFromTable();
+                GroupBy groupBy = this.query.groupBy;
+                if (groupBy == null) {
+                    groupBy = GroupBy.build(gpc);
                     this.query.groupBy = groupBy;
-                }
-            } else {
-                if (!sure) {
-                    groupBy = new GroupBy(new LinkedList<>());
+                } else {
+                    GroupBy.build(groupBy.getItems(), gpc);
                 }
             }
-            return new GroupBy.GroupBuilder<>(this, groupBy, table);
-        }
-
-        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(Table table) {
-            return this.groupBy(true, table);
-        }
-
-        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy(boolean sure) {
-            return this.groupBy(sure, this.query.table);
-        }
-
-        public GroupBy.GroupBuilder<EzQueryBuilder<Rt>> groupBy() {
-            return this.groupBy(true);
-        }
-
-        public EzQueryBuilder<Rt> groupBy(Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
-            GroupBy.GroupBuilder<EzQueryBuilder<Rt>> builder = this.groupBy();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzQueryBuilder<Rt> groupBy(Table table, Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
-            GroupBy.GroupBuilder<EzQueryBuilder<Rt>> builder = this.groupBy(table);
-            consumer.accept(builder);
-            return this;
+        public EzQueryBuilder<Rt> groupBy(Consumer<GroupBy.GroupBuilder> gpc) {
+            return this.groupBy(Boolean.TRUE, gpc);
         }
 
-        public EzQueryBuilder<Rt> groupBy(boolean sure, Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
+        public EzQueryBuilder<Rt> orderBy(boolean sure, Consumer<OrderBy.OrderBuilder> odc) {
             if (sure) {
-                return this.groupBy(consumer);
-            }
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> groupBy(boolean sure, Table table,
-                                          Consumer<GroupBy.GroupBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.groupBy(table, consumer);
-            }
-            return this;
-        }
-
-        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure, Table table) {
-            this.checkFromTable();
-            OrderBy orderBy = this.query.orderBy;
-            if (orderBy == null) {
-                orderBy = new OrderBy(this.query, new LinkedList<>());
-                if (sure) {
+                this.checkFromTable();
+                OrderBy orderBy = this.query.orderBy;
+                if (orderBy == null) {
+                    orderBy = OrderBy.build(this.query, odc);
                     this.query.orderBy = orderBy;
-                }
-            } else {
-                if (!sure) {
-                    orderBy = new OrderBy(this.query, new LinkedList<>());
+                } else {
+                    OrderBy.build(this.query, orderBy.getItems(), odc);
                 }
             }
-            return new OrderBy.OrderBuilder<>(this, orderBy, table);
-        }
-
-        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(Table table) {
-            return this.orderBy(true, table);
-        }
-
-        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy(boolean sure) {
-            return this.orderBy(sure, this.query.table);
-        }
-
-        public OrderBy.OrderBuilder<EzQueryBuilder<Rt>> orderBy() {
-            return this.orderBy(true);
-        }
-
-        public EzQueryBuilder<Rt> orderBy(Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
-            OrderBy.OrderBuilder<EzQueryBuilder<Rt>> builder = this.orderBy();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzQueryBuilder<Rt> orderBy(Table table, Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
-            OrderBy.OrderBuilder<EzQueryBuilder<Rt>> builder = this.orderBy(table);
-            consumer.accept(builder);
-            return this;
+        public EzQueryBuilder<Rt> orderBy(Consumer<OrderBy.OrderBuilder> odc) {
+            return this.orderBy(Boolean.TRUE, odc);
         }
 
-        public EzQueryBuilder<Rt> orderBy(boolean sure, Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
+        /**
+         * 创建 having 条件构造器。
+         *
+         * @param sure 是否启用当前 where
+         * @param hc   当前having条件构造器
+         * @return 构造器
+         */
+        public EzQueryBuilder<Rt> having(boolean sure, Consumer<Having.HavingBuilder> hc) {
             if (sure) {
-                return this.orderBy(consumer);
-            }
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> orderBy(boolean sure, Table table,
-                                          Consumer<OrderBy.OrderBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.orderBy(table, consumer);
-            }
-            return this;
-        }
-
-        public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure, Table table) {
-            this.checkFromTable();
-            Having having = this.query.having;
-            if (having == null) {
-                having = new Having(new LinkedList<>());
-                if (sure) {
-                    this.query.having = having;
-                }
-            } else {
-                if (!sure) {
-                    having = new Having(new LinkedList<>());
+                Having having = this.query.having;
+                if (having == null) {
+                    this.query.having = Having.build(hc);
+                } else {
+                    Having.build(hc, having.getConditions());
                 }
             }
-            return new Having.HavingBuilder<>(this, having, table);
-        }
-
-        public Having.HavingBuilder<EzQueryBuilder<Rt>> having(Table table) {
-            return this.having(true, table);
-        }
-
-        public Having.HavingBuilder<EzQueryBuilder<Rt>> having(boolean sure) {
-            return this.having(sure, this.query.table);
-        }
-
-        public Having.HavingBuilder<EzQueryBuilder<Rt>> having() {
-            return this.having(true);
-        }
-
-        public EzQueryBuilder<Rt> having(Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Having.HavingBuilder<EzQueryBuilder<Rt>> builder = this.having();
-            consumer.accept(builder);
             return this;
         }
 
-        public EzQueryBuilder<Rt> having(Table table, Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
-            Having.HavingBuilder<EzQueryBuilder<Rt>> builder = this.having(table);
-            consumer.accept(builder);
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> having(boolean sure, Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.having(consumer);
-            }
-            return this;
-        }
-
-        public EzQueryBuilder<Rt> having(boolean sure, Table table,
-                                         Consumer<Having.HavingBuilder<EzQueryBuilder<Rt>>> consumer) {
-            if (sure) {
-                return this.having(table, consumer);
-            }
-            return this;
+        /**
+         * 创建 having 条件构造器。
+         *
+         * @param hc 当前having条件构造器
+         * @return 构造器
+         */
+        public EzQueryBuilder<Rt> having(Consumer<Having.HavingBuilder> hc) {
+            return this.having(Boolean.TRUE, hc);
         }
 
         /**

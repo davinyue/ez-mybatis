@@ -92,9 +92,4 @@ public class EntityTable extends DbTable {
     public EntityField field(String field) {
         return EntityField.of(this, field);
     }
-
-    @Override
-    public EntityTable as(String alias) {
-        return (EntityTable) super.as(alias);
-    }
 }

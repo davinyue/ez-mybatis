@@ -357,7 +357,7 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
                     // Conditional addition to the SET fragment
                     s.add(true, table.field(ComplexUser.Fields.age).set(99));
                 })
-                .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(userId)))
+                .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(userId)))
                 .build();
 
         int updated = mapper.ezUpdate(ezUpdate);
@@ -380,13 +380,13 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
 
         EzUpdate ezUpdate1 = EzUpdate.update(table)
                 .set(s -> s.add(table.field(ComplexUser.Fields.username).set("张碧澄_BATCH")))
-                .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(ids.get(0))))
+                .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(ids.get(0))))
                 .build();
         updates.add(ezUpdate1);
 
         EzUpdate ezUpdate2 = EzUpdate.update(table)
                 .set(s -> s.add(table.field(ComplexUser.Fields.username).set("张碧澄_BATCH2")))
-                .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(ids.get(1))))
+                .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(ids.get(1))))
                 .build();
         updates.add(ezUpdate2);
 
@@ -404,7 +404,7 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set(s -> s.add(table.field(ComplexUser.Fields.departmentId).setToNull()))
-                    .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(uId)))
+                    .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(uId)))
                     .build();
             mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
@@ -444,7 +444,7 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
                     .set(s ->
                             s.add(table.field(ComplexUser.Fields.score).set(scoreFormula))
                                     .add(table.field(ComplexUser.Fields.accountBalance).set(accountBalanceFormula)))
-                    .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(uId)))
+                    .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(uId)))
                     .build();
             int ret = mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
@@ -467,7 +467,7 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set(s -> s.add(table.field(ComplexUser.Fields.age).set(function)))
-                    .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(uId)))
+                    .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(uId)))
                     .build();
             int ret = mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();
@@ -489,19 +489,19 @@ public class OracleComplexEntityUpdateTest extends OracleBaseTest {
                     .addArg(table.field(ComplexUser.Fields.username))
                     .addArg("-Modified").build();
 
-            CaseWhen sonCaseWhen = CaseWhen.build(table, c -> c
-                    .when(w -> w.addCondition(table.field(ComplexUser.Fields.username).eq("张三1")), "李四")
+            CaseWhen sonCaseWhen = CaseWhen.build(c -> c
+                    .when(w -> w.add(table.field(ComplexUser.Fields.username).eq("张三1")), "李四")
                     .els("孙五"));
 
-            CaseWhen caseWhen = CaseWhen.build(table, c -> c
-                    .when(w -> w.addCondition(table.field(ComplexUser.Fields.username).eq("源测试_张三_3")), "李四")
-                    .when(w -> w.addCondition(table.field(ComplexUser.Fields.username).eq("源测试_张三_4")), function)
-                    .when(w -> w.addCondition(table.field(ComplexUser.Fields.username).eq("源测试_张三_5")), sonCaseWhen)
+            CaseWhen caseWhen = CaseWhen.build(c -> c
+                    .when(w -> w.add(table.field(ComplexUser.Fields.username).eq("源测试_张三_3")), "李四")
+                    .when(w -> w.add(table.field(ComplexUser.Fields.username).eq("源测试_张三_4")), function)
+                    .when(w -> w.add(table.field(ComplexUser.Fields.username).eq("源测试_张三_5")), sonCaseWhen)
                     .els(EntityField.of(table, ComplexUser.Fields.username)));
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set(s -> s.add(table.field(ComplexUser.Fields.username).set(caseWhen)))
-                    .where(w -> w.addCondition(table.field(BaseEntity.Fields.id).eq(uId)))
+                    .where(w -> w.add(table.field(BaseEntity.Fields.id).eq(uId)))
                     .build();
             int ret = mapper.ezUpdate(ezUpdate);
             this.sqlSession.commit();

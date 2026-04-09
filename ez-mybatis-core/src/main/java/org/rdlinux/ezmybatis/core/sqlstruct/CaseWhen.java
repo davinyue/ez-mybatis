@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,19 +33,10 @@ public class CaseWhen implements QueryRetNeedAlias {
     }
 
     /**
-     * 获取无状态的 CaseWhen 构造器
-     *
-     * @return 构造器实例
-     */
-    public static CaseWhenBuilder builder(Table table) {
-        return new CaseWhenBuilder(table);
-    }
-
-    /**
      * 通过闭包 Lambda 直接构建出 CaseWhen 结构
      */
-    public static CaseWhen build(Table table, Consumer<CaseWhenBuilder> consumer) {
-        CaseWhenBuilder builder = builder(table);
+    public static CaseWhen build(Consumer<CaseWhenBuilder> consumer) {
+        CaseWhenBuilder builder = new CaseWhenBuilder();
         consumer.accept(builder);
         return builder.build();
     }
@@ -83,12 +73,13 @@ public class CaseWhen implements QueryRetNeedAlias {
          * 使用 addFieldCondition 等方法时需要显式传入 Table 参数。
          * </p>
          */
-        public static class CaseWhenDataBuilder extends ConditionBuilder<CaseWhenBuilder, CaseWhenDataBuilder> {
+        public static class CaseWhenDataBuilder extends ConditionBuilder<CaseWhenDataBuilder> {
             private final CaseWhenData caseWhenData;
+            private final CaseWhenBuilder caseWhenBuilder;
 
-            public CaseWhenDataBuilder(Table table, CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
-                super(caseWhenBuilder, caseWhenData.getConditions(), table, null);
-                this.sonBuilder = this;
+            public CaseWhenDataBuilder(CaseWhenBuilder caseWhenBuilder, CaseWhenData caseWhenData) {
+                super(caseWhenData.getConditions());
+                this.caseWhenBuilder = caseWhenBuilder;
                 this.caseWhenData = caseWhenData;
             }
 
@@ -101,9 +92,9 @@ public class CaseWhen implements QueryRetNeedAlias {
              * @param value 返回的通用对象
              * @return 上级 CaseWhenBuilder 构造器
              */
-            public CaseWhenBuilder then(Object value) {
+            private CaseWhenBuilder then(Object value) {
                 this.caseWhenData.setValue(Operand.objToOperand(value));
-                return this.parentBuilder;
+                return this.caseWhenBuilder;
             }
 
             /**
@@ -112,9 +103,9 @@ public class CaseWhen implements QueryRetNeedAlias {
              * @param value 结果操作数抽象节点
              * @return 上级 CaseWhenBuilder 构造器
              */
-            public CaseWhenBuilder then(Operand value) {
+            private CaseWhenBuilder then(Operand value) {
                 this.caseWhenData.setValue(value);
-                return this.parentBuilder;
+                return this.caseWhenBuilder;
             }
         }
 
@@ -128,10 +119,9 @@ public class CaseWhen implements QueryRetNeedAlias {
      */
     public static class CaseWhenBuilder {
         protected CaseWhen caseWhen;
-        protected Table table;
 
-        private CaseWhenBuilder(Table table) {
-            this.table = table;
+
+        private CaseWhenBuilder() {
             this.caseWhen = new CaseWhen();
         }
 
@@ -140,14 +130,14 @@ public class CaseWhen implements QueryRetNeedAlias {
          *
          * @return 条件数据构造器
          */
-        public CaseWhenData.CaseWhenDataBuilder when() {
+        private CaseWhenData.CaseWhenDataBuilder when() {
             if (this.caseWhen.getCaseWhenData() == null) {
                 this.caseWhen.setCaseWhenData(new LinkedList<>());
             }
             CaseWhenData caseWhenData = new CaseWhenData();
             caseWhenData.setConditions(new LinkedList<>());
             this.caseWhen.getCaseWhenData().add(caseWhenData);
-            return new CaseWhenData.CaseWhenDataBuilder(this.table, this, caseWhenData);
+            return new CaseWhenData.CaseWhenDataBuilder(this, caseWhenData);
         }
 
         /**
@@ -196,7 +186,7 @@ public class CaseWhen implements QueryRetNeedAlias {
          *
          * @return 最终构建的 CaseWhen 结构
          */
-        public CaseWhen build() {
+        private CaseWhen build() {
             return this.caseWhen;
         }
     }

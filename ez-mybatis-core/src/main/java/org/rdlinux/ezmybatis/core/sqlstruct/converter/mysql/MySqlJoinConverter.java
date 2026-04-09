@@ -30,9 +30,6 @@ public class MySqlJoinConverter extends AbstractConverter<Join> implements Conve
         if (join == null) {
             return;
         }
-        if (!join.isSure()) {
-            return;
-        }
         String sonSql = "";
         if (join.getJoinType() != JoinType.CrossJoin) {
             sonSql = MySqlWhereConverter.conditionsToSql(type, sqlGenerateContext, join.getOnConditions()).toString();
