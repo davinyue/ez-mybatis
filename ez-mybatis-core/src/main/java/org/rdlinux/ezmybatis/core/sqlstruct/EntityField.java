@@ -51,16 +51,6 @@ public class EntityField implements QueryRetOperand {
     }
 
     /**
-     * 为当前属性设置查询展示的别名
-     *
-     * @param alias 别名名称
-     * @return 包含别名的选择操作数对象
-     */
-    public SelectOperand as(String alias) {
-        return new SelectOperand(this, alias);
-    }
-
-    /**
      * 构建在 WHERE 语句中的等于（=）条件
      *
      * @param value 要比较的目标值
@@ -263,6 +253,9 @@ public class EntityField implements QueryRetOperand {
      * @return 更新项对象，可直接添加到 EzUpdate 的 SET 子句中
      */
     public UpdateItem set(Object value) {
+        if (value == null) {
+            return this.setToNull();
+        }
         return new UpdateFieldItem(this.table, this.field, Operand.objToOperand(value));
     }
 

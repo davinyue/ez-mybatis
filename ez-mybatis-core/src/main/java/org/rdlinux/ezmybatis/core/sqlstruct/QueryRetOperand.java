@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct;
 
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.enumeration.OrderType;
 
 /**
@@ -22,5 +23,15 @@ public interface QueryRetOperand extends Operand {
      */
     default OrderBy.OrderItem desc() {
         return new OrderBy.OrderItem().setValue(this).setOrderType(OrderType.DESC);
+    }
+
+    /**
+     * 为当前属性设置查询展示的别名
+     *
+     * @param alias 别名名称
+     * @return 包含别名的选择操作数对象
+     */
+    default SelectOperand as(String alias) {
+        return new SelectOperand(this, alias);
     }
 }

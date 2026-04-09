@@ -235,16 +235,6 @@ public class TableColumn implements QueryRetOperand {
     }
 
     /**
-     * 为当前列设置查询展示的别名
-     *
-     * @param alias 别名名称
-     * @return 包含别名的选择操作数对象
-     */
-    public SelectOperand as(String alias) {
-        return new SelectOperand(this, alias);
-    }
-
-    /**
      * 构建 EzUpdate SET 子句中的更新项，将当前列更新为指定的操作数值。
      * 操作数可以是普通值（通过 {@link ObjArg#of} 包装）、另一个列、函数、公式等。
      *
@@ -263,6 +253,9 @@ public class TableColumn implements QueryRetOperand {
      * @return 更新项对象，可直接添加到 EzUpdate 的 SET 子句中
      */
     public UpdateItem set(Object value) {
+        if (value == null) {
+            return this.setToNull();
+        }
         return new UpdateColumnItem(this.table, this.column, Operand.objToOperand(value));
     }
 
