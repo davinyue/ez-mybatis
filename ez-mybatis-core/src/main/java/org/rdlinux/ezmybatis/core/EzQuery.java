@@ -478,6 +478,9 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
          */
         public EzQuery<Rt> build() {
             this.checkFromTable();
+            if (this.query.select == null) {
+                this.select(Select.EzSelectBuilder::addAll);
+            }
             return this.query;
         }
     }
