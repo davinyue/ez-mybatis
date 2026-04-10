@@ -461,8 +461,9 @@ public class DmComplexEntityUpdateTest extends DmBaseTest {
             EntityTable table = EntityTable.of(ComplexUser.class);
             String uId = this.insertAndGetComplexUserId();
             // Function that sets age to either its existing age or 100, natively inside DB
-            Function function = Function.builder("GREATEST").addArg(EntityField.of(table, ComplexUser.Fields.age))
-                    .addArg(100).build();
+            Function function = Function.build("GREATEST", f ->
+                    f.addArg(EntityField.of(table, ComplexUser.Fields.age))
+                            .addArg(100));
 
             EzUpdate ezUpdate = EzUpdate.update(table)
                     .set(s -> s.add(table.field(ComplexUser.Fields.age).set(function)))
@@ -484,9 +485,9 @@ public class DmComplexEntityUpdateTest extends DmBaseTest {
             EntityTable table = EntityTable.of(ComplexUser.class);
             String uId = this.insertAndGetComplexUserId();
 
-            Function function = Function.builder("CONCAT")
-                    .addArg(table.field(ComplexUser.Fields.username))
-                    .addArg("-Modified").build();
+            Function function = Function.build("CONCAT", f ->
+                    f.addArg(EntityField.of(table, ComplexUser.Fields.username))
+                            .addArg("-Modified"));
 
             CaseWhen sonCaseWhen = CaseWhen.build(c -> c
                     .when(w -> w.add(table.field(ComplexUser.Fields.username).eq("张三1")), "李四")

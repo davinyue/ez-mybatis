@@ -2,6 +2,7 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
+import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.enumeration.Operator;
 
@@ -639,5 +640,125 @@ public interface Operand extends SqlStruct {
      */
     default Condition orNotIn(Object... operands) {
         return new ArgCompareArgCondition(AndOr.OR, this, Operator.notIn, valueToArgList(operands));
+    }
+
+    /**
+     * 构建基于此属性的最大值（MAX）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return MAX 函数操作数对象
+     */
+    default SelectOperand max(String alias) {
+        return new SelectOperand(Function.build("MAX", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性的最小值（MIN）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return MIN 函数操作数对象
+     */
+    default SelectOperand min(String alias) {
+        return new SelectOperand(Function.build("MIN", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性的求和（SUM）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return SUM 函数操作数对象
+     */
+    default SelectOperand sum(String alias) {
+        return new SelectOperand(Function.build("SUM", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性的平均值（AVG）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return AVG 函数操作数对象
+     */
+    default SelectOperand avg(String alias) {
+        return new SelectOperand(Function.build("AVG", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性的计数（COUNT）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return COUNT 函数操作数对象
+     */
+    default SelectOperand count(String alias) {
+        return new SelectOperand(Function.build("COUNT", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性的计数（COUNT distinct）聚合函数查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return COUNT 函数操作数对象
+     */
+    default SelectOperand distinctCount(String alias) {
+        return new SelectOperand(Function.build("COUNT", f -> f.addDistinctArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性的绝对值（ABS）查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return ABS 函数操作数对象
+     */
+    default SelectOperand abs(String alias) {
+        return new SelectOperand(Function.build("ABS", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性转换为大写（UPPER）查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return UPPER 函数操作数对象
+     */
+    default SelectOperand upper(String alias) {
+        return new SelectOperand(Function.build("UPPER", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性转换为小写（LOWER）查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return LOWER 函数操作数对象
+     */
+    default SelectOperand lower(String alias) {
+        return new SelectOperand(Function.build("LOWER", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性进行四舍五入求整（ROUND）查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return ROUND 函数操作数对象
+     */
+    default SelectOperand round(String alias) {
+        return new SelectOperand(Function.build("ROUND", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性进行向下求整（FLOOR）查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return FLOOR 函数操作数对象
+     */
+    default SelectOperand floor(String alias) {
+        return new SelectOperand(Function.build("FLOOR", f -> f.addArg(this)), alias);
+    }
+
+    /**
+     * 构建基于此属性去除两端空格（TRIM）查询列
+     *
+     * @param alias 查询结果的列别名，如果不需要别名可以传 null
+     * @return TRIM 函数操作数对象
+     */
+    default SelectOperand trim(String alias) {
+        return new SelectOperand(Function.build("TRIM", f -> f.addArg(this)), alias);
     }
 }

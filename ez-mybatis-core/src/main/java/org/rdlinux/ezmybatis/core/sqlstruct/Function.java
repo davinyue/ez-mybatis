@@ -28,16 +28,6 @@ public class Function implements QueryRetNeedAlias {
     }
 
     /**
-     * 获取函数构造器
-     *
-     * @param funName 函数名称，例如 "MAX", "COUNT", "CONCAT"
-     * @return 函数构造器
-     */
-    public static FunctionBuilder builder(String funName) {
-        return new FunctionBuilder(funName);
-    }
-
-    /**
      * 通过闭包 Lambda 直接构建出一个函数
      *
      * @param funName  函数名称，例如 "MAX", "COUNT", "CONCAT"
@@ -45,7 +35,7 @@ public class Function implements QueryRetNeedAlias {
      * @return 构建完成的 Function 对象
      */
     public static Function build(String funName, Consumer<FunctionBuilder> consumer) {
-        FunctionBuilder builder = builder(funName);
+        FunctionBuilder builder = new FunctionBuilder(funName);
         consumer.accept(builder);
         return builder.build();
     }
@@ -181,7 +171,7 @@ public class Function implements QueryRetNeedAlias {
          *
          * @return Function 实例
          */
-        public Function build() {
+        private Function build() {
             return this.function;
         }
     }

@@ -440,7 +440,9 @@ public class PgComplexEntitySelectTest extends PgBaseTest {
                     s.add(table.field(ComplexUser.Fields.departmentId));
                     s.add(countFn, "count");
                 })
+                //测试多个groupBy是否会丢弃group项, 正常是不丢弃
                 .groupBy(g -> g.add(table.field(ComplexUser.Fields.departmentId)))
+                .groupBy(g -> g.add(table.field(ComplexUser.Fields.userType)))
                 .having(h -> h.add(countFn.ge(0)))
                 .build();
 
@@ -696,7 +698,8 @@ public class PgComplexEntitySelectTest extends PgBaseTest {
         this.insertAndGetComplexUserIds(3, dept.getId());
 
         EntityTable table = EntityTable.of(ComplexUser.class);
-        Function countFn = Function.build("COUNT", f -> f.addArg(EntityField.of(table, BaseEntity.Fields.id)));
+        Function countFn = Function.build("COUNT", f ->
+                f.addArg(EntityField.of(table, BaseEntity.Fields.id)));
 
         EzQuery<StringHashMap> query = EzQuery.builder(StringHashMap.class)
                 .from(table)
@@ -706,7 +709,9 @@ public class PgComplexEntitySelectTest extends PgBaseTest {
                 })
                 .groupBy(g -> g.add(table.field(ComplexUser.Fields.departmentId)))
                 .having(h -> h.add(countFn.ge(1)))
+                //测试多个orderBy是否会丢弃排序项, 正常是不应该丢弃
                 .orderBy(o -> o.add(table.field(ComplexUser.Fields.departmentId), OrderType.ASC))
+                .orderBy(o -> o.add(countFn.desc()))
                 .build();
 
         List<StringHashMap> result = this.sqlSession.getMapper(EzMapper.class).query(query);

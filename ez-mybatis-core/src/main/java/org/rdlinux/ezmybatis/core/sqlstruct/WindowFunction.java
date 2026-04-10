@@ -326,7 +326,7 @@ public class WindowFunction implements QueryRetNeedAlias {
          *
          * @return 构造出的窗口函数实例
          */
-        public WindowFunction build() {
+        private WindowFunction build() {
             return this.windowFunction;
         }
     }
