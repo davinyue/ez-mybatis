@@ -16,25 +16,28 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * 查询结构体
+ * SELECT 子句结构节点。
+ *
+ * <p>该类表示一次查询中的投影部分，负责维护查询项、是否去重以及 SQL Hint 等信息。
+ * 它与 {@link EzQuery} 绑定，属于查询 AST 中描述“返回什么”的核心节点。</p>
  */
 @Getter
 @Setter
 public class Select implements SqlStruct {
     /**
-     * 查询
+     * 当前 SELECT 所属的查询对象。
      */
     private EzQuery<?> query;
     /**
-     * sql提示
+     * 作用于当前 SELECT 的 SQL Hint。
      */
     private SqlHint sqlHint;
     /**
-     * 是否去重
+     * 是否生成 DISTINCT 关键字。
      */
     private boolean distinct = false;
     /**
-     * 查询项
+     * 当前 SELECT 中包含的查询项列表。
      */
     private List<SelectItem> selectItems;
 
@@ -50,12 +53,27 @@ public class Select implements SqlStruct {
         this.selectItems = selectItems;
     }
 
+    /**
+     * 使用回调快速构建一个新的 SELECT 结构。
+     *
+     * @param query 所属查询对象
+     * @param sc    查询项构建回调
+     * @return 构建完成的 SELECT 结构
+     */
     public static Select build(EzQuery<?> query, Consumer<EzSelectBuilder> sc) {
         EzSelectBuilder builder = new EzSelectBuilder(query);
         sc.accept(builder);
         return builder.build();
     }
 
+    /**
+     * 基于已有查询项并结合回调继续构建 SELECT 结构。
+     *
+     * @param query       所属查询对象
+     * @param selectItems 初始查询项列表
+     * @param sc          查询项构建回调
+     * @return 构建完成的 SELECT 结构
+     */
     public static Select build(EzQuery<?> query, List<SelectItem> selectItems, Consumer<EzSelectBuilder> sc) {
         EzSelectBuilder builder = new EzSelectBuilder(query, selectItems);
         sc.accept(builder);
@@ -63,11 +81,20 @@ public class Select implements SqlStruct {
     }
 
     /**
-     * 查询构造器
+     * {@link Select} 构造器。
      */
     public static class EzSelectBuilder {
+        /**
+         * 当前 SELECT 绑定的查询项列表。
+         */
         private final List<SelectItem> selectItems;
+        /**
+         * 当前构建中的 SELECT 结构。
+         */
         private final Select select;
+        /**
+         * 当前 SELECT 所属查询对象。
+         */
         private final EzQuery<?> query;
 
         /**
@@ -289,13 +316,20 @@ public class Select implements SqlStruct {
 
         /**
          * 指定sql提示
+         *
+         * @param hint Hint 原文
+         * @return 当前构造器
          */
         public EzSelectBuilder withHint(String hint) {
             return this.withHint(true, hint);
         }
 
         /**
-         * 指定sql提示
+         * 按条件指定 SQL Hint。
+         *
+         * @param sure 是否启用当前 Hint
+         * @param hint Hint 原文
+         * @return 当前构造器
          */
         public EzSelectBuilder withHint(boolean sure, String hint) {
             if (sure && StringUtils.isNotEmpty(hint)) {
@@ -304,6 +338,11 @@ public class Select implements SqlStruct {
             return this;
         }
 
+        /**
+         * 完成构建并返回 SELECT 结构。
+         *
+         * @return 构建完成的 SELECT 结构
+         */
         private Select build() {
             return this.select;
         }

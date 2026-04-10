@@ -19,31 +19,62 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Universal mapper interface providing comprehensive CRUD operations for
- * MyBatis.
- * <p>
- * This interface offers a wide range of database operations including:
- * <ul>
- * <li>Query operations with flexible conditions</li>
- * <li>Insert operations (single and batch)</li>
- * <li>Update operations (partial and full replacement)</li>
- * <li>Delete operations (by entity, ID, or custom conditions)</li>
- * <li>SQL-based operations for custom queries</li>
- * </ul>
- * </p>
+ * 通用动态 Mapper 接口。
+ *
+ * <p>该接口面向“运行时决定实体类型或返回类型”的场景，提供统一的增删改查能力，
+ * 包括：</p>
+ * <p>1. 基于实体类型和主键的通用 CRUD。</p>
+ * <p>2. 基于 {@link EzQuery} / {@link EzUpdate} / {@link EzDelete} 的 DSL 操作。</p>
+ * <p>3. 直接执行 SQL 或 SQL 扩展结构的能力。</p>
+ *
+ * <p>与 {@link EzBaseMapper} 相比，该接口不依赖编译期泛型绑定，更适合作为基础通用 Mapper
+ * 或框架内部统一入口使用。</p>
  */
 @Mapper
 public interface EzMapper {
+    /**
+     * DSL 列表查询方法名常量。
+     */
     String QUERY_METHOD = "query";
+    /**
+     * DSL 单条查询方法名常量。
+     */
     String QUERY_ONE_METHOD = "queryOne";
+    /**
+     * DSL 统计查询方法名常量。
+     */
     String QUERY_COUNT_METHOD = "queryCount";
+    /**
+     * 按主键查询方法名常量。
+     */
     String SELECT_BY_ID_METHOD = "selectById";
+    /**
+     * 按指定表和主键查询方法名常量。
+     */
     String SELECT_BY_TABLE_AND_ID_METHOD = "selectByTableAndId";
+    /**
+     * 按主键集合查询方法名常量。
+     */
     String SELECT_BY_IDS_METHOD = "selectByIds";
+    /**
+     * 按指定表和主键集合查询方法名常量。
+     */
     String SELECT_BY_TABLE_AND_IDS_METHOD = "selectByTableAndIds";
+    /**
+     * DSL 删除方法名常量。
+     */
     String EZ_DELETE_METHOD = "ezDelete";
+    /**
+     * DSL 批量删除方法名常量。
+     */
     String EZ_BATCH_DELETE_METHOD = "ezBatchDelete";
+    /**
+     * 原生 SQL 单对象查询方法名常量。
+     */
     String SELECT_ONE_OBJECT_BY_SQL_METHOD = "selectOneObjectBySql";
+    /**
+     * 原生 SQL 对象列表查询方法名常量。
+     */
     String SELECT_OBJECT_BY_SQL_METHOD = "selectObjectBySql";
 
     /**
