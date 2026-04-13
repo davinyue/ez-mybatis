@@ -302,9 +302,26 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         // 9. IN
         EzQuery<ComplexUser> inQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
-                .where(w -> w.add(userTable.field(ComplexUser.Fields.age).in(Arrays.asList(20, 30))))
+                .where(w -> {
+                    w.add(userTable.field(ComplexUser.Fields.departmentId).eq(dept.getId()));
+                    w.add(userTable.field(ComplexUser.Fields.age).in(Arrays.asList(20, 30)));
+                })
                 .page(1, 2).build();
-        Assert.assertNotNull(mapper.query(inQuery));
+        List<ComplexUser> inUsers = mapper.query(inQuery);
+        Assert.assertNotNull(inUsers);
+        Assert.assertEquals(2, inUsers.size());
+
+        int[] ages = {20, 30};
+        EzQuery<ComplexUser> primitiveArrayInQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> {
+                    w.add(userTable.field(ComplexUser.Fields.departmentId).eq(dept.getId()));
+                    w.add(userTable.field(ComplexUser.Fields.age).in(ages));
+                })
+                .page(1, 2).build();
+        List<ComplexUser> primitiveArrayInUsers = mapper.query(primitiveArrayInQuery);
+        Assert.assertNotNull(primitiveArrayInUsers);
+        Assert.assertEquals(2, primitiveArrayInUsers.size());
 
         // 10. NOT IN
         EzQuery<ComplexUser> notInQuery = EzQuery.builder(ComplexUser.class).from(userTable)

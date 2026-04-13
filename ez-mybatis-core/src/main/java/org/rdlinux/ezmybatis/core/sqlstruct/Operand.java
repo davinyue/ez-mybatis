@@ -53,6 +53,16 @@ public interface Operand extends SqlStruct {
         return args;
     }
 
+    static List<Operand> valueToArgListFromVarargs(Object... values) {
+        if (values != null && values.length == 1) {
+            Object first = values[0];
+            if (first instanceof Collection || (first != null && first.getClass().isArray())) {
+                return valueToArgList(first);
+            }
+        }
+        return valueToArgList(values);
+    }
+
     // ================== isNull / isNotNull ==================
 
     /**
@@ -580,7 +590,7 @@ public interface Operand extends SqlStruct {
      * @return 对比条件
      */
     default Condition in(Object... operands) {
-        return new ArgCompareArgCondition(AndOr.AND, this, Operator.in, valueToArgList(operands));
+        return new ArgCompareArgCondition(AndOr.AND, this, Operator.in, valueToArgListFromVarargs(operands));
     }
 
     /**
@@ -600,7 +610,7 @@ public interface Operand extends SqlStruct {
      * @return 对比条件
      */
     default Condition orIn(Object... operands) {
-        return new ArgCompareArgCondition(AndOr.OR, this, Operator.in, valueToArgList(operands));
+        return new ArgCompareArgCondition(AndOr.OR, this, Operator.in, valueToArgListFromVarargs(operands));
     }
 
     // ================== notIn ==================
@@ -622,7 +632,7 @@ public interface Operand extends SqlStruct {
      * @return 对比条件
      */
     default Condition notIn(Object... operands) {
-        return new ArgCompareArgCondition(AndOr.AND, this, Operator.notIn, valueToArgList(operands));
+        return new ArgCompareArgCondition(AndOr.AND, this, Operator.notIn, valueToArgListFromVarargs(operands));
     }
 
     /**
@@ -642,7 +652,7 @@ public interface Operand extends SqlStruct {
      * @return 对比条件
      */
     default Condition orNotIn(Object... operands) {
-        return new ArgCompareArgCondition(AndOr.OR, this, Operator.notIn, valueToArgList(operands));
+        return new ArgCompareArgCondition(AndOr.OR, this, Operator.notIn, valueToArgListFromVarargs(operands));
     }
 
     /**
