@@ -323,49 +323,62 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         Assert.assertNotNull(primitiveArrayInUsers);
         Assert.assertEquals(2, primitiveArrayInUsers.size());
 
-        // 10. NOT IN
+        // 10. 延迟构造条件
+        String fieldName = null;
+        EzQuery<ComplexUser> lazyConditionQuery = EzQuery.builder(ComplexUser.class).from(userTable)
+                .select(Select.EzSelectBuilder::addAll)
+                .where(w -> {
+                    w.add(userTable.field(ComplexUser.Fields.departmentId).eq(dept.getId()));
+                    w.add(fieldName != null, ww -> ww.add(userTable.field(fieldName).eq(1)));
+                })
+                .page(1, 2).build();
+        List<ComplexUser> lazyConditionUsers = mapper.query(lazyConditionQuery);
+        Assert.assertNotNull(lazyConditionUsers);
+        Assert.assertEquals(2, lazyConditionUsers.size());
+
+        // 11. NOT IN
         EzQuery<ComplexUser> notInQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(userTable.field(ComplexUser.Fields.age).notIn(Arrays.asList(-1, -2))))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notInQuery));
 
-        // 11. LIKE
+        // 12. LIKE
         EzQuery<ComplexUser> likeQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(userTable.field(ComplexUser.Fields.username).like("被查用户_%")))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(likeQuery));
 
-        // 12. NOT LIKE (unlike)
+        // 13. NOT LIKE (unlike)
         EzQuery<ComplexUser> unlikeQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(userTable.field(ComplexUser.Fields.username).unlike("NonExis%")))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(unlikeQuery));
 
-        // 13. BETWEEN
+        // 14. BETWEEN
         EzQuery<ComplexUser> betweenQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(userTable.field(ComplexUser.Fields.age).between(18, 25)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(betweenQuery));
 
-        // 14. NOT BETWEEN
+        // 15. NOT BETWEEN
         EzQuery<ComplexUser> notBetweenQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(userTable.field(ComplexUser.Fields.age).notBetween(100, 200)))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(notBetweenQuery));
 
-        // 15. REGEXP
+        // 16. REGEXP
         EzQuery<ComplexUser> regexpQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(userTable.field(ComplexUser.Fields.username).regexp("^被查.*")))
                 .page(1, 1).build();
         Assert.assertNotNull(mapper.query(regexpQuery));
 
-        // 16. EXISTS (关联查询)
+        // 17. EXISTS (关联查询)
         EntityTable orderTableCondition = EntityTable.of(ComplexOrder.class);
         EzQuery<ComplexOrder> orderSubQuery = EzQuery.builder(ComplexOrder.class)
                 .from(orderTableCondition).select(s -> s.add(orderTableCondition.field(BaseEntity.Fields.id)))
@@ -382,7 +395,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         Assert.assertNotNull(existsRet);
         log.info("EzQuery EXISTS: {}", JacksonUtils.toJsonString(existsRet));
 
-        // 17. NOT EXISTS
+        // 18. NOT EXISTS
         EzQuery<ComplexUser> notExistsQuery = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .where(w -> w.add(orderSubQuery.notExists()).add(orderSubQuery.orNotExists()))

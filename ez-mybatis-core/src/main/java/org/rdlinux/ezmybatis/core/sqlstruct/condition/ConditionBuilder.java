@@ -144,6 +144,30 @@ public class ConditionBuilder<SonBuilder extends ConditionBuilder<?>> {
     }
 
     /**
+     * 根据条件延迟构造并添加条件。
+     *
+     * <p>适用于条件对象的构造本身依赖于 {@code sure} 相关参数的场景。相比先在外部构造
+     * {@link Condition} 再调用 {@link #add(boolean, Condition)}，该重载只有在 {@code sure=true}
+     * 时才会执行回调，从而避免在 {@code sure=false} 时提前触发参数校验或异常。</p>
+     *
+     * <p>例如 {@code a != null} 才允许执行 {@code table.field(a).eq(1)} 时，可写成：
+     * {@code add(a != null, w -> w.add(table.field(a).eq(1)))}，避免因先执行
+     * {@code table.field(a)} 而在 {@code a == null} 时抛出异常。</p>
+     *
+     * @param sure 是否启用当前条件
+     * @param cb   条件构造回调
+     * @return 当前构造器
+     */
+    @SuppressWarnings("unchecked")
+    public SonBuilder add(boolean sure, Consumer<SonBuilder> cb) {
+        if (sure) {
+            cb.accept((SonBuilder) this);
+        }
+        return (SonBuilder) this;
+    }
+
+
+    /**
      * 添加已构造的条件对象。
      *
      * @param condition 条件对象
