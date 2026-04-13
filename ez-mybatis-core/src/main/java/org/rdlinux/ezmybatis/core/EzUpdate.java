@@ -6,7 +6,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Join;
 import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public class EzUpdate extends EzParam<Integer> {
      */
     private EzUpdate() {
         super(Integer.class);
-        this.set = new UpdateSet();
     }
 
     /**
@@ -63,30 +61,6 @@ public class EzUpdate extends EzParam<Integer> {
             this.ezUpdate = new EzUpdate();
             this.ezUpdate.table = table;
             this.ezUpdate.from = new From(table);
-            this.ezUpdate.set = new UpdateSet();
-        }
-
-        /**
-         * 根据条件创建更新集合构造器。
-         *
-         * @param sure 是否启用当前 set
-         * @return 更新集合构造器
-         */
-        public UpdateSetBuilder<EzUpdateBuilder> set(boolean sure) {
-            if (sure) {
-                return new UpdateSetBuilder<>(this, this.ezUpdate.table, this.ezUpdate.set);
-            } else {
-                return new UpdateSetBuilder<>(this, this.ezUpdate.table, new UpdateSet());
-            }
-        }
-
-        /**
-         * 创建更新集合构造器。
-         *
-         * @return 更新集合构造器
-         */
-        public UpdateSetBuilder<EzUpdateBuilder> set() {
-            return this.set(true);
         }
 
         /**
@@ -95,9 +69,12 @@ public class EzUpdate extends EzParam<Integer> {
          * @param consumer 更新集合构造回调
          * @return 当前构造器
          */
-        public EzUpdateBuilder set(Consumer<UpdateSetBuilder<EzUpdateBuilder>> consumer) {
-            UpdateSetBuilder<EzUpdateBuilder> builder = this.set();
-            consumer.accept(builder);
+        public EzUpdateBuilder set(Consumer<UpdateSet.UpdateSetBuilder> consumer) {
+            if (this.ezUpdate.set == null) {
+                this.ezUpdate.set = UpdateSet.build(consumer);
+            } else {
+                UpdateSet.build(consumer, this.ezUpdate.set.getItems());
+            }
             return this;
         }
 
@@ -108,7 +85,7 @@ public class EzUpdate extends EzParam<Integer> {
          * @param consumer 更新集合构造回调
          * @return 当前构造器
          */
-        public EzUpdateBuilder set(boolean sure, Consumer<UpdateSetBuilder<EzUpdateBuilder>> consumer) {
+        public EzUpdateBuilder set(boolean sure, Consumer<UpdateSet.UpdateSetBuilder> consumer) {
             if (sure) {
                 return this.set(consumer);
             }

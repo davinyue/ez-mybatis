@@ -74,9 +74,8 @@ public class MySqlComplexEntityUpsertTest extends MySqlBaseTest {
 
         MySqlUpsert upsert = MySqlUpsert.insert(user)
                 .onDuplicateKeyUpdate()
-                .set()
-                .add(table.field(ComplexUser.Fields.username).set("complex_upsert_update_name"))
-                .done()
+                .set(s ->
+                        s.add(table.field(ComplexUser.Fields.username).set("complex_upsert_update_name")))
                 .build();
 
         EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
@@ -104,9 +103,8 @@ public class MySqlComplexEntityUpsertTest extends MySqlBaseTest {
         MySqlUpsert upsert = MySqlUpsert.into(table)
                 .insert(user)
                 .onDuplicateKeyUpdate()
-                .set()
-                .add(table.field(ComplexUser.Fields.username).set("complex_upsert_update_name"))
-                .done()
+                .set(s ->
+                        s.add(table.field(ComplexUser.Fields.username).set("complex_upsert_update_name")))
                 .build();
 
         EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);

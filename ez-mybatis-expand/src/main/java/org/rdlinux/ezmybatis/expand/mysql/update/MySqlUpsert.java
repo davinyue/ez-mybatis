@@ -7,12 +7,12 @@ import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.UpdateSet;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.expand.mysql.converter.MySqlUpsertConverter;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * MySQL `INSERT ... ON DUPLICATE KEY UPDATE` 扩展结构。
@@ -87,7 +87,6 @@ public class MySqlUpsert implements SqlExpand {
             this.upsert = new MySqlUpsert();
             this.upsert.table = table;
             this.upsert.insertEntity = entity;
-            this.upsert.set = new UpdateSet();
         }
 
         /**
@@ -124,10 +123,30 @@ public class MySqlUpsert implements SqlExpand {
         /**
          * 获取冲突时更新集合的构造器。
          *
-         * @return 更新集合构造器
+         * @param consumer 更新集合构造回调
+         * @return 当前构造器
          */
-        public UpdateSetBuilder<Builder> set() {
-            return new UpdateSetBuilder<>(this, this.resolveTable(), this.upsert.set);
+        public Builder set(Consumer<UpdateSet.UpdateSetBuilder> consumer) {
+            if (this.upsert.set == null) {
+                this.upsert.set = UpdateSet.build(consumer);
+            } else {
+                UpdateSet.build(consumer, this.upsert.set.getItems());
+            }
+            return this;
+        }
+
+        /**
+         * 获取冲突时更新集合的构造器。
+         *
+         * @param sure     是否启用当前 set
+         * @param consumer 更新集合构造回调
+         * @return 当前构造器
+         */
+        public Builder set(boolean sure, Consumer<UpdateSet.UpdateSetBuilder> consumer) {
+            if (sure) {
+                return this.set(consumer);
+            }
+            return this;
         }
 
         /**

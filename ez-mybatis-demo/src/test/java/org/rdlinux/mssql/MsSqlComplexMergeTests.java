@@ -99,7 +99,6 @@ public class MsSqlComplexMergeTests extends MsSqlBaseTest {
         Assert.assertEquals(Integer.valueOf(35), updated.getAge());
     }
 
-
     @Test
     public void mergeMatchedUpdateTest() {
         String userId = this.insertAndGetComplexUserId();
@@ -116,11 +115,11 @@ public class MsSqlComplexMergeTests extends MsSqlBaseTest {
 
         Merge merge = Merge.into(userTable)
                 .using(sourceTable)
-                .on(o -> o.add(userTable.field(BaseEntity.Fields.id).eq(sourceTable.column("id"))))
-                .set()
-                .add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"))
-                .add(userTable.field(ComplexUser.Fields.age).set(35))
-                .done()
+                .on(o -> o.add(userTable.field(BaseEntity.Fields.id), sourceTable.column("ID")))
+                .set(s -> {
+                    s.add(userTable.field(ComplexUser.Fields.username).set("dm_merge_update_name"));
+                    s.add(userTable.field(ComplexUser.Fields.age).set(35));
+                })
                 .whenNotMatchedThenInsert(insertModel)
                 .build();
 

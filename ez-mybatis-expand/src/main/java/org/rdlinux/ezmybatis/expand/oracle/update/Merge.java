@@ -12,7 +12,6 @@ import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EzQueryTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateSetBuilder;
 import org.rdlinux.ezmybatis.expand.mssql.converter.SqlServerMergeConverter;
 import org.rdlinux.ezmybatis.expand.oracle.converter.OracleMergeConverter;
 import org.rdlinux.ezmybatis.expand.postgre.converter.PostgreMergeConverter;
@@ -36,9 +35,7 @@ import java.util.function.Consumer;
  */
 @Getter
 public class Merge implements SqlExpand {
-    /**
-     * 注册 MERGE 在各数据库方言下对应的转换器。
-     */
+    //注册 MERGE 在各数据库方言下对应的转换器。
     static {
         EzMybatisContent.addConverter(DbType.ORACLE, Merge.class, OracleMergeConverter.getInstance());
         EzMybatisContent.addConverter(DbType.DM, Merge.class, OracleMergeConverter.getInstance());
@@ -100,7 +97,6 @@ public class Merge implements SqlExpand {
         private MergeBuilder(Table table) {
             this.merge = new Merge();
             this.merge.mergeTable = table;
-            this.merge.set = new UpdateSet();
         }
 
         /**
@@ -151,25 +147,34 @@ public class Merge implements SqlExpand {
         }
 
         /**
-         * 获取匹配成功后更新集合的构造器。
+         * 通过回调构建匹配成功后的更新集合。
          *
-         * @return 更新集合构造器
+         * @param consumer 更新集合构造回调
+         * @return 当前构造器
          */
-        public UpdateSetBuilder<MergeBuilder> set() {
-            return new UpdateSetBuilder<>(this, this.merge.mergeTable, this.merge.set);
+        public MergeBuilder set(Consumer<UpdateSet.UpdateSetBuilder> consumer) {
+            if (this.merge.set == null) {
+                this.merge.set = UpdateSet.build(consumer);
+            } else {
+                UpdateSet.build(consumer, this.merge.set.getItems());
+            }
+            return this;
         }
 
         /**
          * 通过回调构建匹配成功后的更新集合。
          *
-         * @param consumer 更新集合构建回调
+         * @param sure     是否启用当前 set
+         * @param consumer 更新集合构造回调
          * @return 当前构造器
          */
-        public MergeBuilder set(java.util.function.Consumer<UpdateSetBuilder<MergeBuilder>> consumer) {
-            UpdateSetBuilder<MergeBuilder> builder = this.set();
-            consumer.accept(builder);
+        public MergeBuilder set(boolean sure, Consumer<UpdateSet.UpdateSetBuilder> consumer) {
+            if (sure) {
+                return this.set(consumer);
+            }
             return this;
         }
+
 
         /**
          * 指定未匹配时要插入的实体对象。
