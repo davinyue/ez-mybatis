@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.validation.SqlStructureOwnershipValidator;
 
 import java.util.Collection;
 import java.util.Map;
@@ -113,6 +114,7 @@ public class EzSelectProvider {
     public String query(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        SqlStructureOwnershipValidator.validate(query);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getQuerySql(sqlGenerateContext, query);
     }
@@ -121,6 +123,7 @@ public class EzSelectProvider {
     public String queryCount(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        SqlStructureOwnershipValidator.validate(query);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getQueryCountSql(sqlGenerateContext, query);
     }

@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.validation.SqlStructureOwnershipValidator;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -137,6 +138,7 @@ public class EzDeleteProvider {
     public String deleteByEzDelete(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         EzDelete delete = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        SqlStructureOwnershipValidator.validate(delete);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getDeleteSql(sqlGenerateContext, delete);
     }
@@ -145,6 +147,9 @@ public class EzDeleteProvider {
     public String batchDeleteByEzDelete(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<EzDelete> deletes = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        for (EzDelete delete : deletes) {
+            SqlStructureOwnershipValidator.validate(delete);
+        }
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getDeleteSql(sqlGenerateContext, deletes);
     }

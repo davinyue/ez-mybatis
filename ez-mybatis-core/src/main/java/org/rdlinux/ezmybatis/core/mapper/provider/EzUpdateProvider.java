@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
+import org.rdlinux.ezmybatis.core.validation.SqlStructureOwnershipValidator;
 
 import java.util.Collection;
 import java.util.Map;
@@ -100,6 +101,7 @@ public class EzUpdateProvider {
     public String updateByEzUpdate(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         EzUpdate update = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        SqlStructureOwnershipValidator.validate(update);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getUpdateSql(sqlGenerateContext, update);
     }
@@ -108,6 +110,9 @@ public class EzUpdateProvider {
     public String batchUpdateByEzUpdate(Map<String, Object> param) {
         SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
         Collection<EzUpdate> updates = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
+        for (EzUpdate update : updates) {
+            SqlStructureOwnershipValidator.validate(update);
+        }
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getUpdateSql(sqlGenerateContext, updates);
     }
