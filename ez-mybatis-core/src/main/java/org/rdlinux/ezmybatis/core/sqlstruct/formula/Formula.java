@@ -141,6 +141,24 @@ public class Formula implements QueryRetNeedAlias {
         }
 
         /**
+         * 根据条件延迟构造并添加加法元素。
+         *
+         * <p>适用于待添加元素的构造依赖于 {@code sure} 判定参数的场景。只有在
+         * {@code sure=true} 时才会执行回调，避免在 {@code sure=false} 时提前触发
+         * {@code table.field(a)} 一类的参数校验或异常。</p>
+         *
+         * @param sure 是否满足条件
+         * @param cb   公式元素构造回调
+         * @return 当前构造器
+         */
+        public FormulaEleBuilder<ParentBuilder> add(boolean sure, Consumer<FormulaEleBuilder<ParentBuilder>> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
+        }
+
+        /**
          * 加()
          */
         private FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> addGroup() {
@@ -173,6 +191,20 @@ public class Formula implements QueryRetNeedAlias {
          */
         public FormulaEleBuilder<ParentBuilder> subtract(Object value) {
             return this.subtract(Operand.objToOperand(value));
+        }
+
+        /**
+         * 根据条件延迟构造并添加减法元素。
+         *
+         * @param sure 是否满足条件
+         * @param cb   公式元素构造回调
+         * @return 当前构造器
+         */
+        public FormulaEleBuilder<ParentBuilder> subtract(boolean sure, Consumer<FormulaEleBuilder<ParentBuilder>> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
         }
 
         /**
@@ -211,6 +243,20 @@ public class Formula implements QueryRetNeedAlias {
         }
 
         /**
+         * 根据条件延迟构造并添加乘法元素。
+         *
+         * @param sure 是否满足条件
+         * @param cb   公式元素构造回调
+         * @return 当前构造器
+         */
+        public FormulaEleBuilder<ParentBuilder> multiply(boolean sure, Consumer<FormulaEleBuilder<ParentBuilder>> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
+        }
+
+        /**
          * 乘()
          */
         private FormulaStartBuilder<FormulaEleBuilder<ParentBuilder>> multiplyGroup() {
@@ -243,6 +289,20 @@ public class Formula implements QueryRetNeedAlias {
          */
         public FormulaEleBuilder<ParentBuilder> divide(Object value) {
             return this.divide(Operand.objToOperand(value));
+        }
+
+        /**
+         * 根据条件延迟构造并添加除法元素。
+         *
+         * @param sure 是否满足条件
+         * @param cb   公式元素构造回调
+         * @return 当前构造器
+         */
+        public FormulaEleBuilder<ParentBuilder> divide(boolean sure, Consumer<FormulaEleBuilder<ParentBuilder>> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
         }
 
         /**

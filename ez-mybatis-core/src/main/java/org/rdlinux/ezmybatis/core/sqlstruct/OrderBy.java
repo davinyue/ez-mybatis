@@ -150,6 +150,24 @@ public class OrderBy implements SqlStruct {
         }
 
         /**
+         * 根据条件延迟构造并添加排序项。
+         *
+         * <p>适用于排序项的构造依赖于 {@code sure} 判定参数的场景。只有在 {@code sure=true}
+         * 时才会执行回调，避免在 {@code sure=false} 时提前触发诸如 {@code table.field(a)}
+         * 之类的参数校验或异常。</p>
+         *
+         * @param sure 是否满足条件
+         * @param cb   排序项构造回调
+         * @return 当前构造器
+         */
+        public OrderBuilder add(boolean sure, Consumer<OrderBuilder> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
+        }
+
+        /**
          * 添加排序项
          *
          * @param item 排序项

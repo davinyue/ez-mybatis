@@ -460,6 +460,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         this.insertAndGetComplexUserIds(3, dept.getId());
 
         EntityTable table = EntityTable.of(ComplexUser.class);
+        String groupField = null;
 
         // Count users by deptId
         Function countFn = Function.build("COUNT", f ->
@@ -472,6 +473,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
                 })
                 //测试多个groupBy是否会丢弃group项, 正常是不丢弃
                 .groupBy(g -> g.add(table.field(ComplexUser.Fields.departmentId)))
+                .groupBy(g -> g.add(groupField != null, gg -> gg.add(table.field(groupField))))
                 .groupBy(g -> g.add(table.field(ComplexUser.Fields.userType)))
                 .having(h -> h.add(countFn.ge(0)))
                 .build();
@@ -487,14 +489,19 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         this.insertAndGetComplexUserIds(2, dept.getId());
 
         EntityTable table = EntityTable.of(ComplexUser.class);
+        String functionField = null;
+        String formulaField = null;
 
         // Formula: age + 1 (使用刚刚被强化改造且强限制为 .with() 起手的 Formula)
         Formula agePlusOne = Formula.build(f ->
-                f.with(table.field(ComplexUser.Fields.age)).add(1));
+                f.with(table.field(ComplexUser.Fields.age))
+                        .add(formulaField != null, ff -> ff.add(table.field(formulaField)))
+                        .add(1));
 
         // Function: CONCAT(username, ' - ', age)
         Function nameDesc = Function.build("CONCAT", f -> f
                 .addArg(EntityField.of(table, ComplexUser.Fields.username))
+                .addArg(functionField != null, ff -> ff.addArg(table.field(functionField)))
                 .addArg(" - ")
                 .addArg(EntityField.of(table, ComplexUser.Fields.age))
         );
@@ -790,10 +797,12 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         ComplexDepartment dept = this.insertAndGetDepartment();
         this.insertAndGetComplexUserIds(3, dept.getId());
         EntityTable userTable = EntityTable.of(ComplexUser.class);
+        String orderField = null;
         EzQuery<ComplexUser> query = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(Select.EzSelectBuilder::addAll)
                 .orderBy(o -> {
                     o.add(userTable.field(ComplexUser.Fields.age).asc());
+                    o.add(orderField != null, oo -> oo.add(userTable.field(orderField).asc()));
                     o.add(userTable.field(BaseEntity.Fields.createTime).desc());
                 })
                 .page(1, 5)
