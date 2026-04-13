@@ -22,6 +22,9 @@ public interface Operand extends SqlStruct {
     }
 
     static Collection<?> valueToCollection(Object obj) {
+        if (obj == null) {
+            return Collections.emptyList();
+        }
         if (obj instanceof Collection) {
             return (Collection<?>) obj;
         } else if (obj.getClass().isArray()) {
