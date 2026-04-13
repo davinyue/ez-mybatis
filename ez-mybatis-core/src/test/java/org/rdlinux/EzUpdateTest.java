@@ -48,4 +48,17 @@ public class EzUpdateTest {
 
         Assert.assertNotNull(update);
     }
+
+    @Test
+    public void shouldSkipLazyUpdateItemWhenSureIsFalse() {
+        Table table = DbTable.of("user_info");
+        String fieldName = null;
+
+        EzUpdate update = EzUpdate.update(table)
+                .set(s -> s.add(fieldName != null, ss -> ss.add(table.column(fieldName).set("alice"))))
+                .build();
+
+        Assert.assertNotNull(update);
+        Assert.assertTrue(update.getSet().getItems().isEmpty());
+    }
 }

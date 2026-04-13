@@ -260,6 +260,24 @@ public class Select implements SqlStruct {
         }
 
         /**
+         * 根据条件延迟构造并添加查询项。
+         *
+         * <p>适用于查询项构造依赖于 {@code sure} 判定参数的场景。只有在 {@code sure=true}
+         * 时才会执行回调，避免在 {@code sure=false} 时提前触发诸如 {@code table.field(a)}
+         * 之类的参数校验或异常。</p>
+         *
+         * @param sure 是否添加
+         * @param cb   查询项构造回调
+         * @return 当前构造器
+         */
+        public EzSelectBuilder add(boolean sure, Consumer<EzSelectBuilder> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
+        }
+
+        /**
          * 添加最外层的查询包装项
          *
          * @param operand 已被包装的查询项

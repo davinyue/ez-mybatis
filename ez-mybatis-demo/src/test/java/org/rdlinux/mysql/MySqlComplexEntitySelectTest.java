@@ -174,6 +174,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         this.insertAndGetComplexUserIds(2, dept.getId());
 
         EntityTable userTable = EntityTable.of(ComplexUser.class);
+        String selectField = null;
 
         // Select all fields
         EzQuery<ComplexUser> queryAll = EzQuery.builder(ComplexUser.class).from(userTable)
@@ -187,6 +188,7 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         // Select specific fields
         EzQuery<ComplexUser> querySpecific = EzQuery.builder(ComplexUser.class).from(userTable)
                 .select(s -> s.add(userTable.field(BaseEntity.Fields.id)))
+                .select(s -> s.add(selectField != null, ss -> ss.add(userTable.field(selectField))))
                 .select(s -> s.add(userTable.field(ComplexUser.Fields.username)))
                 .page(1, 2)
                 .build();
