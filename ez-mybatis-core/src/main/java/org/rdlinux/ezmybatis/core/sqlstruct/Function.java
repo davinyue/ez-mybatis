@@ -3,23 +3,18 @@ package org.rdlinux.ezmybatis.core.sqlstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 函数
  */
 @Getter
 public class Function implements QueryRetNeedAlias {
-    /**
-     * 表
-     */
-    private Table table;
+
     /**
      * 函数名称
      */
@@ -32,8 +27,17 @@ public class Function implements QueryRetNeedAlias {
     private Function() {
     }
 
-    public static FunctionBuilder builder(Table table) {
-        return new FunctionBuilder(table);
+    /**
+     * 通过闭包 Lambda 直接构建出一个函数
+     *
+     * @param funName  函数名称，例如 "MAX", "COUNT", "CONCAT"
+     * @param consumer 函数参数配置闭包
+     * @return 构建完成的 Function 对象
+     */
+    public static Function build(String funName, Consumer<FunctionBuilder> consumer) {
+        FunctionBuilder builder = new FunctionBuilder(funName);
+        consumer.accept(builder);
+        return builder.build();
     }
 
     /**
@@ -67,210 +71,143 @@ public class Function implements QueryRetNeedAlias {
     public static class FunctionBuilder {
         private final Function function;
 
-        private FunctionBuilder(Table table) {
+        private FunctionBuilder(String funName) {
+            Assert.notEmpty(funName, "function name can not be null or empty");
             this.function = new Function();
-            this.function.table = table;
+            this.function.funName = funName;
             this.function.funArgs = new LinkedList<>();
         }
 
-        public FunctionBuilder setFunName(String name) {
-            Assert.notEmpty(name, "function name can not be null");
-            this.function.funName = name;
-            return this;
-        }
-
-        private FunctionBuilder addArg(boolean sure, boolean distinct, Operand arg) {
+        /**
+         * 根据条件添加函数参数
+         *
+         * @param sure 是否满足条件，为 true 时才会实际添加该参数
+         * @param arg  标准的结构化参数 (Operand)
+         */
+        public FunctionBuilder addArg(boolean sure, Operand arg) {
             if (!sure) {
                 return this;
             }
             Assert.notNull(arg, "arg can not be null");
-            FunArg funArg = new FunArg().setArgValue(arg).setDistinct(distinct);
+            FunArg funArg = new FunArg().setArgValue(arg).setDistinct(false);
             this.function.funArgs.add(funArg);
             return this;
         }
 
-        private FunctionBuilder addArg(boolean sure, Operand arg) {
-            return this.addArg(sure, false, arg);
+        /**
+         * 添加函数参数
+         *
+         * @param arg 标准的结构化参数 (Operand)
+         */
+        public FunctionBuilder addArg(Operand arg) {
+            return this.addArg(true, arg);
         }
 
-        private FunctionBuilder addArg(Operand arg) {
-            return this.addArg(true, false, arg);
-        }
-
-        private FunctionBuilder addArg(Operand arg, boolean distinct) {
-            return this.addArg(true, distinct, arg);
-        }
-
-        private FunctionBuilder addColumnArg(boolean sure, boolean distinct, Table table, String column) {
-            if (!sure) {
-                return this;
+        /**
+         * 根据条件延迟构造并添加函数参数。
+         *
+         * <p>适用于参数构造本身依赖于 {@code sure} 判定参数的场景。只有在 {@code sure=true}
+         * 时才会执行回调，避免在 {@code sure=false} 时提前触发诸如 {@code table.field(a)}
+         * 之类的参数校验或异常。</p>
+         *
+         * @param sure 是否满足条件，为 true 时才会执行回调
+         * @param cb   参数构造回调
+         * @return 当前构造器
+         */
+        public FunctionBuilder addArg(boolean sure, Consumer<FunctionBuilder> cb) {
+            if (sure) {
+                cb.accept(this);
             }
-            Assert.notNull(table, "table can not be null");
-            Assert.notEmpty(column, "column can not be null");
-            FunArg arg = new FunArg().setArgValue(TableColumn.of(table, column))
-                    .setDistinct(distinct);
-            this.function.funArgs.add(arg);
             return this;
         }
 
-        public FunctionBuilder addColumnArg(boolean sure, Table table, String column) {
-            return this.addColumnArg(sure, false, table, column);
+        /**
+         * 根据条件添加通用的函数参数（如对象、常量等，支持自动包装为 Operand）
+         *
+         * @param sure 是否满足条件，为 true 时才会实际添加该参数
+         * @param arg  通用对象参数，会被自动包装为对应的 Operand 对象
+         */
+        public FunctionBuilder addArg(boolean sure, Object arg) {
+            return this.addArg(sure, Operand.objToOperand(arg));
         }
 
-        public FunctionBuilder addDistinctColumnArg(boolean sure, Table table, String column) {
-            return this.addColumnArg(sure, true, table, column);
+        /**
+         * 添加通用的函数参数（如对象、常量等，支持自动包装为 Operand）
+         *
+         * @param arg 通用对象参数
+         */
+        public FunctionBuilder addArg(Object arg) {
+            return this.addArg(true, arg);
         }
 
-        public FunctionBuilder addColumnArg(Table table, String column) {
-            return this.addColumnArg(true, table, column);
-        }
-
-        public FunctionBuilder addDistinctColumnArg(Table table, String column) {
-            return this.addDistinctColumnArg(true, table, column);
-        }
-
-        public FunctionBuilder addColumnArg(String column) {
-            return this.addColumnArg(this.function.table, column);
-        }
-
-        public FunctionBuilder addDistinctColumnArg(String column) {
-            return this.addDistinctColumnArg(this.function.table, column);
-        }
-
-        public FunctionBuilder addColumnArg(boolean sure, String column) {
-            return this.addColumnArg(sure, this.function.table, column);
-        }
-
-        public FunctionBuilder addDistinctColumnArg(boolean sure, String column) {
-            return this.addDistinctColumnArg(sure, this.function.table, column);
-        }
-
-        private FunctionBuilder addFieldArg(boolean sure, boolean distinct, EntityTable table, String field) {
+        /**
+         * 根据条件添加带 DISTINCT 关键字的函数去重参数
+         *
+         * @param sure 是否满足条件，为 true 时才会实际添加该参数
+         * @param arg  标准的结构化参数 (Operand)
+         */
+        public FunctionBuilder addDistinctArg(boolean sure, Operand arg) {
             if (!sure) {
                 return this;
             }
-            Assert.notNull(table, "table can not be null");
-            Assert.notEmpty(field, "field can not be null");
-            FunArg arg = new FunArg().setArgValue(EntityField.of(table, field))
-                    .setDistinct(distinct);
-            this.function.funArgs.add(arg);
+            Assert.notNull(arg, "arg can not be null");
+            FunArg funArg = new FunArg().setArgValue(arg).setDistinct(true);
+            this.function.funArgs.add(funArg);
             return this;
         }
 
-        public FunctionBuilder addFieldArg(boolean sure, EntityTable table, String field) {
-            return this.addFieldArg(sure, false, table, field);
+        /**
+         * 添加带 DISTINCT 关键字的函数去重参数
+         *
+         * @param arg 标准的结构化参数 (Operand)
+         */
+        public FunctionBuilder addDistinctArg(Operand arg) {
+            return this.addDistinctArg(true, arg);
         }
 
-        public FunctionBuilder addDistinctFieldArg(boolean sure, EntityTable table, String field) {
-            return this.addFieldArg(sure, true, table, field);
-        }
-
-        public FunctionBuilder addFieldArg(EntityTable table, String field) {
-            return this.addFieldArg(true, table, field);
-        }
-
-        public FunctionBuilder addDistinctFieldArg(EntityTable table, String field) {
-            return this.addDistinctFieldArg(true, table, field);
-        }
-
-        protected void checkEntityTable() {
-            if (!(this.function.table instanceof EntityTable)) {
-                throw new IllegalArgumentException("Only EntityTable is supported");
+        /**
+         * 根据条件延迟构造并添加带 DISTINCT 关键字的函数参数。
+         *
+         * <p>适用于参数构造本身依赖于 {@code sure} 判定参数的场景。只有在 {@code sure=true}
+         * 时才会执行回调，避免在 {@code sure=false} 时提前触发诸如 {@code table.field(a)}
+         * 之类的参数校验或异常。</p>
+         *
+         * @param sure 是否满足条件，为 true 时才会执行回调
+         * @param cb   参数构造回调
+         * @return 当前构造器
+         */
+        public FunctionBuilder addDistinctArg(boolean sure, Consumer<FunctionBuilder> cb) {
+            if (sure) {
+                cb.accept(this);
             }
-        }
-
-        public FunctionBuilder addFieldArg(String field) {
-            this.checkEntityTable();
-            return this.addFieldArg((EntityTable) this.function.table, field);
-        }
-
-        public FunctionBuilder addDistinctFieldArg(String field) {
-            this.checkEntityTable();
-            return this.addDistinctFieldArg((EntityTable) this.function.table, field);
-        }
-
-        public FunctionBuilder addFieldArg(boolean sure, String field) {
-            this.checkEntityTable();
-            return this.addFieldArg(sure, (EntityTable) this.function.table, field);
-        }
-
-        public FunctionBuilder addDistinctFieldArg(boolean sure, String field) {
-            this.checkEntityTable();
-            return this.addDistinctFieldArg(sure, (EntityTable) this.function.table, field);
-        }
-
-        public FunctionBuilder addFunArg(boolean sure, Function function) {
-            if (!sure) {
-                return this;
-            }
-            Assert.notNull(function, "function can not be null");
-            FunArg arg = new FunArg().setArgValue(function);
-            this.function.funArgs.add(arg);
             return this;
         }
 
-        public FunctionBuilder addFunArg(Function function) {
-            return this.addFunArg(true, function);
+        /**
+         * 根据条件添加带 DISTINCT 关键字的通用函数去重参数
+         *
+         * @param sure 是否满足条件，为 true 时才会实际添加该参数
+         * @param arg  通用对象参数，会被自动包装为对应的 Operand 对象
+         */
+        public FunctionBuilder addDistinctArg(boolean sure, Object arg) {
+            return this.addDistinctArg(sure, Operand.objToOperand(arg));
         }
 
-        public FunctionBuilder addFormulaArg(boolean sure, Formula formula) {
-            if (!sure) {
-                return this;
-            }
-            Assert.notNull(formula, "formula can not be null");
-            FunArg arg = new FunArg().setArgValue(formula);
-            this.function.funArgs.add(arg);
-            return this;
+        /**
+         * 添加带 DISTINCT 关键字的通用函数去重参数
+         *
+         * @param arg 通用对象参数
+         */
+        public FunctionBuilder addDistinctArg(Object arg) {
+            return this.addDistinctArg(true, arg);
         }
 
-
-        public FunctionBuilder addFormulaArg(Formula formula) {
-            return this.addFormulaArg(true, formula);
-        }
-
-        public FunctionBuilder addValueArg(boolean sure, Object argValue) {
-            if (!sure) {
-                return this;
-            }
-            FunArg arg = new FunArg().setArgValue(ObjArg.of(argValue));
-            this.function.funArgs.add(arg);
-            return this;
-        }
-
-
-        public FunctionBuilder addValueArg(Object argValue) {
-            return this.addValueArg(true, argValue);
-        }
-
-        public FunctionBuilder addKeywordsArg(boolean sure, String keywords) {
-            if (!sure) {
-                return this;
-            }
-            FunArg arg = new FunArg().setArgValue(Keywords.of(keywords));
-            this.function.funArgs.add(arg);
-            return this;
-        }
-
-
-        public FunctionBuilder addKeywordsArg(String keywords) {
-            return this.addKeywordsArg(true, keywords);
-        }
-
-        public FunctionBuilder addCaseWhenArg(boolean sure, CaseWhen caseWhen) {
-            if (!sure) {
-                return this;
-            }
-            FunArg arg = new FunArg().setArgValue(caseWhen);
-            this.function.funArgs.add(arg);
-            return this;
-        }
-
-
-        public FunctionBuilder addCaseWhenArg(CaseWhen caseWhen) {
-            return this.addCaseWhenArg(true, caseWhen);
-        }
-
-        public Function build() {
+        /**
+         * 构建并返回最终的 Function 实例
+         *
+         * @return Function 实例
+         */
+        private Function build() {
             return this.function;
         }
     }

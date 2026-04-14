@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.mp.entity;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzContentConfig;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityInfoBuildConfig;
@@ -26,12 +25,10 @@ public class MpOracleEntityInfoBuilder implements EntityInfoBuilder {
     @Override
     public EntityClassInfo buildInfo(EzContentConfig ezContentConfig, Class<?> ntClass) {
         EntityInfoBuildConfig buildConfig = new EntityInfoBuildConfig(ezContentConfig
-                .getEzMybatisConfig().getTableNamePattern(), EntityInfoBuildConfig.ColumnHandle.TO_UNDER_AND_UPPER);
+                .getEzMybatisConfig().getTableNameCasePolicy(),
+                EntityInfoBuildConfig.ColumnNameBuildPolicy.TO_UNDER_AND_UPPER,
+                ezContentConfig.getEzMybatisConfig().getColumnNameCasePolicy());
         return new MpEntityClassInfo(ntClass, buildConfig);
     }
 
-    @Override
-    public DbType getSupportedDbType() {
-        return DbType.ORACLE;
-    }
 }

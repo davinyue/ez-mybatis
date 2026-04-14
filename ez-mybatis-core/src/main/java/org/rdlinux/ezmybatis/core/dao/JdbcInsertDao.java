@@ -10,7 +10,6 @@ import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
-import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
@@ -75,7 +74,7 @@ public class JdbcInsertDao {
         }
         long start = System.currentTimeMillis();
 
-        EzJdbcBatchSql jdbcBatchSql = DbDialectProviderLoader.getProvider(EzMybatisContent.getDbType(configuration))
+        EzJdbcBatchSql jdbcBatchSql = EzMybatisContent.getDbDialectProvider(configuration)
                 .getSqlGenerate()
                 .getJdbcBatchInsertSql(sqlGenerateContext, table, models);
         long end = System.currentTimeMillis();

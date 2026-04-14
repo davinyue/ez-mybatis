@@ -2,7 +2,6 @@ package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Where;
@@ -73,8 +72,4 @@ public class MySqlWhereConverter extends AbstractConverter<Where> implements Con
         sqlBuilder.append(" WHERE ").append(sonSql);
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

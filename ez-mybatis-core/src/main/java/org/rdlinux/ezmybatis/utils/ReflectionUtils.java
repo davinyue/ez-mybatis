@@ -14,6 +14,10 @@ public class ReflectionUtils {
         FIELDS_CACHE.remove(clazz);
     }
 
+    public static void clearAllCache() {
+        FIELDS_CACHE.clear();
+    }
+
     /**
      * 获取代理类的真实类
      *

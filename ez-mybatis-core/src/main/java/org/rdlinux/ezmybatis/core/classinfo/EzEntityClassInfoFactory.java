@@ -1,51 +1,51 @@
 package org.rdlinux.ezmybatis.core.classinfo;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzContentConfig;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.DmEntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuilder;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.MySqlEntityInfoBuilder;
-import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.OracleEntityInfoBuilder;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * 实体元数据入口工厂。
+ *
+ * <p>该类负责按 {@link Configuration} 与实体类型构建并缓存 {@link EntityClassInfo}，
+ * 同时协调热加载通知器与缓存失效逻辑。虽然命名为 Factory，但其职责还包括缓存复用、
+ * 并发构建保护以及热加载期间的刷新协作。</p>
+ */
 public class EzEntityClassInfoFactory {
     /**
-     * 实体信息构建工厂
+     * 按配置与实体类型组合生成的构建锁映射，用于避免并发重复构建。
      */
-    private static final Map<DbType, EntityInfoBuilder> ENTITY_INFO_BUILD_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Object> LOCK_MAP = new ConcurrentHashMap<>();
     /**
-     * 默认实体信息缓存
+     * 当前生效的实体信息缓存实现。
      */
     private static EzMybatisEntityInfoCache ENTITY_INFO_CACHE = new DefaultEzMybatisEntityInfoCache();
     /**
-     * 锁映射
+     * 当前生效的实体信息热加载通知器。
      */
-    private static final ConcurrentMap<String, Object> LOCK_MAP = new ConcurrentHashMap<>();
+    private static EntityInfoReloadNotifier ENTITY_INFO_RELOAD_NOTIFIER =
+            new DefaultEntityInfoReloadNotifier(ENTITY_INFO_CACHE);
 
-    //初始化实体构建信息
+    /**
+     * 启动默认的实体信息热加载管理器。
+     */
     static {
-        MySqlEntityInfoBuilder mySqlEntityInfoBuild = MySqlEntityInfoBuilder.getInstance();
-        ENTITY_INFO_BUILD_MAP.put(mySqlEntityInfoBuild.getSupportedDbType(), mySqlEntityInfoBuild);
-        OracleEntityInfoBuilder oracleEntityInfoBuild = OracleEntityInfoBuilder.getInstance();
-        ENTITY_INFO_BUILD_MAP.put(oracleEntityInfoBuild.getSupportedDbType(), oracleEntityInfoBuild);
-        DmEntityInfoBuilder dmEntityInfoBuild = DmEntityInfoBuilder.getInstance();
-        ENTITY_INFO_BUILD_MAP.put(dmEntityInfoBuild.getSupportedDbType(), dmEntityInfoBuild);
-        ENTITY_INFO_BUILD_MAP.put(DbType.POSTGRE_SQL, mySqlEntityInfoBuild);
-        ENTITY_INFO_BUILD_MAP.put(DbType.SQL_SERVER, mySqlEntityInfoBuild);
+        new EntityInfoHotReloadManager(new BuildOutputPathResolver(),
+                EzEntityClassInfoFactory::getEntityInfoReloadNotifier).start();
     }
 
     /**
-     * 获取实体信息, 如果没有将构造实体信息返回
+     * 获取指定实体类型的元数据信息，不存在时按当前方言的实体信息构造器进行构建。
      *
-     * @param ntClass       实体对象类型
      * @param configuration mybatis配置
+     * @param ntClass       实体对象类型
+     * @return 实体元数据
      */
     public static EntityClassInfo forClass(Configuration configuration, Class<?> ntClass) {
         EntityClassInfo result = ENTITY_INFO_CACHE.get(configuration, ntClass);
@@ -55,8 +55,8 @@ public class EzEntityClassInfoFactory {
             synchronized (lockObj) {
                 result = ENTITY_INFO_CACHE.get(configuration, ntClass);
                 if (result == null) {
-                    DbType dbType = EzMybatisContent.getDbType(configuration);
-                    EntityInfoBuilder infoBuilder = ENTITY_INFO_BUILD_MAP.get(dbType);
+                    EntityInfoBuilder infoBuilder = EzMybatisContent.getDbDialectProvider(configuration).
+                            getEntityInfoBuilder();
                     EzContentConfig ezContentConfig = EzMybatisContent.getContentConfig(configuration);
                     result = infoBuilder.buildInfo(ezContentConfig, ntClass);
                     ENTITY_INFO_CACHE.set(configuration, result);
@@ -68,27 +68,51 @@ public class EzEntityClassInfoFactory {
     }
 
     /**
-     * 设置实体信息构造器
-     */
-    public static void setEntityInfoBuilder(EntityInfoBuilder entityInfoBuilder) {
-        Assert.notNull(entityInfoBuilder, "The entity information builder cannot be empty.");
-        Assert.notNull(entityInfoBuilder.getSupportedDbType(),
-                "The supported database type cannot be empty.");
-        ENTITY_INFO_BUILD_MAP.put(entityInfoBuilder.getSupportedDbType(), entityInfoBuilder);
-    }
-
-    /**
-     * 根据配置获取实体信息构造器
-     */
-    public static EntityInfoBuilder getEntityInfoBuilder(Configuration configuration) {
-        return ENTITY_INFO_BUILD_MAP.get(EzMybatisContent.getDbType(configuration));
-    }
-
-    /**
-     * 设置实体信息缓存
+     * 设置实体信息缓存实现。
+     *
+     * <p>更新缓存后会同步重建默认的热加载通知器，使后续热加载失效动作与新缓存实现保持一致。</p>
+     *
+     * @param entityInfoCache 实体信息缓存实现
      */
     public static void setEntityInfoCache(EzMybatisEntityInfoCache entityInfoCache) {
         Assert.notNull(entityInfoCache, "The entity information cache cannot be null.");
         EzEntityClassInfoFactory.ENTITY_INFO_CACHE = entityInfoCache;
+        EzEntityClassInfoFactory.ENTITY_INFO_RELOAD_NOTIFIER = new DefaultEntityInfoReloadNotifier(entityInfoCache);
+    }
+
+    /**
+     * 获取当前使用的实体信息热加载通知器。
+     *
+     * @return 实体信息热加载通知器
+     */
+    public static EntityInfoReloadNotifier getEntityInfoReloadNotifier() {
+        return ENTITY_INFO_RELOAD_NOTIFIER;
+    }
+
+    /**
+     * 设置实体信息热加载通知器。
+     *
+     * @param entityInfoReloadNotifier 热加载通知器
+     */
+    public static void setEntityInfoReloadNotifier(EntityInfoReloadNotifier entityInfoReloadNotifier) {
+        Assert.notNull(entityInfoReloadNotifier, "The entity information reload notifier cannot be null.");
+        EzEntityClassInfoFactory.ENTITY_INFO_RELOAD_NOTIFIER = entityInfoReloadNotifier;
+    }
+
+    /**
+     * 清理指定 {@link Configuration} 下的实体信息缓存。
+     *
+     * @param configuration MyBatis 配置对象
+     */
+    public static void clear(Configuration configuration) {
+        Assert.notNull(configuration, "Configuration can not be null");
+        ENTITY_INFO_CACHE.clear(configuration);
+    }
+
+    /**
+     * 清理全部实体信息缓存。
+     */
+    public static void clear() {
+        ENTITY_INFO_CACHE.clear();
     }
 }

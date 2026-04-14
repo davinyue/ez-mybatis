@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Having;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -45,8 +44,4 @@ public class MySqlHavingConverter extends AbstractConverter<Having> implements C
         sqlBuilder.append(" HAVING ").append(sonSql);
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

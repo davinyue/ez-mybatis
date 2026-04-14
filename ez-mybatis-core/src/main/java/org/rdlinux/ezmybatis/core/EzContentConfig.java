@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
+import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.ArrayList;
@@ -36,6 +37,10 @@ public class EzContentConfig {
      * 数据库类型
      */
     private DbType dbType;
+    /**
+     * 当前配置绑定的方言提供者
+     */
+    private DbDialectProvider dbDialectProvider;
     /**
      * 插入监听器列表
      */

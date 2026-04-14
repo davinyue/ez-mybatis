@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.core.classinfo.entityinfo.build;
 
-import org.rdlinux.ezmybatis.constant.DbType;
-
 public class DmEntityInfoBuilder extends OracleEntityInfoBuilder {
     private static volatile DmEntityInfoBuilder instance;
 
@@ -19,8 +17,4 @@ public class DmEntityInfoBuilder extends OracleEntityInfoBuilder {
         return instance;
     }
 
-    @Override
-    public DbType getSupportedDbType() {
-        return DbType.DM;
-    }
 }

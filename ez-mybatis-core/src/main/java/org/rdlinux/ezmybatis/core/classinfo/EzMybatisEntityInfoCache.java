@@ -14,4 +14,24 @@ public interface EzMybatisEntityInfoCache {
      * 该方法需要线程安全
      */
     void set(Configuration configuration, EntityClassInfo entityClassInfo);
+
+    /**
+     * 移除指定实体类型对应的缓存
+     */
+    void remove(Class<?> ntClass);
+
+    /**
+     * 按类名移除缓存
+     */
+    void remove(String className);
+
+    /**
+     * 清空指定 Configuration 下的缓存
+     */
+    void clear(Configuration configuration);
+
+    /**
+     * 清空全部缓存
+     */
+    void clear();
 }

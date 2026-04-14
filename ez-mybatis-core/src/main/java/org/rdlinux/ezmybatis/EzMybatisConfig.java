@@ -1,26 +1,36 @@
 package org.rdlinux.ezmybatis;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
-import org.rdlinux.ezmybatis.constant.TableNamePattern;
+import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 
 /**
  * 配置
  */
+@Getter
+@Setter
 public class EzMybatisConfig {
     private Configuration configuration;
     /**
      * 转义关键词
      */
+
     private boolean escapeKeyword = true;
     /**
-     * 查询结果使用map接收的key格式
+     * 查询结果使用map接收的key转换策略
      */
-    private MapRetKeyPattern mapRetKeyPattern;
+
+    private MapRetKeyCasePolicy mapRetKeyCasePolicy;
     /**
-     * 表名转换格式
+     * 表名解析成功后二次转换处理策略
      */
-    private TableNamePattern tableNamePattern = TableNamePattern.ORIGINAL;
+    private NameCasePolicy tableNameCasePolicy = NameCasePolicy.ORIGINAL;
+    /**
+     * 列名解析成功后二次转换处理策略
+     */
+    private NameCasePolicy columnNameCasePolicy = NameCasePolicy.ORIGINAL;
     /**
      * 启用oracle offset fetch分页
      */
@@ -31,42 +41,6 @@ public class EzMybatisConfig {
             throw new IllegalArgumentException("mybatis configuration can not be null");
         }
         this.configuration = configuration;
-        this.mapRetKeyPattern = MapRetKeyPattern.HUMP;
-    }
-
-    public boolean isEscapeKeyword() {
-        return this.escapeKeyword;
-    }
-
-    public void setEscapeKeyword(boolean escapeKeyword) {
-        this.escapeKeyword = escapeKeyword;
-    }
-
-    public Configuration getConfiguration() {
-        return this.configuration;
-    }
-
-    public MapRetKeyPattern getMapRetKeyPattern() {
-        return this.mapRetKeyPattern;
-    }
-
-    public void setMapRetKeyPattern(MapRetKeyPattern mapRetKeyPattern) {
-        this.mapRetKeyPattern = mapRetKeyPattern;
-    }
-
-    public TableNamePattern getTableNamePattern() {
-        return this.tableNamePattern;
-    }
-
-    public void setTableNamePattern(TableNamePattern tableNamePattern) {
-        this.tableNamePattern = tableNamePattern;
-    }
-
-    public boolean isEnableOracleOffsetFetchPage() {
-        return this.enableOracleOffsetFetchPage;
-    }
-
-    public void setEnableOracleOffsetFetchPage(boolean enableOracleOffsetFetchPage) {
-        this.enableOracleOffsetFetchPage = enableOracleOffsetFetchPage;
+        this.mapRetKeyCasePolicy = MapRetKeyCasePolicy.HUMP;
     }
 }

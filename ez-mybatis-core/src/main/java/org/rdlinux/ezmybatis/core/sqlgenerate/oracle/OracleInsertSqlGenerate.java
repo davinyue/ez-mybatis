@@ -28,12 +28,19 @@ public class OracleInsertSqlGenerate extends AbstractInsertSqlGenerate {
     public String getBatchInsertSql(SqlGenerateContext sqlGenerateContext,
                                     Table table, Collection<Object> models) {
         Assert.notEmpty(models, "models cannot be empty");
-        StringBuilder sqlBuilder = new StringBuilder("BEGIN \n");
+        StringBuilder sqlBuilder = new StringBuilder("INSERT ALL\n");
         for (Object entity : models) {
-            String insertSql = this.getInsertSql(sqlGenerateContext, table, entity);
-            sqlBuilder.append(insertSql).append(";\n");
+            String tableName = getTableName(sqlGenerateContext, table, entity);
+            InsertSqlParts insertSqlParts = getInsertSqlParts(sqlGenerateContext, entity);
+            sqlBuilder.append("INTO ")
+                    .append(tableName)
+                    .append(" ")
+                    .append(insertSqlParts.getColumnsSql())
+                    .append(" VALUES ")
+                    .append(insertSqlParts.getValuesSql())
+                    .append("\n");
         }
-        sqlBuilder.append("END;");
+        sqlBuilder.append("SELECT 1 FROM DUAL");
         return sqlBuilder.toString();
     }
 }

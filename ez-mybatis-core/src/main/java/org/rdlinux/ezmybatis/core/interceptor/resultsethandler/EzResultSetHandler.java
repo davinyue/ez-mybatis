@@ -28,7 +28,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.util.MapUtil;
 import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
-import org.rdlinux.ezmybatis.constant.MapRetKeyPattern;
+import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
@@ -45,33 +45,109 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.*;
 
+/**
+ * Ez-MyBatis 自定义结果集处理器。
+ *
+ * <p>该类在 MyBatis {@link DefaultResultSetHandler} 的基础上扩展了结果映射流程，
+ * 主要用于支持：</p>
+ * <p>1. 按 Ez-MyBatis 动态返回类型解析结果对象。</p>
+ * <p>2. 按实体元数据或 Map key 规则完成列名到属性名的映射。</p>
+ * <p>3. 在结果构造完成前后触发 Ez-MyBatis 的监听器链。</p>
+ * <p>4. 在自动映射阶段优先使用实体字段上声明的 {@link TypeHandler}。</p>
+ *
+ * <p>整体实现沿用了 MyBatis 官方结果集处理主链路，但在自动映射、
+ * 返回类型推导和监听器回调几个关键节点插入了 Ez-MyBatis 自身逻辑。</p>
+ */
 public class EzResultSetHandler extends DefaultResultSetHandler {
+    /**
+     * 延迟加载占位对象，用于标记当前属性值将在后续阶段再解析。
+     */
     private static final Object DEFERRED = new Object();
 
+    /**
+     * 当前查询执行器。
+     */
     private final Executor executor;
+    /**
+     * 当前 MyBatis 配置对象。
+     */
     private final Configuration configuration;
+    /**
+     * 当前执行的映射语句。
+     */
     private final MappedStatement mappedStatement;
+    /**
+     * 当前查询的分页参数。
+     */
     private final RowBounds rowBounds;
+    /**
+     * 当前查询的参数处理器。
+     */
     private final ParameterHandler parameterHandler;
+    /**
+     * 当前查询的结果处理器。
+     */
     private final ResultHandler<?> resultHandler;
+    /**
+     * 当前查询对应的绑定 SQL。
+     */
     private final BoundSql boundSql;
+    /**
+     * TypeHandler 注册中心。
+     */
     private final TypeHandlerRegistry typeHandlerRegistry;
+    /**
+     * 对象工厂，用于实例化结果对象。
+     */
     private final ObjectFactory objectFactory;
+    /**
+     * 反射器工厂，用于构建结果类型的元信息。
+     */
     private final ReflectorFactory reflectorFactory;
 
-    // nested resultmaps
+    /**
+     * 嵌套结果映射阶段的已构建对象缓存。
+     */
     private final Map<CacheKey, Object> nestedResultObjects = new HashMap<>();
+    /**
+     * 祖先结果对象缓存，用于处理循环引用或嵌套回填。
+     */
     private final Map<String, Object> ancestorObjects = new HashMap<>();
-    // multiple resultsets
+    /**
+     * 多结果集场景下，结果集名称到父级映射的索引。
+     */
     private final Map<String, ResultMapping> nextResultMaps = new HashMap<>();
+    /**
+     * 多结果集场景下等待回填的父子关系缓存。
+     */
     private final Map<CacheKey, List<PendingRelation>> pendingRelations = new HashMap<>();
-    // Cached Automappings
+    /**
+     * 自动映射规则缓存。
+     */
     private final Map<String, List<UnMappedColumnAutoMapping>> autoMappingsCache = new HashMap<>();
+    /**
+     * 构造器自动映射已消费列缓存。
+     */
     private final Map<String, List<String>> constructorAutoMappingColumns = new HashMap<>();
+    /**
+     * 有序嵌套结果映射场景下暂存的上一行结果对象。
+     */
     private Object previousRowValue;
-    // temporary marking flag that indicate using constructor mapping (use field to reduce memory usage)
+    /**
+     * 当前行是否使用了构造器映射。
+     */
     private boolean useConstructorMappings;
 
+    /**
+     * 使用当前查询执行上下文初始化结果集处理器。
+     *
+     * @param executor         执行器
+     * @param mappedStatement  映射语句
+     * @param parameterHandler 参数处理器
+     * @param resultHandler    结果处理器
+     * @param boundSql         绑定 SQL
+     * @param rowBounds        分页参数
+     */
     public EzResultSetHandler(Executor executor, MappedStatement mappedStatement, ParameterHandler parameterHandler,
                               ResultHandler<?> resultHandler, BoundSql boundSql, RowBounds rowBounds) {
         super(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
@@ -87,6 +163,12 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         this.resultHandler = resultHandler;
     }
 
+    /**
+     * 处理存储过程的输出参数。
+     *
+     * @param cs 可调用语句
+     * @throws SQLException JDBC 读取异常
+     */
     @Override
     public void handleOutputParameters(CallableStatement cs) throws SQLException {
         final Object parameterObject = this.parameterHandler.getParameterObject();
@@ -105,6 +187,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 处理存储过程返回的游标类型输出参数。
+     *
+     * @param rs               输出结果集
+     * @param parameterMapping 参数映射定义
+     * @param metaParam        参数元对象
+     * @throws SQLException JDBC 读取异常
+     */
     private void handleRefCursorOutputParameter(ResultSet rs, ParameterMapping parameterMapping, MetaObject metaParam)
             throws SQLException {
         if (rs == null) {
@@ -134,6 +224,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     //
     // HANDLE RESULT SETS
     //
+    /**
+     * 处理普通查询返回的结果集列表。
+     *
+     * @param stmt JDBC 语句对象
+     * @return 结果对象列表或折叠后的单结果列表
+     * @throws SQLException JDBC 读取异常
+     */
     @Override
     public List<Object> handleResultSets(Statement stmt) throws SQLException {
         ErrorContext.instance().activity("handling results").object(this.mappedStatement.getId());
@@ -174,6 +271,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return objects;
     }
 
+    /**
+     * 处理游标类型结果集。
+     *
+     * @param stmt JDBC 语句对象
+     * @param <E>  游标元素类型
+     * @return 游标对象
+     * @throws SQLException JDBC 读取异常
+     */
     @Override
     public <E> Cursor<E> handleCursorResultSets(Statement stmt) throws SQLException {
         ErrorContext.instance().activity("handling cursor results").object(this.mappedStatement.getId());
@@ -192,6 +297,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return new DefaultCursor<>(this, resultMap, rsw, this.rowBounds);
     }
 
+    /**
+     * 获取语句返回的第一个结果集包装对象。
+     *
+     * @param stmt JDBC 语句对象
+     * @return 第一个结果集包装对象
+     * @throws SQLException JDBC 读取异常
+     */
     private ResultSetWrapper getFirstResultSet(Statement stmt) throws SQLException {
         ResultSet rs = stmt.getResultSet();
         while (rs == null) {
@@ -207,6 +319,12 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return rs != null ? new ResultSetWrapper(rs, this.configuration) : null;
     }
 
+    /**
+     * 获取下一个结果集包装对象。
+     *
+     * @param stmt JDBC 语句对象
+     * @return 下一个结果集包装对象；不存在时返回 null
+     */
     private ResultSetWrapper getNextResultSet(Statement stmt) {
         // Making this method tolerant of bad JDBC drivers
         try {
@@ -229,6 +347,11 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return null;
     }
 
+    /**
+     * 安静地关闭结果集。
+     *
+     * @param rs 结果集对象
+     */
     private void closeResultSet(ResultSet rs) {
         try {
             if (rs != null) {
@@ -239,10 +362,19 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 在处理完一个结果集后清理当前轮次的临时缓存。
+     */
     private void cleanUpAfterHandlingResultSet() {
         this.nestedResultObjects.clear();
     }
 
+    /**
+     * 校验查询语句是否存在可用的 ResultMap 定义。
+     *
+     * @param rsw            结果集包装对象
+     * @param resultMapCount ResultMap 数量
+     */
     private void validateResultMapsCount(ResultSetWrapper rsw, int resultMapCount) {
         if (rsw != null && resultMapCount < 1) {
             throw new ExecutorException(
@@ -251,6 +383,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 处理单个结果集，并根据上下文决定写入父级关系或最终结果列表。
+     *
+     * @param rsw             结果集包装对象
+     * @param resultMap       当前结果映射
+     * @param multipleResults 多结果集总结果列表
+     * @param parentMapping   父级结果映射
+     * @throws SQLException JDBC 读取异常
+     */
     private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap, List<Object> multipleResults,
                                  ResultMapping parentMapping) throws SQLException {
         try {
@@ -270,10 +411,26 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     @SuppressWarnings("unchecked")
+    /**
+     * 当仅有一个结果列表时执行折叠，保持与 MyBatis 默认返回结构一致。
+     *
+     * @param multipleResults 多结果集结果列表
+     * @return 折叠后的结果列表
+     */
     private List<Object> collapseSingleResultList(List<Object> multipleResults) {
         return multipleResults.size() == 1 ? (List<Object>) multipleResults.get(0) : multipleResults;
     }
 
+    /**
+     * 根据是否存在嵌套结果映射，选择简单映射或嵌套映射处理流程。
+     *
+     * @param rsw           结果集包装对象
+     * @param resultMap     当前结果映射
+     * @param resultHandler 结果处理器
+     * @param rowBounds     分页参数
+     * @param parentMapping 父级结果映射
+     * @throws SQLException JDBC 读取异常
+     */
     @Override
     public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler,
                                 RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
@@ -286,6 +443,9 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 在启用安全限制时校验嵌套结果映射与 RowBounds 的组合是否合法。
+     */
     private void ensureNoRowBounds() {
         if (this.configuration.isSafeRowBoundsEnabled() && this.rowBounds != null
                 && (this.rowBounds.getLimit() < RowBounds.NO_ROW_LIMIT || this.rowBounds.getOffset() > RowBounds.NO_ROW_OFFSET)) {
@@ -299,6 +459,9 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // HANDLE ROWS FOR SIMPLE RESULTMAP
     //
 
+    /**
+     * 在启用安全限制时校验自定义 ResultHandler 与嵌套结果映射的组合是否合法。
+     */
     @Override
     protected void checkResultHandler() {
         if (this.resultHandler != null && this.configuration.isSafeResultHandlerEnabled() && !this.mappedStatement.isResultOrdered()) {
@@ -309,6 +472,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 处理无嵌套结果映射的简单结果集。
+     *
+     * @param rsw           结果集包装对象
+     * @param resultMap     当前结果映射
+     * @param resultHandler 结果处理器
+     * @param rowBounds     分页参数
+     * @param parentMapping 父级结果映射
+     * @throws SQLException JDBC 读取异常
+     */
     private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap,
                                                    ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
         DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
@@ -330,6 +503,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 根据当前结果所处场景决定是挂接到父对象，还是直接交给结果处理器。
+     *
+     * @param resultHandler 结果处理器
+     * @param resultContext 结果上下文
+     * @param rowValue      当前行结果
+     * @param parentMapping 父级结果映射
+     * @param rs            JDBC 结果集
+     * @throws SQLException JDBC 读取异常
+     */
     private void storeObject(ResultHandler<?> resultHandler, DefaultResultContext<Object> resultContext, Object rowValue,
                              ResultMapping parentMapping, ResultSet rs) throws SQLException {
         if (parentMapping != null) {
@@ -340,16 +523,37 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     @SuppressWarnings("unchecked" /* because ResultHandler<?> is always ResultHandler<Object> */)
+    /**
+     * 将当前行结果回调给最终结果处理器。
+     *
+     * @param resultHandler 结果处理器
+     * @param resultContext 结果上下文
+     * @param rowValue      当前行结果
+     */
     private void callResultHandler(ResultHandler<?> resultHandler, DefaultResultContext<Object> resultContext,
                                    Object rowValue) {
         resultContext.nextResultObject(rowValue);
         ((ResultHandler<Object>) resultHandler).handleResult(resultContext);
     }
 
+    /**
+     * 判断是否还应继续处理后续结果行。
+     *
+     * @param context   结果上下文
+     * @param rowBounds 分页参数
+     * @return 是否继续处理
+     */
     private boolean shouldProcessMoreRows(ResultContext<?> context, RowBounds rowBounds) {
         return !context.isStopped() && context.getResultCount() < rowBounds.getLimit();
     }
 
+    /**
+     * 根据 {@link RowBounds} 跳过前置结果行。
+     *
+     * @param rs        JDBC 结果集
+     * @param rowBounds 分页参数
+     * @throws SQLException JDBC 读取异常
+     */
     private void skipRows(ResultSet rs, RowBounds rowBounds) throws SQLException {
         if (rs.getType() != ResultSet.TYPE_FORWARD_ONLY) {
             if (rowBounds.getOffset() != RowBounds.NO_ROW_OFFSET) {
@@ -364,6 +568,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 读取当前结果行并构造简单结果对象。
+     *
+     * @param rsw          结果集包装对象
+     * @param resultMap    当前结果映射
+     * @param columnPrefix 列前缀
+     * @return 当前行结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         final ResultLoaderMap lazyLoader = new ResultLoaderMap();
         Object rowValue = this.createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
@@ -382,6 +595,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return rowValue;
     }
 
+    /**
+     * 读取当前结果行并构造嵌套结果对象，必要时复用已存在的部分结果对象。
+     *
+     * @param rsw           结果集包装对象
+     * @param resultMap     当前结果映射
+     * @param combinedKey   父子结果联合缓存键
+     * @param columnPrefix  列前缀
+     * @param partialObject 已存在的部分结果对象
+     * @return 当前行结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, CacheKey combinedKey, String columnPrefix,
                                Object partialObject) throws SQLException {
         final String resultMapId = resultMap.getId();
@@ -421,6 +645,12 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // GET VALUE FROM ROW FOR SIMPLE RESULT MAP
     //
 
+    /**
+     * 记录当前结果对象为某个 ResultMap 的祖先对象。
+     *
+     * @param resultObject 当前结果对象
+     * @param resultMapId  ResultMap 标识
+     */
     private void putAncestor(Object resultObject, String resultMapId) {
         this.ancestorObjects.put(resultMapId, resultObject);
     }
@@ -429,6 +659,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // GET VALUE FROM ROW FOR NESTED RESULT MAP
     //
 
+    /**
+     * 判断当前结果映射是否应执行自动映射。
+     *
+     * @param resultMap 当前结果映射
+     * @param isNested  是否为嵌套结果映射
+     * @return 是否启用自动映射
+     */
     private boolean shouldApplyAutomaticMappings(ResultMap resultMap, boolean isNested) {
         if (resultMap.getAutoMapping() != null) {
             return resultMap.getAutoMapping();
@@ -440,6 +677,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 按 ResultMap 中显式声明的属性映射规则填充结果对象。
+     *
+     * @param rsw          结果集包装对象
+     * @param resultMap    当前结果映射
+     * @param metaObject   结果对象元信息
+     * @param lazyLoader   延迟加载容器
+     * @param columnPrefix 列前缀
+     * @return 是否至少找到一个有效值
+     * @throws SQLException JDBC 读取异常
+     */
     private boolean applyPropertyMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject,
                                           ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
         final Set<String> mappedColumnNames = rsw.getMappedColumnNames(resultMap, columnPrefix);
@@ -478,6 +726,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues;
     }
 
+    /**
+     * 读取单个属性映射对应的值。
+     *
+     * @param rs               JDBC 结果集
+     * @param metaResultObject 结果对象元信息
+     * @param propertyMapping  属性映射定义
+     * @param lazyLoader       延迟加载容器
+     * @param columnPrefix     列前缀
+     * @return 当前属性值，或延迟占位对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object getPropertyMappingValue(ResultSet rs, MetaObject metaResultObject, ResultMapping propertyMapping,
                                            ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
         if (propertyMapping.getNestedQueryId() != null) {
@@ -497,6 +756,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // PROPERTY MAPPINGS
     //
 
+    /**
+     * 生成并缓存当前结果对象对应的自动映射规则。
+     *
+     * @param rsw          结果集包装对象
+     * @param resultMap    当前结果映射
+     * @param metaObject   结果对象元信息
+     * @param columnPrefix 列前缀
+     * @return 自动映射规则列表
+     * @throws SQLException JDBC 读取异常
+     */
     private List<UnMappedColumnAutoMapping> createAutomaticMappings(ResultSetWrapper rsw, ResultMap resultMap,
                                                                     MetaObject metaObject, String columnPrefix) throws SQLException {
         //TODO EzMapper的查询返回的结果类型是动态的, 所以此处的缓存key需要加上返回结果类型
@@ -574,6 +843,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues;
     }
 
+    /**
+     * 将当前行结果回填到等待中的父对象属性上。
+     *
+     * @param rs            JDBC 结果集
+     * @param parentMapping 父级结果映射
+     * @param rowValue      当前行结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private void linkToParents(ResultSet rs, ResultMapping parentMapping, Object rowValue) throws SQLException {
         CacheKey parentKey = this.createKeyForMultipleResults(rs, parentMapping, parentMapping.getColumn(),
                 parentMapping.getForeignColumn());
@@ -587,6 +864,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 记录一个等待后续结果集回填的父子关系。
+     *
+     * @param rs               JDBC 结果集
+     * @param metaResultObject 父对象元信息
+     * @param parentMapping    父级结果映射
+     * @throws SQLException JDBC 读取异常
+     */
     private void addPendingChildRelation(ResultSet rs, MetaObject metaResultObject, ResultMapping parentMapping)
             throws SQLException {
         CacheKey cacheKey = this.createKeyForMultipleResults(rs, parentMapping, parentMapping.getColumn(),
@@ -607,6 +892,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
 
     // MULTIPLE RESULT SETS
 
+    /**
+     * 为多结果集关联创建缓存键。
+     *
+     * @param rs            JDBC 结果集
+     * @param resultMapping 结果映射定义
+     * @param names         名称列集合
+     * @param columns       值列集合
+     * @return 多结果集关联缓存键
+     * @throws SQLException JDBC 读取异常
+     */
     private CacheKey createKeyForMultipleResults(ResultSet rs, ResultMapping resultMapping, String names, String columns)
             throws SQLException {
         CacheKey cacheKey = new CacheKey();
@@ -625,6 +920,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return cacheKey;
     }
 
+    /**
+     * 创建结果对象，并在需要时为延迟加载属性创建代理。
+     *
+     * @param rsw          结果集包装对象
+     * @param resultMap    当前结果映射
+     * @param lazyLoader   延迟加载容器
+     * @param columnPrefix 列前缀
+     * @return 结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, ResultLoaderMap lazyLoader,
                                       String columnPrefix) throws SQLException {
         this.useConstructorMappings = false; // reset previous mapping result
@@ -648,6 +953,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return resultObject;
     }
 
+    /**
+     * 按返回类型、构造器映射和自动映射规则创建结果对象。
+     *
+     * @param rsw                 结果集包装对象
+     * @param resultMap           当前结果映射
+     * @param constructorArgTypes 构造器参数类型列表
+     * @param constructorArgs     构造器参数值列表
+     * @param columnPrefix        列前缀
+     * @return 结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, List<Class<?>> constructorArgTypes,
                                       List<Object> constructorArgs, String columnPrefix) throws SQLException {
         //TODO 获取结果类型
@@ -674,6 +990,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // INSTANTIATION & CONSTRUCTOR MAPPING
     //
 
+    /**
+     * 按 ResultMap 中显式声明的构造器参数映射创建结果对象。
+     *
+     * @param rsw                 结果集包装对象
+     * @param resultType          目标结果类型
+     * @param constructorMappings 构造器参数映射列表
+     * @param constructorArgTypes 构造器参数类型列表
+     * @param constructorArgs     构造器参数值列表
+     * @param columnPrefix        列前缀
+     * @return 创建完成的结果对象
+     */
     Object createParameterizedResultObject(ResultSetWrapper rsw, Class<?> resultType,
                                            List<ResultMapping> constructorMappings, List<Class<?>> constructorArgTypes, List<Object> constructorArgs,
                                            String columnPrefix) {
@@ -704,6 +1031,18 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues ? this.objectFactory.create(resultType, constructorArgTypes, constructorArgs) : null;
     }
 
+    /**
+     * 按构造器签名自动推断并创建结果对象。
+     *
+     * @param rsw                 结果集包装对象
+     * @param resultMap           当前结果映射
+     * @param columnPrefix        列前缀
+     * @param resultType          目标结果类型
+     * @param constructorArgTypes 构造器参数类型列表
+     * @param constructorArgs     构造器参数值列表
+     * @return 创建完成的结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object createByConstructorSignature(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix,
                                                 Class<?> resultType, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) throws SQLException {
         return this.applyConstructorAutomapping(rsw, resultMap, columnPrefix, resultType, constructorArgTypes, constructorArgs,
@@ -711,6 +1050,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                         "No constructor found in " + resultType.getName() + " matching " + rsw.getClassNames())));
     }
 
+    /**
+     * 为自动构造器映射选择合适的构造方法。
+     *
+     * @param resultType 目标结果类型
+     * @param rsw        结果集包装对象
+     * @return 可用构造方法
+     */
     private Optional<Constructor<?>> findConstructorForAutomapping(final Class<?> resultType, ResultSetWrapper rsw) {
         Constructor<?>[] constructors = resultType.getDeclaredConstructors();
         if (constructors.length == 1) {
@@ -734,6 +1080,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 判断某个构造器的参数类型是否可以由当前结果集列类型驱动映射。
+     *
+     * @param constructor 构造方法
+     * @param jdbcTypes   结果集列 JDBC 类型列表
+     * @return 是否可用
+     */
     private boolean findUsableConstructorByArgTypes(final Constructor<?> constructor, final List<JdbcType> jdbcTypes) {
         final Class<?>[] parameterTypes = constructor.getParameterTypes();
         if (parameterTypes.length != jdbcTypes.size()) {
@@ -747,6 +1100,19 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return true;
     }
 
+    /**
+     * 执行构造器自动映射并创建结果对象。
+     *
+     * @param rsw                 结果集包装对象
+     * @param resultMap           当前结果映射
+     * @param columnPrefix        列前缀
+     * @param resultType          目标结果类型
+     * @param constructorArgTypes 构造器参数类型列表
+     * @param constructorArgs     构造器参数值列表
+     * @param constructor         目标构造方法
+     * @return 结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object applyConstructorAutomapping(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix,
                                                Class<?> resultType, List<Class<?>> constructorArgTypes, List<Object> constructorArgs, Constructor<?> constructor)
             throws SQLException {
@@ -762,6 +1128,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 ? this.objectFactory.create(resultType, constructorArgTypes, constructorArgs) : null;
     }
 
+    /**
+     * 按列顺序执行构造器自动映射。
+     *
+     * @param rsw                 结果集包装对象
+     * @param constructorArgTypes 构造器参数类型列表
+     * @param constructorArgs     构造器参数值列表
+     * @param constructor         目标构造方法
+     * @param foundValues         当前是否已找到有效值
+     * @return 是否至少找到一个有效值
+     * @throws SQLException JDBC 读取异常
+     */
     private boolean applyColumnOrderBasedConstructorAutomapping(ResultSetWrapper rsw, List<Class<?>> constructorArgTypes,
                                                                 List<Object> constructorArgs, Constructor<?> constructor, boolean foundValues) throws SQLException {
         Class<?>[] parameterTypes = constructor.getParameterTypes();
@@ -777,6 +1154,19 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues;
     }
 
+    /**
+     * 按参数名执行构造器自动映射。
+     *
+     * @param rsw                 结果集包装对象
+     * @param resultMap           当前结果映射
+     * @param columnPrefix        列前缀
+     * @param constructorArgTypes 构造器参数类型列表
+     * @param constructorArgs     构造器参数值列表
+     * @param constructor         目标构造方法
+     * @param foundValues         当前是否已找到有效值
+     * @return 是否至少找到一个有效值
+     * @throws SQLException JDBC 读取异常
+     */
     private boolean applyArgNameBasedConstructorAutoMapping(ResultSetWrapper rsw, ResultMap resultMap,
                                                             String columnPrefix, List<Class<?>> constructorArgTypes, List<Object> constructorArgs, Constructor<?> constructor,
                                                             boolean foundValues) throws SQLException {
@@ -817,6 +1207,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues;
     }
 
+    /**
+     * 判断结果列名是否与构造器参数名匹配。
+     *
+     * @param columnName   结果列名
+     * @param paramName    构造器参数名
+     * @param columnPrefix 列前缀
+     * @return 是否匹配
+     */
     private boolean columnMatchesParam(String columnName, String paramName, String columnPrefix) {
         if (columnPrefix != null) {
             if (!columnName.toUpperCase(Locale.ENGLISH).startsWith(columnPrefix)) {
@@ -828,6 +1226,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
                 .equalsIgnoreCase(this.configuration.isMapUnderscoreToCamelCase() ? columnName.replace("_", "") : columnName);
     }
 
+    /**
+     * 创建单列基础类型结果对象。
+     *
+     * @param rsw          结果集包装对象
+     * @param resultMap    当前结果映射
+     * @param columnPrefix 列前缀
+     * @return 基础类型结果对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object createPrimitiveResultObject(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix)
             throws SQLException {
         //TODO 获取结果类型
@@ -845,6 +1252,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return typeHandler.getResult(rsw.getResultSet(), columnName);
     }
 
+    /**
+     * 解析构造器参数上的嵌套查询值。
+     *
+     * @param rs                 JDBC 结果集
+     * @param constructorMapping 构造器参数映射
+     * @param columnPrefix       列前缀
+     * @return 嵌套查询结果
+     * @throws SQLException JDBC 读取异常
+     */
     private Object getNestedQueryConstructorValue(ResultSet rs, ResultMapping constructorMapping, String columnPrefix)
             throws SQLException {
         final String nestedQueryId = constructorMapping.getNestedQueryId();
@@ -865,6 +1281,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return value;
     }
 
+    /**
+     * 解析普通属性上的嵌套查询值，支持延迟加载。
+     *
+     * @param rs               JDBC 结果集
+     * @param metaResultObject 结果对象元信息
+     * @param propertyMapping  属性映射定义
+     * @param lazyLoader       延迟加载容器
+     * @param columnPrefix     列前缀
+     * @return 嵌套查询结果或延迟占位对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object getNestedQueryMappingValue(ResultSet rs, MetaObject metaResultObject, ResultMapping propertyMapping,
                                               ResultLoaderMap lazyLoader, String columnPrefix) throws SQLException {
         final String nestedQueryId = propertyMapping.getNestedQueryId();
@@ -900,6 +1327,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // NESTED QUERY
     //
 
+    /**
+     * 为嵌套查询准备参数对象。
+     *
+     * @param rs            JDBC 结果集
+     * @param resultMapping 结果映射定义
+     * @param parameterType 嵌套查询参数类型
+     * @param columnPrefix  列前缀
+     * @return 嵌套查询参数对象
+     * @throws SQLException JDBC 读取异常
+     */
     private Object prepareParameterForNestedQuery(ResultSet rs, ResultMapping resultMapping, Class<?> parameterType,
                                                   String columnPrefix) throws SQLException {
         if (resultMapping.isCompositeResult()) {
@@ -908,6 +1345,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return this.prepareSimpleKeyParameter(rs, resultMapping, parameterType, columnPrefix);
     }
 
+    /**
+     * 为简单主键场景准备嵌套查询参数。
+     *
+     * @param rs            JDBC 结果集
+     * @param resultMapping 结果映射定义
+     * @param parameterType 参数类型
+     * @param columnPrefix  列前缀
+     * @return 参数值
+     * @throws SQLException JDBC 读取异常
+     */
     private Object prepareSimpleKeyParameter(ResultSet rs, ResultMapping resultMapping, Class<?> parameterType,
                                              String columnPrefix) throws SQLException {
         final TypeHandler<?> typeHandler;
@@ -919,6 +1366,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return typeHandler.getResult(rs, this.prependPrefix(resultMapping.getColumn(), columnPrefix));
     }
 
+    /**
+     * 为复合主键场景准备嵌套查询参数对象。
+     *
+     * @param rs            JDBC 结果集
+     * @param resultMapping 结果映射定义
+     * @param parameterType 参数类型
+     * @param columnPrefix  列前缀
+     * @return 参数对象；若所有复合键列均为空则返回 null
+     * @throws SQLException JDBC 读取异常
+     */
     private Object prepareCompositeKeyParameter(ResultSet rs, ResultMapping resultMapping, Class<?> parameterType,
                                                 String columnPrefix) throws SQLException {
         final Object parameterObject = this.instantiateParameterObject(parameterType);
@@ -937,6 +1394,12 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return foundValues ? parameterObject : null;
     }
 
+    /**
+     * 实例化嵌套查询参数对象。
+     *
+     * @param parameterType 参数类型
+     * @return 参数对象
+     */
     private Object instantiateParameterObject(Class<?> parameterType) {
         if (parameterType == null) {
             return new HashMap<>();
@@ -948,6 +1411,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 根据鉴别器规则解析最终应使用的 ResultMap。
+     *
+     * @param rs           JDBC 结果集
+     * @param resultMap    初始 ResultMap
+     * @param columnPrefix 列前缀
+     * @return 解析后的 ResultMap
+     * @throws SQLException JDBC 读取异常
+     */
     @Override
     public ResultMap resolveDiscriminatedResultMap(ResultSet rs, ResultMap resultMap, String columnPrefix)
             throws SQLException {
@@ -969,6 +1441,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return resultMap;
     }
 
+    /**
+     * 读取鉴别器列的值。
+     *
+     * @param rs           JDBC 结果集
+     * @param discriminator 鉴别器定义
+     * @param columnPrefix 列前缀
+     * @return 鉴别器值
+     * @throws SQLException JDBC 读取异常
+     */
     private Object getDiscriminatorValue(ResultSet rs, Discriminator discriminator, String columnPrefix)
             throws SQLException {
         final ResultMapping resultMapping = discriminator.getResultMapping();
@@ -980,6 +1461,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // DISCRIMINATOR
     //
 
+    /**
+     * 为列名拼接前缀。
+     *
+     * @param columnName 原始列名
+     * @param prefix     列前缀
+     * @return 拼接后的列名
+     */
     private String prependPrefix(String columnName, String prefix) {
         if (columnName == null || columnName.length() == 0 || prefix == null || prefix.length() == 0) {
             return columnName;
@@ -987,6 +1475,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return prefix + columnName;
     }
 
+    /**
+     * 处理带嵌套结果映射的结果集。
+     *
+     * @param rsw           结果集包装对象
+     * @param resultMap     当前结果映射
+     * @param resultHandler 结果处理器
+     * @param rowBounds     分页参数
+     * @param parentMapping 父级结果映射
+     * @throws SQLException JDBC 读取异常
+     */
     private void handleRowValuesForNestedResultMap(ResultSetWrapper rsw, ResultMap resultMap,
                                                    ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
         final DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
@@ -1019,6 +1517,17 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 递归处理当前结果对象上的嵌套结果映射属性。
+     *
+     * @param rsw          结果集包装对象
+     * @param resultMap    当前结果映射
+     * @param metaObject   当前结果对象元信息
+     * @param parentPrefix 父级列前缀
+     * @param parentRowKey 父级行缓存键
+     * @param newObject    是否为新创建对象
+     * @return 是否至少填充了一个嵌套值
+     */
     private boolean applyNestedResultMappings(ResultSetWrapper rsw, ResultMap resultMap, MetaObject metaObject,
                                               String parentPrefix, CacheKey parentRowKey, boolean newObject) {
         boolean foundValues = false;
@@ -1064,6 +1573,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // HANDLE NESTED RESULT MAPS
     //
 
+    /**
+     * 计算嵌套结果映射应使用的列前缀。
+     *
+     * @param parentPrefix  父级列前缀
+     * @param resultMapping 当前结果映射
+     * @return 最终列前缀
+     */
     private String getColumnPrefix(String parentPrefix, ResultMapping resultMapping) {
         final StringBuilder columnPrefixBuilder = new StringBuilder();
         if (parentPrefix != null) {
@@ -1079,6 +1595,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // NESTED RESULT MAP (JOIN MAPPING)
     //
 
+    /**
+     * 判断嵌套结果映射的非空列条件是否满足。
+     *
+     * @param resultMapping 当前结果映射
+     * @param columnPrefix  列前缀
+     * @param rsw           结果集包装对象
+     * @return 是否满足非空条件
+     * @throws SQLException JDBC 读取异常
+     */
     private boolean anyNotNullColumnHasValue(ResultMapping resultMapping, String columnPrefix, ResultSetWrapper rsw)
             throws SQLException {
         Set<String> notNullColumns = resultMapping.getNotNullColumns();
@@ -1103,12 +1628,30 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return true;
     }
 
+    /**
+     * 获取并解析嵌套 ResultMap。
+     *
+     * @param rs                JDBC 结果集
+     * @param nestedResultMapId 嵌套 ResultMap 标识
+     * @param columnPrefix      列前缀
+     * @return 解析后的嵌套 ResultMap
+     * @throws SQLException JDBC 读取异常
+     */
     private ResultMap getNestedResultMap(ResultSet rs, String nestedResultMapId, String columnPrefix)
             throws SQLException {
         ResultMap nestedResultMap = this.configuration.getResultMap(nestedResultMapId);
         return this.resolveDiscriminatedResultMap(rs, nestedResultMap, columnPrefix);
     }
 
+    /**
+     * 为当前结果行创建唯一缓存键。
+     *
+     * @param resultMap    当前结果映射
+     * @param rsw          结果集包装对象
+     * @param columnPrefix 列前缀
+     * @return 行缓存键
+     * @throws SQLException JDBC 读取异常
+     */
     private CacheKey createRowKey(ResultMap resultMap, ResultSetWrapper rsw, String columnPrefix) throws SQLException {
         final CacheKey cacheKey = new CacheKey();
         cacheKey.update(resultMap.getId());
@@ -1130,6 +1673,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return cacheKey;
     }
 
+    /**
+     * 合并当前行缓存键和父级缓存键。
+     *
+     * @param rowKey       当前行缓存键
+     * @param parentRowKey 父级缓存键
+     * @return 联合缓存键
+     */
     private CacheKey combineKeys(CacheKey rowKey, CacheKey parentRowKey) {
         if (rowKey.getUpdateCount() > 1 && parentRowKey.getUpdateCount() > 1) {
             CacheKey combinedKey;
@@ -1148,6 +1698,12 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     // UNIQUE RESULT KEY
     //
 
+    /**
+     * 获取生成行缓存键时优先使用的映射列表。
+     *
+     * @param resultMap 当前结果映射
+     * @return 用于构建缓存键的结果映射列表
+     */
     private List<ResultMapping> getResultMappingsForRowKey(ResultMap resultMap) {
         List<ResultMapping> resultMappings = resultMap.getIdResultMappings();
         if (resultMappings.isEmpty()) {
@@ -1156,6 +1712,16 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return resultMappings;
     }
 
+    /**
+     * 基于显式映射属性构建行缓存键。
+     *
+     * @param resultMap      当前结果映射
+     * @param rsw            结果集包装对象
+     * @param cacheKey       行缓存键
+     * @param resultMappings 显式映射列表
+     * @param columnPrefix   列前缀
+     * @throws SQLException JDBC 读取异常
+     */
     private void createRowKeyForMappedProperties(ResultMap resultMap, ResultSetWrapper rsw, CacheKey cacheKey,
                                                  List<ResultMapping> resultMappings, String columnPrefix) throws SQLException {
         for (ResultMapping resultMapping : resultMappings) {
@@ -1175,6 +1741,15 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 基于未显式映射但可推断到属性的列构建行缓存键。
+     *
+     * @param resultMap    当前结果映射
+     * @param rsw          结果集包装对象
+     * @param cacheKey     行缓存键
+     * @param columnPrefix 列前缀
+     * @throws SQLException JDBC 读取异常
+     */
     private void createRowKeyForUnmappedProperties(ResultMap resultMap, ResultSetWrapper rsw, CacheKey cacheKey,
                                                    String columnPrefix) throws SQLException {
         //TODO 获取结果类型
@@ -1200,6 +1775,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 为 Map 结果对象按全部列构建行缓存键。
+     *
+     * @param rsw      结果集包装对象
+     * @param cacheKey 行缓存键
+     * @throws SQLException JDBC 读取异常
+     */
     private void createRowKeyForMap(ResultSetWrapper rsw, CacheKey cacheKey) throws SQLException {
         List<String> columnNames = rsw.getColumnNames();
         for (String columnName : columnNames) {
@@ -1211,6 +1793,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 将嵌套结果对象关联到父对象属性上。
+     *
+     * @param metaObject    父对象元信息
+     * @param resultMapping 属性映射定义
+     * @param rowValue      子对象结果
+     */
     private void linkObjects(MetaObject metaObject, ResultMapping resultMapping, Object rowValue) {
         final Object collectionProperty = this.instantiateCollectionPropertyIfAppropriate(resultMapping, metaObject);
         if (collectionProperty != null) {
@@ -1221,6 +1810,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         }
     }
 
+    /**
+     * 在属性为集合类型时按需实例化集合对象。
+     *
+     * @param resultMapping 属性映射定义
+     * @param metaObject    结果对象元信息
+     * @return 已存在或新建的集合对象；非集合属性时返回 null
+     */
     private Object instantiateCollectionPropertyIfAppropriate(ResultMapping resultMapping, MetaObject metaObject) {
         final String propertyName = resultMapping.getProperty();
         Object propertyValue = metaObject.getValue(propertyName);
@@ -1246,6 +1842,13 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return null;
     }
 
+    /**
+     * 判断结果类型是否存在直接可用的 TypeHandler。
+     *
+     * @param rsw        结果集包装对象
+     * @param resultType 结果类型
+     * @return 是否可直接使用 TypeHandler 读取
+     */
     private boolean hasTypeHandlerForResultObject(ResultSetWrapper rsw, Class<?> resultType) {
         if (rsw.getColumnNames().size() == 1) {
             return this.typeHandlerRegistry.hasTypeHandler(resultType, rsw.getJdbcType(rsw.getColumnNames().get(0)));
@@ -1254,7 +1857,14 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     /**
-     * TODO 结果列转为结果对象属性
+     * 将结果列名转换为结果对象属性名。
+     *
+     * <p>对于 Map 结果，会按配置的 {@link MapRetKeyCasePolicy} 进行 key 规范化；
+     * 对于实体结果，会优先通过实体元数据中的列映射反查字段名。</p>
+     *
+     * @param column     结果列名
+     * @param metaObject 结果对象元信息
+     * @return 对应属性名
      */
     private String retColumnToField(String column, MetaObject metaObject) {
         if (EzMybatisConstant.ORACLE_ROW_NUM_ALIAS.equals(column)) {
@@ -1263,22 +1873,22 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         String property;
         //如果是map, 则根据配置规则进行推算map属性
         if (metaObject.getOriginalObject() instanceof Map) {
-            MapRetKeyPattern mapRetKeyPattern = EzMybatisContent.getContentConfig(this.configuration)
-                    .getEzMybatisConfig().getMapRetKeyPattern();
-            if (mapRetKeyPattern == null) {
-                mapRetKeyPattern = MapRetKeyPattern.HUMP;
+            MapRetKeyCasePolicy mapRetKeyCasePolicy = EzMybatisContent.getContentConfig(this.configuration)
+                    .getEzMybatisConfig().getMapRetKeyCasePolicy();
+            if (mapRetKeyCasePolicy == null) {
+                mapRetKeyCasePolicy = MapRetKeyCasePolicy.HUMP;
             }
-            if (mapRetKeyPattern == MapRetKeyPattern.HUMP) {
+            if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.HUMP) {
                 if (HumpLineStringUtils.isHump(column)) {
                     property = column;
                 } else {
                     property = HumpLineStringUtils.lineToHump(column.toLowerCase());
                 }
-            } else if (mapRetKeyPattern == MapRetKeyPattern.LOWER_CASE) {
+            } else if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.LOWER_CASE) {
                 property = column.toLowerCase();
-            } else if (mapRetKeyPattern == MapRetKeyPattern.UPPER_CASE) {
+            } else if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.UPPER_CASE) {
                 property = column.toUpperCase();
-            } else if (mapRetKeyPattern == MapRetKeyPattern.ORIGINAL) {
+            } else if (mapRetKeyCasePolicy == MapRetKeyCasePolicy.ORIGINAL) {
                 property = column;
             } else {
                 property = column;
@@ -1305,7 +1915,11 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
     }
 
     /**
-     * TODO 获取注解的类型处理器
+     * 获取实体字段上声明的自定义 {@link TypeHandler}。
+     *
+     * @param metaObject 结果对象元信息
+     * @param property   属性名
+     * @return 字段级 TypeHandler；不存在时返回 null
      */
     private TypeHandler<?> getAnnotationTypeHandler(MetaObject metaObject, String property) {
         TypeHandler<?> typeHandler = null;
@@ -1321,17 +1935,49 @@ public class EzResultSetHandler extends DefaultResultSetHandler {
         return typeHandler;
     }
 
+    /**
+     * 多结果集场景下等待回填的父子关系描述。
+     */
     private static class PendingRelation {
+        /**
+         * 父对象元信息。
+         */
         public MetaObject metaObject;
+        /**
+         * 父对象上的属性映射定义。
+         */
         public ResultMapping propertyMapping;
     }
 
+    /**
+     * 自动映射阶段的单列映射规则。
+     */
     private static class UnMappedColumnAutoMapping {
+        /**
+         * 结果列名。
+         */
         private final String column;
+        /**
+         * 目标属性名。
+         */
         private final String property;
+        /**
+         * 负责读取当前列的 TypeHandler。
+         */
         private final TypeHandler<?> typeHandler;
+        /**
+         * 目标属性是否为基础类型。
+         */
         private final boolean primitive;
 
+        /**
+         * 使用列名、属性名和类型处理器初始化自动映射规则。
+         *
+         * @param column      结果列名
+         * @param property    目标属性名
+         * @param typeHandler 类型处理器
+         * @param primitive   目标属性是否为基础类型
+         */
         public UnMappedColumnAutoMapping(String column, String property, TypeHandler<?> typeHandler, boolean primitive) {
             this.column = column;
             this.property = property;

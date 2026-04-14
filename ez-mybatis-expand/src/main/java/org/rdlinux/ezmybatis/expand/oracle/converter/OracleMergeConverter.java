@@ -1,8 +1,9 @@
 package org.rdlinux.ezmybatis.expand.oracle.converter;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
+import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -77,10 +78,21 @@ public class OracleMergeConverter extends AbstractConverter<Merge> implements Co
                 sqlBuilder.append(", ");
             }
         }
+        if (merge.getNotMatchedInsertEntity() != null) {
+            List<EzMybatisInsertListener> listeners = EzMybatisContent
+                    .getInsertListeners(sqlGenerateContext.getConfiguration());
+            if (listeners != null) {
+                for (EzMybatisInsertListener listener : listeners) {
+                    listener.onInsert(merge.getNotMatchedInsertEntity());
+                }
+            }
+            AbstractInsertSqlGenerate.InsertSqlParts insertSqlParts = AbstractInsertSqlGenerate.getInsertSqlParts(
+                    sqlGenerateContext, merge.getNotMatchedInsertEntity());
+            sqlBuilder.append(" WHEN NOT MATCHED THEN INSERT ")
+                    .append(insertSqlParts.getColumnsSql())
+                    .append(" VALUES ")
+                    .append(insertSqlParts.getValuesSql());
+        }
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.DM;
-    }
 }

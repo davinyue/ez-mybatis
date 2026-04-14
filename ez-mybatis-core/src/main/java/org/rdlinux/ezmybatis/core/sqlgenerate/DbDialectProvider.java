@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.classinfo.entityinfo.build.EntityInfoBuilder;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 
@@ -46,4 +47,14 @@ public interface DbDialectProvider {
      * 获取转换器
      */
     <T extends SqlStruct> Converter<T> getConverter(Class<T> sqlStruct);
+
+    /**
+     * 获取实体信息构造器
+     */
+    EntityInfoBuilder getEntityInfoBuilder();
+
+    /**
+     * 设置实体信息构造器
+     */
+    void setEntityInfoBuilder(EntityInfoBuilder entityInfoBuilder);
 }

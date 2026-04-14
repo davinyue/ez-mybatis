@@ -11,4 +11,9 @@ public interface Condition extends SqlStruct {
      * 获取逻辑运算符号
      */
     AndOr getAndOr();
+
+    /**
+     * 设置逻辑运算符号
+     */
+    void setAndOr(AndOr andOr);
 }

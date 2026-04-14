@@ -6,6 +6,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.rdlinux.ezmybatis.core.EzJdbcBatchSql;
 import org.rdlinux.ezmybatis.core.EzJdbcSqlParam;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
+import org.rdlinux.ezmybatis.core.FieldAccessScope;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
@@ -53,7 +54,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
                 continue;
             }
             sqlBuilder.append(keywordQM).append(column).append(keywordQM).append(" = ");
-            sqlBuilder.append(mybatisParamHolder.simpleGetMybatisParamName(model.getClass(),
+            sqlBuilder.append(mybatisParamHolder.entityPersistGetMybatisParamName(model.getClass(),
                     entityFieldInfo.getField(), fieldValue)).append(", ");
             //有字段更新, sql才有效
             invalidSql = false;
@@ -61,7 +62,7 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
         Assert.isTrue(!invalidSql, "cannot update empty entity");
         sqlBuilder.delete(sqlBuilder.length() - 2, sqlBuilder.length());
         sqlBuilder.append(" WHERE ").append(keywordQM).append(primaryKeyInfo.getColumnName()).append(keywordQM)
-                .append(" = ").append(mybatisParamHolder.simpleGetMybatisParamName(model.getClass(),
+                .append(" = ").append(mybatisParamHolder.entityPersistGetMybatisParamName(model.getClass(),
                         primaryKeyInfo.getField(), idValue));
         return sqlBuilder.toString();
     }
@@ -158,9 +159,15 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             int eti = 0;
             for (Object model : models) {
                 Object fieldValue = ReflectionUtils.invokeMethod(model, fieldGetMethod);
-                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, Boolean.TRUE, model.getClass(),
-                        fieldInfo.getField(), fieldValue);
+                fieldValue = EzMybatisContent.onBuildSqlGetField(configuration, FieldAccessScope.ENTITY_PERSIST,
+                        model.getClass(), fieldInfo.getField(), fieldValue);
                 JdbcType jdbcType = TypeHandlerUtils.getJdbcType(fieldValue);
+                if (jdbcType == null || jdbcType == JdbcType.NULL) {
+                    jdbcType = TypeHandlerUtils.getJdbcType(fieldInfo.getField());
+                }
+                if (jdbcType == null) {
+                    jdbcType = configuration.getJdbcTypeForNull();
+                }
                 EzJdbcSqlParam param = new EzJdbcSqlParam(fieldValue, typeHandler, jdbcType);
                 params.get(eti).add(param);
                 eti++;

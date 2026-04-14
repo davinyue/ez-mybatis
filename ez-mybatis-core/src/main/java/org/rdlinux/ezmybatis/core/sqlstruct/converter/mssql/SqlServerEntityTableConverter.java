@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
@@ -21,11 +20,6 @@ public class SqlServerEntityTableConverter extends AbstractConverter<EntityTable
             }
         }
         return instance;
-    }
-
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
     }
 
     @Override

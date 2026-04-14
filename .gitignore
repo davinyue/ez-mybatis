@@ -41,3 +41,7 @@ mvnw
 mvnw.cmd
 
 hs_err_pid*
+
+### VSCODE ###
+.vscode/
+.codex

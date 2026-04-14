@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.constant.TableNamePattern;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.AbstractEntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityInfoBuildConfig;
@@ -31,9 +31,9 @@ public class MpEntityClassInfo extends AbstractEntityClassInfo {
             }
             this.schema = annotation.schema();
         }
-        if (buildConfig.getTableNamePattern() == TableNamePattern.UPPER_CASE) {
+        if (buildConfig.getTableNameCasePolicy() == NameCasePolicy.UPPER_CASE) {
             this.tableName = this.tableName.toUpperCase();
-        } else if (buildConfig.getTableNamePattern() == TableNamePattern.LOWER_CASE) {
+        } else if (buildConfig.getTableNameCasePolicy() == NameCasePolicy.LOWER_CASE) {
             this.tableName = this.tableName.toLowerCase();
         }
         this.entityClass = entityClass;

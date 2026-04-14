@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.condition;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.rdlinux.ezmybatis.core.sqlstruct.ObjArg;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
@@ -15,12 +16,13 @@ import java.util.List;
  * 对比参数
  */
 @Getter
-public class ArgCompareArgCondition implements Condition, SqlStruct {
-    private AndOr andOr;
+public class ArgCompareArgCondition extends AbstractCondition implements Condition, SqlStruct {
+    @Setter
     private Operand leftValue;
     /**
      * 关系运算符号
      */
+    @Setter
     private Operator operator;
     private Operand rightValue;
     private Operand minValue;
