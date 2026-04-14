@@ -160,7 +160,7 @@ public class JdbcUpdateDao {
         }
         Map<String, Object> mybatisParam = new HashMap<>();
         mybatisParam.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, configuration);
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(mybatisParam);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(mybatisParam);
         long start = System.currentTimeMillis();
         EzJdbcBatchSql jdbcBatchSql = EzMybatisContent.getDbDialectProvider(configuration)
                 .getSqlGenerate()

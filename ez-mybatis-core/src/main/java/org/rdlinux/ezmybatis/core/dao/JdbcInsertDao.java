@@ -65,7 +65,7 @@ public class JdbcInsertDao {
         Configuration configuration = this.sqlSession.getConfiguration();
         Map<String, Object> mybatisParam = new HashMap<>();
         mybatisParam.put(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION, configuration);
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(mybatisParam);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(mybatisParam);
         List<EzMybatisInsertListener> listeners = EzMybatisContent.getInsertListeners(configuration);
         if (listeners != null) {
             for (EzMybatisInsertListener listener : listeners) {
