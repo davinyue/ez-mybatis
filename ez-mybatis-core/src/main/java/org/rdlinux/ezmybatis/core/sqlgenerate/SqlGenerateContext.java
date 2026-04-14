@@ -55,6 +55,14 @@ public class SqlGenerateContext {
     }
 
     /**
+     * 从MybatisParamHolder对象构建content
+     */
+    public static SqlGenerateContext ofMybatisParamHolder(MybatisParamHolder paramHolder) {
+        Configuration configuration = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_CONFIGURATION);
+        return new SqlGenerateContext(configuration, paramHolder);
+    }
+
+    /**
      * 从一个存在的content拷贝content, 并且设置新的sql builder对象
      */
     public static SqlGenerateContext copyOf(SqlGenerateContext context, StringBuilder sqlBuilder) {
