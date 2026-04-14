@@ -21,7 +21,7 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_METHOD)
     public String insert(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getInsertSql(sqlGenerateContext, null, entity);
@@ -29,7 +29,7 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_BY_TABLE_METHOD)
     public String insertByTable(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Object entity = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
@@ -38,7 +38,7 @@ public class EzInsertProvider {
 
     @MethodName(BATCH_INSERT_METHOD)
     public String batchInsert(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getBatchInsertSql(sqlGenerateContext, null, entities);
@@ -46,7 +46,7 @@ public class EzInsertProvider {
 
     @MethodName(BATCH_INSERT_BY_TABLE_METHOD)
     public String batchInsertByTable(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Collection<Object> entities = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITYS);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
@@ -55,7 +55,7 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_BY_SQL_METHOD)
     public String insertBySql(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         MybatisParamHolder paramHolder = sqlGenerateContext.getMybatisParamHolder();
         String sql = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQL);
         Map<String, Object> sqlParam = paramHolder.get(EzMybatisConstant.MAPPER_PARAM_SQLPARAM);
@@ -65,7 +65,7 @@ public class EzInsertProvider {
 
     @MethodName(INSERT_BY_QUERY_METHOD)
     public String insertByQuery(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())

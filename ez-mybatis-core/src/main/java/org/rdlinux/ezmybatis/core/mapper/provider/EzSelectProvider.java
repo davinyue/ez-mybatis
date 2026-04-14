@@ -63,7 +63,7 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_ID_METHOD)
     public String selectById(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Object id = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ID);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
@@ -72,7 +72,7 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_TABLE_AND_ID_METHOD)
     public String selectByTableAndId(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
         Object id = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ID);
@@ -82,7 +82,7 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_IDS_METHOD)
     public String selectByIds(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Collection<Object> ids = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_IDS);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
@@ -91,7 +91,7 @@ public class EzSelectProvider {
 
     @MethodName(SELECT_BY_TABLE_AND_IDS_METHOD)
     public String selectByTableAndIds(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         Class<?> ntClass = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_ENTITY_CLASS);
         Table table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
         Collection<Object> ids = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_IDS);
@@ -112,7 +112,7 @@ public class EzSelectProvider {
 
     @MethodName(QUERY_METHOD)
     public String query(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         SqlStructureOwnershipValidator.validate(query);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
@@ -121,7 +121,7 @@ public class EzSelectProvider {
 
     @MethodName(QUERY_COUNT_METHOD)
     public String queryCount(Map<String, Object> param) {
-        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.ofMyBatisParam(param);
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
         EzQuery<?> query = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_EZPARAM);
         SqlStructureOwnershipValidator.validate(query);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
