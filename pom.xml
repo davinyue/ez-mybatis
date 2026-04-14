@@ -49,8 +49,8 @@
         <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
         <central.publishing.plugin.version>0.7.0</central.publishing.plugin.version>
-        <lombok.version>1.18.22</lombok.version>
-        <lombok.maven.plugin.version>1.18.4.0</lombok.maven.plugin.version>
+        <lombok.version>1.18.44</lombok.version>
+        <lombok.maven.plugin.version>1.18.20.0</lombok.maven.plugin.version>
         <mybatis.version>3.5.19</mybatis.version>
         <commons.lang3.version>3.18.0</commons.lang3.version>
         <junit.version>4.13.2</junit.version>
