@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.*;
 import org.rdlinux.ezmybatis.demo.mapper.ComplexUserMapper;
@@ -195,6 +196,56 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         List<ComplexUser> usersSpecific = this.sqlSession.getMapper(EzMapper.class).query(querySpecific);
         Assert.assertNotNull(usersSpecific);
         log.info("EzQuery Basic Select Specific: {}", JacksonUtils.toJsonString(usersSpecific));
+    }
+
+    @Test
+    public void ezQueryAliasSelect() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(1, dept.getId());
+        EntityTable userTable = EntityTable.of(ComplexUser.class);
+        // Select specific fields
+        EzQuery<StringHashMap> querySpecific = EzQuery.builder(StringHashMap.class).from(userTable)
+                .select(s -> s.add(userTable.field(BaseEntity.Fields.id).as("userId")))
+                .select(s -> s.add(userTable.field(ComplexUser.Fields.username).as("userName")))
+                .page(1, 1)
+                .build();
+        StringHashMap user = this.sqlSession.getMapper(EzMapper.class).queryOne(querySpecific);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.get("userId"));
+        Assert.assertNotNull(user.get("userName"));
+        log.info("EzQuery Alias Select Specific: {}", JacksonUtils.toJsonString(user));
+    }
+
+    @Test
+    public void ezQueryCustomTableNameSelect() {
+        ComplexDepartment dept = this.insertAndGetDepartment();
+        this.insertAndGetComplexUserIds(1, dept.getId());
+        EntityTable userTable = EntityTable.of(ComplexUser.class, "EZ_COMPLEX_USER");
+        // Select specific fields
+        EzQuery<StringHashMap> querySpecific = EzQuery.builder(StringHashMap.class).from(userTable)
+                .select(s -> s.add(userTable.field(BaseEntity.Fields.id).as("userId")))
+                .select(s -> s.add(userTable.field(ComplexUser.Fields.username).as("userName")))
+                .page(1, 1)
+                .build();
+        StringHashMap user = this.sqlSession.getMapper(EzMapper.class).queryOne(querySpecific);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.get("userId"));
+        Assert.assertNotNull(user.get("userName"));
+        log.info("EzQuery Custom Table Name Select Specific: {}", JacksonUtils.toJsonString(user));
+
+        DbTable dbTable = DbTable.of("EZ_COMPLEX_USER");
+        EzQuery<StringHashMap> userQuery = EzQuery.builder(StringHashMap.class).from(dbTable)
+                .select(s -> {
+                    s.add(dbTable.column(BaseEntity.Fields.id))
+                            .add(dbTable.column(ComplexUser.Fields.age));
+                })
+                .page(1, 1)
+                .build();
+        user = this.sqlSession.getMapper(EzMapper.class).queryOne(userQuery);
+        Assert.assertNotNull(user);
+        Assert.assertNotNull(user.get("id"));
+        Assert.assertNotNull(user.get("age"));
+        log.info("EzQuery Custom Table Name Select Specific: {}", JacksonUtils.toJsonString(user));
     }
 
     @Test

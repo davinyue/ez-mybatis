@@ -7,13 +7,13 @@ import org.apache.ibatis.plugin.InterceptorChain;
 import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.EzMybatisConfig;
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisExecutorInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisResultSetHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisStatementHandlerInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
@@ -152,7 +152,6 @@ public class EzMybatisContent {
         if (!ezContentConfig.getEzMybatisConfig().isEscapeKeyword()) {
             return "";
         }
-        DbType dbType = getDbType(configuration);
         return getDbDialectProvider(configuration).getKeywordQuoteMark();
     }
 
@@ -198,8 +197,8 @@ public class EzMybatisContent {
     /**
      * 为指定配置添加插入监听器。
      *
-     * @param config    Ez-MyBatis 配置对象
-     * @param listener  插入监听器
+     * @param config   Ez-MyBatis 配置对象
+     * @param listener 插入监听器
      */
     public static void addInsertListener(EzMybatisConfig config, EzMybatisInsertListener listener) {
         checkInit(config);
@@ -222,8 +221,8 @@ public class EzMybatisContent {
     /**
      * 为指定配置添加查询结果构造完成监听器。
      *
-     * @param config    Ez-MyBatis 配置对象
-     * @param listener  查询结果监听器
+     * @param config   Ez-MyBatis 配置对象
+     * @param listener 查询结果监听器
      */
     public static void addQueryRetListener(EzMybatisConfig config, EzMybatisQueryRetListener listener) {
         checkInit(config);
@@ -234,8 +233,8 @@ public class EzMybatisContent {
     /**
      * 为指定配置添加删除监听器。
      *
-     * @param config    Ez-MyBatis 配置对象
-     * @param listener  删除监听器
+     * @param config   Ez-MyBatis 配置对象
+     * @param listener 删除监听器
      */
     public static void addDeleteListener(EzMybatisConfig config, EzMybatisDeleteListener listener) {
         checkInit(config);
@@ -246,8 +245,8 @@ public class EzMybatisContent {
     /**
      * 为指定配置添加 SQL 构建阶段字段取值监听器。
      *
-     * @param config    Ez-MyBatis 配置对象
-     * @param listener  字段取值监听器
+     * @param config   Ez-MyBatis 配置对象
+     * @param listener 字段取值监听器
      */
     public static void addOnBuildSqlGetFieldListener(EzMybatisConfig config,
                                                      EzMybatisOnBuildSqlGetFieldListener listener) {
