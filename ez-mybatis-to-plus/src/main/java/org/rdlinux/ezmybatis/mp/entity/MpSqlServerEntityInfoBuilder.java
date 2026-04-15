@@ -1,7 +1,5 @@
 package org.rdlinux.ezmybatis.mp.entity;
 
-import org.rdlinux.ezmybatis.constant.DbType;
-
 public class MpSqlServerEntityInfoBuilder extends MpMySqlEntityInfoBuilder {
     private static volatile MpSqlServerEntityInfoBuilder instance;
 
@@ -20,8 +18,4 @@ public class MpSqlServerEntityInfoBuilder extends MpMySqlEntityInfoBuilder {
     }
 
 
-    @Override
-    public DbType getSupportedDbType() {
-        return DbType.SQL_SERVER;
-    }
 }

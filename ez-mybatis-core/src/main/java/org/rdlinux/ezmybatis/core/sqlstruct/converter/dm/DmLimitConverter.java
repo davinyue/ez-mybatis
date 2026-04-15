@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.dm;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Limit;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -31,8 +30,4 @@ public class DmLimitConverter extends AbstractConverter<Limit> implements Conver
         sqlGenerateContext.getSqlBuilder().append(" FETCH FIRST ").append(limit.getSize()).append(" ROWS ONLY ");
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

@@ -5,23 +5,22 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ConditionBuilder;
-import org.rdlinux.ezmybatis.core.sqlstruct.condition.GroupCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
-import org.rdlinux.ezmybatis.enumeration.AndOr;
 import org.rdlinux.ezmybatis.enumeration.JoinType;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
+/**
+ * JOIN 结构节点。
+ *
+ * <p>用于描述 join 类型、被关联表、ON 条件以及递归子 join。</p>
+ */
 @Setter
 @Getter
 @Accessors(chain = true)
 public class Join implements SqlStruct {
-
-    /**
-     * 主表
-     */
-    private Table table;
     /**
      * 关联类型
      */
@@ -38,85 +37,101 @@ public class Join implements SqlStruct {
      * 关联表
      */
     private List<Join> joins;
+
     /**
-     * 是否确认连表
+     * 构建 JOIN 结构。
+     *
+     * @param joinType  join 类型
+     * @param joinTable 被关联表
+     * @param jbc       join 条件构造回调
+     * @return JOIN 结构对象
      */
-    private boolean sure;
+    public static Join build(JoinType joinType, Table joinTable, Consumer<JoinBuilder> jbc) {
+        JoinBuilder builder = new JoinBuilder(joinType, joinTable);
+        jbc.accept(builder);
+        return builder.build();
+    }
 
-    public static class JoinBuilder<Builder> extends ConditionBuilder<Builder,
-            JoinBuilder<Builder>> {
-        private Join join;
+    /**
+     * {@link Join} 构造器。
+     */
+    public static class JoinBuilder extends ConditionBuilder<JoinBuilder> {
+        /**
+         * 当前构建中的 join 对象。
+         */
+        private final Join join;
 
-        public JoinBuilder(Builder builder, Join join) {
-            super(builder, join.getOnConditions(), join.getTable(), join.getJoinTable());
-            this.sonBuilder = this;
-            this.join = join;
+        /**
+         * 使用 join 类型和被关联表初始化构造器。
+         *
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         */
+        private JoinBuilder(JoinType joinType, Table joinTable) {
+            super(new LinkedList<>());
+            this.join = new Join();
+            this.join.setJoinType(joinType);
+            this.join.setJoinTable(joinTable);
+            this.join.setOnConditions(this.conditions);
         }
 
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure, AndOr andOr) {
-            GroupCondition condition = new GroupCondition(sure, new LinkedList<>(), andOr);
-            this.conditions.add(condition);
-            Join newJoin = new Join();
-            newJoin.setTable(this.join.getTable());
-            newJoin.setJoinTable(this.join.getJoinTable());
-            newJoin.setOnConditions(condition.getConditions());
-            return new JoinBuilder<>(this, newJoin);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(AndOr andOr) {
-            return this.groupCondition(true, andOr);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition() {
-            return this.groupCondition(AndOr.AND);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> groupCondition(boolean sure) {
-            return this.groupCondition(sure, AndOr.AND);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, JoinType joinType, Table joinTable) {
-            if (this.join.getJoins() == null) {
-                this.join.joins = new LinkedList<>();
+        /**
+         * 根据条件向当前 join 追加子 join。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       子 join 条件构造回调
+         */
+        public void join(boolean sure, JoinType joinType, Table joinTable, Consumer<JoinBuilder> jbc) {
+            if (sure) {
+                if (this.join.getJoins() == null) {
+                    this.join.setJoins(new LinkedList<>());
+                }
+                JoinBuilder sonBuilder = new JoinBuilder(joinType, joinTable);
+                this.join.getJoins().add(sonBuilder.getJoin());
+                jbc.accept(sonBuilder);
             }
-            Join newJoin = new Join();
-            newJoin.setJoinType(joinType);
-            newJoin.setTable(this.join.getJoinTable());
-            newJoin.setJoinTable(joinTable);
-            newJoin.setOnConditions(new LinkedList<>());
-            newJoin.setSure(sure);
-            this.join.joins.add(newJoin);
-            return new Join.JoinBuilder<>(this, newJoin);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> join(JoinType joinType, Table joinTable) {
-            return this.join(true, joinType, joinTable);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> join(Table joinTable) {
-            return this.join(JoinType.InnerJoin, joinTable);
-        }
-
-        public JoinBuilder<JoinBuilder<Builder>> join(boolean sure, Table joinTable) {
-            return this.join(sure, JoinType.InnerJoin, joinTable);
         }
 
         /**
-         * 将被join表设置为条件构造表
+         * 追加指定类型的子 join。
+         *
+         * @param joinType  join 类型
+         * @param joinTable 被关联表
+         * @param jbc       子 join 条件构造回调
          */
-        public JoinBuilder<Builder> joinTableCondition() {
-            this.table = this.join.getJoinTable();
-            this.otherTable = this.join.getTable();
-            return this;
+        public void join(JoinType joinType, Table joinTable, Consumer<JoinBuilder> jbc) {
+            this.join(Boolean.TRUE, joinType, joinTable, jbc);
         }
 
         /**
-         * 将被主表设置为条件构造表
+         * 根据条件追加默认 INNER JOIN 子 join。
+         *
+         * @param sure      是否启用当前 join
+         * @param joinTable 被关联表
+         * @param jbc       子 join 条件构造回调
          */
-        public JoinBuilder<Builder> masterTableCondition() {
-            this.table = this.join.getTable();
-            this.otherTable = this.join.getJoinTable();
-            return this;
+        public void join(boolean sure, Table joinTable, Consumer<JoinBuilder> jbc) {
+            this.join(sure, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+        /**
+         * 追加默认 INNER JOIN 子 join。
+         *
+         * @param joinTable 被关联表
+         * @param jbc       子 join 条件构造回调
+         */
+        public void join(Table joinTable, Consumer<JoinBuilder> jbc) {
+            this.join(Boolean.TRUE, JoinType.InnerJoin, joinTable, jbc);
+        }
+
+        private Join getJoin() {
+            return this.join;
+        }
+
+        private Join build() {
+            return this.join;
         }
     }
 }

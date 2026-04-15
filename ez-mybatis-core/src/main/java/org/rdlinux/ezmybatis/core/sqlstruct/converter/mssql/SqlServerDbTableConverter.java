@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
 import org.apache.ibatis.session.Configuration;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -52,8 +51,4 @@ public class SqlServerDbTableConverter extends AbstractConverter<DbTable> implem
         converter.buildSql(type, partition, sqlGenerateContext);
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
-    }
 }

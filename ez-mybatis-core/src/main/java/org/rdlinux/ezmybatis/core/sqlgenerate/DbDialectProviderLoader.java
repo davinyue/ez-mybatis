@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.constant.DbType;
+import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,15 @@ public class DbDialectProviderLoader {
             throw new RuntimeException("Cannot find DbDialectProvider for DbType: " + dbType);
         }
         return provider;
+    }
+
+    /**
+     * 按 DbType 设置 Provider
+     */
+    public static void setProvider(DbType dbType, DbDialectProvider provider) {
+        Assert.notNull(dbType, "dbType must not be null");
+        Assert.notNull(provider, "provider must not be null");
+        PROVIDER_MAP.put(dbType, provider);
     }
 
     /**

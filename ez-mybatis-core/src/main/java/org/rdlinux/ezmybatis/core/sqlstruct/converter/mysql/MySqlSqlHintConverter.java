@@ -1,7 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
 import org.apache.commons.lang3.StringUtils;
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
@@ -32,8 +31,4 @@ public class MySqlSqlHintConverter extends AbstractConverter<SqlHint> implements
         sqlGenerateContext.getSqlBuilder().append(" /*+ ").append(obj.getHint()).append(" */ ");
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

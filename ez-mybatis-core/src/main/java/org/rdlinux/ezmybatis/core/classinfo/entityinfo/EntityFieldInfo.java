@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.TypeHandler;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 import org.rdlinux.ezmybatis.utils.HumpLineStringUtils;
 import org.rdlinux.ezmybatis.utils.TypeHandlerUtils;
 
@@ -42,9 +43,9 @@ public class EntityFieldInfo {
         this.fieldName = field.getName();
         this.columnName = field.getName();
         this.buildConfig = buildConfig;
-        if (buildConfig.getColumnHandle() == EntityInfoBuildConfig.ColumnHandle.TO_UNDER) {
+        if (buildConfig.getColumnNameBuildPolicy() == EntityInfoBuildConfig.ColumnNameBuildPolicy.TO_UNDER) {
             this.columnName = HumpLineStringUtils.humpToLine(field.getName());
-        } else if (buildConfig.getColumnHandle() == EntityInfoBuildConfig.ColumnHandle.TO_UNDER_AND_UPPER) {
+        } else if (buildConfig.getColumnNameBuildPolicy() == EntityInfoBuildConfig.ColumnNameBuildPolicy.TO_UNDER_AND_UPPER) {
             this.columnName = HumpLineStringUtils.humpToLine(field.getName()).toUpperCase();
         }
         if (field.isAnnotationPresent(Column.class)) {
@@ -52,6 +53,11 @@ public class EntityFieldInfo {
             if (StringUtils.isNotEmpty(ccn.name())) {
                 this.columnName = ccn.name();
             }
+        }
+        if (buildConfig.getColumnNameCasePolicy() == NameCasePolicy.LOWER_CASE) {
+            this.columnName = this.columnName.toLowerCase();
+        } else if (buildConfig.getColumnNameCasePolicy() == NameCasePolicy.UPPER_CASE) {
+            this.columnName = this.columnName.toUpperCase();
         }
         if (field.isAnnotationPresent(Id.class)) {
             this.isPrimaryKey = true;

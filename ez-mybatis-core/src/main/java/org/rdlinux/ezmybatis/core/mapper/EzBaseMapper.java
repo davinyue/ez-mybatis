@@ -15,16 +15,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base mapper interface providing type-safe CRUD operations for MyBatis.
- * <p>
- * This interface provides generic database operations with compile-time type
- * safety.
- * It supports common CRUD operations including insert, update, delete, and
- * query operations.
- * </p>
+ * 强类型基础 Mapper 接口。
  *
- * @param <Nt> the entity type
- * @param <Pt> the primary key type, must extend Serializable
+ * <p>该接口通过泛型在编译期绑定实体类型和主键类型，为单一实体提供常用的增删改查能力。
+ * 适合业务 Mapper 直接继承，以获得更稳定的类型约束与更简洁的调用方式。</p>
+ *
+ * <p>接口能力包括：</p>
+ * <p>1. 单条与批量的实体增删改。</p>
+ * <p>2. 按主键或主键集合查询与删除。</p>
+ * <p>3. 基于 {@link EzQuery} 的列表、单条和统计查询。</p>
+ * <p>4. 基于指定 {@link Table} 的动态表名操作。</p>
+ *
+ * @param <Nt> 实体类型
+ * @param <Pt> 主键类型，必须实现 {@link Serializable}
  */
 public interface EzBaseMapper<Nt, Pt extends Serializable> {
     /**

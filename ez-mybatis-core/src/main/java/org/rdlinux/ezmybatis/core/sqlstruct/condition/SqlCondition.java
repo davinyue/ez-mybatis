@@ -9,11 +9,9 @@ import org.rdlinux.ezmybatis.utils.Assert;
  * 表列对比条件
  */
 @Getter
-public class SqlCondition implements Condition, SqlStruct {
-    private AndOr andOr;
-    private String sql;
-
-
+public class SqlCondition extends AbstractCondition implements Condition, SqlStruct {
+    private final String sql;
+    
     public SqlCondition(AndOr andOr, String sql) {
         Assert.notNull(andOr, "andOr can not be null");
         Assert.notEmpty(sql, "sql can not be empty");
@@ -26,11 +24,5 @@ public class SqlCondition implements Condition, SqlStruct {
             sql = sql.substring("or".length());
         }
         this.sql = sql;
-    }
-
-
-    @Override
-    public AndOr getAndOr() {
-        return this.andOr;
     }
 }

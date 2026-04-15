@@ -34,6 +34,11 @@ public abstract class EzMybatisConstant {
      */
     public static final String REPLACE_METHOD_NAME = "replace";
     /**
+     * 根据表明替换实体方法名
+     */
+    public static final String REPLACE_BY_TABLE_METHOD_NAME = "replaceByTable";
+
+    /**
      * ezUpdate方法名称
      */
     public static final String EZ_UPDATE_METHOD_NAME = "ezUpdate";
@@ -45,6 +50,10 @@ public abstract class EzMybatisConstant {
      * 批量替换实体方法名
      */
     public static final String BATCH_REPLACE_METHOD_NAME = "batchReplace";
+    /**
+     * 根据表名称批量替换实体方法名
+     */
+    public static final String BATCH_REPLACE_BY_TABLE_METHOD_NAME = "batchReplaceByTable";
 
     /**
      * 删除实体方法名

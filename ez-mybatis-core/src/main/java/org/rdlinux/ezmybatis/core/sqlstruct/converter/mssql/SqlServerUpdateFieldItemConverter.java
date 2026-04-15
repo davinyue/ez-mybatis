@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql.MySqlUpdateFieldItemConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
@@ -27,8 +26,4 @@ public class SqlServerUpdateFieldItemConverter extends MySqlUpdateFieldItemConve
         return false;
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.SQL_SERVER;
-    }
 }

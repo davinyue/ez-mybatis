@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
@@ -41,8 +40,4 @@ public class MySqlExistsConverter extends AbstractConverter<ExistsCondition> imp
         ezQueryConverter.buildSql(type, obj.getQuery(), sqlGenerateContext);
     }
 
-    @Override
-    public DbType getSupportDbType() {
-        return DbType.MYSQL;
-    }
 }

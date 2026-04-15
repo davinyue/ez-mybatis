@@ -4,21 +4,48 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.enumeration.OrderType;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+/**
+ * ORDER BY 排序结构
+ */
 @Getter
 @Setter
 public class OrderBy implements SqlStruct {
+    /**
+     * 所属查询对象。
+     */
     private EzQuery<?> query;
+    /**
+     * 排序项列表。
+     */
     private List<OrderItem> items;
 
-    public OrderBy(EzQuery<?> query, List<OrderItem> items) {
+    /**
+     * 使用查询对象和排序项初始化 ORDER BY 结构。
+     *
+     * @param query 所属查询对象
+     * @param items 排序项列表
+     */
+    private OrderBy(EzQuery<?> query, List<OrderItem> items) {
         this.query = query;
         this.items = items;
+    }
+
+    public static OrderBy build(EzQuery<?> query, Consumer<OrderBuilder> gpc) {
+        OrderBuilder builder = new OrderBuilder(query);
+        gpc.accept(builder);
+        return builder.build();
+    }
+
+    public static OrderBy build(EzQuery<?> query, List<OrderItem> items, Consumer<OrderBuilder> gpc) {
+        OrderBuilder builder = new OrderBuilder(query, items);
+        gpc.accept(builder);
+        return builder.build();
     }
 
     /**
@@ -38,107 +65,122 @@ public class OrderBy implements SqlStruct {
         private OrderType orderType = OrderType.ASC;
     }
 
-    public static class OrderBuilder<T> {
-        private final T target;
-        private final Table table;
+    /**
+     * ORDER BY 构造器
+     */
+    public static class OrderBuilder {
+        /**
+         * 当前构建中的 ORDER BY 对象。
+         */
         private final OrderBy orderBy;
 
-        public OrderBuilder(T target, OrderBy orderBy, Table table) {
-            this.target = target;
-            this.orderBy = orderBy;
-            this.table = table;
+        /**
+         * 使用查询对象和已有排序项初始化构造器。
+         *
+         * @param query 所属查询对象
+         * @param items 排序项列表
+         */
+        private OrderBuilder(EzQuery<?> query, List<OrderItem> items) {
+            this.orderBy = new OrderBy(query, items);
         }
 
-        private void checkEntityTable() {
-            if (!(this.table instanceof EntityTable)) {
-                throw new IllegalArgumentException("Only EntityTable is supported");
-            }
+        /**
+         * 使用查询对象创建空的排序构造器。
+         *
+         * @param query 所属查询对象
+         */
+        private OrderBuilder(EzQuery<?> query) {
+            this.orderBy = new OrderBy(query, new ArrayList<>());
         }
 
-        public OrderBuilder<T> addField(String field, OrderType type) {
-            this.checkEntityTable();
-            this.orderBy.getItems().add(new OrderItem().setValue(EntityField.of((EntityTable) this.table, field))
-                    .setOrderType(type));
-            return this;
-        }
-
-        public OrderBuilder<T> addField(String field) {
-            return this.addField(field, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addField(boolean sure, String field, OrderType type) {
-            if (sure) {
-                return this.addField(field, type);
-            }
-            return this;
-        }
-
-
-        public OrderBuilder<T> addField(boolean sure, String field) {
-            return this.addField(sure, field, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addColumn(String column, OrderType type) {
-            this.orderBy.getItems().add(new OrderItem().setValue(TableColumn.of(this.table, column))
-                    .setOrderType(type));
-            return this;
-        }
-
-        public OrderBuilder<T> addColumn(String column) {
-            return this.addColumn(column, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addColumn(boolean sure, String column, OrderType type) {
-            if (sure) {
-                return this.addColumn(column, type);
-            }
-            return this;
-        }
-
-        public OrderBuilder<T> addColumn(boolean sure, String column) {
-            return this.addColumn(sure, column, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addAlias(boolean sure, String alias, OrderType type) {
-            if (sure) {
-                this.orderBy.getItems().add(new OrderItem().setValue(Alias.of(alias)).setOrderType(type));
-            }
-            return this;
-        }
-
-        public OrderBuilder<T> addAlias(boolean sure, String alias) {
-            return this.addAlias(sure, alias, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> addAlias(String alias, OrderType type) {
-            return this.addAlias(true, alias, type);
-        }
-
-        public OrderBuilder<T> addAlias(String alias) {
-            return this.addAlias(alias, OrderType.ASC);
-        }
-
-        public OrderBuilder<T> add(boolean sure, Operand operand, OrderType type) {
+        /**
+         * 根据条件添加通用操作数作为排序项
+         *
+         * @param sure    是否满足条件
+         * @param operand 操作数（如 EntityField, TableColumn, Alias, Function 等）
+         * @param type    排序类型
+         */
+        public OrderBuilder add(boolean sure, Operand operand, OrderType type) {
             if (sure) {
                 this.orderBy.getItems().add(new OrderItem().setValue(operand).setOrderType(type));
             }
             return this;
         }
 
-        public OrderBuilder<T> add(boolean sure, Operand operand) {
+        /**
+         * 根据条件添加通用操作数作为升序排序项
+         *
+         * @param sure    是否满足条件
+         * @param operand 操作数
+         */
+        public OrderBuilder add(boolean sure, Operand operand) {
             return this.add(sure, operand, OrderType.ASC);
         }
 
-        public OrderBuilder<T> add(Operand operand, OrderType type) {
+        /**
+         * 添加通用操作数作为排序项
+         *
+         * @param operand 操作数
+         * @param type    排序类型
+         */
+        public OrderBuilder add(Operand operand, OrderType type) {
             return this.add(true, operand, type);
         }
 
-        public OrderBuilder<T> add(Operand operand) {
+        /**
+         * 添加通用操作数作为升序排序项
+         *
+         * @param operand 操作数
+         */
+        public OrderBuilder add(Operand operand) {
             return this.add(operand, OrderType.ASC);
         }
 
-        public T done() {
-            return this.target;
+        /**
+         * 根据条件添加排序项
+         *
+         * @param sure 是否满足条件
+         * @param item 排序项
+         */
+        public OrderBuilder add(boolean sure, OrderItem item) {
+            if (sure) {
+                this.orderBy.getItems().add(item);
+            }
+            return this;
+        }
+
+        /**
+         * 根据条件延迟构造并添加排序项。
+         *
+         * <p>适用于排序项的构造依赖于 {@code sure} 判定参数的场景。只有在 {@code sure=true}
+         * 时才会执行回调，避免在 {@code sure=false} 时提前触发诸如 {@code table.field(a)}
+         * 之类的参数校验或异常。</p>
+         *
+         * @param sure 是否满足条件
+         * @param cb   排序项构造回调
+         * @return 当前构造器
+         */
+        public OrderBuilder add(boolean sure, Consumer<OrderBuilder> cb) {
+            if (sure) {
+                cb.accept(this);
+            }
+            return this;
+        }
+
+        /**
+         * 添加排序项
+         *
+         * @param item 排序项
+         */
+        public OrderBuilder add(OrderItem item) {
+            return this.add(true, item);
+        }
+
+        /**
+         * 结束 ORDER BY 构造
+         */
+        private OrderBy build() {
+            return this.orderBy;
         }
     }
 }

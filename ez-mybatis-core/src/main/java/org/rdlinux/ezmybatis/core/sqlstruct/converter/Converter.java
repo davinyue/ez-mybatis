@@ -1,6 +1,5 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter;
 
-import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 
@@ -18,11 +17,6 @@ public interface Converter<Sp extends SqlStruct> {
      * @param sqlGenerateContext sql构建上下文
      */
     void buildSql(Type type, Object sp, SqlGenerateContext sqlGenerateContext);
-
-    /**
-     * 获取支持的数据库
-     */
-    DbType getSupportDbType();
 
     enum Type {
         SELECT,

@@ -4,443 +4,365 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.rdlinux.ezmybatis.core.EzQuery;
-import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectAllItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectOperand;
 import org.rdlinux.ezmybatis.core.sqlstruct.selectitem.SelectTableAllItem;
-import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
+/**
+ * SELECT 子句结构节点。
+ *
+ * <p>该类表示一次查询中的投影部分，负责维护查询项、是否去重以及 SQL Hint 等信息。
+ * 它与 {@link EzQuery} 绑定，属于查询 AST 中描述“返回什么”的核心节点。</p>
+ */
 @Getter
 @Setter
 public class Select implements SqlStruct {
     /**
-     * 查询
+     * 当前 SELECT 所属的查询对象。
      */
     private EzQuery<?> query;
     /**
-     * sql提示
+     * 作用于当前 SELECT 的 SQL Hint。
      */
     private SqlHint sqlHint;
     /**
-     * 是否去重
+     * 是否生成 DISTINCT 关键字。
      */
     private boolean distinct = false;
     /**
-     * 查询项
+     * 当前 SELECT 中包含的查询项列表。
      */
-    private List<SelectItem> selectFields;
+    private List<SelectItem> selectItems;
 
-    public Select(EzQuery<?> query, List<SelectItem> selectFields) {
+    /**
+     * 使用查询对象和查询项初始化 SELECT 结构。
+     *
+     * @param query       所属查询对象
+     * @param selectItems 查询项列表
+     */
+    private Select(EzQuery<?> query, List<SelectItem> selectItems) {
         Assert.notNull(query, "query can not be null");
         this.query = query;
-        this.selectFields = selectFields;
+        this.selectItems = selectItems;
     }
 
-    public static class EzSelectBuilder<T> {
-        private final List<SelectItem> selectFields;
-        private final T target;
-        private final Table table;
+    /**
+     * 使用回调快速构建一个新的 SELECT 结构。
+     *
+     * @param query 所属查询对象
+     * @param sc    查询项构建回调
+     * @return 构建完成的 SELECT 结构
+     */
+    public static Select build(EzQuery<?> query, Consumer<EzSelectBuilder> sc) {
+        EzSelectBuilder builder = new EzSelectBuilder(query);
+        sc.accept(builder);
+        return builder.build();
+    }
+
+    /**
+     * 基于已有查询项并结合回调继续构建 SELECT 结构。
+     *
+     * @param query       所属查询对象
+     * @param selectItems 初始查询项列表
+     * @param sc          查询项构建回调
+     * @return 构建完成的 SELECT 结构
+     */
+    public static Select build(EzQuery<?> query, List<SelectItem> selectItems, Consumer<EzSelectBuilder> sc) {
+        EzSelectBuilder builder = new EzSelectBuilder(query, selectItems);
+        sc.accept(builder);
+        return builder.build();
+    }
+
+    /**
+     * {@link Select} 构造器。
+     */
+    public static class EzSelectBuilder {
+        /**
+         * 当前 SELECT 绑定的查询项列表。
+         */
+        private final List<SelectItem> selectItems;
+        /**
+         * 当前构建中的 SELECT 结构。
+         */
         private final Select select;
+        /**
+         * 当前 SELECT 所属查询对象。
+         */
+        private final EzQuery<?> query;
 
-        public EzSelectBuilder(T target, Select select, Table table) {
-            if (select.getSelectFields() == null) {
-                select.setSelectFields(new LinkedList<>());
-            }
-            this.select = select;
-            this.selectFields = select.getSelectFields();
-            this.target = target;
-            this.table = table;
-        }
-
-        private void checkEntityTable() {
-            if (!(this.table instanceof EntityTable)) {
-                throw new IllegalArgumentException("Only EntityTable is supported");
-            }
-        }
-
-        public T done() {
-            return this.target;
+        /**
+         * 使用查询对象和已有查询项初始化构造器。
+         *
+         * @param query       所属查询对象
+         * @param selectItems 查询项列表
+         */
+        private EzSelectBuilder(EzQuery<?> query, List<SelectItem> selectItems) {
+            this.select = new Select(query, selectItems);
+            this.selectItems = selectItems;
+            this.query = query;
         }
 
         /**
-         * 去重
+         * 使用查询对象创建空的查询列构造器。
+         *
+         * @param query 所属查询对象
          */
-        public EzSelectBuilder<T> distinct() {
+        private EzSelectBuilder(EzQuery<?> query) {
+            this.select = new Select(query, new ArrayList<>());
+            this.selectItems = this.select.getSelectItems();
+            this.query = query;
+        }
+
+        /**
+         * 开启查询去重 (DISTINCT)
+         */
+        public EzSelectBuilder distinct() {
             this.select.distinct = true;
             return this;
         }
 
         /**
-         * 不去重
+         * 取消查询去重
          */
-        public EzSelectBuilder<T> notDistinct() {
+        public EzSelectBuilder notDistinct() {
             this.select.distinct = false;
             return this;
         }
 
-        public EzSelectBuilder<T> addAllTable() {
-            this.selectFields.add(new SelectAllItem());
+        /**
+         * 添加所有表的所有列查询项 (如 SELECT *)
+         */
+        public EzSelectBuilder addAllTable() {
+            this.selectItems.add(new SelectAllItem());
             return this;
         }
 
-        public EzSelectBuilder<T> addAllTable(boolean sure) {
+        /**
+         * 根据条件添加所有表的所有列查询项
+         *
+         * @param sure 是否满足条件，为 true 才会添加
+         */
+        public EzSelectBuilder addAllTable(boolean sure) {
             if (sure) {
                 return this.addAllTable();
             }
             return this;
         }
 
-        /**
-         * @param excludeField 排除的查询项, 只支持entityTable
-         */
-        public EzSelectBuilder<T> addAll(String... excludeField) {
-            this.selectFields.add(new SelectTableAllItem(this.table, excludeField));
-            return this;
-        }
 
         /**
-         * @param excludeField 排除的查询项, 只支持entityTable
+         * 添加指定表的所有属性查询项，并支持排除个别属性
+         *
+         * @param table        指定表
+         * @param sure         是否满足条件，为 true 才会添加
+         * @param excludeField 仅在指定表为 EntityTable 时受支持
          */
-        public EzSelectBuilder<T> addAll(boolean sure, String... excludeField) {
+        public EzSelectBuilder addAll(boolean sure, Table table, String... excludeField) {
             if (sure) {
-                return this.addAll(excludeField);
+                this.selectItems.add(new SelectTableAllItem(table, excludeField));
             }
             return this;
         }
 
-
-        public EzSelectBuilder<T> addField(String field) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectOperand(EntityField.of((EntityTable) this.table, field), null));
-            return this;
+        /**
+         * 添加指定表的所有属性查询项，并支持排除个别属性
+         *
+         * @param table        指定表
+         * @param excludeField 仅在指定表为 EntityTable 时受支持
+         */
+        public EzSelectBuilder addAll(Table table, String... excludeField) {
+            return this.addAll(Boolean.TRUE, table, excludeField);
         }
 
-        public EzSelectBuilder<T> addField(boolean sure, String field) {
+        /**
+         * 根据条件添加当前实体表的所有属性查询项
+         *
+         * @param sure         是否满足条件，为 true 才会添加
+         * @param excludeField 需要排除的实体属性名列表, 仅在查询主表为 EntityTable 时受支持
+         */
+        public EzSelectBuilder addAll(boolean sure, String... excludeField) {
             if (sure) {
-                return this.addField(field);
+                this.selectItems.add(new SelectTableAllItem(this.query.getFrom().getTable(), excludeField));
             }
             return this;
         }
 
-        public EzSelectBuilder<T> addField(String field, String alias) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectOperand(EntityField.of((EntityTable) this.table, field), alias));
-            return this;
+        /**
+         * 添加当前实体表的所有属性查询项，并支持排除个别属性
+         *
+         * @param excludeField 需要排除的实体属性名列表, 仅在查询主表为 EntityTable 时受支持
+         */
+        public EzSelectBuilder addAll(String... excludeField) {
+            return this.addAll(Boolean.TRUE, excludeField);
         }
 
-
-        public EzSelectBuilder<T> addField(boolean sure, String field, String alias) {
+        /**
+         * 根据条件添加具有返回结果能力的底层抽象节点作为查询项（如 Function, Formula 等类型），并可以设置别名
+         *
+         * @param sure    是否添加
+         * @param operand 具备结果返回特征的操作数节点
+         * @param alias   别名
+         */
+        public EzSelectBuilder add(boolean sure, QueryRetOperand operand, String alias) {
             if (sure) {
-                return this.addField(field, alias);
+                this.selectItems.add(new SelectOperand(operand, alias));
             }
             return this;
         }
 
-        public EzSelectBuilder<T> addColumn(String column) {
-            this.selectFields.add(new SelectOperand(TableColumn.of(this.table, column), null));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumn(boolean sure, String column) {
-            if (sure) {
-                return this.addColumn(column);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumn(String column, String alias) {
-            this.selectFields.add(new SelectOperand(TableColumn.of(this.table, column), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumn(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumn(column, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldMax(String field, String alias) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MAX")
-                    .addFieldArg(field).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldMax(boolean sure, String field, String alias) {
-            if (sure) {
-                return this.addFieldMax(field, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnMax(String column, String alias) {
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MAX")
-                    .addColumnArg(column).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnMax(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumnMax(column, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldCount(String field, String alias) {
-            return this.addFieldCount(field, alias, false);
-        }
-
-        public EzSelectBuilder<T> addFieldCount(String field, String alias, boolean distinct) {
-            this.checkEntityTable();
-            if (distinct) {
-                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
-                        .addDistinctFieldArg(field).build(), alias));
-            } else {
-                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
-                        .addFieldArg(field).build(), alias));
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldCount(boolean sure, String field, String alias) {
-            if (sure) {
-                return this.addFieldCount(field, alias, false);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldCount(boolean sure, String field, String alias, boolean distinct) {
-            if (sure) {
-                return this.addFieldCount(field, alias, distinct);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnCount(String column, String alias) {
-            return this.addColumnCount(column, alias, false);
-        }
-
-        public EzSelectBuilder<T> addColumnCount(String column, String alias, boolean distinct) {
-            if (distinct) {
-                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
-                        .addDistinctColumnArg(column).build(), alias));
-            } else {
-                this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("COUNT")
-                        .addColumnArg(column).build(), alias));
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnCount(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumnCount(column, alias, false);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnCount(boolean sure, String column, String alias, boolean distinct) {
-            if (sure) {
-                return this.addColumnCount(column, alias, distinct);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldMin(String field, String alias) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MIN")
-                    .addFieldArg(field).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldMin(boolean sure, String field, String alias) {
-            if (sure) {
-                return this.addFieldMin(field, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnMin(String column, String alias) {
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("MIN")
-                    .addColumnArg(column).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnMin(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumnMin(column, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldAvg(String field, String alias) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("AVG")
-                    .addFieldArg(field).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldAvg(boolean sure, String field, String alias) {
-            if (sure) {
-                return this.addFieldAvg(field, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnAvg(String column, String alias) {
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("AVG")
-                    .addColumnArg(column).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnAvg(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumnAvg(column, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldSum(String field, String alias) {
-            this.checkEntityTable();
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("SUM")
-                    .addFieldArg(field).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addFieldSum(boolean sure, String field, String alias) {
-            if (sure) {
-                return this.addFieldSum(field, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnSum(String column, String alias) {
-            this.selectFields.add(new SelectOperand(Function.builder(this.table).setFunName("SUM")
-                    .addColumnArg(column).build(), alias));
-            return this;
-        }
-
-        public EzSelectBuilder<T> addColumnSum(boolean sure, String column, String alias) {
-            if (sure) {
-                return this.addColumnSum(column, alias);
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> add(boolean sure, QueryRetOperand operand, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectOperand(operand, alias));
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> add(boolean sure, QueryRetOperand operand) {
+        /**
+         * 根据条件添加具有返回结果能力的底层抽象节点作为查询项
+         *
+         * @param sure    是否添加
+         * @param operand 具备结果返回特征的操作数节点
+         */
+        public EzSelectBuilder add(boolean sure, QueryRetOperand operand) {
             return this.add(sure, operand, null);
         }
 
-        public EzSelectBuilder<T> add(QueryRetOperand operand, String alias) {
+        /**
+         * 添加具有返回结果能力的底层抽象节点作为查询项，并指定别名
+         *
+         * @param operand 具备结果返回特征的操作数节点
+         * @param alias   别名
+         */
+        public EzSelectBuilder add(QueryRetOperand operand, String alias) {
             return this.add(true, operand, alias);
         }
 
-        public EzSelectBuilder<T> add(QueryRetOperand operand) {
+        /**
+         * 添加具有返回结果能力的底层抽象节点作为查询项
+         *
+         * @param operand 具备结果返回特征的操作数节点
+         */
+        public EzSelectBuilder add(QueryRetOperand operand) {
             return this.add(true, operand, null);
         }
 
-        public EzSelectBuilder<T> addKeywords(boolean sure, String keywords, String alias) {
+        /**
+         * 根据条件添加最外层的查询包装项
+         *
+         * @param sure    是否添加
+         * @param operand 已被包装的查询项
+         */
+        public EzSelectBuilder add(boolean sure, SelectOperand operand) {
             if (sure) {
-                this.selectFields.add(new SelectOperand(Keywords.of(keywords), alias));
+                this.selectItems.add(operand);
             }
             return this;
         }
 
-        public EzSelectBuilder<T> addKeywords(boolean sure, String keywords) {
-            return this.addKeywords(sure, keywords, null);
-        }
-
-        public EzSelectBuilder<T> addKeywords(String keywords, String alias) {
-            return this.addKeywords(true, keywords, alias);
-        }
-
-        public EzSelectBuilder<T> addKeywords(String keywords) {
-            return this.addKeywords(true, keywords, null);
-        }
-
-        public EzSelectBuilder<T> addFunc(boolean sure, Function function, String alias) {
+        /**
+         * 根据条件延迟构造并添加查询项。
+         *
+         * <p>适用于查询项构造依赖于 {@code sure} 判定参数的场景。只有在 {@code sure=true}
+         * 时才会执行回调，避免在 {@code sure=false} 时提前触发诸如 {@code table.field(a)}
+         * 之类的参数校验或异常。</p>
+         *
+         * @param sure 是否添加
+         * @param cb   查询项构造回调
+         * @return 当前构造器
+         */
+        public EzSelectBuilder add(boolean sure, Consumer<EzSelectBuilder> cb) {
             if (sure) {
-                this.selectFields.add(new SelectOperand(function, alias));
+                cb.accept(this);
             }
             return this;
         }
 
-        public EzSelectBuilder<T> addFunc(Function function, String alias) {
-            return this.addFunc(true, function, alias);
-        }
-
-        public EzSelectBuilder<T> addFormula(boolean sure, Formula formula, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectOperand(formula, alias));
-            }
+        /**
+         * 添加最外层的查询包装项
+         *
+         * @param operand 已被包装的查询项
+         */
+        public EzSelectBuilder add(SelectOperand operand) {
+            this.selectItems.add(operand);
             return this;
         }
 
-        public EzSelectBuilder<T> addFormula(Formula formula, String alias) {
-            return this.addFormula(true, formula, alias);
-        }
-
-        public EzSelectBuilder<T> addCaseWhen(boolean sure, CaseWhen caseWhen, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectOperand(caseWhen, alias));
+        /**
+         * 根据条件添加通用的对象节点作为查询项，并指定别名<br>
+         * 常量或是普通的包装类会自动被转换为合适的 SqlStruct 结构节点
+         *
+         * @param sure    是否添加
+         * @param operand 任意目标对象（支持如 String 等常量类型或高级实现类）
+         * @param alias   别名
+         */
+        public EzSelectBuilder add(boolean sure, Object operand, String alias) {
+            if (operand instanceof QueryRetOperand) {
+                return this.add(sure, (QueryRetOperand) operand, alias);
             }
-            return this;
+            return this.add(sure, (QueryRetOperand) Operand.objToOperand(operand), alias);
         }
 
-        public EzSelectBuilder<T> addCaseWhen(CaseWhen caseWhen, String alias) {
-            return this.addCaseWhen(true, caseWhen, alias);
+        /**
+         * 根据条件添加通用的对象节点作为查询项
+         *
+         * @param sure    是否添加
+         * @param operand 任意目标对象（支持如 String 等常量类型）
+         */
+        public EzSelectBuilder add(boolean sure, Object operand) {
+            return this.add(sure, operand, null);
         }
 
-        public EzSelectBuilder<T> addWindowFunction(boolean sure, WindowFunction windowFunction, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectOperand(windowFunction, alias));
-            }
-            return this;
+        /**
+         * 添加通用的对象节点作为查询项，并指定别名<br>
+         * 常量会自动被转换为普通实值结构节点参与执行
+         *
+         * @param operand 任意目标对象
+         * @param alias   别名
+         */
+        public EzSelectBuilder add(Object operand, String alias) {
+            return this.add(true, operand, alias);
         }
 
-        public EzSelectBuilder<T> addWindowFunction(WindowFunction windowFunction, String alias) {
-            return this.addWindowFunction(true, windowFunction, alias);
-        }
-
-        public EzSelectBuilder<T> addValue(boolean sure, Object value, String alias) {
-            if (sure) {
-                this.selectFields.add(new SelectOperand(ObjArg.of(value), alias));
-            }
-            return this;
-        }
-
-        public EzSelectBuilder<T> addValue(Object value, String alias) {
-            return this.addValue(true, value, alias);
+        /**
+         * 添加通用的对象节点作为查询项
+         *
+         * @param operand 任意目标对象
+         */
+        public EzSelectBuilder add(Object operand) {
+            return this.add(true, operand, null);
         }
 
         /**
          * 指定sql提示
+         *
+         * @param hint Hint 原文
+         * @return 当前构造器
          */
-        public EzSelectBuilder<T> withHint(String hint) {
+        public EzSelectBuilder withHint(String hint) {
             return this.withHint(true, hint);
         }
 
         /**
-         * 指定sql提示
+         * 按条件指定 SQL Hint。
+         *
+         * @param sure 是否启用当前 Hint
+         * @param hint Hint 原文
+         * @return 当前构造器
          */
-        public EzSelectBuilder<T> withHint(boolean sure, String hint) {
+        public EzSelectBuilder withHint(boolean sure, String hint) {
             if (sure && StringUtils.isNotEmpty(hint)) {
                 this.select.sqlHint = new SqlHint(hint);
             }
             return this;
+        }
+
+        /**
+         * 完成构建并返回 SELECT 结构。
+         *
+         * @return 构建完成的 SELECT 结构
+         */
+        private Select build() {
+            return this.select;
         }
     }
 }
