@@ -189,7 +189,7 @@ public class EntityTable extends DbTable {
     @Override
     public String getTableName(Configuration configuration) {
         if (this.tableName != null && !this.tableName.isEmpty()) {
-            return this.tableName;
+            return super.getTableName(configuration);
         }
         return EzEntityClassInfoFactory.forClass(configuration, this.etType).getTableName();
     }

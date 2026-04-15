@@ -35,7 +35,9 @@ public class MySqlSelectOperandConverter extends AbstractConverter<SelectOperand
         converter.buildSql(type, obj.getOperand(), sqlGenerateContext);
         String alias = obj.getAlias();
         if (alias != null && !alias.isEmpty()) {
-            String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
+            //这里必须使用方言提供者来获取关键词引号, 因为EzMybatisContent来获取的话，可能会返回空字符串，会导致别名丢失关键词引号，
+            //在某些数据库中，比如oracle，指定别名是驼峰格式，会被转换成全大写，最终导致无法和结果集实体对应
+            String keywordQM = EzMybatisContent.getDbDialectProvider(configuration).getKeywordQuoteMark();
             sqlBuilder.append(" ").append(keywordQM).append(SqlEscaping.nameEscaping(alias)).append(keywordQM)
                     .append(" ");
         }

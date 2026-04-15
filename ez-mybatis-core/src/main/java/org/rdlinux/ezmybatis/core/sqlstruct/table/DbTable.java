@@ -2,6 +2,10 @@ package org.rdlinux.ezmybatis.core.sqlstruct.table;
 
 import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.EzMybatisConfig;
+import org.rdlinux.ezmybatis.constant.NameCasePolicy;
+import org.rdlinux.ezmybatis.core.EzContentConfig;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 import org.rdlinux.ezmybatis.utils.AliasGenerate;
 
@@ -106,6 +110,14 @@ public class DbTable extends AbstractTable {
      */
     @Override
     public String getTableName(Configuration configuration) {
-        return this.tableName;
+        EzContentConfig contentConfig = EzMybatisContent.getContentConfig(configuration);
+        EzMybatisConfig ezMybatisConfig = contentConfig.getEzMybatisConfig();
+        if (ezMybatisConfig.getTableNameCasePolicy() == NameCasePolicy.UPPER_CASE) {
+            return this.tableName.toUpperCase();
+        } else if (ezMybatisConfig.getTableNameCasePolicy() == NameCasePolicy.LOWER_CASE) {
+            return this.tableName.toLowerCase();
+        } else {
+            return this.tableName;
+        }
     }
 }
