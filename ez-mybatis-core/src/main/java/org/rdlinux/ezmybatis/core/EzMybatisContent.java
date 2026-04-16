@@ -281,29 +281,33 @@ public class EzMybatisContent {
      * @param config Ez-MyBatis 配置对象
      */
     private static void initDbType(EzMybatisConfig config) {
-        Configuration configuration = config.getConfiguration();
-        Environment environment = configuration.getEnvironment();
-        if (environment == null) {
-            return;
-        }
-        DataSource dataSource = environment.getDataSource();
-        if (dataSource == null) {
-            return;
-        }
-        String driver;
-        if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
-            driver = ((PooledDataSource) dataSource).getDriver();
-        } else {
-            if (dataSource.getClass().getName().contains("druid")) {
-                driver = ReflectionUtils.getFieldValue(dataSource, "driverClass");
-            } else {
-                driver = ReflectionUtils.getFieldValue(dataSource, "driverClassName");
+        DbType dbType = config.getDbType();
+        if (dbType == null) {
+            Configuration configuration = config.getConfiguration();
+            Environment environment = configuration.getEnvironment();
+            if (environment == null) {
+                return;
             }
+            DataSource dataSource = environment.getDataSource();
+            if (dataSource == null) {
+                return;
+            }
+            String driver;
+            if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
+                driver = ((PooledDataSource) dataSource).getDriver();
+            } else {
+                if (dataSource.getClass().getName().contains("druid")) {
+                    driver = ReflectionUtils.getFieldValue(dataSource, "driverClass");
+                } else {
+                    driver = ReflectionUtils.getFieldValue(dataSource, "driverClassName");
+                }
+            }
+            if (StringUtils.isBlank(driver)) {
+                return;
+            }
+            dbType = DbDialectProviderLoader.matchDbType(driver);
+            config.setDbType(dbType);
         }
-        if (StringUtils.isBlank(driver)) {
-            return;
-        }
-        DbType dbType = DbDialectProviderLoader.matchDbType(driver);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.setDbType(dbType);
         configurationConfig.setDbDialectProvider(DbDialectProviderLoader.getProvider(dbType));
