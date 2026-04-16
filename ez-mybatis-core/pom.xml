@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ez-mybatis</artifactId>
         <groupId>org.rdlinux</groupId>
-        <version>1.0.6.RS</version>
+        <version>1.0.7.RS</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
@@ -15,6 +15,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.rdlinux</groupId>
