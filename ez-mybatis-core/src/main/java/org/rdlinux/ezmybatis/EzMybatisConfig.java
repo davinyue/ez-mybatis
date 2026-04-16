@@ -3,6 +3,7 @@ package org.rdlinux.ezmybatis;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
+import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.constant.MapRetKeyCasePolicy;
 import org.rdlinux.ezmybatis.constant.NameCasePolicy;
 
@@ -35,6 +36,10 @@ public class EzMybatisConfig {
      * 启用oracle offset fetch分页
      */
     private boolean enableOracleOffsetFetchPage = false;
+    /**
+     * 数据库类型
+     */
+    private DbType dbType;
 
     public EzMybatisConfig(Configuration configuration) {
         if (configuration == null) {

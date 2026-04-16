@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlstruct.converter.mysql;
 
+import org.apache.ibatis.session.Configuration;
 import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.Alias;
@@ -26,10 +27,12 @@ public class MySqlAliasConverter extends AbstractConverter<Alias> implements Con
 
     @Override
     protected void doBuildSql(Type type, Alias obj, SqlGenerateContext sqlGenerateContext) {
-        String keywordQM = EzMybatisContent.getKeywordQuoteMark(sqlGenerateContext.getConfiguration());
+        //这里必须使用方言提供者来获取关键词引号, 因为EzMybatisContent来获取的话，可能会返回空字符串，会导致别名丢失关键词引号，
+        //在某些数据库中，比如oracle，指定别名是驼峰格式，会被转换成全大写，最终导致无法和结果集实体对应
+        Configuration configuration = sqlGenerateContext.getConfiguration();
+        String keywordQM = EzMybatisContent.getDbDialectProvider(configuration).getKeywordQuoteMark();
         String alias = obj.getAlias();
         alias = SqlEscaping.nameEscaping(alias);
         sqlGenerateContext.getSqlBuilder().append(keywordQM).append(alias).append(keywordQM);
     }
-
 }
