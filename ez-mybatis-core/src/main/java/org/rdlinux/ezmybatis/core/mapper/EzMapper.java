@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.core.mapper.provider.EzInsertProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.mapper.provider.EzUpdateProvider;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.io.Serializable;
@@ -76,6 +77,10 @@ public interface EzMapper {
      * 原生 SQL 对象列表查询方法名常量。
      */
     String SELECT_OBJECT_BY_SQL_METHOD = "selectObjectBySql";
+    /**
+     * 判断表是否存在方法名常量。
+     */
+    String TABLE_EXISTS_METHOD = "tableExists";
 
     /**
      * Query entity by primary key.
@@ -224,6 +229,16 @@ public interface EzMapper {
     @MethodName(QUERY_COUNT_METHOD)
     @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.QUERY_COUNT_METHOD)
     int queryCount(@Param(EzMybatisConstant.MAPPER_PARAM_EZPARAM) EzQuery<?> query);
+
+    /**
+     * Check whether a physical database table exists.
+     *
+     * @param table the database table to check
+     * @return true if the table exists
+     */
+    @MethodName(TABLE_EXISTS_METHOD)
+    @SelectProvider(type = EzSelectProvider.class, method = EzSelectProvider.TABLE_EXISTS_METHOD)
+    boolean tableExists(@Param(EzMybatisConstant.MAPPER_PARAM_TABLE) DbTable table);
 
     /**
      * Update records using EzUpdate.

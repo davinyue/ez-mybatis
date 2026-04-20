@@ -283,14 +283,15 @@ public class EzMybatisContent {
     private static void initDbType(EzMybatisConfig config) {
         DbType dbType = config.getDbType();
         if (dbType == null) {
+            String errorMsg = "Cannot recognize database type automatically. Please set the database type first";
             Configuration configuration = config.getConfiguration();
             Environment environment = configuration.getEnvironment();
             if (environment == null) {
-                return;
+                throw new RuntimeException(errorMsg);
             }
             DataSource dataSource = environment.getDataSource();
             if (dataSource == null) {
-                return;
+                throw new RuntimeException(errorMsg);
             }
             String driver;
             if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
@@ -303,9 +304,13 @@ public class EzMybatisContent {
                 }
             }
             if (StringUtils.isBlank(driver)) {
-                return;
+                throw new RuntimeException(errorMsg);
             }
-            dbType = DbDialectProviderLoader.matchDbType(driver);
+            try {
+                dbType = DbDialectProviderLoader.matchDbType(driver);
+            } catch (RuntimeException e) {
+                throw new RuntimeException(errorMsg);
+            }
             config.setDbType(dbType);
         }
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());

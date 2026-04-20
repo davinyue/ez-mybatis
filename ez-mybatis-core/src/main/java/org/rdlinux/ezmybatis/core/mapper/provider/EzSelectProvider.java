@@ -7,6 +7,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.MybatisParamHolder;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.core.validation.SqlStructureOwnershipValidator;
 
@@ -24,6 +25,7 @@ public class EzSelectProvider {
     public static final String SELECT_BY_SQL_METHOD = "selectBySql";
     public static final String QUERY_METHOD = "query";
     public static final String QUERY_COUNT_METHOD = "queryCount";
+    public static final String TABLE_EXISTS_METHOD = "tableExists";
 
     /**
      * 处理in参数
@@ -126,5 +128,13 @@ public class EzSelectProvider {
         SqlStructureOwnershipValidator.validate(query);
         return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
                 .getSqlGenerate().getQueryCountSql(sqlGenerateContext, query);
+    }
+
+    @MethodName(TABLE_EXISTS_METHOD)
+    public String tableExists(Map<String, Object> param) {
+        SqlGenerateContext sqlGenerateContext = SqlGenerateContext.fromMyBatisParam(param);
+        DbTable table = sqlGenerateContext.getParam(EzMybatisConstant.MAPPER_PARAM_TABLE);
+        return EzMybatisContent.getDbDialectProvider(sqlGenerateContext.getConfiguration())
+                .getSqlGenerate().getTableExistsSql(sqlGenerateContext, table);
     }
 }

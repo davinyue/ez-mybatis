@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
 import org.rdlinux.ezmybatis.core.sqlstruct.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.formula.Formula;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.demo.entity.*;
 import org.rdlinux.ezmybatis.demo.mapper.ComplexUserMapper;
@@ -162,6 +163,13 @@ public class PgComplexEntitySelectTest extends PgBaseTest {
         Assert.assertNotNull(maps);
         Assert.assertEquals(2, maps.size());
         log.info("EzMapper.selectMapBySql: {}", JacksonUtils.toJsonString(maps));
+    }
+
+    @Test
+    public void ezTableExists() {
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        Assert.assertFalse(mapper.tableExists(EntityTable.of(ComplexUser.class)));
+        Assert.assertFalse(mapper.tableExists(DbTable.of("ez_complex_missing_table")));
     }
 
     // =================================================================================================================

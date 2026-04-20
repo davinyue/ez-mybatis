@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -71,6 +72,11 @@ public class MySqlSqlGenerate implements SqlGenerate {
     @Override
     public String getQueryCountSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
         return MySqlSelectSqlGenerate.getInstance().getQueryCountSql(sqlGenerateContext, query);
+    }
+
+    @Override
+    public String getTableExistsSql(SqlGenerateContext sqlGenerateContext, DbTable table) {
+        return MySqlSelectSqlGenerate.getInstance().getTableExistsSql(sqlGenerateContext, table);
     }
 
     @Override
