@@ -57,7 +57,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-    <version>1.0.9.RS</version>
+    <version>1.1.0.RS</version>
 </dependency>
 ```
 
@@ -66,7 +66,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-    <version>1.0.9.RS</version>
+    <version>1.1.0.RS</version>
 </dependency>
 ```
 

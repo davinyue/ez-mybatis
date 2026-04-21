@@ -1,11 +1,17 @@
 package org.rdlinux.ezmybatis.core.dao;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.rdlinux.ezmybatis.annotation.MethodName;
+import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
+import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.dto.DcDTO;
@@ -20,7 +26,9 @@ import java.util.Map;
 /**
  * 便捷数据访问对象。
  *
- * <p>对 {@link EzMapper} 做轻量封装，提供常用的查询、插入、更新、删除能力。</p>
+ * <p>
+ * 对 {@link EzMapper} 做轻量封装，提供常用的查询、插入、更新、删除能力。
+ * </p>
  */
 public class EzDao {
     /**
@@ -85,7 +93,7 @@ public class EzDao {
      * @param ids    Primary key values
      */
     public <Id extends Serializable, NT> List<NT> selectByTableAndIds(Table table, Class<NT> etType,
-                                                                      Collection<Id> ids) {
+            Collection<Id> ids) {
         return this.ezMapper.selectByTableAndIds(table, etType, ids);
     }
 
@@ -98,7 +106,7 @@ public class EzDao {
      * @param field    Entity field name
      * @param value    Field value
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <RtType> List<RtType> selectByField(Class<RtType> rtType, EntityTable table, String field, Object value) {
         Assert.notNull(rtType, "rtType can not be null");
         Assert.notNull(table, "table can not be null");
@@ -133,7 +141,7 @@ public class EzDao {
      * @param column   Column name
      * @param value    Column value
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <RtType> List<RtType> selectByColumn(Class<RtType> rtType, Table table, String column, Object value) {
         Assert.notNull(rtType, "rtType can not be null");
         Assert.notNull(table, "table can not be null");
@@ -564,5 +572,15 @@ public class EzDao {
      */
     public <T extends Serializable> int batchDeleteByTableAndId(Table table, Class<?> etType, Collection<T> ids) {
         return this.ezMapper.batchDeleteByTableAndId(table, etType, ids);
+    }
+
+    /**
+     * Check whether a physical database table exists.
+     *
+     * @param table the database table to check
+     * @return true if the table exists
+     */
+    public boolean tableExists(DbTable table) {
+        return this.ezMapper.tableExists(table);
     }
 }
