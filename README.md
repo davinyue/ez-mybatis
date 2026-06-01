@@ -1,4 +1,8 @@
+<img align="right" src="docs/images/ez-mybatis.svg" alt="Ez-MyBatis" width="128" />
+
 # Ez-MyBatis
+
+**轻量、类型安全、多数据库兼容的 MyBatis 增强框架。**
 
 > **兼容性提示**：Ez-MyBatis 支持 Spring Boot 2.x / 3.x，支持 MyBatis 与 MyBatis-Plus 两种生态。请根据项目栈选择对应 Starter 依赖。
 
@@ -57,7 +61,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-    <version>1.0.8.RS</version>
+    <version>1.1.0.RS</version>
 </dependency>
 ```
 
@@ -66,7 +70,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-    <version>1.0.8.RS</version>
+    <version>1.1.0.RS</version>
 </dependency>
 ```
 

@@ -481,6 +481,10 @@ public class EzQuery<Rt> extends EzParam<Rt> implements MultipleRetOperand, Quer
             if (this.query.select == null) {
                 this.select(Select.EzSelectBuilder::addAll);
             }
+            if (this.query.orderBy == null) {
+                this.query.orderBy = OrderBy.build(this.query, orderBuilder -> {
+                });
+            }
             return this.query;
         }
     }

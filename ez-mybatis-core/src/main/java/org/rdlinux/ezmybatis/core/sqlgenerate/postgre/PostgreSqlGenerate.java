@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlSqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -29,6 +30,22 @@ public class PostgreSqlGenerate extends MySqlSqlGenerate implements SqlGenerate 
     @Override
     public String getQuerySql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
         return PostgreSqlEzQueryToSql.getInstance().toSql(sqlGenerateContext, query);
+    }
+
+    @Override
+    public String getTableExistsSql(SqlGenerateContext sqlGenerateContext, DbTable table) {
+        return "SELECT COUNT(1) FROM information_schema.tables WHERE " +
+                getTableExistsSchemaCondition(sqlGenerateContext, table) +
+                " AND table_name = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
+                table.getTableName(sqlGenerateContext.getConfiguration())).getFormatedName();
+    }
+
+    private String getTableExistsSchemaCondition(SqlGenerateContext sqlGenerateContext, DbTable table) {
+        if (table.getSchema(sqlGenerateContext.getConfiguration()) == null) {
+            return "table_schema = CURRENT_SCHEMA()";
+        }
+        return "table_schema = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
+                table.getSchema(sqlGenerateContext.getConfiguration())).getFormatedName();
     }
 
     @Override

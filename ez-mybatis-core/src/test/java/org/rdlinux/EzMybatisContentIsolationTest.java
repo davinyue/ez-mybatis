@@ -1,6 +1,9 @@
 package org.rdlinux;
 
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,8 +25,8 @@ public class EzMybatisContentIsolationTest {
     public void shouldKeepProviderIsolationPerConfiguration() {
         Configuration configuration1 = new Configuration();
         Configuration configuration2 = new Configuration();
-        EzMybatisContent.init(new EzMybatisConfig(configuration1));
-        EzMybatisContent.init(new EzMybatisConfig(configuration2));
+        EzMybatisContent.init(createConfig(configuration1, DbType.MYSQL));
+        EzMybatisContent.init(createConfig(configuration2, DbType.MYSQL));
 
         TrackingMySqlDialectProvider provider1 = new TrackingMySqlDialectProvider("[cfg-1]");
         TrackingMySqlDialectProvider provider2 = new TrackingMySqlDialectProvider("[cfg-2]");
@@ -45,8 +48,8 @@ public class EzMybatisContentIsolationTest {
     public void shouldDestroyOnlySpecifiedConfiguration() {
         Configuration configuration1 = new Configuration();
         Configuration configuration2 = new Configuration();
-        EzMybatisContent.init(new EzMybatisConfig(configuration1));
-        EzMybatisContent.init(new EzMybatisConfig(configuration2));
+        EzMybatisContent.init(createConfig(configuration1, DbType.MYSQL));
+        EzMybatisContent.init(createConfig(configuration2, DbType.MYSQL));
 
         EzMybatisContent.setProvider(configuration1, new TrackingMySqlDialectProvider("[cfg-1]"));
         EzMybatisContent.setProvider(configuration2, new TrackingMySqlDialectProvider("[cfg-2]"));
@@ -60,6 +63,39 @@ public class EzMybatisContentIsolationTest {
             Assert.assertTrue(e.getMessage().contains("configurationConfig non-existent"));
         }
         Assert.assertEquals("[cfg-2]", EzMybatisContent.getKeywordQuoteMark(configuration2));
+    }
+
+    @Test
+    public void shouldRequireManualDbTypeWhenDbTypeCannotBeRecognized() {
+        try {
+            EzMybatisContent.init(new EzMybatisConfig(new Configuration()));
+            Assert.fail("Unrecognized database type should require manual configuration");
+        } catch (RuntimeException e) {
+            Assert.assertEquals("Cannot recognize database type automatically. Please set the database type first",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldRequireManualDbTypeWhenDriverCannotBeMatched() {
+        PooledDataSource dataSource = new PooledDataSource();
+        dataSource.setDriver("org.example.UnknownDriver");
+        Environment environment = new Environment("test", new JdbcTransactionFactory(), dataSource);
+        Configuration configuration = new Configuration(environment);
+
+        try {
+            EzMybatisContent.init(new EzMybatisConfig(configuration));
+            Assert.fail("Unmatched driver should require manual database type configuration");
+        } catch (RuntimeException e) {
+            Assert.assertEquals("Cannot recognize database type automatically. Please set the database type first",
+                    e.getMessage());
+        }
+    }
+
+    private EzMybatisConfig createConfig(Configuration configuration, DbType dbType) {
+        EzMybatisConfig config = new EzMybatisConfig(configuration);
+        config.setDbType(dbType);
+        return config;
     }
 
     private static class TrackingMySqlDialectProvider extends MySqlDialectProvider {

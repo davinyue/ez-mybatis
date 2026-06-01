@@ -165,6 +165,13 @@ public class MySqlComplexEntitySelectTest extends MySqlBaseTest {
         log.info("EzMapper.selectMapBySql: {}", JacksonUtils.toJsonString(maps));
     }
 
+    @Test
+    public void ezTableExists() {
+        EzMapper mapper = this.sqlSession.getMapper(EzMapper.class);
+        Assert.assertFalse(mapper.tableExists(EntityTable.of(ComplexUser.class)));
+        Assert.assertFalse(mapper.tableExists(DbTable.of("ez_complex_missing_table")));
+    }
+
     // =================================================================================================================
     // EzQuery Comprehensive Tests
     // =================================================================================================================
