@@ -1,4 +1,8 @@
+<img align="right" src="docs/images/ez-mybatis.png" alt="Ez-MyBatis" width="128" />
+
 # Ez-MyBatis
+
+**轻量、类型安全、多数据库兼容的 MyBatis 增强框架。**
 
 > **兼容性提示**：Ez-MyBatis 支持 Spring Boot 2.x / 3.x，支持 MyBatis 与 MyBatis-Plus 两种生态。请根据项目栈选择对应 Starter 依赖。
 
