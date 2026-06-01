@@ -1,4 +1,4 @@
-<img align="right" src="docs/images/ez-mybatis.png" alt="Ez-MyBatis" width="128" />
+<img align="right" src="docs/images/ez-mybatis.svg" alt="Ez-MyBatis" width="128" />
 
 # Ez-MyBatis
 
