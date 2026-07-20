@@ -1,14 +1,9 @@
 package org.rdlinux.ezmybatis.core.dao;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.rdlinux.ezmybatis.annotation.MethodName;
-import org.rdlinux.ezmybatis.constant.EzMybatisConstant;
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
 import org.rdlinux.ezmybatis.core.EzUpdate;
 import org.rdlinux.ezmybatis.core.mapper.EzMapper;
-import org.rdlinux.ezmybatis.core.mapper.provider.EzSelectProvider;
 import org.rdlinux.ezmybatis.core.sqlstruct.Select;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlExpand;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
