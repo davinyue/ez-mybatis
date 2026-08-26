@@ -1,7 +1,10 @@
+<img align="right" src="docs/images/ez-mybatis.svg" alt="Ez-MyBatis" width="128" />
+
 # Ez-MyBatis
 
-> **兼容性提示**：Ez-MyBatis 支持 Spring Boot 2.x / 3.x，支持 MyBatis 与 MyBatis-Plus 两种生态。请根据项目栈选择对应
-> Starter 依赖。
+**轻量、类型安全、多数据库兼容的 MyBatis 增强框架。**
+
+> **兼容性提示**：Ez-MyBatis 支持 Spring Boot 2.x / 3.x，支持 MyBatis 与 MyBatis-Plus 两种生态。请根据项目栈选择对应 Starter 依赖。
 
 ## 🚀 简介
 
@@ -65,7 +68,7 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring-boot-starter</artifactId>
-    <version>1.0.8.plus352</version>
+    <version>1.1.2.plus352</version>
 </dependency>
 ```
 
@@ -76,9 +79,85 @@ ez-mybatis:
 <dependency>
     <groupId>org.rdlinux</groupId>
     <artifactId>ez-mybatis-spring3-boot-starter</artifactId>
-    <version>1.0.8.plus352</version>
+    <version>1.1.2.plus352</version>
 </dependency>
 ```
+
+### 动态物理表路由
+
+Ez-MyBatis 支持在 SQL 生成阶段动态决定物理表的 `schema`、`table name` 和 `partition`，适用于多租户、按年份分表或按月份分区等场景。动态路由只作用于 `DbTable` 和 `EntityTable`，不会作用于 `SqlTable`、`EzQueryTable` 等派生表。
+
+实现 `DynamicTableResolver` 并返回 `PhysicalTableRoute`：
+
+```java
+import org.springframework.stereotype.Component;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DynamicTableResolver;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.TableRouteContext;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
+
+@Component
+public class UserTableResolver implements DynamicTableResolver {
+    @Override
+    public PhysicalTableRoute resolve(TableRouteContext context) {
+        String tenantId = TenantContext.requireTenantId();
+        String year = TenantContext.requireBusinessYear();
+
+        return PhysicalTableRoute.of(
+                "tenant_" + tenantId,
+                context.getBaseTableName() + "_" + year,
+                NormalPartition.of("p_" + year));
+    }
+}
+```
+
+`TableRouteContext` 提供当前 MyBatis `Configuration`、当前 `DbTable` 和 `baseTableName`。其中 `baseTableName` 已由当前表实现解析完成：
+
+- `EntityTable.of(User.class, "user_custom")` 的基础表名是 `user_custom`；
+- 未显式指定表名时，基础表名来自实体注解或实体类默认命名；
+
+Resolver 返回值决定本次 SQL 的使用方式：
+
+```java
+// 返回 null：完整沿用原表的 schema、tableName 和 partition
+return null;
+
+// 返回非空路由：三个字段整体生效；null 表示明确不使用 schema 和 partition
+return PhysicalTableRoute.of(null, "user_2026", null);
+
+// DbTable 未指定 schema 和 partition 时，可以由路由器补充
+return PhysicalTableRoute.of(
+        "tenant_a", "user_2026", NormalPartition.of("p_2026"));
+```
+
+合并规则如下：
+
+- 未配置动态路由器，或 Resolver 返回 `null` 时，完整沿用原有表结构；
+- Resolver 返回非空 `PhysicalTableRoute` 时，完整采用其 schema、tableName 和 partition；
+- 非空路由的 `tableName` 不能为空；schema 和 partition 可以为 `null`，表示明确不使用它们；
+- 因此显式 `EntityTable.of(User.class, "user_custom")` 的表名也允许被动态替换。
+
+例如，下面的 schema 和 partition 属于原表基础配置。只有 Resolver 返回 `null` 时它们才会保留；Resolver 返回非空路由时，以路由结果为准：
+
+```java
+EntityTable table = EntityTable.of(
+        "fixed_schema",
+        "user_custom",
+        User.class,
+        NormalPartition.of("p_fixed"));
+```
+
+动态字段只允许作为数据库标识符使用，不能返回任意 SQL 片段。`partition` 应使用现有的 `Partition` 结构（如 `NormalPartition`、`SubPartition`），由当前数据库方言负责渲染。
+
+每个 MyBatis `Configuration` 只允许注册一个 `DynamicTableResolver`。如果存在多个 Spring Bean，Spring 初始化阶段会直接抛出异常；需要组合多个业务规则时，请显式实现一个组合 Resolver，并在组合逻辑中处理规则冲突。
+
+非 Spring 项目可以手动注册：
+
+```java
+EzMybatisContent.setDynamicTableResolver(ezMybatisConfig, new UserTableResolver());
+```
+
+Spring Boot 2.x 使用 `ez-mybatis-spring-boot-starter`，Spring Boot 3.x 使用 `ez-mybatis-spring3-boot-starter` 时，只要将 Resolver 注册为 Spring Bean，框架会自动完成注入。
 
 ---
 

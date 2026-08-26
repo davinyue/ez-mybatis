@@ -5,6 +5,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.rdlinux.ezmybatis.annotation.TypeHandler;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TypeHandlerUtils {
-    private static final Map<Class<?>, org.apache.ibatis.type.TypeHandler<?>> TYPE_HANDLER_INS_MAP =
+    private static final Map<String, org.apache.ibatis.type.TypeHandler<?>> TYPE_HANDLER_INS_MAP =
             new ConcurrentHashMap<>();
 
     /**
@@ -25,19 +26,36 @@ public class TypeHandlerUtils {
             Class<?> typeHandlerClass = annotation.value();
             if (typeHandlerClass != null) {
                 if (org.apache.ibatis.type.TypeHandler.class.isAssignableFrom(typeHandlerClass)) {
-                    typeHandler = TYPE_HANDLER_INS_MAP.computeIfAbsent(typeHandlerClass, (key) -> {
-                        try {
-                            return (org.apache.ibatis.type.TypeHandler<?>) key.newInstance();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+                    String cacheKey = buildTypeHandlerCacheKey(typeHandlerClass, field.getType());
+                    typeHandler = TYPE_HANDLER_INS_MAP.computeIfAbsent(cacheKey,
+                            (key) -> createTypeHandler(typeHandlerClass, field.getType()));
                 } else {
                     throw new IllegalArgumentException("typeHandler must extend org.apache.ibatis.type.TypeHandler");
                 }
             }
         }
         return typeHandler;
+    }
+
+    private static String buildTypeHandlerCacheKey(Class<?> typeHandlerClass, Class<?> fieldType) {
+        return typeHandlerClass.getName() + "#" + fieldType.getName();
+    }
+
+    private static org.apache.ibatis.type.TypeHandler<?> createTypeHandler(Class<?> typeHandlerClass,
+                                                                           Class<?> fieldType) {
+        try {
+            Constructor<?> classConstructor = typeHandlerClass.getConstructor(Class.class);
+            return (org.apache.ibatis.type.TypeHandler<?>) classConstructor.newInstance(fieldType);
+        } catch (NoSuchMethodException ignored) {
+            try {
+                Constructor<?> noArgConstructor = typeHandlerClass.getConstructor();
+                return (org.apache.ibatis.type.TypeHandler<?>) noArgConstructor.newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

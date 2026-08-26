@@ -9,6 +9,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.Page;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlHint;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.ArgCompareArgCondition;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.postgre.*;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 
@@ -38,6 +40,8 @@ public class PostgreDialectProvider extends MySqlDialectProvider {
     @Override
     public void registerConverters() {
         super.registerConverters();
+        this.addConverter(NormalPartition.class, PostgreSqlNormalPartitionConverter.getInstance());
+        this.addConverter(SubPartition.class, PostgreSqlSubPartitionConverter.getInstance());
         this.addConverter(Page.class, PostgreSqlPageConverter.getInstance());
         this.addConverter(UpdateColumnItem.class, PostgreSqlUpdateColumnItemConverter.getInstance());
         this.addConverter(UpdateFieldItem.class, PostgreSqlUpdateFieldItemConverter.getInstance());

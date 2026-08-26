@@ -1,5 +1,6 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
+import lombok.Getter;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
@@ -8,13 +9,17 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 import org.rdlinux.ezmybatis.utils.TypeHandlerUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
 
@@ -56,20 +61,8 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         if (model instanceof Collection) {
             throw new IllegalArgumentException("model can not instanceof Collection");
         }
-        Configuration configuration = sqlGenerateContext.getConfiguration();
-        MybatisParamHolder mybatisParamHolder = sqlGenerateContext.getMybatisParamHolder();
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, model.getClass());
-        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
-        String tableName;
-        if (table != null) {
-            Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            converter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
-            tableName = sqlGenerateContext.getSqlBuilder().toString();
-            sqlGenerateContext.getSqlBuilder().setLength(0);
-        } else {
-            tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
-        }
-        return tableName;
+        Table targetTable = table == null ? EntityTable.of(model.getClass()) : table;
+        return TableSqlRenderer.render(sqlGenerateContext, targetTable, Converter.Type.INSERT);
     }
 
     @Override
@@ -86,7 +79,6 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         Assert.notEmpty(models, "models can not be empty");
         Configuration configuration = sqlGenerateContext.getConfiguration();
         String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
-        MybatisParamHolder mybatisParamHolder = new MybatisParamHolder(configuration, new HashMap<>());
         Object firstEntity = models.iterator().next();
         String tableName = AbstractInsertSqlGenerate.getTableName(sqlGenerateContext, table, firstEntity);
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ").append(tableName).append(" ");
@@ -163,6 +155,7 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         return true;
     }
 
+    @Getter
     public static class InsertSqlParts {
         private final String columnsSql;
         private final String valuesSql;
@@ -172,12 +165,5 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
             this.valuesSql = valuesSql;
         }
 
-        public String getColumnsSql() {
-            return this.columnsSql;
-        }
-
-        public String getValuesSql() {
-            return this.valuesSql;
-        }
     }
 }

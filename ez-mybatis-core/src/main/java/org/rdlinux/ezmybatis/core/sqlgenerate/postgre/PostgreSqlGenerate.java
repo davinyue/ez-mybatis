@@ -2,9 +2,12 @@ package org.rdlinux.ezmybatis.core.sqlgenerate.postgre;
 
 import org.rdlinux.ezmybatis.core.EzDelete;
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlgenerate.mysql.MySqlSqlGenerate;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -29,6 +32,24 @@ public class PostgreSqlGenerate extends MySqlSqlGenerate implements SqlGenerate 
     @Override
     public String getQuerySql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query) {
         return PostgreSqlEzQueryToSql.getInstance().toSql(sqlGenerateContext, query);
+    }
+
+    @Override
+    public String getTableExistsSql(SqlGenerateContext sqlGenerateContext, DbTable table) {
+        PhysicalTableRoute route = EzMybatisContent.resolveDynamicTableRoute(
+                sqlGenerateContext.getConfiguration(), table);
+        return "SELECT COUNT(1) FROM information_schema.tables WHERE " +
+                getTableExistsSchemaCondition(sqlGenerateContext, route.getSchema()) +
+                " AND table_name = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
+                route.getTableName()).getFormatedName();
+    }
+
+    private String getTableExistsSchemaCondition(SqlGenerateContext sqlGenerateContext, String schema) {
+        if (schema == null) {
+            return "table_schema = CURRENT_SCHEMA()";
+        }
+        return "table_schema = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
+                schema).getFormatedName();
     }
 
     @Override

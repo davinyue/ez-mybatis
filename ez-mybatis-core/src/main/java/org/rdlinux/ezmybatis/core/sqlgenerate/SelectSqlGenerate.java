@@ -1,6 +1,7 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate;
 
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 
 import java.util.Collection;
@@ -49,4 +50,13 @@ public interface SelectSqlGenerate {
      * @return 计数查询SQL语句
      */
     String getQueryCountSql(SqlGenerateContext sqlGenerateContext, EzQuery<?> query);
+
+    /**
+     * 根据数据库表对象生成表存在性查询SQL语句
+     *
+     * @param sqlGenerateContext SQL生成上下文
+     * @param table              数据库表对象
+     * @return 表存在性查询SQL语句
+     */
+    String getTableExistsSql(SqlGenerateContext sqlGenerateContext, DbTable table);
 }

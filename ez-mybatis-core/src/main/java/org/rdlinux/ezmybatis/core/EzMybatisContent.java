@@ -18,6 +18,10 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DynamicTableResolver;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.TableRouteResolver;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
@@ -256,6 +260,48 @@ public class EzMybatisContent {
     }
 
     /**
+     * 为指定配置设置唯一的动态物理表路由器。
+     *
+     * @param config   EzMybatis 配置
+     * @param resolver 物理表路由器
+     */
+    public static void setDynamicTableResolver(EzMybatisConfig config, DynamicTableResolver resolver) {
+        Assert.notNull(config, "config can not be null");
+        Assert.notNull(resolver, "resolver can not be null");
+        checkInit(config);
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        synchronized (configurationConfig) {
+            DynamicTableResolver exists = configurationConfig.getDynamicTableResolver();
+            if (exists != null && exists != resolver) {
+                throw new IllegalStateException(
+                        "Only one DynamicTableResolver can be registered for a Configuration");
+            }
+            configurationConfig.setDynamicTableResolver(resolver);
+        }
+    }
+
+    /**
+     * 获取指定配置绑定的动态物理表路由器。
+     *
+     * @param configuration MyBatis 配置
+     * @return 动态物理表路由器；未配置时返回 {@code null}
+     */
+    public static DynamicTableResolver getDynamicTableResolver(Configuration configuration) {
+        return getContentConfig(configuration).getDynamicTableResolver();
+    }
+
+    /**
+     * 解析指定物理表的动态路由结果。
+     *
+     * @param configuration MyBatis 配置
+     * @param table         物理表
+     * @return 合并后的物理表路由结果
+     */
+    public static PhysicalTableRoute resolveDynamicTableRoute(Configuration configuration, DbTable table) {
+        return TableRouteResolver.resolve(configuration, table);
+    }
+
+    /**
      * 检查当前配置是否已初始化，未初始化时自动完成初始化。
      *
      * @param config Ez-MyBatis 配置对象
@@ -283,14 +329,15 @@ public class EzMybatisContent {
     private static void initDbType(EzMybatisConfig config) {
         DbType dbType = config.getDbType();
         if (dbType == null) {
+            String errorMsg = "Cannot recognize database type automatically. Please set the database type first";
             Configuration configuration = config.getConfiguration();
             Environment environment = configuration.getEnvironment();
             if (environment == null) {
-                return;
+                throw new RuntimeException(errorMsg);
             }
             DataSource dataSource = environment.getDataSource();
             if (dataSource == null) {
-                return;
+                throw new RuntimeException(errorMsg);
             }
             String driver;
             if (PooledDataSource.class.isAssignableFrom(dataSource.getClass())) {
@@ -303,9 +350,13 @@ public class EzMybatisContent {
                 }
             }
             if (StringUtils.isBlank(driver)) {
-                return;
+                throw new RuntimeException(errorMsg);
             }
-            dbType = DbDialectProviderLoader.matchDbType(driver);
+            try {
+                dbType = DbDialectProviderLoader.matchDbType(driver);
+            } catch (RuntimeException e) {
+                throw new RuntimeException(errorMsg);
+            }
             config.setDbType(dbType);
         }
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());

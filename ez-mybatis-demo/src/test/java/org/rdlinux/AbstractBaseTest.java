@@ -93,6 +93,9 @@ public abstract class AbstractBaseTest {
             }
         });
 
+        //动态表名处理器
+        EzMybatisContent.setDynamicTableResolver(ezMybatisConfig, context -> null);
+
         // 更新监听器
         EzMybatisContent.addUpdateListener(ezMybatisConfig, new ModelUpdateListener(configuration));
 
