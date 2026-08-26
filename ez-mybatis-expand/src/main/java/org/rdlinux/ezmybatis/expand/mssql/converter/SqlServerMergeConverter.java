@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.interceptor.listener.EzMybatisInsertListener;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractInsertSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
+import org.rdlinux.ezmybatis.core.sqlgenerate.TableSqlRenderer;
 import org.rdlinux.ezmybatis.core.sqlstruct.EntityField;
 import org.rdlinux.ezmybatis.core.sqlstruct.Operand;
 import org.rdlinux.ezmybatis.core.sqlstruct.condition.Condition;
@@ -42,10 +43,9 @@ public class SqlServerMergeConverter extends AbstractConverter<Merge> implements
     @Override
     protected void doBuildSql(Type type, Merge merge, SqlGenerateContext sqlGenerateContext) {
         Configuration configuration = sqlGenerateContext.getConfiguration();
-        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
-        sqlBuilder.append(" MERGE INTO ").append(keywordQM).append(merge.getMergeTable().getTableName(configuration))
-                .append(keywordQM).append(" ")
+        String tableSql = TableSqlRenderer.render(sqlGenerateContext, merge.getMergeTable(), Type.INSERT);
+        sqlBuilder.append(" MERGE INTO ").append(tableSql).append(" ")
                 .append(merge.getMergeTable().getAlias()).append(" USING ");
         Converter<? extends EzQueryTable> tableConverter = EzMybatisContent.getConverter(configuration,
                 merge.getUseTable().getClass());

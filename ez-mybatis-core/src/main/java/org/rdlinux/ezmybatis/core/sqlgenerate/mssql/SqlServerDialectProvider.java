@@ -10,6 +10,8 @@ import org.rdlinux.ezmybatis.core.sqlstruct.converter.mssql.*;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.SqlTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.NormalPartition;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.SubPartition;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateColumnItem;
 import org.rdlinux.ezmybatis.core.sqlstruct.update.UpdateFieldItem;
 
@@ -40,6 +42,8 @@ public class SqlServerDialectProvider extends MySqlDialectProvider {
     @Override
     public void registerConverters() {
         super.registerConverters();
+        this.addConverter(NormalPartition.class, SqlServerNormalPartitionConverter.getInstance());
+        this.addConverter(SubPartition.class, SqlServerSubPartitionConverter.getInstance());
         this.addConverter(OrderBy.class, SqlServerOrderByConverter.getInstance());
         this.addConverter(Page.class, SqlServerPageConverter.getInstance());
         this.addConverter(DbTable.class, SqlServerDbTableConverter.getInstance());

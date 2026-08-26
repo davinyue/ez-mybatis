@@ -11,6 +11,7 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
@@ -38,7 +39,8 @@ public abstract class AbstractUpdateSqlGenerate implements UpdateSqlGenerate {
             Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
             converter.buildSql(Converter.Type.UPDATE, table, sqlGenerateContext);
         } else {
-            sqlBuilder.append(entityClassInfo.getTableNameWithSchema(keywordQM));
+            sqlBuilder.append(TableSqlRenderer.render(sqlGenerateContext, EntityTable.of(model.getClass()),
+                    Converter.Type.UPDATE));
         }
         Map<String, EntityFieldInfo> columnMapFieldInfo = entityClassInfo.getColumnMapFieldInfo();
         EntityFieldInfo primaryKeyInfo = entityClassInfo.getPrimaryKeyInfo();

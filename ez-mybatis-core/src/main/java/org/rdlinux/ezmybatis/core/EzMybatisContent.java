@@ -18,6 +18,10 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProviderLoader;
 import org.rdlinux.ezmybatis.core.sqlstruct.SqlStruct;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DynamicTableResolver;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.TableRouteResolver;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
 
@@ -253,6 +257,48 @@ public class EzMybatisContent {
         checkInit(config);
         EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
         configurationConfig.addOnBuildSqlGetFieldListener(listener);
+    }
+
+    /**
+     * 为指定配置设置唯一的动态物理表路由器。
+     *
+     * @param config   EzMybatis 配置
+     * @param resolver 物理表路由器
+     */
+    public static void setDynamicTableResolver(EzMybatisConfig config, DynamicTableResolver resolver) {
+        Assert.notNull(config, "config can not be null");
+        Assert.notNull(resolver, "resolver can not be null");
+        checkInit(config);
+        EzContentConfig configurationConfig = CFG_CONFIG_MAP.get(config.getConfiguration());
+        synchronized (configurationConfig) {
+            DynamicTableResolver exists = configurationConfig.getDynamicTableResolver();
+            if (exists != null && exists != resolver) {
+                throw new IllegalStateException(
+                        "Only one DynamicTableResolver can be registered for a Configuration");
+            }
+            configurationConfig.setDynamicTableResolver(resolver);
+        }
+    }
+
+    /**
+     * 获取指定配置绑定的动态物理表路由器。
+     *
+     * @param configuration MyBatis 配置
+     * @return 动态物理表路由器；未配置时返回 {@code null}
+     */
+    public static DynamicTableResolver getDynamicTableResolver(Configuration configuration) {
+        return getContentConfig(configuration).getDynamicTableResolver();
+    }
+
+    /**
+     * 解析指定物理表的动态路由结果。
+     *
+     * @param configuration MyBatis 配置
+     * @param table         物理表
+     * @return 合并后的物理表路由结果
+     */
+    public static PhysicalTableRoute resolveDynamicTableRoute(Configuration configuration, DbTable table) {
+        return TableRouteResolver.resolve(configuration, table);
     }
 
     /**

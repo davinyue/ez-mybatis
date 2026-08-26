@@ -60,8 +60,10 @@ public class OraclePageConverter extends AbstractConverter<Page> implements Conv
             //需要判断rownum > 0的问题
             else {
                 String bodyAlias = AliasGenerate.getAlias();
-                sqlBuilder.insert(0, "SELECT ").append(bodyAlias).append(".*  FROM ( ")
-                        .append(" ) ").append(bodyAlias)
+                String originalSql = sqlBuilder.toString();
+                sqlBuilder.setLength(0);
+                sqlBuilder.append("SELECT ").append(bodyAlias).append(".*  FROM ( ")
+                        .append(originalSql).append(" ) ").append(bodyAlias)
                         .append(" WHERE ").append(bodyAlias).append(".\"")
                         .append(EzMybatisConstant.ORACLE_ROW_NUM_ALIAS)
                         .append("\" > ")
