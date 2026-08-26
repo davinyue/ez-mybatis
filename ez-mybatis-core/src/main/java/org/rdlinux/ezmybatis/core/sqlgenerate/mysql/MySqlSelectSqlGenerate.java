@@ -1,9 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.mysql;
 
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractSelectSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
 
 public class MySqlSelectSqlGenerate extends AbstractSelectSqlGenerate {
     private static volatile MySqlSelectSqlGenerate instance;
@@ -34,17 +36,19 @@ public class MySqlSelectSqlGenerate extends AbstractSelectSqlGenerate {
 
     @Override
     public String getTableExistsSql(SqlGenerateContext sqlGenerateContext, DbTable table) {
+        PhysicalTableRoute route = EzMybatisContent.resolveDynamicTableRoute(
+                sqlGenerateContext.getConfiguration(), table);
         return "SELECT COUNT(1) FROM information_schema.tables WHERE " +
-                getTableExistsSchemaCondition(sqlGenerateContext, table) +
+                getTableExistsSchemaCondition(sqlGenerateContext, route.getSchema()) +
                 " AND table_name = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
-                table.getTableName(sqlGenerateContext.getConfiguration())).getFormatedName();
+                route.getTableName()).getFormatedName();
     }
 
-    private String getTableExistsSchemaCondition(SqlGenerateContext sqlGenerateContext, DbTable table) {
-        if (table.getSchema(sqlGenerateContext.getConfiguration()) == null) {
+    private String getTableExistsSchemaCondition(SqlGenerateContext sqlGenerateContext, String schema) {
+        if (schema == null) {
             return "table_schema = DATABASE()";
         }
         return "table_schema = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
-                table.getSchema(sqlGenerateContext.getConfiguration())).getFormatedName();
+                schema).getFormatedName();
     }
 }

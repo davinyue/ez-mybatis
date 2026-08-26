@@ -5,6 +5,7 @@ import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 
@@ -18,14 +19,8 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         MybatisParamHolder paramHolder = sqlGenerateContext.getMybatisParamHolder();
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQuoteMark(configuration);
-        String tableName;
-        if (table != null) {
-            Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            converter.buildSql(Converter.Type.DELETE, table, sqlGenerateContext);
-            tableName = sqlGenerateContext.getSqlBuilder().toString();
-        } else {
-            tableName = entityClassInfo.getTableNameWithSchema(kwQM);
-        }
+        Table targetTable = table == null ? EntityTable.of(ntClass) : table;
+        String tableName = TableSqlRenderer.render(sqlGenerateContext, targetTable, Converter.Type.DELETE);
 
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         return "DELETE FROM " + tableName + " WHERE " + kwQM + idColumn + kwQM + " = " + paramHolder
@@ -41,14 +36,8 @@ public abstract class AbstractDeleteSqlGenerate implements DeleteSqlGenerate {
         EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, ntClass);
         String kwQM = EzMybatisContent.getKeywordQuoteMark(configuration);
 
-        String tableName;
-        if (table != null) {
-            Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            converter.buildSql(Converter.Type.DELETE, table, sqlGenerateContext);
-            tableName = sqlGenerateContext.getSqlBuilder().toString();
-        } else {
-            tableName = entityClassInfo.getTableNameWithSchema(kwQM);
-        }
+        Table targetTable = table == null ? EntityTable.of(ntClass) : table;
+        String tableName = TableSqlRenderer.render(sqlGenerateContext, targetTable, Converter.Type.DELETE);
 
         String idColumn = entityClassInfo.getPrimaryKeyInfo().getColumnName();
         StringBuilder sqlBuilder = new StringBuilder("DELETE FROM " + tableName + " WHERE " + kwQM +

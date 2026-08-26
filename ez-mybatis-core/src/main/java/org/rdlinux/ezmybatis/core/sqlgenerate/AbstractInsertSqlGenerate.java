@@ -9,6 +9,7 @@ import org.rdlinux.ezmybatis.core.classinfo.EzEntityClassInfoFactory;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityClassInfo;
 import org.rdlinux.ezmybatis.core.classinfo.entityinfo.EntityFieldInfo;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.EntityTable;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.Table;
 import org.rdlinux.ezmybatis.utils.Assert;
 import org.rdlinux.ezmybatis.utils.ReflectionUtils;
@@ -60,19 +61,8 @@ public abstract class AbstractInsertSqlGenerate implements InsertSqlGenerate {
         if (model instanceof Collection) {
             throw new IllegalArgumentException("model can not instanceof Collection");
         }
-        Configuration configuration = sqlGenerateContext.getConfiguration();
-        EntityClassInfo entityClassInfo = EzEntityClassInfoFactory.forClass(configuration, model.getClass());
-        String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
-        String tableName;
-        if (table != null) {
-            Converter<?> converter = EzMybatisContent.getConverter(configuration, table.getClass());
-            converter.buildSql(Converter.Type.INSERT, table, sqlGenerateContext);
-            tableName = sqlGenerateContext.getSqlBuilder().toString();
-            sqlGenerateContext.getSqlBuilder().setLength(0);
-        } else {
-            tableName = entityClassInfo.getTableNameWithSchema(keywordQM);
-        }
-        return tableName;
+        Table targetTable = table == null ? EntityTable.of(model.getClass()) : table;
+        return TableSqlRenderer.render(sqlGenerateContext, targetTable, Converter.Type.INSERT);
     }
 
     @Override

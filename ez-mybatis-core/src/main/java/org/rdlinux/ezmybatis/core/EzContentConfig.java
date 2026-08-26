@@ -8,6 +8,7 @@ import org.rdlinux.ezmybatis.constant.DbType;
 import org.rdlinux.ezmybatis.core.interceptor.EzMybatisUpdateInterceptor;
 import org.rdlinux.ezmybatis.core.interceptor.listener.*;
 import org.rdlinux.ezmybatis.core.sqlgenerate.DbDialectProvider;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.DynamicTableResolver;
 import org.rdlinux.ezmybatis.utils.Assert;
 
 import java.util.ArrayList;
@@ -41,6 +42,10 @@ public class EzContentConfig {
      * 当前配置绑定的方言提供者
      */
     private DbDialectProvider dbDialectProvider;
+    /**
+     * 当前配置绑定的动态物理表路由器
+     */
+    private volatile DynamicTableResolver dynamicTableResolver;
     /**
      * 插入监听器列表
      */

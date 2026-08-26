@@ -1,9 +1,11 @@
 package org.rdlinux.ezmybatis.core.sqlgenerate.oracle;
 
 import org.rdlinux.ezmybatis.core.EzQuery;
+import org.rdlinux.ezmybatis.core.EzMybatisContent;
 import org.rdlinux.ezmybatis.core.sqlgenerate.AbstractSelectSqlGenerate;
 import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
 
 public class OracleSelectSqlGenerate extends AbstractSelectSqlGenerate {
     private static volatile OracleSelectSqlGenerate instance;
@@ -34,17 +36,19 @@ public class OracleSelectSqlGenerate extends AbstractSelectSqlGenerate {
 
     @Override
     public String getTableExistsSql(SqlGenerateContext sqlGenerateContext, DbTable table) {
+        PhysicalTableRoute route = EzMybatisContent.resolveDynamicTableRoute(
+                sqlGenerateContext.getConfiguration(), table);
         return "SELECT COUNT(1) FROM ALL_TABLES WHERE " +
-                getTableExistsSchemaCondition(sqlGenerateContext, table) +
+                getTableExistsSchemaCondition(sqlGenerateContext, route.getSchema()) +
                 " AND TABLE_NAME = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
-                table.getTableName(sqlGenerateContext.getConfiguration())).getFormatedName();
+                route.getTableName()).getFormatedName();
     }
 
-    private String getTableExistsSchemaCondition(SqlGenerateContext sqlGenerateContext, DbTable table) {
-        if (table.getSchema(sqlGenerateContext.getConfiguration()) == null) {
+    private String getTableExistsSchemaCondition(SqlGenerateContext sqlGenerateContext, String schema) {
+        if (schema == null) {
             return "OWNER = SYS_CONTEXT('USERENV', 'CURRENT_SCHEMA')";
         }
         return "OWNER = " + sqlGenerateContext.getMybatisParamHolder().getMybatisParamName(
-                table.getSchema(sqlGenerateContext.getConfiguration())).getFormatedName();
+                schema).getFormatedName();
     }
 }

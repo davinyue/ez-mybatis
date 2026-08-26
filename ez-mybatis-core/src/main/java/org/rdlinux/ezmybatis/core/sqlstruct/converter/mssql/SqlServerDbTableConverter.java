@@ -6,6 +6,7 @@ import org.rdlinux.ezmybatis.core.sqlgenerate.SqlGenerateContext;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.AbstractConverter;
 import org.rdlinux.ezmybatis.core.sqlstruct.converter.Converter;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.DbTable;
+import org.rdlinux.ezmybatis.core.sqlstruct.table.PhysicalTableRoute;
 import org.rdlinux.ezmybatis.core.sqlstruct.table.partition.Partition;
 import org.rdlinux.ezmybatis.utils.SqlEscaping;
 
@@ -31,14 +32,15 @@ public class SqlServerDbTableConverter extends AbstractConverter<DbTable> implem
         Configuration configuration = sqlGenerateContext.getConfiguration();
         StringBuilder sqlBuilder = sqlGenerateContext.getSqlBuilder();
         String keywordQM = EzMybatisContent.getKeywordQuoteMark(configuration);
-        String schema = table.getSchema(configuration);
+        PhysicalTableRoute route = EzMybatisContent.resolveDynamicTableRoute(configuration, table);
+        String schema = route.getSchema();
         if (schema != null && !schema.isEmpty()) {
             sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(schema)).append(keywordQM).append(".");
         }
-        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(table.getTableName(configuration)))
+        sqlBuilder.append(keywordQM).append(SqlEscaping.nameEscaping(route.getTableName()))
                 .append(keywordQM);
-        if (table.getPartition() != null) {
-            this.partitionToSql(type, table.getPartition(), sqlGenerateContext);
+        if (route.getPartition() != null) {
+            this.partitionToSql(type, route.getPartition(), sqlGenerateContext);
         }
         if (type == Type.SELECT) {
             sqlBuilder.append(" ").append(table.getAlias()).append(" ");
