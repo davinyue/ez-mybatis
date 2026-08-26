@@ -157,9 +157,9 @@ Spring Boot Starter 继续复用已有的 `SpringEzMybatisInit.init(...)` 调用
 ### 验证
 
 - [x] 补充核心模块物理表路由单元测试
-- [ ] 补充各数据库方言的 schema、table name、partition SQL 测试
+- [x] 补充各数据库方言的 schema、table name、partition SQL 测试
 - [x] 补充 EntityTable、DbTable、SqlTable、EzQueryTable 边界测试
-- [ ] 补充 Spring2、Spring3 Bean 注入测试
+- [x] 补充 Spring2、Spring3 Bean 注入测试
 - [x] 验证解析结果不回写原始 DbTable
 - [x] 执行与改动直接相关的 Maven 测试和构建验证
 
@@ -170,10 +170,14 @@ Spring Boot Starter 继续复用已有的 `SpringEzMybatisInit.init(...)` 调用
 
 ## 当前进度
 
-已完成 core 动态物理表路由实现、标准 SQL 和扩展 SQL 路径接入，以及 Spring2/Spring3 单 Resolver Bean 注入。路由结果合并逻辑使用 `if/else`：Resolver 返回 `null` 时完整沿用基础表，返回非空 `PhysicalTableRoute` 时完整采用其三个字段，并要求 tableName 非空。核心单元测试、根项目测试、Spring2 测试和使用 JDK17 的 Spring3 测试均已通过。当前仍未补充真实数据库方言下的动态 partition SQL 集成测试和 Spring 容器运行时注入测试。
+已完成 core 动态物理表路由实现、标准 SQL 和扩展 SQL 路径接入，以及 Spring2/Spring3 单 Resolver Bean 注入。路由结果合并逻辑使用 `if/else`：Resolver 返回 `null` 时完整沿用基础表，返回非空 `PhysicalTableRoute` 时完整采用其三个字段，并要求 tableName 非空。
+
+已新增各方言 SQL 生成层测试：MySQL、PostgreSQL、SQL Server、Oracle、达梦均验证动态 schema 和 tableName，MySQL、Oracle、达梦同时验证动态 partition；并新增 Spring2、Spring3 基于 `ApplicationContext` 的单 Bean 注入和多 Bean 快速失败测试。MySQL 普通分区转换器同时补齐了 `PARTITION (` 前缀。
+
+验证结果：根项目使用 JDK8 执行 `mvn -q clean test` 通过；Spring2 使用 JDK8 执行 `mvn -q clean test` 通过；Spring3 使用 JDK17 执行 `mvn -q clean test` 通过。
 
 ## 风险与阻塞
 
-- 动态 partition 已沿用现有 `Partition` 方言转换器，MySQL/SQL Server 继承方言的 partition 输出仍缺少真实数据库集成覆盖；
-- Spring2/Spring3 已完成编译验证，但尚未增加基于 Spring `ApplicationContext` 的多 Bean 运行时测试；
+- 方言验证为 SQL 生成层单元测试，未连接真实数据库；真实数据库集成仍依赖外部数据库环境，未纳入本次自动化测试；
+- PostgreSQL 和 SQL Server 本次仅验证 schema/tableName，未定义独立的表 partition SQL 语法；
 - XML Mapper 和原生 SQL 暂不纳入本次自动改写范围。
